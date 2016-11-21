@@ -22,9 +22,9 @@ class App extends React.Component {
       <div className="app-container">
         <Sidebar />
         <div style={ styles }>
-          {/*<Top />*/}
+          <Top />
           { this.props.children }
-          {/*<Footer />*/}
+          <Footer />
         </div>
       </div>
     );

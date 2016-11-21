@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { Button, Form, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
+import { Button, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
 
-class PortalForm extends Component {
+class AdminEditForm extends Component {
   static propTypes = {
-    //editFormDefaultData: PropTypes.array.isRequired,
-    //onBlur: PropTypes.func.isRequired,
-    //onSubmit: PropTypes.func.isRequired
+    editFormDefaultData: PropTypes.array.isRequired,
+    onBlur: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -46,11 +46,25 @@ class PortalForm extends Component {
     }
 
     return (
-      <Form inline>
-        {this.props.children}
-      </Form>
+      <div className='admin-edit-form'>
+        <form>
+          {editFormDefaultData.map(col =>
+            <FieldGroup
+              key={col.label}
+              id={`formControlsText-${col.label}`}
+              type={col.type}
+              label={col.label}
+              placeholder="Enter text"
+              defaultValue={col.value}
+              onBlur={this.handleBlur.bind(this, col.label)}
+            />
+          )}
+          <Button onClick={::this.handleSubmit} type="submit">保存</Button>
+          <Button onClick={::this.handleReset} type="reset">清空</Button>
+        </form>
+      </div>
     );
   }
 };
 
-export default PortalForm;
+export default AdminEditForm;

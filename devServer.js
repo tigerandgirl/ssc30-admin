@@ -5,6 +5,12 @@ const config = require('./webpack.config.dev');
 const bodyParser = require('body-parser');
 //const multer = require('multer');
 
+const fakeApiArchMiddleware = require('./server/routes/fakeApiArch');
+const fakeApiRoleMiddleware = require('./server/routes/fakeApiRole');
+const fakeApiPermissionMiddleware = require('./server/routes/fakeApiPermission');
+const fakeApiArchSettingMiddleware = require('./server/routes/fakeApiArchSetting');
+const fakeApiNCSyncMiddleware = require('./server/routes/fakeApiNCSync');
+
 const app = express();
 const compiler = webpack(config);
 
@@ -19,6 +25,12 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 app.use('/', express.static(path.join(__dirname + '/client')));
+
+app.use(fakeApiArchMiddleware());
+app.use(fakeApiRoleMiddleware());
+app.use(fakeApiPermissionMiddleware());
+app.use(fakeApiArchSettingMiddleware());
+app.use(fakeApiNCSyncMiddleware());
 
 // Create a mock API with swagger
 

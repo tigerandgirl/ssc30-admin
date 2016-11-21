@@ -46,9 +46,7 @@ class Welcome extends React.Component {
             <div className="welcomeContainer">
                 <NormalWidget />
                 <ul>
-                  <li><Link to={`/welcome`}>welcome</Link></li>
-                  <li><Link to={`/baozhangren`}>报账人门户</Link></li>
-                  <li><Link to={`/zuoyeren`}>作业人门户</Link></li>
+                  <li><Link to={`/arch`}>arch</Link></li>
                 </ul>
             </div>
         );

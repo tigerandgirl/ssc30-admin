@@ -54,15 +54,33 @@ export default class Sidebar extends React.Component {
         </div>
         <ul className="nav-menu">
           <li className="nav-menu-item" style={menuItemStyles}>
-            <Link to="/form" style={linkStyles}>
+            <Link to="/arch" style={linkStyles}>
               <Glyphicon glyph="align-left" />
-              <span className="nav-title" style={itemTitleStyles}>form</span>
+              <span className="nav-title" style={itemTitleStyles}>基础档案</span>
             </Link>
           </li>
           <li className="nav-menu-item" style={menuItemStyles}>
-            <Link to="/tree" style={linkStyles}>
+            <Link to="/role" style={linkStyles}>
               <Glyphicon glyph="align-left" />
-              <span className="nav-title" style={itemTitleStyles}>tree</span>
+              <span className="nav-title" style={itemTitleStyles}>角色配置</span>
+            </Link>
+          </li>
+          <li className="nav-menu-item" style={menuItemStyles}>
+            <Link to="/permission" style={linkStyles}>
+              <Glyphicon glyph="align-left" />
+              <span className="nav-title" style={itemTitleStyles}>权限配置/权限分配/权限配置应用注册</span>
+            </Link>
+          </li>
+          <li className="nav-menu-item" style={menuItemStyles}>
+            <Link to="/archsetting" style={linkStyles}>
+              <Glyphicon glyph="align-left" />
+              <span className="nav-title" style={itemTitleStyles}>基础档案配置</span>
+            </Link>
+          </li>
+          <li className="nav-menu-item" style={menuItemStyles}>
+            <Link to="/ncsync" style={linkStyles}>
+              <Glyphicon glyph="align-left" />
+              <span className="nav-title" style={itemTitleStyles}>NC同步配置功能</span>
             </Link>
           </li>
         </ul>
