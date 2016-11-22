@@ -100,6 +100,7 @@ class ArchContainer extends Component {
 
   render() {
     const {
+      tableData,
       editDialog, editFormData,
       createDialog, createFormData,
       adminAlert
@@ -123,7 +124,8 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <NormalWidget />
-              <AdminTable {...this.props} itemsPerPage={itemsPerPage}
+              <AdminTable checkboxColumn={true} operateColumn={true}
+                tableData={tableData} itemsPerPage={itemsPerPage}
                 onPagination={::this.handlePagination}
                 onSelectOne={::this.handleSelectOne}
                 onEdit={::this.handleEdit}

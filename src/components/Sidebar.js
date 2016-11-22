@@ -68,7 +68,19 @@ export default class Sidebar extends React.Component {
           <li className="nav-menu-item" style={menuItemStyles}>
             <Link to="/permission" style={linkStyles}>
               <Glyphicon glyph="align-left" />
-              <span className="nav-title" style={itemTitleStyles}>权限配置/权限分配/权限配置应用注册</span>
+              <span className="nav-title" style={itemTitleStyles}>权限配置</span>
+            </Link>
+          </li>
+          <li className="nav-menu-item" style={menuItemStyles}>
+            <Link to="/permission" style={linkStyles}>
+              <Glyphicon glyph="align-left" />
+              <span className="nav-title" style={itemTitleStyles}>权限分配</span>
+            </Link>
+          </li>
+          <li className="nav-menu-item" style={menuItemStyles}>
+            <Link to="/permission" style={linkStyles}>
+              <Glyphicon glyph="align-left" />
+              <span className="nav-title" style={itemTitleStyles}>权限配置应用注册</span>
             </Link>
           </li>
           <li className="nav-menu-item" style={menuItemStyles}>

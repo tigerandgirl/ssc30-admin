@@ -100,10 +100,17 @@ class PermissionPage extends Component {
 
   render() {
     const {
+      tableData,
       editDialog, editFormData,
       createDialog, createFormData,
       adminAlert
     } = this.props;
+
+    const cols = [
+      '权限',
+      '管理员',
+      '业务员'
+    ];
 
     return (
       <div>
@@ -123,7 +130,8 @@ class PermissionPage extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <NormalWidget />
-              <AdminTable {...this.props} itemsPerPage={itemsPerPage}
+              <AdminTable
+                cols={cols} tableData={tableData} itemsPerPage={itemsPerPage}
                 onPagination={::this.handlePagination}
                 onSelectOne={::this.handleSelectOne}
                 onEdit={::this.handleEdit}
