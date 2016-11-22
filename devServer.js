@@ -1,7 +1,12 @@
 const path = require('path');
 const express = require('express');
 const webpack = require('webpack');
-const config = require('./webpack.config.dev');
+
+if (process.env.NODE_ENV === 'production') {
+  var config = require('./webpack.config.prod');
+} else {
+  var config = require('./webpack.config.dev');
+}
 const bodyParser = require('body-parser');
 //const multer = require('multer');
 
@@ -23,7 +28,9 @@ app.use(require('webpack-dev-middleware')(compiler, {
   publicPath: config.output.publicPath
 }));
 
-app.use(require('webpack-hot-middleware')(compiler));
+if (process.env.NODE_ENV !== 'production') {
+  app.use(require('webpack-hot-middleware')(compiler));
+}
 app.use('/', express.static(path.join(__dirname + '/client')));
 
 app.use(fakeApiArchMiddleware());
