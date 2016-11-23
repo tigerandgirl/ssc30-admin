@@ -140,6 +140,7 @@ class PermissionPage extends Component {
                 onSelectOne={::this.handleSelectOne}
                 onEdit={::this.handleEdit}
                 onCellChecked={::this.handleCellChecked}
+                paging={false}
               />
             </Col>
           </Row>

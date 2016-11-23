@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
 import NormalWidget from '../components/NormalWidget';

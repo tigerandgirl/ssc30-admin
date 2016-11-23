@@ -1,11 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
+
 import { Table, Pagination, Checkbox } from 'react-bootstrap';
+
 import * as ArchActions from '../actions/arch';
 import AdminTableRow from './AdminTableRow';
 
 /**
  * AdminTable组件
+ *
+ * Options: https://datatables.net/reference/option/
  *
  * @param {boolean} checkboxColumn 是否在表格的最左边一列显示复选框
  * @param {boolean} operateColumn 是否在表格的最右边一列显示操作按钮
@@ -13,6 +17,7 @@ import AdminTableRow from './AdminTableRow';
  * @param {Object} tableData 表格填充数据
  *                           如果单元格中的数据类型为boolean，默认渲染为复选框
  * @param {number} itemsPerPage 每页显示的数量
+ * @param {boolean} paging 是否显示分页
  */
 
 class AdminTable extends Component {
@@ -32,7 +37,8 @@ class AdminTable extends Component {
   static defaultProps = {
     checkboxColumn: false,
     operateColumn: false,
-    onCellChecked: () => {}
+    onCellChecked: () => {},
+    paging: true
   };
 
   constructor(props) {
@@ -88,6 +94,20 @@ class AdminTable extends Component {
       checkboxColumn ? <th><Checkbox onChange={::this.handleSelectAll} /></th> : null
     )
 
+    const pagination = (
+      <Pagination className="pagination"
+        prev
+        next
+        first
+        last
+        ellipsis
+        items={items}
+        maxButtons={10}
+        activePage={activePage}
+        onSelect={this.handlePagination.bind(this)}
+      />
+    )
+
     const self = this
 
     //var onRow = this.props.onRow;
@@ -117,16 +137,7 @@ class AdminTable extends Component {
           }
           </tbody>
         </Table>
-        <Pagination className="pagination"
-          prev
-          next
-          first
-          last
-          ellipsis
-          items={items}
-          maxButtons={10}
-          activePage={activePage}
-          onSelect={this.handlePagination.bind(this)} />
+        {this.props.paging ? pagination : null}
       </div>
     );
   }
