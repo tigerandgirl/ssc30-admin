@@ -14,6 +14,7 @@ module.exports = {
     publicPath: '/static/'
   },
   plugins: [
+    new webpack.EvalSourceMapDevToolPlugin(),
     new webpack.optimize.CommonsChunkPlugin('common.js'),
     /**
      * This is where the magic happens! You need this to enable Hot Module Replacement!
