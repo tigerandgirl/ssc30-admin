@@ -64,7 +64,7 @@ export const PERMISSION_CHANGED_REQUEST  = 'PERMISSION_CHANGED_REQUEST';
 export const PERMISSION_CHANGED_SUCCESS  = 'PERMISSION_CHANGED_SUCCESS';
 export const PERMISSION_CHANGED_FAILURE  = 'PERMISSION_CHANGED_FAILURE';
 
-const permissionChangedRequest = createAction(PERMISSION_CHANGED_REQUEST, (rowIdx, cols) => { rowIdx, cols });
+const permissionChangedRequest = createAction(PERMISSION_CHANGED_REQUEST, (rowIdx, cols) => ({ rowIdx, cols }));
 const permissionChangedSuccess = createAction(PERMISSION_CHANGED_SUCCESS, data => data);
 const permissionChangedFailure = createAction(PERMISSION_CHANGED_FAILURE);
 
@@ -82,7 +82,7 @@ export const changePermission = (rowIdx, colIdx) => {
       }
       return col;
     })
-    //dispatch(permissionChangedRequest(rowIdx, cols));
+    dispatch(permissionChangedRequest(rowIdx, cols));
     //return fetch(url, opts)
   }
 }
