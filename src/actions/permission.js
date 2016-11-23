@@ -16,9 +16,13 @@ const checkStatus = response => {
 
 const parseJSON = response => response.json();
 
-const permissionRequest = createAction(types.PERMISSION_REQUEST);
-const permissionSuccess = createAction(types.PERMISSION_SUCCESS, data => data);
-const permissionFailure = createAction(types.PERMISSION_FAILURE,
+export const PERMISSION_REQUEST = 'PERMISSION_REQUEST';
+export const PERMISSION_SUCCESS = 'PERMISSION_SUCCESS';
+export const PERMISSION_FAILURE = 'PERMISSION_FAILURE';
+
+const permissionRequest = createAction(PERMISSION_REQUEST);
+const permissionSuccess = createAction(PERMISSION_SUCCESS, data => data);
+const permissionFailure = createAction(PERMISSION_FAILURE,
   (bsStyle, message) => ({bsStyle, message})
 );
 
@@ -56,9 +60,40 @@ export const fetchTableData = (itemsPerPage, startIndex) => {
   }
 }
 
-const deletePermissionRequest = createAction(types.PERMISSION_DELETE_REQUEST);
-const deletePermissionSuccess = createAction(types.PERMISSION_DELETE_SUCCESS, data => data);
-const deletePermissionFailure = createAction(types.PERMISSION_DELETE_FAILURE,
+export const PERMISSION_CHANGED_REQUEST  = 'PERMISSION_CHANGED_REQUEST';
+export const PERMISSION_CHANGED_SUCCESS  = 'PERMISSION_CHANGED_SUCCESS';
+export const PERMISSION_CHANGED_FAILURE  = 'PERMISSION_CHANGED_FAILURE';
+
+const permissionChangedRequest = createAction(PERMISSION_CHANGED_REQUEST, (rowIdx, cols) => { rowIdx, cols });
+const permissionChangedSuccess = createAction(PERMISSION_CHANGED_SUCCESS, data => data);
+const permissionChangedFailure = createAction(PERMISSION_CHANGED_FAILURE);
+
+export const changePermission = (rowIdx, colIdx) => {
+  return (dispatch, getState) => {
+    const {
+      permission: {
+        tableData: { items }
+      }
+    } = getState();
+    let row = items[rowIdx];
+    let cols = row.cols.map((col, idx) => {
+      if (idx === colIdx) {
+        col.value = !col.value;
+      }
+      return col;
+    })
+    //dispatch(permissionChangedRequest(rowIdx, cols));
+    //return fetch(url, opts)
+  }
+}
+
+export const PERMISSION_DELETE_REQUEST  = 'PERMISSION_DELETE_REQUEST';
+export const PERMISSION_DELETE_SUCCESS  = 'PERMISSION_DELETE_SUCCESS';
+export const PERMISSION_DELETE_FAILURE  = 'PERMISSION_DELETE_FAILURE';
+
+const deletePermissionRequest = createAction(PERMISSION_DELETE_REQUEST);
+const deletePermissionSuccess = createAction(PERMISSION_DELETE_SUCCESS, data => data);
+const deletePermissionFailure = createAction(PERMISSION_DELETE_FAILURE,
   (bsStyle, message) => ({bsStyle, message})
 );
 

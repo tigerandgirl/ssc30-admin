@@ -32,55 +32,37 @@ module.exports = function () {
             "items": [
               {
                 id: 0,
-                col1: 'row1, col1',
-                col2: 'row1, col2',
-                col3: 'row1, col3',
                 cols: [
-                  { type: 'text', label: 'id', value: '0' },
-                  { type: 'text', label: 'col1', value: 'row1, col1' },
-                  { type: 'text', label: 'col2', value: 'row1, col2' },
-                  { type: 'text', label: 'col3', value: 'row1, col3' },
-                  { type: 'text', label: 'col4', value: 'row1, col4' },
-                  { type: 'text', label: 'col5', value: 'row1, col5' }
+                  { type: 'text', label: 'col1', value: 'Administer blocks' },
+                  { type: 'text', label: 'col2', value: true },
+                  { type: 'text', label: 'col3', value: false }
                 ]
               },
               {
                 id: 1,
-                col1: 'row2, col1',
-                col2: 'row2, col2',
-                col3: 'row2, col3',
                 cols: [
-                  { type: 'text', label: 'id', value: '1' },
-                  { type: 'text', label: 'col1', value: 'row2, col1演示错误' },
-                  { type: 'text', label: 'col2', value: 'row2, col2' },
-                  { type: 'text', label: 'col3', value: 'row2, col3' },
-                  { type: 'text', label: 'col4', value: 'row2, col4' },
-                  { type: 'text', label: 'col5', value: 'row2, col5' }
+                  { type: 'text', label: 'col1', value: 'Administer comments and comment settings' },
+                  { type: 'text', label: 'col2', value: true },
+                  { type: 'text', label: 'col3', value: false }
                 ]
               },
-              { id: 2, col1: 'row3, col1', col2: 'row3, col2', col3: 'row3, col3', cols: [
-                { type: 'text', label: 'id', value: '2' },
-                { type: 'text', label: 'col1', value: 'row3, col1' },
-                { type: 'text', label: 'col2', value: 'row3, col2' },
-                { type: 'text', label: 'col3', value: 'row3, col3' },
-                { type: 'text', label: 'col4', value: 'row3, col4' },
-                { type: 'text', label: 'col5', value: 'row3, col5' }
+              { id: 2,
+                cols: [
+                { type: 'text', label: 'col1', value: 'View comments' },
+                { type: 'text', label: 'col2', value: true },
+                { type: 'text', label: 'col3', value: false }
               ]},
-              { id: 3, col1: 'row4, col1', col2: 'row4, col2', col3: 'row4, col3', cols: [
-                { type: 'text', label: 'id', value: '3' },
-                { type: 'text', label: 'col1', value: 'row4, col1' },
-                { type: 'text', label: 'col2', value: 'row4, col2' },
-                { type: 'text', label: 'col3', value: 'row4, col3' },
-                { type: 'text', label: 'col4', value: 'row4, col4' },
-                { type: 'text', label: 'col5', value: 'row4, col5' }
+              { id: 3,
+                cols: [
+                { type: 'text', label: 'col1', value: 'Post comments' },
+                { type: 'text', label: 'col2', value: true },
+                { type: 'text', label: 'col3', value: false }
               ]},
-              { id: 4, col1: 'row5, col1', col2: 'row5, col2', col3: 'row5, col3', cols: [
-                { type: 'text', label: 'id', value: '4' },
-                { type: 'text', label: 'col1', value: 'row5, col1' },
-                { type: 'text', label: 'col2', value: 'row5, col2' },
-                { type: 'text', label: 'col3', value: 'row5, col3' },
-                { type: 'text', label: 'col4', value: 'row5, col4' },
-                { type: 'text', label: 'col5', value: 'row5, col5' }
+              { id: 4,
+                cols: [
+                { type: 'text', label: 'col1', value: 'Skip comment approval' },
+                { type: 'text', label: 'col2', value: true },
+                { type: 'text', label: 'col3', value: false }
               ]}
             ]
           }

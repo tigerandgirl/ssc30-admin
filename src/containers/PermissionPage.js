@@ -26,7 +26,7 @@ class PermissionPage extends Component {
     super(props);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchTableData(itemsPerPage, startIndex);
   }
 
@@ -83,19 +83,23 @@ class PermissionPage extends Component {
     this.props.fetchTableData(itemsPerPage, startIndex);
   }
 
-  handleSelectOne(rowId, checked) {
+  handleSelectOne(rowIdx, checked) {
     var rows = this.state.selectedRows;
-    rows[rowId] = checked;
+    rows[rowIdx] = checked;
     this.setState({
       selectedRow: rows
     });
 
-    this.props.changeSelectedRows(rowId, checked);
+    this.props.changeSelectedRows(rowIdx, checked);
   }
 
-  handleEdit(rowId, rowData) {
-    this.props.showEditDialog(rowId, rowData);
+  handleEdit(rowIdx, rowData) {
+    this.props.showEditDialog(rowIdx, rowData);
     this.props.initEditFormData(rowData.cols);
+  }
+
+  handleCellChecked(rowIdx, colIdx) {
+    this.props.changePermission(rowIdx, colIdx);
   }
 
   render() {
@@ -135,6 +139,7 @@ class PermissionPage extends Component {
                 onPagination={::this.handlePagination}
                 onSelectOne={::this.handleSelectOne}
                 onEdit={::this.handleEdit}
+                onCellChecked={::this.handleCellChecked}
               />
             </Col>
           </Row>

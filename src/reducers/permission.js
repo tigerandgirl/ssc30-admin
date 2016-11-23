@@ -2,7 +2,8 @@ import update from 'react-addons-update';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
-import * as ActionTypes from '../constants/PermissionActionTypes';
+//import * as ActionTypes from '../constants/PermissionActionTypes';
+import * as ActionTypes from '../actions/permission';
 
 const initState = {
   loaded: false,
@@ -53,6 +54,28 @@ export default handleActions({
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
     }
+  }),
+
+  // Change permission
+  [ActionTypes.PERMISSION_CHANGED_REQUEST]: (state, action) => (
+    update(state, {
+      changeLoading: {$set: true},
+      tableData: {
+        items: {
+          [action.payload.rowIdx]: {
+            cols: {$set: action.payload.cols}
+          }
+        }
+      }
+    })
+  ),
+  [ActionTypes.PERMISSION_CHANGED_SUCCESS]: (state, action) => ({...state,
+    changeLoading: false,
+    changeLoaded: true
+  }),
+  [ActionTypes.PERMISSION_CHANGED_FAILURE]: (state, action) => ({...state,
+    changeLoading: false,
+    changeLoaded: false
   }),
 
   // Remove premission data

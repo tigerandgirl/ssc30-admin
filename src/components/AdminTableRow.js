@@ -3,57 +3,76 @@ import { Checkbox, Button } from 'react-bootstrap';
 
 /**
  * AdminTableRow组件
+ * @param {number} rowIdx row index
  * @param {boolean} checkboxColumn 每一行是否显示最左侧的复选框
  * @param {boolean} operateColumn 每一行是否显示最右侧的操作按钮列
  * @param {Array} cols 每一列数据
+ *                     如果单元格数据为boolean，默认渲染为复选框
  */
 
 class AdminTableRow extends Component {
   static propTypes = {
     // TODO(d3vin.chen@gmail.com): row is not used.
     row: PropTypes.object.isRequired,
+    rowIdx: PropTypes.number.isRequired,
     cols: PropTypes.array.isRequired,
     onRowSelection: PropTypes.func.isRequired,
     onEdit: PropTypes.func.isRequired,
     checkboxColumn: PropTypes.bool,
-    operateColumn: PropTypes.bool
+    operateColumn: PropTypes.bool,
+    onCellChecked: PropTypes.func
   };
 
   static defaultProps = {
     selectable: true,
     checkboxColumn: false,
-    operateColumn: false
+    operateColumn: false,
+    onCellChecked: () => {console.log(2)}
   };
 
   constructor(props) {
     super(props);
   }
 
-  handleSelection(rowId, event) {
+  handleSelection(rowIdx, event) {
     //this.setState({value: event.target.value});
-    this.props.onRowSelection(rowId, event.target.checked);
+    this.props.onRowSelection(rowIdx, event.target.checked);
   }
 
-  handleEdit(rowId, rowData) {
-    this.props.onEdit(rowId, rowData);
+  handleEdit(rowIdx, rowData) {
+    this.props.onEdit(rowIdx, rowData);
+  }
+
+  handleCheckbox(rowIdx, colIdx, e) {
+    //e.target
+    this.props.onCellChecked(rowIdx, colIdx);
+  }
+
+  renderCells = (cols, rowIdx) => {
+    const self = this;
+    return cols.map((col, colIdx) => {
+      let cell = col.value;
+      if (typeof col.value === 'boolean') {
+        cell = <input type='checkbox' checked={col.value} onChange={self.handleCheckbox.bind(this, rowIdx, colIdx)} />;
+      }
+      return <td key={colIdx}>{cell}</td>
+    })
   }
 
   render() {
-    const { row, cols,
+    const { row, rowIdx, cols,
       checkboxColumn, operateColumn } = this.props;
     return (
       <tr>
         {
           //<td><Checkbox onChange={::this.handleSelection} /></td>
           checkboxColumn
-            ? <td><input type='checkbox' onChange={this.handleSelection.bind(this, row.id)} /></td>
+            ? <td><input type='checkbox' onChange={this.handleSelection.bind(this, rowIdx)} /></td>
             : null
         }
-        {cols.map((col, key) => 
-          <td key={key}>{col.value}</td>
-        )}
+        { this.renderCells(cols, rowIdx) }
         { operateColumn
-          ? <td><Button onClick={this.handleEdit.bind(this, row.id, row)}>修改</Button></td>
+          ? <td><Button onClick={this.handleEdit.bind(this, rowIdx, row)}>修改</Button></td>
           : null }
       </tr>
     );

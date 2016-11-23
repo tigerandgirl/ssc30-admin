@@ -11,6 +11,7 @@ import AdminTableRow from './AdminTableRow';
  * @param {boolean} operateColumn 是否在表格的最右边一列显示操作按钮
  * @param {Array} cols 表头每一列的名称
  * @param {Object} tableData 表格填充数据
+ *                           如果单元格中的数据类型为boolean，默认渲染为复选框
  * @param {number} itemsPerPage 每页显示的数量
  */
 
@@ -24,12 +25,14 @@ class AdminTable extends Component {
     onEdit: PropTypes.func.isRequired,
     itemsPerPage: PropTypes.number.isRequired,
     checkboxColumn: PropTypes.bool,
-    operateColumn: PropTypes.bool
+    operateColumn: PropTypes.bool,
+    onCellChecked: PropTypes.func
   };
 
   static defaultProps = {
     checkboxColumn: false,
-    operateColumn: false
+    operateColumn: false,
+    onCellChecked: () => {}
   };
 
   constructor(props) {
@@ -46,12 +49,16 @@ class AdminTable extends Component {
   handleSelectAll() {
   }
 
-  handleSelectOne(rowId, checked) {
-    this.props.onSelectOne(rowId, checked);
+  handleSelectOne(rowIdx, checked) {
+    this.props.onSelectOne(rowIdx, checked);
   }
 
-  handleEdit(rowId, rowData) {
-    this.props.onEdit(rowId, rowData);
+  handleEdit(rowIdx, rowData) {
+    this.props.onEdit(rowIdx, rowData);
+  }
+
+  handleCellChecked(rowIdx, colIdx) {
+    this.props.onCellChecked(rowIdx, colIdx);
   }
 
   render () {
@@ -81,6 +88,8 @@ class AdminTable extends Component {
       checkboxColumn ? <th><Checkbox onChange={::this.handleSelectAll} /></th> : null
     )
 
+    const self = this
+
     //var onRow = this.props.onRow;
     return (
       <div className="admin-table">
@@ -94,15 +103,16 @@ class AdminTable extends Component {
           </thead>
           <tbody>
           {
-            tableData.items.map((row, key) =>
-              <AdminTableRow
+            tableData.items.map((row, rowIdx) => {
+              return <AdminTableRow
                 checkboxColumn={checkboxColumn}
                 operateColumn={operateColumn}
-                row={row} key={key}
-                cols={row.cols}
-                onRowSelection={::this.handleSelectOne}
-                onEdit={::this.handleEdit}>
-              </AdminTableRow>
+                row={row} key={rowIdx}
+                cols={row.cols} rowIdx={rowIdx}
+                onRowSelection={::self.handleSelectOne}
+                onEdit={::self.handleEdit}
+                onCellChecked={::self.handleCellChecked}
+              ></AdminTableRow>}
             )
           }
           </tbody>
