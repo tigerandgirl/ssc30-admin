@@ -1,6 +1,10 @@
-# ssc_web-boilerplate
+# ssc30-admin
 
-A boilerplate for creating ssc_web (SSC 3.0) sub-project 
+SSC 3.0 后台管理
+
+## Online demo
+
+[http://101.200.74.182:3000/](http://101.200.74.182:3000/)
 
 ## Prepare
 
@@ -8,10 +12,20 @@ A boilerplate for creating ssc_web (SSC 3.0) sub-project
 npm install
 ```
 
-## Run dev
+## Run in development mode
 
 ```
 npm run dev
+```
+
+Open http://127.0.0.1:3008/
+
+## Run in demo mode
+
+Development feature, like webpack HMR, is not include in demo mode. As this you could host this demo on a web server.
+
+```
+npm run demo
 ```
 
 Open http://127.0.0.1:3008/
