@@ -25,6 +25,7 @@ Open http://127.0.0.1:3008/
 Development feature, like webpack HMR, is not include in demo mode. As this you could host this demo on a web server.
 
 ```
+npm run build
 npm run demo
 ```
 
