@@ -46,12 +46,12 @@ Host: 127.0.0.1:3008
 
 ## Mock API with swagger
 
-Edit API with [Swagger Editor](http://editor.swagger.io/), and export to `ssc_web/src/admin/swagger/swagger.yaml`
+Edit API with [Swagger Editor](http://editor.swagger.io/), and export to `src/swagger/swagger.yaml`
 
 Test API with cURL
 
 ```
-curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 214c0fb1-7e45-91d2-99e5-083471febbe1" -d '{
+curl -X POST -H "Content-Type: application/json" -d '{
   "pk_doctype": "string1",
   "condition": "string",
   "paras": [],
@@ -61,7 +61,7 @@ curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H
 }' "http://localhost:3008/plat/basedoc/qrybd"
 ```
 
-View generated API docs with Swagger UI: https://xxd3vin.github.io/swagger-ui/?url=https://xxd3vin.github.io/attachments/yonyou-ssc30/swagger-api.json
+View generated API docs with Swagger UI: https://xxd3vin.github.io/swagger-ui/?url=https://raw.githubusercontent.com/yyssc/ssc30-admin/master/src/swagger/swagger.yaml
 
 ## JSON
 
