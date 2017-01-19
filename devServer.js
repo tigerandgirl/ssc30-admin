@@ -41,7 +41,8 @@ const SwaggerExpress = require('swagger-express-mw');
 const swaggerConfig = {
   appRoot: __dirname,  // required config
   configDir: 'src/swagger',
-  swagger: 'src/swagger/swagger.yaml'
+  //swagger: 'src/swagger/swagger.yaml' // 全部API
+  swagger: 'src/swagger/basedoc.yaml' // 仅有基础档案API
 };
 
 SwaggerExpress.create(swaggerConfig, function(err, swaggerExpress) {

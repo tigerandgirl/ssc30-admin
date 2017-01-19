@@ -11,12 +11,10 @@ schemes:
   - https
 # will be prefixed to all paths
 basePath: /plat/basedoc
-consumes:
-  - application/json
 produces:
   - application/json
 paths:
-  /qrybd?uid={uid}:
+  /qrybd:
     x-swagger-router-controller: qrybd
     get:
       description: 查询基本档案
@@ -32,13 +30,19 @@ paths:
       parameters:
         - required: true
           type: string
-          name: uid
-          in: path
+          name: id
+          in: query
+          description: 基础档案ID
       produces:
         - application/json
 definitions:
   SuccessModel:
     type: object
+    required:
+    - success
+    - message
+    - fields
+    - data
     properties:
       success:
         type: boolean
@@ -53,6 +57,11 @@ definitions:
           $ref: '#/definitions/FieldModel'
       data:
         type: object
+        required:
+        - currentItemCount
+        - startIndex
+        - totalItems
+        - items
         properties:
           currentItemCount:
             type: integer
@@ -68,8 +77,33 @@ definitions:
             description: 表格中的内容
             items:
               $ref: '#/definitions/RowDetail'
+    example:
+      success: true
+      message: Success to load data
+      fields:
+      - label: 公司
+        type: text
+      data:
+        currentItemCount: 5
+        startIndex: 1
+        totalItems: 22
+        items:
+        - id: 1
+          cols:
+          - label: 公司
+            type: text
+            value: 用友网络科技股份有限公司
+          - label: 优点
+            type: text
+            value: 5点下班
+          - label: 缺点
+            type: text
+            value: 出差
   FieldModel:
     type: object
+    required:
+    - label
+    - type
     properties:
       label:
         type: string
@@ -77,8 +111,14 @@ definitions:
       type:
         type: string
         description: 字段类型
+    example:
+      label: 公司
+      type: text
   RowDetail:
     type: object
+    required:
+    - id
+    - cols
     properties:
       id:
         type: integer
@@ -86,8 +126,24 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/FieldDetail'
+    example:
+      id: 123
+      cols:
+      - label: 公司
+        type: text
+        value: 用友网络科技股份有限公司
+      - label: 优点
+        type: text
+        value: 5点下班
+      - label: 缺点
+        type: text
+        value: 出差
   FieldDetail:
     type: object
+    required:
+    - label
+    - type
+    - value
     properties:
       label:
         type: string
@@ -98,3 +154,7 @@ definitions:
       value:
         type: string
         description: 字段值
+    example:
+      label: 公司
+      type: text
+      value: 用友网络科技股份有限公司
