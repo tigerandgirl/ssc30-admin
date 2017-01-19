@@ -1,0 +1,72 @@
+swagger: '2.0'
+info:
+  title: SSC 3.0 基础档案 API
+  description: Move your app forward with the SSC API
+  version: "1.0.0"
+# the domain of the service
+host: api.yyssc.org
+# array of all schemes that your API supports
+schemes:
+  - http
+  - https
+# will be prefixed to all paths
+basePath: /plat/basedoc
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /qrybd?uid={uid}:
+    x-swagger-router-controller: qrybd
+    get:
+      description: 查询基本档案
+      tags:
+        - BaseDoc
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessModel'
+        '404':
+          description: Not Found
+      parameters:
+        - required: true
+          type: string
+          name: uid
+          in: path
+      produces:
+        - application/json
+definitions:
+  SuccessModel:
+    type: object
+    properties:
+      success:
+        type: boolean
+      message:
+        type: string
+      columnModel:
+        type: array
+        items:
+          $ref: '#/definitions/BaseDocDetail'
+      data:
+        type: object
+        properties:
+          currentItemCount:
+            type: integer
+          startIndex:
+            type: integer
+          totalItems:
+            type: integer
+          items:
+            type: array
+            items:
+              $ref: '#/definitions/BaseDocDetail'
+  BaseDocDetail:
+    type: object
+    properties:
+      label:
+        type: string
+      type:
+        type: string
+      value:
+        type: string
