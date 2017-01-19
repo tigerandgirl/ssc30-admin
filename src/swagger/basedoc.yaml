@@ -42,31 +42,59 @@ definitions:
     properties:
       success:
         type: boolean
+        description: 标志成功还是失败
       message:
         type: string
-      columnModel:
+        description: 当失败的时候用于显示失败信息
+      fields:
         type: array
+        description: 字段模型
         items:
-          $ref: '#/definitions/BaseDocDetail'
+          $ref: '#/definitions/FieldModel'
       data:
         type: object
         properties:
           currentItemCount:
             type: integer
+            description: 当前获取到数据的数量
           startIndex:
             type: integer
+            description: 起始index
           totalItems:
             type: integer
+            description: 总数量
           items:
             type: array
+            description: 表格中的内容
             items:
-              $ref: '#/definitions/BaseDocDetail'
-  BaseDocDetail:
+              $ref: '#/definitions/RowDetail'
+  FieldModel:
     type: object
     properties:
       label:
         type: string
+        description: 字段显示名
       type:
         type: string
+        description: 字段类型
+  RowDetail:
+    type: object
+    properties:
+      id:
+        type: integer
+      cols:
+        type: array
+        items:
+          $ref: '#/definitions/FieldDetail'
+  FieldDetail:
+    type: object
+    properties:
+      label:
+        type: string
+        description: 字段显示名
+      type:
+        type: string
+        description: 字段类型
       value:
         type: string
+        description: 字段值
