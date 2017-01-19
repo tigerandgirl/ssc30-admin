@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  title: SSC API
+  title: SSC 3.0 API
   description: Move your app forward with the SSC API
   version: "1.0.0"
 # the domain of the service
@@ -450,6 +450,10 @@ responses:
 definitions:
   BaseControllerRS:
     type: object
+    required:
+    - msg
+    - code
+    - resultValue
     properties:
       msg:
         type: string
