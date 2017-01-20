@@ -27,6 +27,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use('/', express.static(path.join(__dirname + '/client')));
+app.use('/swagger/basedoc.yaml',
+  express.static(path.join(__dirname, 'src', 'swagger', 'basedoc.yaml')));
 
 app.use(require('./server/routes/fakeApiArch')());
 app.use(require('./server/routes/fakeApiRole')());
