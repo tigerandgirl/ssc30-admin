@@ -56,27 +56,29 @@ definitions:
         items:
           $ref: '#/definitions/FieldModel'
       data:
-        type: object
-        required:
-        - currentItemCount
-        - startIndex
-        - totalItems
-        - items
-        properties:
-          currentItemCount:
-            type: integer
-            description: 当前获取到数据的数量
-          startIndex:
-            type: integer
-            description: 起始index
-          totalItems:
-            type: integer
-            description: 总数量
-          items:
-            type: array
-            description: 表格中的内容
-            items:
-              $ref: '#/definitions/RowDetail'
+        $ref: '#/definitions/Table'
+  Table:
+    type: object
+    required:
+    - currentItemCount
+    - startIndex
+    - totalItems
+    - items
+    properties:
+      currentItemCount:
+        type: integer
+        description: 当前获取到数据的数量
+      startIndex:
+        type: integer
+        description: 起始index
+      totalItems:
+        type: integer
+        description: 总数量
+      items:
+        type: array
+        description: 表格中的内容
+        items:
+          $ref: '#/definitions/RowDetail'
     example:
       success: true
       message: Success to load data
@@ -103,49 +105,73 @@ definitions:
     type: string
     description: |
       字段类型，复用iWeb原有类型，出现问题再进行改进。
+      ```
+      enum:
+      - value: string
+        description: 文本类型，对应原iWeb类型`STRING = 0`
+      - value: integer
+        description: 整数类型，对应原iWeb类型`INTEGER = 1`
+      - value: decimal
+        description: 数量(double)类型，对应原iWeb类型`DECIMAL = 2`
+      - value: date
+        description: 日期类型，不带带具体时分秒，对应原iWeb类型`DATE = 3`
+      - value: boolean
+        description: 逻辑类型，对应原iWeb类型`BOOLEAN = 4`
+      - value: ufref
+        description: 参照类型，对应原iWeb类型`UFREF = 5`
+      - value: combo
+        description: 下拉类型，对应原iWeb类型`COMBO = 6`
+      - value: userdef
+        description: 文本类型，对应原iWeb类型`USERDEF = 7`
+      - value: time
+        description: 时间类型，对应原iWeb类型`TIME = 8`
+      - value: textarea
+        description: 文本区域类型，对应原iWeb类型`TEXTAREA = 9`
+      - value: image
+        description: 图片类型，对应原iWeb类型`IMAGE = 10`
+      - value: object
+        description: 对象类型，对应原iWeb类型`OBJECT = 11`
+      - value: blank
+        description: 占位块类型，对应原iWeb类型`BLANK = 12`
+      - value: passwordfield
+        description: 密码类型，对应原iWeb类型`PASSWORDFIELD = 13`
+      - value: emailaddress
+        description: Email类型，对应原iWeb类型`EMAILADDRESS = 14`
+      - value: datetime
+        description: 时间戳类型，对应原iWeb类型`DATETIME = 15`
+      - value: userdefitem
+        description: 文本类型，对应原iWeb类型`USERDEFITEM = 16`
+      - value: multilangtext
+        description: 文本类型（多语类型），对应原iWeb类型`MULTILANGTEXT = 17`
+      - value: money
+        description: money类型，对应原iWeb类型`MONEY = 18`
+      - value: fraction
+        description: 小数（分数）类型，对应原iWeb类型`FRACTION = 19`
+      - value: literaldate
+        description: 日期类型，不带带具体时分秒，对应原iWeb类型`LITERALDATE = 20`
+      ```
     enum:
-    - value: string
-      description: 文本类型，对应原iWeb类型`STRING = 0`
-    - value: integer
-      description: 整数类型，对应原iWeb类型`INTEGER = 1`
-    - value: decimal
-      description: 数量(double)类型，对应原iWeb类型`DECIMAL = 2`
-    - value: date
-      description: 日期类型，不带带具体时分秒，对应原iWeb类型`DATE = 3`
-    - value: boolean
-      description: 逻辑类型，对应原iWeb类型`BOOLEAN = 4`
-    - value: ufref
-      description: 参照类型，对应原iWeb类型`UFREF = 5`
-    - value: combo
-      description: 下拉类型，对应原iWeb类型`COMBO = 6`
-    - value: userdef
-      description: 文本类型，对应原iWeb类型`USERDEF = 7`
-    - value: time
-      description: 时间类型，对应原iWeb类型`TIME = 8`
-    - value: textarea
-      description: 文本区域类型，对应原iWeb类型`TEXTAREA = 9`
-    - value: image
-      description: 图片类型，对应原iWeb类型`IMAGE = 10`
-    - value: object
-      description: 对象类型，对应原iWeb类型`OBJECT = 11`
-    - value: blank
-      description: 占位块类型，对应原iWeb类型`BLANK = 12`
-    - value: passwordfield
-      description: 密码类型，对应原iWeb类型`PASSWORDFIELD = 13`
-    - value: emailaddress
-      description: Email类型，对应原iWeb类型`EMAILADDRESS = 14`
-    - value: datetime
-      description: 时间戳类型，对应原iWeb类型`DATETIME = 15`
-    - value: userdefitem
-      description: 文本类型，对应原iWeb类型`USERDEFITEM = 16`
-    - value: multilangtext
-      description: 文本类型（多语类型），对应原iWeb类型`MULTILANGTEXT = 17`
-    - value: money
-      description: money类型，对应原iWeb类型`MONEY = 18`
-    - value: fraction
-      description: 小数（分数）类型，对应原iWeb类型`FRACTION = 19`
-    - value: literaldate
-      description: 日期类型，不带带具体时分秒，对应原iWeb类型`LITERALDATE = 20`
+    - string
+    - integer
+    - decimal
+    - date
+    - boolean
+    - ufref
+    - combo
+    - userdef
+    - time
+    - textarea
+    - image
+    - object
+    - blank
+    - passwordfield
+    - emailaddress
+    - datetime
+    - userdefitem
+    - multilangtext
+    - money
+    - fraction
+    - literaldate
   FieldModel:
     type: object
     required:
