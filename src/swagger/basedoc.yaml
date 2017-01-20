@@ -84,7 +84,7 @@ definitions:
       message: Success to load data
       fields:
       - label: 公司
-        type: text
+        type: string
       data:
         currentItemCount: 5
         startIndex: 1
@@ -93,13 +93,13 @@ definitions:
         - id: 1
           cols:
           - label: 公司
-            type: text
+            type: string
             value: 用友网络科技股份有限公司
           - label: 优点
-            type: text
+            type: string
             value: 5点下班
           - label: 缺点
-            type: text
+            type: string
             value: 出差
   FieldTypeModel:
     type: string
@@ -185,7 +185,7 @@ definitions:
         $ref: '#/definitions/FieldTypeModel'
     example:
       label: 公司
-      type: text
+      type: string
   RowDetail:
     type: object
     required:
@@ -199,16 +199,16 @@ definitions:
         items:
           $ref: '#/definitions/FieldDetail'
     example:
-      id: 123
+      id: 1
       cols:
       - label: 公司
-        type: text
+        type: string
         value: 用友网络科技股份有限公司
       - label: 优点
-        type: text
+        type: string
         value: 5点下班
       - label: 缺点
-        type: text
+        type: string
         value: 出差
   FieldDetail:
     type: object
@@ -228,5 +228,5 @@ definitions:
         description: 字段值
     example:
       label: 公司
-      type: text
+      type: string
       value: 用友网络科技股份有限公司
