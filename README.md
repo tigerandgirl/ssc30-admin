@@ -1,5 +1,7 @@
 # ssc30-admin
 
+注意：**停止维护**，项目已经转移到http://git.yonyou.com/sscplatform/FC_MANA
+
 SSC 3.0 后台管理
 
 ## Online demo
