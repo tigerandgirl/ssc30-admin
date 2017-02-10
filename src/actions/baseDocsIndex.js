@@ -25,19 +25,9 @@ function requestTableData() {
 }
 
 function receiveTableData(json) {
-  function fixTypo (fields) {
-    return fields.map(field => {
-      field.label = field.lable;
-      return field;
-    });
-  }
-  json.fields = fixTypo(json.fields);
   return {
     type: types.LOAD_TABLEDATA_SUCCESS,
-    data: {
-      fields: json.fields,
-      items: json.body
-    }
+    data: json.data
   }
 }
 
@@ -48,8 +38,7 @@ function deleteTableDataSuccess(json) {
   }
 }
 
-// 废弃接口
-export function fetchTableData2(itemsPerPage, startIndex) {
+export function fetchTableData(itemsPerPage, startIndex) {
   return (dispatch) => {
     dispatch(requestTableData());
     var opts = {
@@ -61,36 +50,6 @@ export function fetchTableData2(itemsPerPage, startIndex) {
     };
 
     var url = `/api/arch?itemsPerPage=${itemsPerPage}`;
-    if (typeof startIndex === 'undefined') {
-      url += `&startIndex=1`;
-    } else {
-      url += `&startIndex=${startIndex}`;
-    }
-
-    return fetch(url, opts)
-      .then(response => {
-        return response.json();
-      }).then(json => {
-        dispatch(receiveTableData(json));
-      }).catch(function (err) {
-        console.log("fetch error:", err);
-      });
-  }
-}
-
-export function fetchTableData(itemsPerPage, startIndex, baseDocId) {
-  return (dispatch) => {
-    dispatch(requestTableData());
-    var opts = {
-      method: 'post',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
-      },
-      mode: "cors",
-      body: `doctype=${baseDocId}`
-    };
-
-    var url = `/ficloud_pub_ctr/initgrid?itemsPerPage=${itemsPerPage}`;
     if (typeof startIndex === 'undefined') {
       url += `&startIndex=1`;
     } else {
@@ -384,10 +343,10 @@ export function initCreateFormData(formData) {
 
 export function updateCreateFormFieldValue(label, value) {
   return (dispatch, getState) => {
-    const { arch: { fields } } = getState();
-    const id = _.findIndex(fields, field => field.label === label);
+    const { arch: { createFormData } } = getState();
+    const id = _.findIndex(createFormData, field => field.label === label);
     if (id === -1) {
-      console.log('Not found this field:', label, ', in fields:', fields);
+      console.log('Not found this field:', label, ', in createFormData:', createFormData);
       return false;
     }
     // TODO(chenyangf@yonyou.com): Dont touch state when value not changed.

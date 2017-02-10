@@ -25,6 +25,7 @@ const initState = {
     "totalItems": 0,
     "items": []
   },
+  fields: [],
   selectedRows: {},
   editDialog: {
     show: false,
@@ -71,7 +72,10 @@ export default function arch(state = initState, action) {
       return {...state,
         loading: false,
         loaded: true,
-        data: {...action.data}
+        data: {...state.data,
+          items: action.data.items
+        },
+        fields: action.data.fields
       };
     case LOAD_TABLEDATA_FAIL:
       return {...state,
@@ -150,8 +154,8 @@ export default function arch(state = initState, action) {
     case UPDATE_CREATE_FORM_FIELD_VALUE:
       // Update single value inside specific array item
       // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
-      return update(state, { 
-        createFormData: { 
+      return update(state, {
+        createFormData: {
           [action.id]: {
             value: {$set: action.payload}
           }

@@ -54,7 +54,7 @@ export default class Sidebar extends React.Component {
         </div>
         <ul className="nav-menu">
           <li className="nav-menu-item" style={menuItemStyles}>
-            <Link to="/arch" style={linkStyles}>
+            <Link to="/basedocs" style={linkStyles}>
               <Glyphicon glyph="align-left" />
               <span className="nav-title" style={itemTitleStyles}>基础档案</span>
             </Link>

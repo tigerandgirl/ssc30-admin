@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
-import { Grid as SSCGrid, Form } from 'ssc-grid';
+import { Grid as SSCGrid } from 'ssc-grid';
 
 import NormalWidget from '../components/NormalWidget';
 import AdminCardActions from '../components/AdminCardActions';
@@ -19,7 +19,7 @@ import * as Actions from '../actions/arch';
 const itemsPerPage = 5;
 const startIndex = 1;
 
-class ArchContainer extends Component {
+class BaseDocIndex extends Component {
   static PropTypes = {
     //dispatch: PropTypes.func.isRequired
   }
@@ -29,16 +29,6 @@ class ArchContainer extends Component {
   }
 
   componentWillMount() {
-    this.props.fetchTableData(itemsPerPage, startIndex, this.props.params.baseDocId);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const nextType = nextProps.params.baseDocId;
-    const currentType = this.props.params.baseDocId;
-    // 当跳转到其他类型的基础档案时候，重新加载表格数据
-    if (nextType !== currentType) {
-      this.props.fetchTableData(itemsPerPage, startIndex, nextType);
-    }
   }
 
   // admin card actions
@@ -61,7 +51,7 @@ class ArchContainer extends Component {
 
   // create form
   handleCreateFormBlur(label, value) {
-    //this.props.updateCreateFormFieldValue(label, value);
+    this.props.updateCreateFormFieldValue(label, value);
   }
   handleCreateFormSubmit() {
     this.props.submitCreateForm();
@@ -83,7 +73,7 @@ class ArchContainer extends Component {
   //handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
     const { tableData } = this.props;
-    
+
     //let page = selectedEvent.eventKey;
     let page = eventKey;
 
@@ -111,55 +101,41 @@ class ArchContainer extends Component {
 
   render() {
     const {
-      tableData, fields,
+      tableData,
       editDialog, editFormData,
-      createDialog,
+      createDialog, createFormData,
       adminAlert
     } = this.props;
-    const cols = fields || [];
+    const cols = tableData.items[0] ? tableData.items[0].cols : [];
+    const basedocs = [
+      {
+        "name": "部门",
+        "id": "dept"
+      },
+      {
+        "name": "人员",
+        "id": "renyuan"
+      },
+      {
+        "name": "项目",
+        "id": "xiangmu"
+      },
+      {
+        "name": "费用项目",
+        "id": "feiyongxiangmu"
+      }
+    ];
 
     return (
       <div>
-        <AdminAlert {...this.props} show={adminAlert.show} bsStyle={adminAlert.bsStyle} message={adminAlert.message}
-          onDismiss={::this.handleAlertDismiss}
-        />
-        <Grid>
-          <Row className="show-grid">
-            <Col md={12}>
-              <h3>基础档案id {this.props.params.baseDocId}</h3>
-              <AdminCardActions
-                handleCreate={::this.handleCreate}
-                handleUpdate={::this.handleUpdate}
-                handleDelete={::this.handleDelete} />
-            </Col>
-          </Row>
-          <Row className="show-grid">
-            <Col md={12}>
-              <NormalWidget />
-              <SSCGrid checkboxColumn={true} operateColumn={true}
-                cols={cols}
-                tableData={tableData} itemsPerPage={itemsPerPage}
-                onPagination={::this.handlePagination}
-                onSelectOne={::this.handleSelectOne}
-                onEdit={::this.handleEdit}
-              />
-            </Col>
-          </Row>
-        </Grid>
-        <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
-          <AdminEditForm
-            editFormDefaultData={editFormData}
-            onBlur={::this.handleEditFormBlur}
-            onSubmit={::this.handleEditFormSubmit}
-          />
-        </AdminEditDialog>
-        <AdminEditDialog className='create-form' title='创建' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
-          <Form
-            formDefaultData={cols}
-            onBlur={::this.handleCreateFormBlur}
-            onSubmit={::this.handleCreateFormSubmit}
-          />
-        </AdminEditDialog>
+        <h1>基础档案所有类型</h1>
+        <ul>
+          {basedocs.map(basedoc => <li key={basedoc.id}><Link to={`/basedoc/${basedoc.id}`}>{basedoc.name}</Link></li>)}
+        </ul>
+        <h2>详情</h2>
+        <div>
+          {this.props.children}
+        </div>
       </div>
     );
   }
@@ -168,8 +144,7 @@ class ArchContainer extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {...state.arch,
     arch: state.arch,
-    tableData: state.arch.data,
-    fields: state.arch.fields
+    tableData: state.arch.data
   }
 }
 
@@ -178,4 +153,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 // The component will subscribe to Redux store updates.
-export default connect(mapStateToProps, mapDispatchToProps)(ArchContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(BaseDocIndex);

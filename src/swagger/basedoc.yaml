@@ -10,14 +10,47 @@ schemes:
   - http
   - https
 # will be prefixed to all paths
-basePath: /plat/basedoc
+basePath: /
 produces:
   - application/json
 paths:
-  /qrybd:
+  /plat/basedoc:
+    # binds swagger app logic to a route
+    x-swagger-router-controller: basedocs
+    get:
+      description: 返回所有基础档案类型
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/BaseDocsModel'
+  /ficloud_pub_ctr/initgrid:
+    x-swagger-router-controller: basedoc
+    post:
+      description: 查询基本档案
+      tags:
+        - BaseDoc
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+        - required: true
+          type: string
+          name: doctype
+          in: formData
+          description: 基础档案类型，比如`dept`
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessModel'
+        '404':
+          description: Not Found
+  /plat/basedoc/qrybd:
     x-swagger-router-controller: qrybd
     get:
-      description: 查询基本档案
+      description: 查询基本档案（废弃接口）
       tags:
         - BaseDoc
       responses:
@@ -36,13 +69,26 @@ paths:
       produces:
         - application/json
 definitions:
+  BaseDocsModel:
+    type: array
+    items:
+      $ref: "#/definitions/BaseDocsItemModel"
+  BaseDocsItemModel:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 基础档案类型ID
+      name:
+        type: string
+        description: 基础档案类型名称（中文）
   SuccessModel:
     type: object
     required:
     - success
     - message
     - fields
-    - data
+    - body
     properties:
       success:
         type: boolean
@@ -55,7 +101,7 @@ definitions:
         description: 字段模型
         items:
           $ref: '#/definitions/FieldModel'
-      data:
+      body:
         $ref: '#/definitions/Table'
   Table:
     type: object
@@ -105,87 +151,56 @@ definitions:
     type: string
     description: |
       字段类型，复用iWeb原有类型，出现问题再进行改进。
-      ```
-      enum:
-      - value: string
-        description: 文本类型，对应原iWeb类型`STRING = 0`
-      - value: integer
-        description: 整数类型，对应原iWeb类型`INTEGER = 1`
-      - value: decimal
-        description: 数量(double)类型，对应原iWeb类型`DECIMAL = 2`
-      - value: date
-        description: 日期类型，不带带具体时分秒，对应原iWeb类型`DATE = 3`
-      - value: boolean
-        description: 逻辑类型，对应原iWeb类型`BOOLEAN = 4`
-      - value: ufref
-        description: 参照类型，对应原iWeb类型`UFREF = 5`
-      - value: combo
-        description: 下拉类型，对应原iWeb类型`COMBO = 6`
-      - value: userdef
-        description: 文本类型，对应原iWeb类型`USERDEF = 7`
-      - value: time
-        description: 时间类型，对应原iWeb类型`TIME = 8`
-      - value: textarea
-        description: 文本区域类型，对应原iWeb类型`TEXTAREA = 9`
-      - value: image
-        description: 图片类型，对应原iWeb类型`IMAGE = 10`
-      - value: object
-        description: 对象类型，对应原iWeb类型`OBJECT = 11`
-      - value: blank
-        description: 占位块类型，对应原iWeb类型`BLANK = 12`
-      - value: passwordfield
-        description: 密码类型，对应原iWeb类型`PASSWORDFIELD = 13`
-      - value: emailaddress
-        description: Email类型，对应原iWeb类型`EMAILADDRESS = 14`
-      - value: datetime
-        description: 时间戳类型，对应原iWeb类型`DATETIME = 15`
-      - value: userdefitem
-        description: 文本类型，对应原iWeb类型`USERDEFITEM = 16`
-      - value: multilangtext
-        description: 文本类型（多语类型），对应原iWeb类型`MULTILANGTEXT = 17`
-      - value: money
-        description: money类型，对应原iWeb类型`MONEY = 18`
-      - value: fraction
-        description: 小数（分数）类型，对应原iWeb类型`FRACTION = 19`
-      - value: literaldate
-        description: 日期类型，不带带具体时分秒，对应原iWeb类型`LITERALDATE = 20`
-      ```
+      - `string 0`, 文本类型
+      - `integer 1`, 整数类型
+      - `double 2`, 数量(double)类型
+      - `date 3`, 日期类型，不带带具体时分秒
+      - `datetime 8`, 日期类型
+      - `boolean 4`, 逻辑类型，
+      - `enum 6`, 枚举类型，
+      - `ref 5`, 参照类型
+      - `text 9`, 文本区域类型
     enum:
     - string
     - integer
-    - decimal
+    - double
     - date
-    - boolean
-    - ufref
-    - combo
-    - userdef
-    - time
-    - textarea
-    - image
-    - object
-    - blank
-    - passwordfield
-    - emailaddress
     - datetime
-    - userdefitem
-    - multilangtext
-    - money
-    - fraction
-    - literaldate
+    - boolean
+    - enum
+    - ref
+    - text
   FieldModel:
     type: object
     required:
-    - label
-    - type
+    - lable
+    - key
     properties:
-      label:
+      lable:
         type: string
         description: 字段显示名
-      type:
+      key:
         $ref: '#/definitions/FieldTypeModel'
+      datatype:
+        type: integer
+        description: 字段类型，对于`date`来说，应该是`3`
+      length:
+        type: integer
+        description: 存储的字节数
+      digit:
+        type: integer
+        description: 小数位数
+      data:
+        type: object
+        description: 枚举类型存储数据用
+      refinfo:
+        type: string
+        description: 参照类型存储参照ID使用
     example:
-      label: 公司
-      type: string
+      key: string
+      lable: 字符
+      datatype: 0
+      length: 40
   RowDetail:
     type: object
     required:
