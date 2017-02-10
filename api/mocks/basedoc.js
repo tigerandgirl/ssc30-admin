@@ -11,8 +11,8 @@ tpl.dept = function (basedoc) {
   basedoc.fields = [
     utils.string('部门编码'),
     utils.string('部门名称'),
-    utils.dangan('所属上级'),
-    utils.dangan('部门主管'),
+    utils.ref('所属上级'),
+    utils.ref('部门主管'),
     utils.boolean('企业'),
     utils.string('备注')
   ];
@@ -47,11 +47,12 @@ tpl.dept = function (basedoc) {
 tpl.renyuan = function (basedoc) {
   basedoc.fields = [
     utils.string('员工编码'),
-    utils.string('员工姓名')
+    utils.string('员工姓名'),
+    utils.enum('性别')
   ];
   basedoc.body = [
-    utils.row(1, ['zhangsanf', '张三']),
-    utils.row(2, ['lisif', '李四']),
+    utils.row(1, ['zhangsanf', '张三', 'male']),
+    utils.row(2, ['lisif', '李四', 'female']),
   ];
 };
 

@@ -2,7 +2,8 @@ module.exports = {
   row: row,
   string: $string,
   boolean: $boolean,
-  dangan: $dangan
+  ref: $ref,
+  enum: $enum
 };
 
 function row(id, cols) {
@@ -29,12 +30,29 @@ function $boolean(name) {
   };
 }
 
-// 后端没有定义档案类型，所以这个结构是从string复制过来的。
-function $dangan(name) {
+function $ref(name) {
   return {
-    "key": "dangan",
+    "key": "ref",
     "lable": name,
     "datatype": 999,
-    "length": 40
+    refinfo: "G001ZM0000BASEDOC0000DEPT000000000000000"
+  };
+}
+
+function $enum(name) {
+  return {
+    "key": "enum",
+    "lable": name,
+    "datatype": 6,
+    "data": [
+      {
+        "key": "male",
+        "value": "男"
+      },
+      {
+        "key": "female",
+        "value": "女"
+      }
+    ]
   };
 }

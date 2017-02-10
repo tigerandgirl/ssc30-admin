@@ -62,8 +62,14 @@ class ArchContainer extends Component {
   handleCreateFormBlur(label, value) {
     //this.props.updateCreateFormFieldValue(label, value);
   }
-  handleCreateFormSubmit() {
-    this.props.submitCreateForm();
+  handleCreateFormSubmit(event, formData) {
+    //this.props.submitCreateForm();
+    alert('提交的数据: \n' + JSON.stringify(
+      formData.map(function createValue(field) {
+        return field.value;
+      }),
+      null, '  '));
+    event.preventDefault();
   }
 
   // edit form
