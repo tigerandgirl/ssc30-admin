@@ -11,7 +11,6 @@ import NormalWidget from '../components/NormalWidget';
 import AdminCardActions from '../components/AdminCardActions';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
-import AdminEditForm from '../components/AdminEditForm';
 
 import * as Actions from '../actions/arch';
 
@@ -71,8 +70,14 @@ class ArchContainer extends Component {
   handleEditFormBlur(label, value) {
     this.props.updateEditFormFieldValue(label, value);
   }
-  handleEditFormSubmit() {
-    this.props.submitEditForm();
+  handleEditFormSubmit(event, formData) {
+    //this.props.submitEditForm();
+    alert('提交的数据: \n' + JSON.stringify(
+      formData.map(function createValue(field) {
+        return field.value;
+      }),
+      null, '  '));
+    event.preventDefault();
   }
 
   handleAlertDismiss(){
@@ -118,6 +123,11 @@ class ArchContainer extends Component {
     } = this.props;
     const cols = fields || [];
 
+    // TODO: 需要将editFormData2和editFormData合并了
+    var editFormData2 = cols.map((field, idx) => ({...field,
+      value: editFormData[idx] ? editFormData[idx].value : null
+    }));
+
     return (
       <div>
         <AdminAlert {...this.props} show={adminAlert.show} bsStyle={adminAlert.bsStyle} message={adminAlert.message}
@@ -147,9 +157,8 @@ class ArchContainer extends Component {
           </Row>
         </Grid>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
-          <AdminEditForm
-            editFormDefaultData={editFormData}
-            onBlur={::this.handleEditFormBlur}
+          <Form
+            formDefaultData={editFormData2}
             onSubmit={::this.handleEditFormSubmit}
           />
         </AdminEditDialog>
