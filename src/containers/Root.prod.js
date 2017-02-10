@@ -6,6 +6,7 @@ import App from './App';
 import NoMatch from '../components/NoMatch';
 import Welcome from './Welcome';
 
+import BaseDocIndex from './BaseDocIndex'; // 基础档案列表页面
 import ArchContainer from './ArchContainer'; // 基础档案
 import RoleContainer from './RoleContainer'; // 角色配置
 import PermissionPage from './PermissionPage'; // 权限配置/权限分配
@@ -33,7 +34,9 @@ module.exports = class Root extends Component {
           <Route path="/" component={App}>
             <IndexRoute component={Welcome}/>
             <Route path="/welcome" component={Welcome}></Route>
-            <Route path="/arch" component={ArchContainer}></Route>
+            <Route path="basedocs" component={BaseDocIndex}>
+              <Route path="/basedoc/:baseDocId" component={ArchContainer} />
+            </Route>
             <Route path="/role" component={RoleContainer}></Route>
             <Route path="/permission" component={PermissionPage}></Route>
             <Route path="/archsetting" component={ArchSettingPage}></Route>
