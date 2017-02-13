@@ -91,10 +91,12 @@ export function fetchTableData(itemsPerPage, startIndex, baseDocId) {
     var opts = {
       method: 'post',
       headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
+        'Content-type': 'application/json'
       },
       mode: "cors",
-      body: `doctype=${baseDocId}`
+      body: JSON.stringify({
+        doctype: baseDocId
+      })
     };
 
     var url = `${INIT_GRID_URL}?itemsPerPage=${itemsPerPage}`;

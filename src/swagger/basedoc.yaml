@@ -31,15 +31,16 @@ paths:
       tags:
         - BaseDoc
       consumes:
-      - application/x-www-form-urlencoded
+      - application/json
       produces:
       - application/json
       parameters:
         - required: true
-          type: string
-          name: doctype
-          in: formData
+          name: body
+          in: body
           description: 基础档案类型，比如`dept`
+          schema:
+            $ref: '#/definitions/InitGridReqModel'
       responses:
         '200':
           description: Success
@@ -69,6 +70,19 @@ paths:
       produces:
         - application/json
 definitions:
+  InitGridReqModel:
+    type: object
+    required:
+    - doctype
+    properties:
+      doctype:
+        type: string
+        description: |
+          基础档案类型，包括：
+          - dept
+          - renyuan
+          - xiangmu
+          - feiyongxiangmu
   BaseDocsModel:
     type: array
     items:
