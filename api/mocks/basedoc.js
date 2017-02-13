@@ -8,7 +8,7 @@ module.exports = {
 const tpl = {};
 
 tpl.dept = function (basedoc) {
-  basedoc.fields = [
+  basedoc.data.head = [
     utils.string('部门编码'),
     utils.string('部门名称'),
     utils.ref('所属上级'),
@@ -16,7 +16,7 @@ tpl.dept = function (basedoc) {
     utils.boolean('企业'),
     utils.string('备注')
   ];
-  basedoc.body = [
+  basedoc.data.body = [
     {'id': 3, 'cols': [
       {'value': `263X2016111400000081`},
       {'value': '部门1'},
@@ -95,7 +95,11 @@ function post(req, res) {
   const doctype = req.body.doctype;
   const basedoc = {
     "success": true,
-    "message": null
+    "message": null,
+    "data": {
+      "head": [],
+      "body": []
+    }
   };
   if (tpl[doctype]) {
     tpl[doctype](basedoc);

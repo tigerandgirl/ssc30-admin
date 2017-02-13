@@ -2,6 +2,12 @@ import * as types from '../constants/ActionTypes';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
+// 获取表格体数据(table body)，以及表格字段数据(table head)。
+const INIT_GRID_URL = '/ficloud_pub_ctr/initgrid';
+const SAVE_URL = '/dept/save';
+const DELETE_URL = '/dept/delete';
+const QUERY_URL = '/dept/query';
+
 // Common helper -> utils.js/api.js
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -24,19 +30,20 @@ function requestTableData() {
   }
 }
 
+// 由于后端的数据结构改过几次，所以在这里处理变化后的映射关系。
 function receiveTableData(json) {
-  function fixTypo (fields) {
+  function fixFieldTypo (fields) {
     return fields.map(field => {
-      field.label = field.lable;
+      field.label = field.lable; // API中将label错误的写成了lable
+      field.key = field.id; // API后来将key改成了id
       return field;
     });
   }
-  json.fields = fixTypo(json.fields);
   return {
     type: types.LOAD_TABLEDATA_SUCCESS,
     data: {
-      fields: json.fields,
-      items: json.body
+      fields: fixFieldTypo(json.data.head),
+      items: json.data.body
     }
   }
 }
@@ -90,7 +97,7 @@ export function fetchTableData(itemsPerPage, startIndex, baseDocId) {
       body: `doctype=${baseDocId}`
     };
 
-    var url = `/ficloud_pub_ctr/initgrid?itemsPerPage=${itemsPerPage}`;
+    var url = `${INIT_GRID_URL}?itemsPerPage=${itemsPerPage}`;
     if (typeof startIndex === 'undefined') {
       url += `&startIndex=1`;
     } else {

@@ -15,7 +15,7 @@ function row(id, cols) {
 
 function $string(name) {
   return {
-    "key": "string",
+    "id": "string",
     "lable": name,
     "datatype": 0,
     "length": 40
@@ -24,7 +24,7 @@ function $string(name) {
 
 function $boolean(name) {
   return {
-    "key": "boolean",
+    "id": "boolean",
     "lable": name,
     "datatype": 4
   };
@@ -32,7 +32,7 @@ function $boolean(name) {
 
 function $ref(name) {
   return {
-    "key": "ref",
+    "id": "ref",
     "lable": name,
     "datatype": 999,
     refinfo: "G001ZM0000BASEDOC0000DEPT000000000000000"
@@ -41,7 +41,7 @@ function $ref(name) {
 
 function $enum(name) {
   return {
-    "key": "enum",
+    "id": "enum",
     "lable": name,
     "datatype": 6,
     "data": [
