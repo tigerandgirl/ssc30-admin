@@ -5,10 +5,11 @@ module.exports = {
   post: post
 };
 
-const tpl = {};
+const DB_TABLE = {};
 
-tpl.dept = function (basedoc) {
-  basedoc.data.head = [
+DB_TABLE.dept = function () {
+  var db_table = {};
+  db_table.head = [
     utils.string('部门编码'),
     utils.string('部门名称'),
     utils.ref('所属上级'),
@@ -16,8 +17,8 @@ tpl.dept = function (basedoc) {
     utils.boolean('企业'),
     utils.string('备注')
   ];
-  basedoc.data.body = [
-    {'id': 11, 'cols': [
+  db_table.body = [
+    {'id': '11', 'cols': [
       {'value': `263X2016111400000081`},
       {'value': '部门1'},
       {'value': '上级1'},
@@ -25,7 +26,7 @@ tpl.dept = function (basedoc) {
       {'value': true},
       {value: '备注1'}
     ]},
-    {'id': 22, 'cols': [
+    {'id': '22', 'cols': [
       {'value': 'D32016091200000022'},
       {'value': '部门2'},
       {'value': '上级2'},
@@ -33,7 +34,7 @@ tpl.dept = function (basedoc) {
       {'value': false},
       {value: '备注2'}
     ]},
-    {'id': 33, 'cols': [
+    {'id': '33', 'cols': [
       {'value': '263X2016083000000025'},
       {'value': '部门3'},
       {'value': '上级3'},
@@ -41,7 +42,7 @@ tpl.dept = function (basedoc) {
       {'value': true},
       {value: '备注3'}
     ]},
-    {'id': 44, 'cols': [
+    {'id': '44', 'cols': [
       {'value': '263X2016083000000025'},
       {'value': '部门4'},
       {'value': '上级4'},
@@ -49,7 +50,7 @@ tpl.dept = function (basedoc) {
       {'value': true},
       {value: '备注4'}
     ]},
-    {'id': 55, 'cols': [
+    {'id': '55', 'cols': [
       {'value': '263X2016083000000025'},
       {'value': '部门5'},
       {'value': '上级5'},
@@ -57,7 +58,7 @@ tpl.dept = function (basedoc) {
       {'value': true},
       {value: '备注5'}
     ]},
-    {'id': 66, 'cols': [
+    {'id': '66', 'cols': [
       {'value': '263X2016083000000025'},
       {'value': '部门6'},
       {'value': '上级6'},
@@ -65,7 +66,7 @@ tpl.dept = function (basedoc) {
       {'value': true},
       {value: '备注6'}
     ]},
-    {'id': 77, 'cols': [
+    {'id': '77', 'cols': [
       {'value': '263X2016083000000025'},
       {'value': '部门7'},
       {'value': '上级7'},
@@ -74,9 +75,10 @@ tpl.dept = function (basedoc) {
       {value: '备注7'}
     ]}
   ];
+  return db_table;
 };
 
-tpl.renyuan = function (basedoc) {
+DB_TABLE.renyuan = function () {
   basedoc.fields = [
     utils.string('员工编码'),
     utils.string('员工姓名'),
@@ -101,7 +103,7 @@ tpl.renyuan = function (basedoc) {
   ];
 };
 
-tpl.xiangmu = function (basedoc) {
+DB_TABLE.xiangmu = function () {
   basedoc.fields = [
     utils.string('项目类别编码'),
     utils.string('项目类别名称')
@@ -112,7 +114,7 @@ tpl.xiangmu = function (basedoc) {
   ];
 };
 
-tpl.feiyongxiangmu = function (basedoc) {
+DB_TABLE.feiyongxiangmu = function () {
   basedoc.fields = [
     utils.string('费用项目类别编码'),
     utils.string('费用项目类别名称')
@@ -128,9 +130,9 @@ function post(req, res) {
 
   const condition = req.body.condition || '';
   const begin = req.body.begin;
-  const groupnum = req.body.groupnum;
+  const groupnum = req.body.groupnum; // 每页显示数量
 
-  const basedoc = {
+  const resObj = {
     "success": true,
     "message": null,
     "data": {
@@ -139,15 +141,19 @@ function post(req, res) {
     }
   };
 
-  if (tpl[doctype]) {
-    tpl[doctype](basedoc);
-    basedoc.data.body = utils.pagination(basedoc.data.body, begin, groupnum);
+  if (DB_TABLE[doctype]) {
+    var db_table = DB_TABLE[doctype]();
+    resObj.data.body = utils.pagination(db_table, begin, groupnum);
+    resObj.data.head = db_table.head;
+    resObj.begin = begin;
+    resObj.num = groupnum;
+    resObj.totalnum = db_table.body.length;
   } else {
-    basedoc.success = false;
-    basedoc.message = '未知的基础档案类型';
+    resObj.success = false;
+    resObj.message = '未知的基础档案类型';
   }
 
-  res.json(basedoc);
+  res.json(resObj);
 }
 
 /*

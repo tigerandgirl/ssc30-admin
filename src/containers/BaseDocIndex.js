@@ -106,7 +106,7 @@ class BaseDocIndex extends Component {
       createDialog, createFormData,
       adminAlert
     } = this.props;
-    const cols = tableData.items[0] ? tableData.items[0].cols : [];
+    const cols = tableData[0] ? tableData[0].cols : [];
     const basedocs = [
       {
         "name": "部门",
@@ -144,7 +144,7 @@ class BaseDocIndex extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {...state.arch,
     arch: state.arch,
-    tableData: state.arch.data
+    tableData: state.arch.tableData
   }
 }
 

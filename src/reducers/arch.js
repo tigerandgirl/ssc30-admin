@@ -18,14 +18,9 @@ import {
 
 const initState = {
   loaded: false,
-  data: {
-    "currentItemCount": 5,
-    "itemsPerPage": 5,
-    "startIndex": 1,
-    "totalItems": 0,
-    "items": []
-  },
+  tableData: [],
   fields: [],
+  totalDataCount: 0,
   selectedRows: {},
   editDialog: {
     show: false,
@@ -72,10 +67,10 @@ export default function arch(state = initState, action) {
       return {...state,
         loading: false,
         loaded: true,
-        data: {...state.data,
-          items: action.data.items
-        },
-        fields: action.data.fields
+        tableData: action.data.items,
+        fields: action.data.fields,
+        totalDataCount: action.data.totalCount,
+        totalPage: action.data.totalPage
       };
     case LOAD_TABLEDATA_FAIL:
       return {...state,

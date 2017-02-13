@@ -22,6 +22,10 @@ class ArchContainer extends Component {
     //dispatch: PropTypes.func.isRequired
   }
 
+  state = {
+    activePage: 1
+  }
+
   constructor(props) {
     super(props);
   }
@@ -88,15 +92,14 @@ class ArchContainer extends Component {
   //handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
     const { tableData } = this.props;
+    let nextPage = eventKey;
+    let startIndex = (nextPage-1) * itemsPerPage;
 
-    //let page = selectedEvent.eventKey;
-    let page = eventKey;
-
-    //if (page == this.state.activePage) return;
-
-    let startIndex = (page-1) * itemsPerPage + 1;
-    //this.props.changePage(startIndex);
     this.props.fetchTableData(this.props.params.baseDocId, itemsPerPage, startIndex);
+
+    this.setState({
+      activePage: nextPage
+    });
   }
 
   handleEdit(rowId, rowData, event) {
@@ -139,10 +142,11 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <NormalWidget />
-              <SSCGrid checkboxColumn={true}
-                cols={cols}
-                tableData={tableData} itemsPerPage={itemsPerPage}
+              <SSCGrid tableData={tableData} cols={cols}
                 paging
+                itemsPerPage={itemsPerPage}
+                totalPage={this.props.totalPage}
+                activePage={this.state.activePage}
                 onPagination={::this.handlePagination}
                 operateColumn
                 onEdit={::this.handleEdit}
@@ -172,8 +176,9 @@ class ArchContainer extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {...state.arch,
     arch: state.arch,
-    tableData: state.arch.data,
-    fields: state.arch.fields
+    tableData: state.arch.tableData,
+    fields: state.arch.fields,
+    totalPage: state.arch.totalPage
   }
 }
 

@@ -31,7 +31,7 @@ function requestTableData() {
 }
 
 // 由于后端的数据结构改过几次，所以在这里处理变化后的映射关系。
-function receiveTableData(json) {
+function receiveTableData(json, itemsPerPage) {
   function fixFieldTypo (fields) {
     return fields.map(field => {
       field.label = field.lable; // API中将label错误的写成了lable
@@ -43,7 +43,9 @@ function receiveTableData(json) {
     type: types.LOAD_TABLEDATA_SUCCESS,
     data: {
       fields: fixFieldTypo(json.data.head),
-      items: json.data.body
+      items: json.data.body,
+      totalCount: json.totalnum,
+      totalPage: Math.ceil(json.totalnum / itemsPerPage)
     }
   }
 }
@@ -110,7 +112,7 @@ export function fetchTableData(baseDocId, itemsPerPage, startIndex) {
       .then(response => {
         return response.json();
       }).then(json => {
-        dispatch(receiveTableData(json));
+        dispatch(receiveTableData(json, itemsPerPage));
       }).catch(function (err) {
         console.log("fetch error:", err);
       });
@@ -134,7 +136,7 @@ export function deleteTableData(rowIdx, rowData) {
       .then(response => {
         return response.json();
       }).then(json => {
-        alert(`服务器端返回的message: ${response.message}`);
+        alert(`服务器端返回的message: ${json.message}`);
         // TODO(chenyangf@yonyou.com): Should fetch new data
       }).catch(function (err) {
         console.log("delete error:", err);
@@ -189,8 +191,8 @@ export function showEditDialog(rowId, rowData) {
     if (!rowData) {
       let rowData;
       const state = getState();
-      if (state.arch.data.items.length !== 0) {
-        rowData = state.arch.data.items[0];
+      if (state.arch.tableData.length !== 0) {
+        rowData = state.arch.tableData[0];
       } else {
         // fake data
         rowData = {};
@@ -312,8 +314,8 @@ export function showCreateDialog(rowId, rowData) {
     if (!rowData) {
       let rowData;
       const state = getState();
-      if (state.arch.data.items.length !== 0) {
-        rowData = state.arch.data.items[0];
+      if (state.arch.tableData.length !== 0) {
+        rowData = state.arch.tableData[0];
       } else {
         // fake data
         rowData = {};

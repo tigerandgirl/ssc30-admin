@@ -16,11 +16,12 @@ function row(id, cols) {
   };
 }
 
-function pagination(data, begin, itemPerPage) {
-  let ret = [],
-    index = begin;
+function pagination(db_table, begin, itemPerPage) {
+  let ret = [];
+  let index = begin;
   for (; index < (begin + itemPerPage); index++) {
-    ret.push(data[index]);
+    if (!db_table.body[index]) continue;
+    ret.push(db_table.body[index]);
   }
   return ret;
 }
