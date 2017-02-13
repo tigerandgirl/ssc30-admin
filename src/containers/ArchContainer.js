@@ -8,7 +8,6 @@ import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import { Grid as SSCGrid, Form } from 'ssc-grid';
 
 import NormalWidget from '../components/NormalWidget';
-import AdminCardActions from '../components/AdminCardActions';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
@@ -143,10 +142,9 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <h3>基础档案id {this.props.params.baseDocId}</h3>
-              <AdminCardActions
-                handleCreate={::this.handleCreate}
-                handleUpdate={::this.handleUpdate}
-                handleDelete={::this.handleDelete} />
+              <div style={{ display: 'inline-block', float: 'right' }}>
+                <Button onClick={::this.handleCreate}>创建</Button>
+              </div>
             </Col>
           </Row>
           <Row className="show-grid">

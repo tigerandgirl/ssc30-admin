@@ -48,7 +48,20 @@ tpl.renyuan = function (basedoc) {
   basedoc.fields = [
     utils.string('员工编码'),
     utils.string('员工姓名'),
-    utils.enum('性别')
+    utils.enum('性别'),
+    utils.string('移动电话'),
+    utils.string('电子邮件'),
+    utils.ref('所属部门'),
+    utils.enum('职位状态'),
+    utils.ref('角色'),
+    utils.string('备注'),
+    utils.ref('银行帐户'),
+    utils.string('所属银行'),
+    utils.string('开户行'),
+    utils.string('银行账户'),
+    utils.string('账户名称'),
+    utils.boolean('默认账户'),
+    utils.enum('有效')
   ];
   basedoc.body = [
     utils.row(1, ['zhangsanf', '张三', 'male']),
