@@ -1,5 +1,8 @@
+"use strict";
+
 module.exports = {
   row: row,
+  pagination: pagination,
   string: $string,
   boolean: $boolean,
   ref: $ref,
@@ -11,6 +14,15 @@ function row(id, cols) {
     id: id,
     cols: cols.map(col => ({value: col}))
   };
+}
+
+function pagination(data, begin, itemPerPage) {
+  let ret = [],
+    index = begin;
+  for (; index < (begin + itemPerPage); index++) {
+    ret.push(data[index]);
+  }
+  return ret;
 }
 
 function $string(name) {

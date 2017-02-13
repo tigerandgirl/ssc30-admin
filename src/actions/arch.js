@@ -55,37 +55,8 @@ function deleteTableDataSuccess(json) {
   }
 }
 
-// 废弃接口
-export function fetchTableData2(itemsPerPage, startIndex) {
-  return (dispatch) => {
-    dispatch(requestTableData());
-    var opts = {
-      method: 'get',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      mode: "cors"
-    };
-
-    var url = `/api/arch?itemsPerPage=${itemsPerPage}`;
-    if (typeof startIndex === 'undefined') {
-      url += `&startIndex=1`;
-    } else {
-      url += `&startIndex=${startIndex}`;
-    }
-
-    return fetch(url, opts)
-      .then(response => {
-        return response.json();
-      }).then(json => {
-        dispatch(receiveTableData(json));
-      }).catch(function (err) {
-        console.log("fetch error:", err);
-      });
-  }
-}
-
-export function fetchTableData(itemsPerPage, startIndex, baseDocId) {
+// 历史上使用过这个接口，不知道后来这个接口干啥用了。
+export function fetchTableData2(itemsPerPage, startIndex, baseDocId) {
   return (dispatch) => {
     dispatch(requestTableData());
     var opts = {
@@ -117,30 +88,53 @@ export function fetchTableData(itemsPerPage, startIndex, baseDocId) {
   }
 }
 
-export function deleteTableData() {
-  return (dispatch, getState) => {
-    const { arch: { selectedRows } } = getState();
+export function fetchTableData(baseDocId, itemsPerPage, startIndex) {
+  return (dispatch) => {
+    dispatch(requestTableData());
 
-    const dataIds = [];
-    Object.keys(selectedRows).map(function(value, index) {
-      dataIds.push(index);
-    });
-    const dataIdsStr = dataIds.join(',');
-
-    if (!dataIdsStr) {
-      console.log('Not selected any row');
-    }
-
-    const opts = {
-      method: 'delete',
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        condition: '',
+        begin: startIndex,
+        groupnum: itemsPerPage
+      })
     };
-    // /api/arch/100,102,103
-    var url = `/api/arch/${dataIdsStr}`;
+
+    var url = `${QUERY_URL}`;
     return fetch(url, opts)
       .then(response => {
         return response.json();
       }).then(json => {
-        dispatch(deleteTableDataSuccess(json));
+        dispatch(receiveTableData(json));
+      }).catch(function (err) {
+        console.log("fetch error:", err);
+      });
+  }
+}
+
+export function deleteTableData(rowIdx, rowData) {
+  return (dispatch, getState) => {
+    var id = rowData.id; // 40位主键 primary key
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: "cors",
+      body: JSON.stringify({ id })
+    };
+
+    var url = `${DELETE_URL}`;
+    return fetch(url, opts)
+      .then(response => {
+        return response.json();
+      }).then(json => {
+        alert(`服务器端返回的message: ${response.message}`);
         // TODO(chenyangf@yonyou.com): Should fetch new data
       }).catch(function (err) {
         console.log("delete error:", err);
@@ -148,20 +142,34 @@ export function deleteTableData() {
   }
 }
 
-export function changeSelectedRows(rowId, checked) {
+export function saveTableData(rowIdx, rowData) {
   return (dispatch, getState) => {
-    const { arch: { selectedRows } } = getState();
+    var id = rowData.id; // 40位主键 primary key
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        data: {
+          head: {
+            id: rowData.id
+          }
+        }
+      })
+    };
 
-    if (selectedRows[rowId]) {
-      delete selectedRows[rowId];
-    } else {
-      selectedRows[rowId] = true;
-    }
-
-    dispatch({
-      type: types.CHANGE_SELECTED_ROWS,
-      selectedRows
-    })
+    var url = `${SAVE_URL}`;
+    return fetch(url, opts)
+      .then(response => {
+        return response.json();
+      }).then(json => {
+        alert(`服务器端返回的message: ${response.message}`);
+        // TODO(chenyangf@yonyou.com): Should fetch new data
+      }).catch(function (err) {
+        console.log("delete error:", err);
+      });
   }
 }
 

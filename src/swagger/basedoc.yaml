@@ -48,6 +48,78 @@ paths:
             $ref: '#/definitions/SuccessModel'
         '404':
           description: Not Found
+  /dept/query:
+    x-swagger-router-controller: dept_query
+    post:
+      description: 基础档案 - 部门 - 查询接口
+      tags:
+        - 部门
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - required: true
+          name: body
+          in: body
+          description: 查询条件
+          schema:
+            $ref: '#/definitions/DeptQueryReqModel'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessModel'
+        '404':
+          description: Not Found
+  /dept/delete:
+    x-swagger-router-controller: dept_delete
+    post:
+      description: 基础档案 - 部门 - 删除接口
+      tags:
+        - 部门
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - required: true
+          name: body
+          in: body
+          description: 部门主键
+          schema:
+            $ref: '#/definitions/DeptDeleteReqModel'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/DeleteSuccessModel'
+        '404':
+          description: Not Found
+  /dept/save:
+    x-swagger-router-controller: dept_save
+    post:
+      description: 基础档案 - 部门 - 修改接口
+      tags:
+        - 部门
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - required: true
+          name: body
+          in: body
+          description: 部门新数据
+          schema:
+            $ref: '#/definitions/DeptSaveReqModel'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/DeptSaveSuccessModel'
+        '404':
+          description: Not Found
   /plat/basedoc/qrybd:
     x-swagger-router-controller: qrybd
     get:
@@ -83,6 +155,73 @@ definitions:
           - renyuan
           - xiangmu
           - feiyongxiangmu
+  DeptQueryReqModel:
+    type: object
+    required:
+    - condition
+    - begin
+    - groupnum
+    properties:
+      condition:
+        type: string
+        description: 查询条件
+      paras:
+        type: string
+        description: 查询条件参数，非必须
+      fields:
+        type: string
+        description: 查询字段，非必须，空则查询全部字段
+      begin:
+        type: integer
+        description: 起始位置，用于分页。从0开始
+      groupnum:
+        type: integer
+        description: 分页数量
+  DeptDeleteReqModel:
+    type: object
+    required:
+    - id
+    properties:
+      id:
+        type: string
+        description: 40位主键
+  DeptSaveReqModel:
+    type: object
+    required:
+    - data
+    properties:
+      data:
+        type: object
+        required:
+        - head
+        properties:
+          head:
+            type: object
+            properties:
+              id:
+                type: string
+                description: 部门主键，当为空的时候，新增，不为空，则修改
+              org:
+                type: string
+                description: 组织
+              code:
+                type: string
+                description: 部门编码
+              name:
+                type: string
+                description: 部门名称
+              parentid:
+                type: string
+                description: 上级部门
+              personal:
+                type: string
+                description: 主管
+              enable:
+                type: string
+                description: 启用
+              description:
+                type: string
+                description: 备注
   BaseDocsModel:
     type: array
     items:
@@ -96,13 +235,11 @@ definitions:
       name:
         type: string
         description: 基础档案类型名称（中文）
-  SuccessModel:
+  DeleteSuccessModel:
     type: object
     required:
     - success
     - message
-    - fields
-    - body
     properties:
       success:
         type: boolean
@@ -110,57 +247,80 @@ definitions:
       message:
         type: string
         description: 当失败的时候用于显示失败信息
-      fields:
-        type: array
-        description: 字段模型
-        items:
-          $ref: '#/definitions/FieldModel'
-      body:
-        $ref: '#/definitions/Table'
-  Table:
+  DeptSaveSuccessModel:
     type: object
     required:
-    - currentItemCount
-    - startIndex
-    - totalItems
-    - items
+    - success
+    - message
+    - data
     properties:
-      currentItemCount:
-        type: integer
-        description: 当前获取到数据的数量
-      startIndex:
-        type: integer
-        description: 起始index
-      totalItems:
-        type: integer
-        description: 总数量
-      items:
-        type: array
-        description: 表格中的内容
-        items:
-          $ref: '#/definitions/RowDetail'
-    example:
-      success: true
-      message: Success to load data
-      fields:
-      - label: 公司
+      success:
+        type: boolean
+        description: 标志成功还是失败
+      message:
         type: string
+        description: 当失败的时候用于显示失败信息
       data:
-        currentItemCount: 5
-        startIndex: 1
-        totalItems: 22
-        items:
-        - id: 1
-          cols:
-          - label: 公司
-            type: string
-            value: 用友网络科技股份有限公司
-          - label: 优点
-            type: string
-            value: 5点下班
-          - label: 缺点
-            type: string
-            value: 出差
+        type: object
+        required:
+        - head
+        properties:
+          head:
+            type: object
+            properties:
+              id:
+                type: string
+                description: 部门主键，当为空的时候，新增，不为空，则修改
+              org:
+                type: string
+                description: 组织
+              code:
+                type: string
+                description: 部门编码
+              name:
+                type: string
+                description: 部门名称
+              parentid:
+                type: string
+                description: 上级部门
+              personal:
+                type: string
+                description: 主管
+              enable:
+                type: string
+                description: 启用
+              description:
+                type: string
+                description: 备注
+  SuccessModel:
+    type: object
+    required:
+    - success
+    - message
+    - data
+    properties:
+      success:
+        type: boolean
+        description: 标志成功还是失败
+      message:
+        type: string
+        description: 当失败的时候用于显示失败信息
+      data:
+        type: object
+        required:
+        - head
+        - body
+        properties:
+          head:
+            type: array
+            description: 表格字段模型
+            items:
+              $ref: '#/definitions/FieldModel'
+          body:
+            type: array
+            description: 表格行模型
+            items:
+              $ref: '#/definitions/RowDetail'
   FieldTypeModel:
     type: string
     description: |

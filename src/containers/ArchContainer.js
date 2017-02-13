@@ -14,8 +14,8 @@ import AdminAlert from '../components/AdminAlert';
 import * as Actions from '../actions/arch';
 
 // Consants for table
-const itemsPerPage = 5;
-const startIndex = 1;
+const itemsPerPage = 3;
+const startIndex = 0;
 
 class ArchContainer extends Component {
   static PropTypes = {
@@ -27,7 +27,7 @@ class ArchContainer extends Component {
   }
 
   componentWillMount() {
-    this.props.fetchTableData(itemsPerPage, startIndex, this.props.params.baseDocId);
+    this.props.fetchTableData(this.props.params.baseDocId, itemsPerPage, startIndex);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -35,18 +35,13 @@ class ArchContainer extends Component {
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableData(itemsPerPage, startIndex, nextType);
+      this.props.fetchTableData(nextType, itemsPerPage, startIndex);
     }
   }
 
   // admin card actions
   handleCreate(event) {
     this.props.showCreateDialog();
-  }
-  handleUpdate(event) {
-  }
-  handleDelete(event) {
-    this.props.deleteTableData();
   }
 
   closeEditDialog() {
@@ -101,17 +96,7 @@ class ArchContainer extends Component {
 
     let startIndex = (page-1) * itemsPerPage + 1;
     //this.props.changePage(startIndex);
-    this.props.fetchTableData(itemsPerPage, startIndex);
-  }
-
-  handleSelectOne(rowId, checked) {
-    var rows = this.state.selectedRows;
-    rows[rowId] = checked;
-    this.setState({
-      selectedRow: rows
-    });
-
-    this.props.changeSelectedRows(rowId, checked);
+    this.props.fetchTableData(this.props.params.baseDocId, itemsPerPage, startIndex);
   }
 
   handleEdit(rowId, rowData, event) {
@@ -119,7 +104,8 @@ class ArchContainer extends Component {
     this.props.initEditFormData(rowData.cols);
   }
 
-  handleRemove(rowId, rowData, event) {
+  handleRemove(rowIdx, rowData, event) {
+    this.props.deleteTableData(rowIdx, rowData);
   }
 
   render() {
@@ -156,8 +142,8 @@ class ArchContainer extends Component {
               <SSCGrid checkboxColumn={true}
                 cols={cols}
                 tableData={tableData} itemsPerPage={itemsPerPage}
+                paging
                 onPagination={::this.handlePagination}
-                onSelectOne={::this.handleSelectOne}
                 operateColumn
                 onEdit={::this.handleEdit}
                 onRemove={::this.handleRemove}
