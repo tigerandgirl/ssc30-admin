@@ -14,8 +14,8 @@ before_script:
 - npm install
 script:
 - npm run build
-after_success:
-- curl http://101.200.74.182:8080/job/ssc30-admin/build?token=yonyou.com1988
+#after_success:
+#- curl http://101.200.74.182:8080/job/ssc30-admin/build?token=yonyou.com1988
 #before_deploy:
 #- cd patch
 #- zip -r ../patch.zip .
