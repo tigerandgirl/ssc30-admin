@@ -93,7 +93,7 @@ class ArchContainer extends Component {
   //handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
     const { tableData } = this.props;
-    
+
     //let page = selectedEvent.eventKey;
     let page = eventKey;
 
@@ -114,9 +114,12 @@ class ArchContainer extends Component {
     this.props.changeSelectedRows(rowId, checked);
   }
 
-  handleEdit(rowId, rowData) {
+  handleEdit(rowId, rowData, event) {
     this.props.showEditDialog(rowId, rowData);
     this.props.initEditFormData(rowData.cols);
+  }
+
+  handleRemove(rowId, rowData, event) {
   }
 
   render() {
@@ -150,12 +153,14 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <NormalWidget />
-              <SSCGrid checkboxColumn={true} operateColumn={true}
+              <SSCGrid checkboxColumn={true}
                 cols={cols}
                 tableData={tableData} itemsPerPage={itemsPerPage}
                 onPagination={::this.handlePagination}
                 onSelectOne={::this.handleSelectOne}
+                operateColumn
                 onEdit={::this.handleEdit}
+                onRemove={::this.handleRemove}
               />
             </Col>
           </Row>

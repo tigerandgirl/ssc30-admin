@@ -75,7 +75,7 @@
     "redux-router": "^0.1.0",
     "redux-thunk": "^1.0.0",
     "serve-favicon": "~2.3.0",
-    "ssc-grid": "^0.6.0",
+    "ssc-grid": "^0.7.0",
     "style-loader": "^0.12.3",
     "swagger-express-mw": "^0.7.0",
     "url-loader": "^0.5.6"
