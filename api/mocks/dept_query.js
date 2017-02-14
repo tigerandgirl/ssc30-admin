@@ -21,7 +21,7 @@ function post(req, res) {
 
   if (DB_TABLE[doctype]) {
     // 根据基础档案类型，获取数据库中对应表的所有数据
-    var db_table = DB_TABLE[doctype]();
+    var db_table = DB_TABLE[doctype]();console.log(JSON.stringify(db_table, null, '  '))
     // 通过工具函数对所有数据进行分页，获取单页数据
     // 由于数据库结构和后端定义的response结构不同，这里处理transform
     resObj.data = utils.pagination(db_table, begin, groupnum).map(function (dbRow) {

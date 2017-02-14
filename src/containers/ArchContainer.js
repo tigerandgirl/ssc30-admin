@@ -71,7 +71,7 @@ class ArchContainer extends Component {
         return field.value;
       }),
       null, '  '));*/
-    this.props.saveTableData(formData);
+    this.props.saveTableData(baseDocId, formData);
     // 重新加载表格中的数据
     this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
     event.preventDefault();
@@ -121,7 +121,7 @@ class ArchContainer extends Component {
   handleRemove(rowIdx, rowData, event) {
     const { startIndex } = this.state;
     const { baseDocId } = this.props.params;
-    this.props.deleteTableData(rowIdx, rowData);
+    this.props.deleteTableData(baseDocId, rowIdx, rowData);
     this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
   }
 

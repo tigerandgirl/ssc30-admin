@@ -9,9 +9,18 @@ function aliyun(enable, url) {
   return (enable ? '/ficloud' : '') + url;
 }
 var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
-var SAVE_URL                = aliyun(0, '/dept/save');
-var DELETE_URL              = aliyun(0, '/dept/delete');
-var QUERY_URL               = aliyun(0, '/dept/query');
+const SAVE_URL = 1;
+const DELETE_URL = 1;
+const QUERY_URL = 1;
+function getSaveURL(type) {
+  return aliyun(SAVE_URL, `/${type}/save`);
+}
+function getDeleteURL(type) {
+  return aliyun(DELETE_URL, `/${type}/delete`);
+}
+function getQueryURL(type) {
+  return aliyun(QUERY_URL, `/${type}/query`);
+}
 
 // Common helper -> utils.js/api.js
 function checkStatus(response) {
@@ -94,7 +103,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
       })
     };
 
-    var url = `${QUERY_URL}`;
+    var url = getQueryURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         return response.json();
@@ -133,7 +142,7 @@ export function fetchTableColumnsModel(baseDocId) {
   }
 }
 
-export function deleteTableData(rowIdx, rowData) {
+export function deleteTableData(baseDocId, rowIdx, rowData) {
   return (dispatch, getState) => {
     var { id } = rowData; // 40位主键 primary key
     var opts = {
@@ -145,7 +154,7 @@ export function deleteTableData(rowIdx, rowData) {
       body: JSON.stringify({ id })
     };
 
-    var url = `${DELETE_URL}`;
+    var url = getDeleteURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         return response.json();
@@ -158,7 +167,7 @@ export function deleteTableData(rowIdx, rowData) {
   }
 }
 
-export function saveTableData(formData) {
+export function saveTableData(baseDocId, formData) {
   return (dispatch, getState) => {
     var opts = {
       method: 'post',
@@ -169,12 +178,12 @@ export function saveTableData(formData) {
       body: JSON.stringify(formData)
     };
 
-    var url = `${SAVE_URL}`;
+    var url = getSaveURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         return response.json();
       }).then(json => {
-        alert(`服务器端返回的message: ${response.message}`);
+        alert(`服务器端返回的message: ${json.message}`);
         // TODO(chenyangf@yonyou.com): Should fetch new data
       }).catch(function (err) {
         console.log("保存时候出现错误：", err);

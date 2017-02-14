@@ -1,4 +1,6 @@
 const utils = require('./utils');
+const fs = require('fs');
+
 
 module.exports = {
   db: db
@@ -83,6 +85,9 @@ DB_TABLE.dept = function () {
       {value: '备注7'}
     ]}
   ];
+
+  //var jsonStr= fs.readFileSync('./db_data/t_dept.json', 'utf8');
+  //db_table = JSON.parse(jsonStr);
   return db_table;
 };
 

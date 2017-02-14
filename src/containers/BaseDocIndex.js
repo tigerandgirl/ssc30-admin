@@ -114,15 +114,15 @@ class BaseDocIndex extends Component {
       },
       {
         "name": "人员",
-        "id": "renyuan"
+        "id": "person"
       },
       {
         "name": "项目",
-        "id": "xiangmu"
+        "id": "project"
       },
       {
         "name": "费用项目",
-        "id": "feiyongxiangmu"
+        "id": "feeitem"
       }
     ];
 
