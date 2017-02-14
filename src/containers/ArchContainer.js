@@ -14,8 +14,7 @@ import AdminAlert from '../components/AdminAlert';
 import * as Actions from '../actions/arch';
 
 // Consants for table
-const itemsPerPage = 3;
-const startIndex = 0;
+const ItemsPerPage = 3;
 
 class ArchContainer extends Component {
   static PropTypes = {
@@ -23,7 +22,8 @@ class ArchContainer extends Component {
   }
 
   state = {
-    activePage: 1
+    activePage: 1,
+    startIndex: 0
   }
 
   constructor(props) {
@@ -31,7 +31,8 @@ class ArchContainer extends Component {
   }
 
   componentWillMount() {
-    this.props.fetchTableData(this.props.params.baseDocId, itemsPerPage, startIndex);
+    this.props.fetchTableBodyData(this.props.params.baseDocId, ItemsPerPage, this.state.startIndex);
+    this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -39,7 +40,8 @@ class ArchContainer extends Component {
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableData(nextType, itemsPerPage, startIndex);
+      this.props.fetchTableBodyData(nextType, ItemsPerPage, this.state.startIndex);
+      this.props.fetchTableColumnsModel(nextType);
     }
   }
 
@@ -61,26 +63,32 @@ class ArchContainer extends Component {
     //this.props.updateCreateFormFieldValue(label, value);
   }
   handleCreateFormSubmit(event, formData) {
+    const { startIndex } = this.state;
+    const { baseDocId } = this.props.params;
     //this.props.submitCreateForm();
-    alert('提交的数据: \n' + JSON.stringify(
+    /*alert('提交的数据: \n' + JSON.stringify(
       formData.map(function createValue(field) {
         return field.value;
       }),
-      null, '  '));
+      null, '  '));*/
+    this.props.saveTableData(formData);
+    // 重新加载表格中的数据
+    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
     event.preventDefault();
   }
 
   // edit form
-  handleEditFormBlur(label, value) {
-    this.props.updateEditFormFieldValue(label, value);
+  handleEditFormBlur(index, fieldModel, value) {
+    //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleEditFormSubmit(event, formData) {
+    const { startIndex } = this.state;
+    const { baseDocId } = this.props.params;
     //this.props.submitEditForm();
-    alert('提交的数据: \n' + JSON.stringify(
-      formData.map(function createValue(field) {
-        return field.value;
-      }),
-      null, '  '));
+    alert('提交的数据: \n' + JSON.stringify(formData, null, '  '));
+    this.props.saveTableData(formData);
+    // 重新加载表格中的数据
+    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
     event.preventDefault();
   }
 
@@ -93,22 +101,28 @@ class ArchContainer extends Component {
   handlePagination(eventKey) {
     const { tableData } = this.props;
     let nextPage = eventKey;
-    let startIndex = (nextPage-1) * itemsPerPage;
+    let startIndex = (nextPage-1) * ItemsPerPage;
 
-    this.props.fetchTableData(this.props.params.baseDocId, itemsPerPage, startIndex);
+    this.props.fetchTableBodyData(this.props.params.baseDocId, ItemsPerPage, startIndex);
 
     this.setState({
-      activePage: nextPage
+      activePage: nextPage,
+      startIndex
     });
   }
 
   handleEdit(rowId, rowData, event) {
+    // 将rowData保存到store中
     this.props.showEditDialog(rowId, rowData);
-    this.props.initEditFormData(rowData.cols);
+    // 从store中取出editFormData填充到表单上
+    this.props.initEditFormData(rowData);
   }
 
   handleRemove(rowIdx, rowData, event) {
+    const { startIndex } = this.state;
+    const { baseDocId } = this.props.params;
     this.props.deleteTableData(rowIdx, rowData);
+    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
   }
 
   render() {
@@ -118,12 +132,14 @@ class ArchContainer extends Component {
       createDialog,
       adminAlert
     } = this.props;
+
+    // 表单字段模型 / 表格列模型
     const cols = fields || [];
 
-    // TODO: 需要将editFormData2和editFormData合并了
-    var editFormData2 = cols.map((field, idx) => ({...field,
-      value: editFormData[idx] ? editFormData[idx].value : null
-    }));
+    const formDefaultData = {};
+    cols.map(fieldModel => {
+      formDefaultData[fieldModel.id] = '';
+    })
 
     return (
       <div>
@@ -142,9 +158,9 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <NormalWidget />
-              <SSCGrid tableData={tableData} cols={cols}
+              <SSCGrid tableData={tableData} columnsModel={cols}
                 paging
-                itemsPerPage={itemsPerPage}
+                itemsPerPage={ItemsPerPage}
                 totalPage={this.props.totalPage}
                 activePage={this.state.activePage}
                 onPagination={::this.handlePagination}
@@ -157,13 +173,16 @@ class ArchContainer extends Component {
         </Grid>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
           <Form
-            formDefaultData={editFormData2}
+            fieldsModel={cols}
+            defaultData={editFormData}
+            onBlur={::this.handleEditFormBlur}
             onSubmit={::this.handleEditFormSubmit}
           />
         </AdminEditDialog>
         <AdminEditDialog className='create-form' title='创建' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
           <Form
-            formDefaultData={cols}
+            fieldsModel={cols}
+            defaultData={formDefaultData}
             onBlur={::this.handleCreateFormBlur}
             onSubmit={::this.handleCreateFormSubmit}
           />

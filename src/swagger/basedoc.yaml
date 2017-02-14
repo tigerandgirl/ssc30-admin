@@ -24,10 +24,10 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/BaseDocsModel'
-  /ficloud_pub_ctr/initgrid:
-    x-swagger-router-controller: basedoc
+  /ficloud_pub/initgrid:
+    x-swagger-router-controller: ficloud_pub_initgrid
     post:
-      description: 查询基本档案
+      description: 查询基本档案字段定义
       tags:
         - BaseDoc
       consumes:
@@ -187,41 +187,31 @@ definitions:
         description: 40位主键
   DeptSaveReqModel:
     type: object
-    required:
-    - data
     properties:
-      data:
-        type: object
-        required:
-        - head
-        properties:
-          head:
-            type: object
-            properties:
-              id:
-                type: string
-                description: 部门主键，当为空的时候，新增，不为空，则修改
-              org:
-                type: string
-                description: 组织
-              code:
-                type: string
-                description: 部门编码
-              name:
-                type: string
-                description: 部门名称
-              parentid:
-                type: string
-                description: 上级部门
-              personal:
-                type: string
-                description: 主管
-              enable:
-                type: string
-                description: 启用
-              description:
-                type: string
-                description: 备注
+      id:
+        type: string
+        description: 部门主键，当为空的时候，新增，不为空，则修改
+      org:
+        type: string
+        description: 组织
+      code:
+        type: string
+        description: 部门编码
+      name:
+        type: string
+        description: 部门名称
+      parentid:
+        type: string
+        description: 上级部门
+      personal:
+        type: string
+        description: 主管
+      enable:
+        type: boolean
+        description: 启用
+      description:
+        type: string
+        description: 备注
   BaseDocsModel:
     type: array
     items:

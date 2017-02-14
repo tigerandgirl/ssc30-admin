@@ -3,10 +3,15 @@ import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
 // 获取表格体数据(table body)，以及表格字段数据(table head)。
-const INIT_GRID_URL = '/ficloud_pub_ctr/initgrid';
-const SAVE_URL = '/dept/save';
-const DELETE_URL = '/dept/delete';
-const QUERY_URL = '/dept/query';
+
+// 是否连接到阿里云接口
+function aliyun(enable, url) {
+  return (enable ? '/ficloud' : '') + url;
+}
+var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
+var SAVE_URL                = aliyun(0, '/dept/save');
+var DELETE_URL              = aliyun(0, '/dept/delete');
+var QUERY_URL               = aliyun(0, '/dept/query');
 
 // Common helper -> utils.js/api.js
 function checkStatus(response) {
@@ -31,21 +36,35 @@ function requestTableData() {
 }
 
 // 由于后端的数据结构改过几次，所以在这里处理变化后的映射关系。
-function receiveTableData(json, itemsPerPage) {
+function receiveTableBodyData(json, itemsPerPage) {
+  return {
+    type: types.LOAD_TABLEDATA_SUCCESS,
+    data: {
+      items: json.data,
+      totalCount: json.totalnum,
+      totalPage: Math.ceil(json.totalnum / itemsPerPage)
+    }
+  }
+}
+
+function receiveTableColumnsModel(json) {
   function fixFieldTypo (fields) {
     return fields.map(field => {
       field.label = field.lable; // API中将label错误的写成了lable
       field.key = field.id; // API后来将key改成了id
+      // 将后端使用数字表示的data type转换成前端的名称
+      const TYPE = [
+        'string', 'integer', 'double', 'date', 'boolean', // 0~4
+        'ref', 'enum', '', 'datetime', 'text' // 5~9
+      ]
+      field.type = TYPE[field.datatype];
       return field;
     });
   }
   return {
-    type: types.LOAD_TABLEDATA_SUCCESS,
+    type: types.LOAD_TABLECOLUMNS_SUCCESS,
     data: {
-      fields: fixFieldTypo(json.data.head),
-      items: json.data.body,
-      totalCount: json.totalnum,
-      totalPage: Math.ceil(json.totalnum / itemsPerPage)
+      fields: fixFieldTypo(json.data)
     }
   }
 }
@@ -57,40 +76,8 @@ function deleteTableDataSuccess(json) {
   }
 }
 
-// 历史上使用过这个接口，不知道后来这个接口干啥用了。
-export function fetchTableData2(itemsPerPage, startIndex, baseDocId) {
-  return (dispatch) => {
-    dispatch(requestTableData());
-    var opts = {
-      method: 'post',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      mode: "cors",
-      body: JSON.stringify({
-        doctype: baseDocId
-      })
-    };
-
-    var url = `${INIT_GRID_URL}?itemsPerPage=${itemsPerPage}`;
-    if (typeof startIndex === 'undefined') {
-      url += `&startIndex=1`;
-    } else {
-      url += `&startIndex=${startIndex}`;
-    }
-
-    return fetch(url, opts)
-      .then(response => {
-        return response.json();
-      }).then(json => {
-        dispatch(receiveTableData(json));
-      }).catch(function (err) {
-        console.log("fetch error:", err);
-      });
-  }
-}
-
-export function fetchTableData(baseDocId, itemsPerPage, startIndex) {
+// 这个接口只获取表格体的数据
+export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
   return (dispatch) => {
     dispatch(requestTableData());
 
@@ -112,7 +99,34 @@ export function fetchTableData(baseDocId, itemsPerPage, startIndex) {
       .then(response => {
         return response.json();
       }).then(json => {
-        dispatch(receiveTableData(json, itemsPerPage));
+        dispatch(receiveTableBodyData(json, itemsPerPage));
+      }).catch(function (err) {
+        console.log("fetch error:", err);
+      });
+  }
+}
+
+export function fetchTableColumnsModel(baseDocId) {
+  return (dispatch) => {
+    dispatch(requestTableData());
+
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: "cors",
+      body: JSON.stringify({
+        doctype: baseDocId
+      })
+    };
+
+    var url = `${FICLOUDPUB_INITGRID_URL}`;
+    return fetch(url, opts)
+      .then(response => {
+        return response.json();
+      }).then(json => {
+        dispatch(receiveTableColumnsModel(json));
       }).catch(function (err) {
         console.log("fetch error:", err);
       });
@@ -121,7 +135,7 @@ export function fetchTableData(baseDocId, itemsPerPage, startIndex) {
 
 export function deleteTableData(rowIdx, rowData) {
   return (dispatch, getState) => {
-    var id = rowData.id; // 40位主键 primary key
+    var { id } = rowData; // 40位主键 primary key
     var opts = {
       method: 'post',
       headers: {
@@ -144,22 +158,15 @@ export function deleteTableData(rowIdx, rowData) {
   }
 }
 
-export function saveTableData(rowIdx, rowData) {
+export function saveTableData(formData) {
   return (dispatch, getState) => {
-    var id = rowData.id; // 40位主键 primary key
     var opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: "cors",
-      body: JSON.stringify({
-        data: {
-          head: {
-            id: rowData.id
-          }
-        }
-      })
+      body: JSON.stringify(formData)
     };
 
     var url = `${SAVE_URL}`;
@@ -170,7 +177,7 @@ export function saveTableData(rowIdx, rowData) {
         alert(`服务器端返回的message: ${response.message}`);
         // TODO(chenyangf@yonyou.com): Should fetch new data
       }).catch(function (err) {
-        console.log("delete error:", err);
+        console.log("保存时候出现错误：", err);
       });
   }
 }
@@ -178,42 +185,20 @@ export function saveTableData(rowIdx, rowData) {
 /**
  * @param {Object} [rowData] -  Table row data, e.g.
  * {
- *   "cols": [
- *     {},
- *     {}
- *   ]
+ *   id: '123',
+ *   name: '456',
+ *   mobileNumber: '1112223333'
  * }
  * When "CreateForm" call this, rowData will not pass, so we will try to get 
  * table column(form field) information from table rows.
  */
 export function showEditDialog(rowId, rowData) {
   return (dispatch, getState) => {
-    if (!rowData) {
-      let rowData;
-      const state = getState();
-      if (state.arch.tableData.length !== 0) {
-        rowData = state.arch.tableData[0];
-      } else {
-        // fake data
-        rowData = {};
-        rowData.cols = [
-          { type: 'text', label: 'col1', value: '' },
-          { type: 'text', label: 'col2', value: '' }
-        ];
-      }
-      dispatch({
-        type: types.SHOW_EDIT_DIALOG,
-        openDialog: true,
-        formData: rowData.cols
-      })
-    } else {
-      dispatch({
-        type: types.SHOW_EDIT_DIALOG,
-        openDialog: true,
-        formData: rowData.cols
-      })
-    }
-
+    dispatch({
+      type: types.SHOW_EDIT_DIALOG,
+      openDialog: true,
+      formData: rowData
+    })
   };
 }
 
@@ -222,23 +207,17 @@ export function hideEditDialog() {
     dispatch({
       type: types.HIDE_EDIT_DIALOG,
       openDialog: false,
-      formData: []
+      formData: {}
     })
   };
 }
 
-export function updateEditFormFieldValue(label, value) {
+export function updateEditFormFieldValue(index, fieldModel, value) {
   return (dispatch, getState) => {
-    const { arch: { editFormData } } = getState();
-    const id = _.findIndex(editFormData, field => field.label === label);
-    if (id === -1) {
-      console.log('Not found this field:', label, ', in editFormData:', editFormData);
-      return false;
-    }
     // TODO(chenyangf@yonyou.com): Dont touch state when value not changed.
     dispatch({
       type: types.UPDATE_EDIT_FORM_FIELD_VALUE,
-      id,
+      id: fieldModel.id,
       payload: value
     });
   };
@@ -247,7 +226,7 @@ export function updateEditFormFieldValue(label, value) {
 export function initEditFormData(editFormData) {
   return dispatch => {
     dispatch({
-      type: types.INIT_EDIT_FORM_DATA,
+      type: types.ARCH_INIT_EDIT_FORM_DATA,
       editFormData
     });
   };
@@ -327,13 +306,13 @@ export function showCreateDialog(rowId, rowData) {
       dispatch({
         type: types.SHOW_CREATE_DIALOG,
         openDialog: true,
-        formData: rowData.cols
+        formData: rowData
       })
     } else {
       dispatch({
         type: types.SHOW_CREATE_DIALOG,
         openDialog: true,
-        formData: rowData.cols
+        formData: rowData
       })
     }
 
@@ -345,7 +324,7 @@ export function hideCreateDialog() {
     dispatch({
       type: types.HIDE_CREATE_DIALOG,
       openDialog: false,
-      formData: []
+      formData: {}
     })
   };
 }

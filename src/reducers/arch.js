@@ -3,10 +3,11 @@ import { combineReducers } from 'redux';
 
 import {
   LOAD_TABLEDATA, LOAD_TABLEDATA_SUCCESS, LOAD_TABLEDATA_FAIL,
+  LOAD_TABLECOLUMNS, LOAD_TABLECOLUMNS_SUCCESS, LOAD_TABLECOLUMNS_FAIL,
   CHANGE_SELECTED_ROWS,
 
   SHOW_EDIT_DIALOG, HIDE_EDIT_DIALOG,
-  INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
+  ARCH_INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
   SUBMIT_EDIT_FORM, SUBMIT_EDIT_FORM_SUCCESS, SUBMIT_EDIT_FORM_FAIL,
 
   SHOW_CREATE_DIALOG, HIDE_CREATE_DIALOG,
@@ -26,7 +27,7 @@ const initState = {
     show: false,
     formData: []
   },
-  editFormData: [],
+  editFormData: {},
   createDialog: {
     show: false
   },
@@ -58,7 +59,7 @@ export default function arch(state = initState, action) {
         }
       });
 
-    // table
+    // table body data
     case LOAD_TABLEDATA:
       return {...state,
         loading: true
@@ -68,7 +69,6 @@ export default function arch(state = initState, action) {
         loading: false,
         loaded: true,
         tableData: action.data.items,
-        fields: action.data.fields,
         totalDataCount: action.data.totalCount,
         totalPage: action.data.totalPage
       };
@@ -82,6 +82,13 @@ export default function arch(state = initState, action) {
           message: action.message
         }
       };
+
+    // table columns model
+    case LOAD_TABLECOLUMNS_SUCCESS:
+      return {...state,
+        fields: action.data.fields,
+      };
+
     case CHANGE_SELECTED_ROWS:
       return {...state,
         selectedRows: action.selectedRows
@@ -103,11 +110,11 @@ export default function arch(state = initState, action) {
       return update(state, { 
         editFormData: { 
           [action.id]: {
-            value: {$set: action.payload}
+            $set: action.payload
           }
         }
       });
-    case INIT_EDIT_FORM_DATA:
+    case ARCH_INIT_EDIT_FORM_DATA:
       return {...state,
         editFormData: action.editFormData
       }

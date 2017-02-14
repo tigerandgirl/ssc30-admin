@@ -3,6 +3,7 @@
 module.exports = {
   row: row,
   pagination: pagination,
+  makeid: makeid,
   string: $string,
   boolean: $boolean,
   ref: $ref,
@@ -26,35 +27,50 @@ function pagination(db_table, begin, itemPerPage) {
   return ret;
 }
 
-function $string(name) {
+function makeid(length) {
+  length = length || 5;
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
+
+// 字符
+function $string(id, name, size) {
+  size = size || 40;
   return {
-    "id": "string",
+    "id": id,
     "lable": name,
     "datatype": 0,
-    "length": 40
+    "length": size
   };
 }
 
-function $boolean(name) {
+// 布尔
+function $boolean(id, name) {
   return {
-    "id": "boolean",
+    "id": id,
     "lable": name,
     "datatype": 4
   };
 }
 
-function $ref(name) {
+// 参照
+function $ref(id, name) {
   return {
-    "id": "ref",
+    "id": id,
     "lable": name,
     "datatype": 999,
     refinfo: "G001ZM0000BASEDOC0000DEPT000000000000000"
   };
 }
 
-function $enum(name) {
+// 枚举
+function $enum(id, name) {
   return {
-    "id": "enum",
+    "id": id,
     "lable": name,
     "datatype": 6,
     "data": [
