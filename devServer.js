@@ -4,7 +4,6 @@ const express = require('express');
 const webpack = require('webpack');
 const bodyParser = require('body-parser');
 //const multer = require('multer');
-const httpProxy = require('http-proxy');
 
 const app = express();
 app.use(compression());
@@ -13,11 +12,6 @@ app.use(require('./server/routes/aliyun')());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 //var upload = multer(); // for parsing multipart/form-data
-
-//
-// Create your proxy server and set the target in the options.
-//
-const proxy = httpProxy.createProxyServer({});
 
 if (process.env.NODE_ENV === 'production') {
   var config = require('./webpack.config.prod');
@@ -64,12 +58,6 @@ SwaggerExpress.create(swaggerConfig, function(err, swaggerExpress) {
   // install middleware
   swaggerExpress.register(app);
 });
-
-// 反向代理到阿里云上的真实服务器
-//app.use('/ficloud', proxy.web(req, res, { target: 'http://59.110.123.20' }));
-//app.post('/ficloud', function (req, res) {
-//  proxy.web(req, res, { target: 'http://59.110.123.20' });
-//});
 
 const port = process.env.PORT || 3008;
 const ip = process.env.IP || '127.0.0.1';

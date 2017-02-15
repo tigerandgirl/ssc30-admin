@@ -6,11 +6,15 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use(compression());
+// 反向代理中间件需要在body-parser之前处理请求，否则会导致请求hang up
+app.use(require('./server/routes/aliyun')());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 //var upload = multer(); // for parsing multipart/form-data
 
 app.use('/', express.static(path.join(__dirname + '/client')));
+app.use('/swagger/basedoc.yaml',
+  express.static(path.join(__dirname, 'src', 'swagger', 'basedoc.yaml')));
 app.use('/static', express.static(path.join(__dirname + '/dist')));
 
 app.use(require('./server/routes/fakeApiArch')());
