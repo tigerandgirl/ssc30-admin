@@ -6,9 +6,11 @@ import _ from 'lodash';
 
 // 是否连接到阿里云接口
 function aliyun(enable, url) {
+  // 在编译环境下，需要默认启用阿里云接口
+  if (process.env.NODE_ENV === 'production') enable = 1;
   return (enable ? '/ficloud' : '') + url;
 }
-var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
+var FICLOUDPUB_INITGRID_URL = aliyun(1, '/ficloud_pub/initgrid');
 const SAVE_URL = 1;
 const DELETE_URL = 1;
 const QUERY_URL = 1;
@@ -37,6 +39,25 @@ function parseJSON(response) {
   return response.json();
 }
 
+// 删除JSON object中的空值
+// {
+//   foo: 'bar',
+//   bar: ''
+// }
+// 转换为
+// {
+//   foo: 'bar'
+// }
+const removeEmpty = (p) => {
+  var key;
+  for (key in p) {
+    if (p.hasOwnProperty(key)) {
+      if (!p[key]) {
+        delete p[key]
+      }
+    }
+  }
+};
 
 function requestTableData() {
   return {
@@ -122,12 +143,10 @@ export function fetchTableColumnsModel(baseDocId) {
     var opts = {
       method: 'post',
       headers: {
-        'Content-type': 'application/json'
+        'Content-type': 'application/x-www-form-urlencoded'
       },
       mode: "cors",
-      body: JSON.stringify({
-        doctype: baseDocId
-      })
+      body: `doctype=${baseDocId}`
     };
 
     var url = `${FICLOUDPUB_INITGRID_URL}`;
@@ -159,16 +178,17 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       .then(response => {
         return response.json();
       }).then(json => {
-        alert(`服务器端返回的message: ${json.message}`);
         // TODO(chenyangf@yonyou.com): Should fetch new data
       }).catch(function (err) {
-        console.log("delete error:", err);
+        alert('删除时候出现错误');
+        console.log("删除时候出现错误：", err);
       });
   }
 }
 
 export function saveTableData(baseDocId, formData) {
   return (dispatch, getState) => {
+    removeEmpty(formData);
     var opts = {
       method: 'post',
       headers: {
@@ -183,9 +203,9 @@ export function saveTableData(baseDocId, formData) {
       .then(response => {
         return response.json();
       }).then(json => {
-        alert(`服务器端返回的message: ${json.message}`);
         // TODO(chenyangf@yonyou.com): Should fetch new data
       }).catch(function (err) {
+        alert('保存时候出现错误');
         console.log("保存时候出现错误：", err);
       });
   }

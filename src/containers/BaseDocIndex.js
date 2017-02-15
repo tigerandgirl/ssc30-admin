@@ -111,26 +111,30 @@ class BaseDocIndex extends Component {
       {
         "name": "部门",
         "id": "dept"
-      },
-      {
-        "name": "人员",
-        "id": "person"
-      },
-      {
+      }
+      //,{
+      //  "name": "人员",
+      //  "id": "person"
+      //},
+      ,{
         "name": "项目",
         "id": "project"
-      },
-      {
+      }
+      ,{
         "name": "费用项目",
         "id": "feeitem"
       }
+      //,{
+      //  name: '角色',
+      //  id: 'role'
+      //}
     ];
 
     return (
       <div>
         <h1>基础档案所有类型</h1>
         <ul>
-          {basedocs.map(basedoc => <li key={basedoc.id}><Link to={`/basedoc/${basedoc.id}`}>{basedoc.name}</Link></li>)}
+          {basedocs.map(basedoc => <span style={{marginRight: '10px'}} key={basedoc.id}><Link to={`/basedoc/${basedoc.id}`}>{basedoc.name}</Link></span>)}
         </ul>
         <h2>详情</h2>
         <div>

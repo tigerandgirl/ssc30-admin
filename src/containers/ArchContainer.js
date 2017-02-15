@@ -66,11 +66,6 @@ class ArchContainer extends Component {
     const { startIndex } = this.state;
     const { baseDocId } = this.props.params;
     //this.props.submitCreateForm();
-    /*alert('提交的数据: \n' + JSON.stringify(
-      formData.map(function createValue(field) {
-        return field.value;
-      }),
-      null, '  '));*/
     this.props.saveTableData(baseDocId, formData);
     // 重新加载表格中的数据
     this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
@@ -85,8 +80,7 @@ class ArchContainer extends Component {
     const { startIndex } = this.state;
     const { baseDocId } = this.props.params;
     //this.props.submitEditForm();
-    alert('提交的数据: \n' + JSON.stringify(formData, null, '  '));
-    this.props.saveTableData(formData);
+    this.props.saveTableData(baseDocId, formData);
     // 重新加载表格中的数据
     this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
     event.preventDefault();
