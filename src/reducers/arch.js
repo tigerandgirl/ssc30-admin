@@ -5,6 +5,7 @@ import {
   LOAD_TABLEDATA, LOAD_TABLEDATA_SUCCESS, LOAD_TABLEDATA_FAIL,
   LOAD_TABLECOLUMNS, LOAD_TABLECOLUMNS_SUCCESS, LOAD_TABLECOLUMNS_FAIL,
   DELETE_TABLEDATA, DELETE_TABLEDATA_SUCCESS, DELETE_TABLEDATA_FAIL,
+  TABLEDATA_UPDATE, TABLEDATA_UPDATE_SUCCESS, TABLEDATA_UPDATE_FAIL,
   CHANGE_SELECTED_ROWS,
 
   SHOW_EDIT_DIALOG, HIDE_EDIT_DIALOG,
@@ -89,6 +90,16 @@ export default function arch(state = initState, action) {
       return {...state,
         fields: action.data.fields,
       };
+
+    // save table data
+    case TABLEDATA_UPDATE_SUCCESS:
+      return update(state, {
+        adminAlert: {
+          show: {$set: true},
+          bsStyle: {$set: 'success'},
+          message: {$set: '保存成功'}
+        }
+      });
 
     // delete table data
     case DELETE_TABLEDATA_SUCCESS:

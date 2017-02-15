@@ -106,6 +106,12 @@ function deleteTableDataSuccess(json) {
   }
 }
 
+function updateTableDataSuccess() {
+  return {
+    type: types.TABLEDATA_UPDATE_SUCCESS
+  }
+}
+
 // 这个接口只获取表格体的数据
 export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
   return (dispatch) => {
@@ -203,7 +209,7 @@ export function saveTableData(baseDocId, formData) {
       .then(response => {
         return response.json();
       }).then(json => {
-        // TODO(chenyangf@yonyou.com): Should fetch new data
+        dispatch(updateTableDataSuccess());
       }).catch(function (err) {
         alert('保存时候出现错误');
         console.log("保存时候出现错误：", err);
