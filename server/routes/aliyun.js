@@ -15,25 +15,8 @@ module.exports = function () {
   var aliyunBackend = {
     target: `http://${aliyunIP2}`
   };
-  console.log(aliyunBackend);
   router.all("/ficloud/*", function(req, res) {
     console.log('redirecting to aliyun');
-    proxy.web(req, res, aliyunBackend);
-  });
-  router.all("/iwebap/*", function(req, res) {
-    console.log('redirecting to NC');
-    proxy.web(req, res, aliyunBackend);
-  });
-  router.all("/portal", function(req, res) {
-    console.log('redirecting to NC');
-    proxy.web(req, res, aliyunBackend);
-  });
-  router.all("/portal/*", function(req, res) {
-    console.log('redirecting to NC');
-    proxy.web(req, res, aliyunBackend);
-  });
-  router.all("/lfw/*", function(req, res) {
-    console.log('redirecting to NC');
     proxy.web(req, res, aliyunBackend);
   });
   return router;
