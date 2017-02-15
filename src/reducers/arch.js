@@ -38,7 +38,7 @@ const initState = {
     show: false,
     error: {
       code: 0,
-      bsStyle: 'danger',
+      bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
       message: ''
     }
   }
