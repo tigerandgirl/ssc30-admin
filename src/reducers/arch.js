@@ -4,6 +4,7 @@ import { combineReducers } from 'redux';
 import {
   LOAD_TABLEDATA, LOAD_TABLEDATA_SUCCESS, LOAD_TABLEDATA_FAIL,
   LOAD_TABLECOLUMNS, LOAD_TABLECOLUMNS_SUCCESS, LOAD_TABLECOLUMNS_FAIL,
+  DELETE_TABLEDATA, DELETE_TABLEDATA_SUCCESS, DELETE_TABLEDATA_FAIL,
   CHANGE_SELECTED_ROWS,
 
   SHOW_EDIT_DIALOG, HIDE_EDIT_DIALOG,
@@ -89,6 +90,16 @@ export default function arch(state = initState, action) {
         fields: action.data.fields,
       };
 
+    // delete table data
+    case DELETE_TABLEDATA_SUCCESS:
+      return update(state, {
+        adminAlert: {
+          show: {$set: true},
+          bsStyle: {$set: 'success'},
+          message: {$set: '删除成功'}
+        }
+      });
+
     case CHANGE_SELECTED_ROWS:
       return {...state,
         selectedRows: action.selectedRows
@@ -107,8 +118,8 @@ export default function arch(state = initState, action) {
     case UPDATE_EDIT_FORM_FIELD_VALUE:
       // Update single value inside specific array item
       // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
-      return update(state, { 
-        editFormData: { 
+      return update(state, {
+        editFormData: {
           [action.id]: {
             $set: action.payload
           }

@@ -11,9 +11,9 @@ function aliyun(enable, url) {
   return (enable ? '/ficloud' : '') + url;
 }
 var FICLOUDPUB_INITGRID_URL = aliyun(1, '/ficloud_pub/initgrid');
-const SAVE_URL = 1;
+const SAVE_URL   = 1;
 const DELETE_URL = 1;
-const QUERY_URL = 1;
+const QUERY_URL  = 1;
 function getSaveURL(type) {
   return aliyun(SAVE_URL, `/${type}/save`);
 }
@@ -178,7 +178,7 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       .then(response => {
         return response.json();
       }).then(json => {
-        // TODO(chenyangf@yonyou.com): Should fetch new data
+        dispatch(deleteTableDataSuccess(json));
       }).catch(function (err) {
         alert('删除时候出现错误');
         console.log("删除时候出现错误：", err);

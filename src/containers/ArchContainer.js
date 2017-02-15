@@ -191,7 +191,8 @@ const mapStateToProps = (state, ownProps) => {
     arch: state.arch,
     tableData: state.arch.tableData,
     fields: state.arch.fields,
-    totalPage: state.arch.totalPage
+    totalPage: state.arch.totalPage,
+    adminAlert: state.arch.adminAlert
   }
 }
 
