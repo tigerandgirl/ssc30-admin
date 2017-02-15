@@ -2,14 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: {
-    'bundle': [
-      './src/index'
-    ]
-  },
+  entry:  [
+    './src/index'
+  ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].js' //Template based on keys in entry above
+    filename: 'bundle.js' //Template based on keys in entry above
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('common.js'),
@@ -25,19 +23,19 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
-    new webpack.optimize.UglifyJsPlugin({
+    /*new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
       }
-    })
+    })*/
   ],
   module: {
     loaders: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel',
-        include: __dirname
+        exclude: [/node_modules/, /styles/],
+        loaders: ['babel'],
+        include: path.join(__dirname, 'src')
       },
       {
         test: /\.css$/,
@@ -54,5 +52,3 @@ module.exports = {
     ]
   }
 };
-
-
