@@ -113,6 +113,9 @@ class ArchContainer extends Component {
   }
 
   handleRemove(rowIdx, rowData, event) {
+    if (!confirm("是否删除？")) {
+      return;
+    }
     const { startIndex } = this.state;
     const { baseDocId } = this.props.params;
     this.props.deleteTableData(baseDocId, rowIdx, rowData);
