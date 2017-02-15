@@ -5,8 +5,6 @@ import { Link } from 'react-router';
 
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
-import { Grid as SSCGrid } from 'ssc-grid';
-
 import NormalWidget from '../components/NormalWidget';
 import AdminCardActions from '../components/AdminCardActions';
 import AdminEditDialog from '../components/AdminEditDialog';

@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
-import { Grid as SSCGrid, Form } from 'ssc-grid';
+import { Grid as SSCGrid, Form } from 'ssc-comp';
 
 import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
