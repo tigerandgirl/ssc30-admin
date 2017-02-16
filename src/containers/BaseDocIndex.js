@@ -126,6 +126,10 @@ class BaseDocIndex extends Component {
       //  name: '角色',
       //  id: 'role'
       //}
+      ,{
+        id: 'bizhong',
+        name: '币种'
+      }
     ];
 
     return (

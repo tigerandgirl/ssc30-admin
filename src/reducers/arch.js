@@ -94,6 +94,12 @@ export default function arch(state = initState, action) {
     // save table data
     case TABLEDATA_UPDATE_SUCCESS:
       return update(state, {
+        createDialog: {
+          show: {$set: false}
+        },
+        editDialog: {
+          show: {$set: false}
+        },
         adminAlert: {
           show: {$set: true},
           bsStyle: {$set: 'success'},
