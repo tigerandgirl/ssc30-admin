@@ -33,6 +33,16 @@ npm run demo
 
 Open http://127.0.0.1:3008/
 
+## 发布到阿里云
+
+**注意**: 先确认有权限登录阿里云服务器
+
+运行如下命令，先调用webpack进行打包，然后将结果通过rsync同步到阿里云服务器上。
+
+```
+npm run release
+```
+
 ## Development
 
 ## API

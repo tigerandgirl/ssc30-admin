@@ -10,7 +10,8 @@
     "build": "npm run clean && npm run build:webpack",
     "dev": "cross-env NODE_ENV=development node ./devServer.js",
     "prod": "cross-env NODE_ENV=production node ./devServer.js",
-    "demo": "cross-env NODE_ENV=production node ./demoServer.js"
+    "demo": "cross-env NODE_ENV=production node ./demoServer.js",
+    "release": "npm run build && .utils/deploy.sh"
   },
   "devDependencies": {
     "babel-core": "^6.8.0",
