@@ -140,9 +140,12 @@ class ArchContainer extends Component {
 
     return (
       <div>
-        <AdminAlert {...this.props} show={adminAlert.show} bsStyle={adminAlert.bsStyle} message={adminAlert.message}
+        <AdminAlert {...this.props} show={adminAlert.show} bsStyle={adminAlert.bsStyle} 
           onDismiss={::this.handleAlertDismiss}
-        />
+        >
+          <p>{adminAlert.message}</p>
+          { adminAlert.resMessage ? <p>后端返回的信息是：<pre>{adminAlert.resMessage}</pre></p> : null }
+        </AdminAlert>
         <Grid>
           <Row className="show-grid">
             <Col md={12}>

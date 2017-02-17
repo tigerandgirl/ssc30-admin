@@ -80,7 +80,7 @@ export default function arch(state = initState, action) {
         loaded: false,
         adminAlert: {...state.adminAlert,
           show: true,
-          bsStyle: action.bsStyle,
+          bsStyle: 'danger',
           message: action.message
         }
       };

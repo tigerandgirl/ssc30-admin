@@ -67,13 +67,22 @@ function requestTableData() {
 
 // 由于后端的数据结构改过几次，所以在这里处理变化后的映射关系。
 function receiveTableBodyData(json, itemsPerPage) {
-  return {
-    type: types.LOAD_TABLEDATA_SUCCESS,
-    data: {
-      items: json.data,
-      totalCount: json.totalnum,
-      totalPage: Math.ceil(json.totalnum / itemsPerPage)
-    }
+  if (json.success === true) {
+    return {
+      type: types.LOAD_TABLEDATA_SUCCESS,
+      data: {
+        items: json.data,
+        totalCount: json.totalnum,
+        totalPage: Math.ceil(json.totalnum / itemsPerPage)
+      }
+    };
+  } else {
+    // TODO: resMessage不应该保存在adminAlert下，而是应该放在tableData下
+    return {
+      type: types.LOAD_TABLEDATA_FAIL,
+      message: '获取表格数据失败，后端返回的success是false',
+      resMessage: json.message
+    };
   }
 }
 

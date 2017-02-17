@@ -33,10 +33,10 @@ module.exports = class Root extends Component {
       <Provider store={store}>
         <div>
           <Router>
-            <Route path="/" component={App}>
+            <Route path="/app" component={App}>
               <IndexRoute component={Welcome}/>
               <Route path="/welcome" component={Welcome}></Route>
-              <Route path="basedocs" component={BaseDocIndex}>
+              <Route path="/basedocs" component={BaseDocIndex}>
                 <Route path="/basedoc/:baseDocId" component={ArchContainer} />
               </Route>
               <Route path="/role" component={RoleContainer}></Route>
@@ -47,6 +47,9 @@ module.exports = class Root extends Component {
               <Route path="/demo/tree" component={DemoTreeContainer}></Route>
               <Route path="*" component={NoMatch} />
             </Route>
+            <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>
+              <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
+            </Route>
           </Router>
           {/* Being the dev version of our Root component, we include DevTools below */}
           {/*<DevTools />*/}
@@ -55,4 +58,3 @@ module.exports = class Root extends Component {
     );
   }
 };
-

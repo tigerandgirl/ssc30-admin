@@ -15,12 +15,12 @@ class AdminAlert extends Component {
     this.props.onDismiss();
   }
   render() {
-    const { show, bsStyle, message } = this.props.adminAlert;
+    const { show, bsStyle } = this.props.adminAlert;
     if (show) {
       return (
         <div className='admin-alert'>
           <Alert bsStyle={bsStyle} onDismiss={::this.handleAlertDismiss}>
-            <p>{message}</p>
+            {this.props.children}
             <p>
               <Button onClick={::this.handleAlertDismiss}>关闭</Button>
             </p>

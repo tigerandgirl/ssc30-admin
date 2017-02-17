@@ -30,22 +30,27 @@ module.exports = class Root extends Component {
        * calls in component hierarchy below.
        */
       <Provider store={store}>
-        <Router>
-          <Route path="/" component={App}>
-            <IndexRoute component={Welcome}/>
-            <Route path="/welcome" component={Welcome}></Route>
-            <Route path="basedocs" component={BaseDocIndex}>
-              <Route path="/basedoc/:baseDocId" component={ArchContainer} />
+        <div>
+          <Router>
+            <Route path="/app" component={App}>
+              <IndexRoute component={Welcome}/>
+              <Route path="/welcome" component={Welcome}></Route>
+              <Route path="/basedocs" component={BaseDocIndex}>
+                <Route path="/basedoc/:baseDocId" component={ArchContainer} />
+              </Route>
+              <Route path="/role" component={RoleContainer}></Route>
+              <Route path="/permission" component={PermissionPage}></Route>
+              <Route path="/archsetting" component={ArchSettingPage}></Route>
+              <Route path="/ncsync" component={NCSyncPage}></Route>
+              <Route path="/demo/form" component={DemoFormContainer}></Route>
+              <Route path="/demo/tree" component={DemoTreeContainer}></Route>
+              <Route path="*" component={NoMatch} />
             </Route>
-            <Route path="/role" component={RoleContainer}></Route>
-            <Route path="/permission" component={PermissionPage}></Route>
-            <Route path="/archsetting" component={ArchSettingPage}></Route>
-            <Route path="/ncsync" component={NCSyncPage}></Route>
-            <Route path="/demo/form" component={DemoFormContainer}></Route>
-            <Route path="/demo/tree" component={DemoTreeContainer}></Route>
-            <Route path="*" component={NoMatch} />
-          </Route>
-        </Router>
+            <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>
+              <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
+            </Route>
+          </Router>
+        </div>
       </Provider>
     );
   }
