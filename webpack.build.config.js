@@ -1,5 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const packageJSON = require('./package.json');
 
 module.exports = {
   entry:  [
@@ -27,6 +30,12 @@ module.exports = {
       compress: {
         warnings: false
       }
+    }),
+    new HtmlWebpackPlugin({
+      template: 'client/index.hbs',
+      hash: true,
+      // User defined options
+      version: packageJSON.version
     })
   ],
   module: {
@@ -48,6 +57,10 @@ module.exports = {
       {
         test: /\.(png|jpg|bmp)$/,
         loader: 'url-loader?limit=8192'
+      },
+      {
+        test: /\.hbs$/,
+        loader: 'handlebars-loader'
       }
     ]
   }

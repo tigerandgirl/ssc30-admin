@@ -13,4 +13,4 @@ cd $root_dir
 #npm run build
 
 # Bundle and upload
-rsync -arvzh -e "ssh -p $port" --progress dist/ $user@$ip:/data/ficloud/uiresources/manaaccount/dist/
+rsync -arvzh -e "ssh -p $port" --progress dist/ $user@$ip:/data/ficloud/uiresources/manaaccount/
