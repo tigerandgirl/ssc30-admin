@@ -78,11 +78,10 @@ class ArchContainer extends Component {
   }
   handleEditFormSubmit(event, formData) {
     const { startIndex } = this.state;
+    const { editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
     //this.props.submitEditForm();
-    this.props.saveTableData(baseDocId, formData);
-    // 重新加载表格中的数据
-    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
+    this.props.saveTableData(baseDocId, formData, rowIdx);
     event.preventDefault();
   }
 
@@ -105,9 +104,9 @@ class ArchContainer extends Component {
     });
   }
 
-  handleEdit(rowId, rowData, event) {
+  handleEdit(rowIdx, rowData, event) {
     // 将rowData保存到store中
-    this.props.showEditDialog(rowId, rowData);
+    this.props.showEditDialog(rowIdx, rowData);
     // 从store中取出editFormData填充到表单上
     this.props.initEditFormData(rowData);
   }

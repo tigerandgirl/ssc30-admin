@@ -115,9 +115,17 @@ function deleteTableDataSuccess(json) {
   }
 }
 
-function updateTableDataSuccess() {
+// rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
+function updateTableDataSuccess(json, rowIdx) {
+  // 后端返回的response总包含了修改之后的值，填写到表格中
+  // 隐藏editDialog和createDialog
+  // 显示adminAlert呈现“保存成功”
   return {
-    type: types.TABLEDATA_UPDATE_SUCCESS
+    type: types.TABLEDATA_UPDATE_SUCCESS,
+    data: {
+      rowIdx,
+      rowData: json.data // json.data中保存了后端返回的改行修改后的新数据
+    }
   }
 }
 
@@ -201,7 +209,10 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
   }
 }
 
-export function saveTableData(baseDocId, formData) {
+// 创建和修改表格数据都会调用到这里
+// rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
+// 的时候才会传这个参数
+export function saveTableData(baseDocId, formData, rowIdx) {
   return (dispatch, getState) => {
     removeEmpty(formData);
     var opts = {
@@ -218,7 +229,7 @@ export function saveTableData(baseDocId, formData) {
       .then(response => {
         return response.json();
       }).then(json => {
-        dispatch(updateTableDataSuccess());
+        dispatch(updateTableDataSuccess(json, rowIdx));
       }).catch(function (err) {
         alert('保存时候出现错误');
         console.log("保存时候出现错误：", err);
@@ -235,13 +246,16 @@ export function saveTableData(baseDocId, formData) {
  * }
  * When "CreateForm" call this, rowData will not pass, so we will try to get 
  * table column(form field) information from table rows.
+ *
+ * rowIdx表示当前打开的编辑框对应是表格中的哪一行，第一行的rowIdx=0
  */
-export function showEditDialog(rowId, rowData) {
+export function showEditDialog(rowIdx, rowData) {
   return (dispatch, getState) => {
     dispatch({
       type: types.SHOW_EDIT_DIALOG,
       openDialog: true,
-      formData: rowData
+      formData: rowData,
+      rowIdx
     })
   };
 }
@@ -251,7 +265,8 @@ export function hideEditDialog() {
     dispatch({
       type: types.HIDE_EDIT_DIALOG,
       openDialog: false,
-      formData: {}
+      formData: {},
+      rowIdx: null
     })
   };
 }

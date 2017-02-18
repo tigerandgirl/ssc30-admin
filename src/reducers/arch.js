@@ -27,7 +27,8 @@ const initState = {
   selectedRows: {},
   editDialog: {
     show: false,
-    formData: []
+    formData: [],
+    rowIdx: null // 当前编辑框对应表格的行index
   },
   editFormData: {},
   createDialog: {
@@ -94,6 +95,9 @@ export default function arch(state = initState, action) {
     // save table data
     case TABLEDATA_UPDATE_SUCCESS:
       return update(state, {
+        tableData: {
+          [action.data.rowIdx]: {$set: action.data.rowData}
+        },
         createDialog: {
           show: {$set: false}
         },
@@ -128,7 +132,8 @@ export default function arch(state = initState, action) {
       return {...state,
         editDialog: {
           show: action.openDialog,
-          formData: action.formData
+          formData: action.formData,
+          rowIdx: action.rowIdx
         },
         editFormData: action.formData
       }
