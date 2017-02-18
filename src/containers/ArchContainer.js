@@ -14,7 +14,7 @@ import AdminAlert from '../components/AdminAlert';
 import * as Actions from '../actions/arch';
 
 // Consants for table
-const ItemsPerPage = 3;
+const ItemsPerPage = 15;
 
 class ArchContainer extends Component {
   static PropTypes = {
