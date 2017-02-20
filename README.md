@@ -46,9 +46,20 @@ npm run demo
 
 然后在浏览器中测试一下页面显示没有问题，点一点按钮看看是否可以正常提交数据。
 
+升级版本号，比如升级到0.1.4
+
+先修改`package.json`中的版本号
+
+```
+git commit -m 'new release'
+git tag -a v0.1.4 -m 'new release'
+git push --follow-tags
+```
+
 运行如下命令，先调用webpack进行打包，然后将结果通过rsync同步到阿里云服务器上。
 
 ```
+npm run build
 npm run release
 ```
 
