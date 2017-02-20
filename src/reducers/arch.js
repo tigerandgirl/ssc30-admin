@@ -79,24 +79,34 @@ export default function arch(state = initState, action) {
       return {...state,
         loading: false,
         loaded: false,
+        tableData: [],
         adminAlert: {...state.adminAlert,
           show: true,
           bsStyle: 'danger',
-          message: action.message
+          message: action.message,
+          resBody: action.resBody
         }
       };
 
     // table columns model
+    case LOAD_TABLECOLUMNS:
+      return {...state,
+        adminAlert: {
+          show: false
+        }
+      };
     case LOAD_TABLECOLUMNS_SUCCESS:
       return {...state,
         fields: action.data.fields,
       };
     case LOAD_TABLECOLUMNS_FAIL:
       return {...state,
+        fields: [],
         adminAlert: {...state.adminAlert,
           show: true,
           bsStyle: 'danger',
-          message: action.message
+          message: action.message,
+          resBody: action.resBody
         }
       };
 

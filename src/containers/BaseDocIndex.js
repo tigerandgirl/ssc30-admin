@@ -127,8 +127,16 @@ class BaseDocIndex extends Component {
       //  id: 'role'
       //}
       ,{
-        id: 'bizhong',
-        name: '币种'
+        id: 'bankclass',
+        name: '银行类别'
+      }
+      ,{
+        id: 'bank',
+        name: '银行'
+      }
+      ,{
+        id: 'bankaccount',
+        name: '银行账户'
       }
     ];
 

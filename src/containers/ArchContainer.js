@@ -143,7 +143,8 @@ class ArchContainer extends Component {
           onDismiss={::this.handleAlertDismiss}
         >
           <p>{adminAlert.message}</p>
-          { adminAlert.resMessage ? <p>后端返回的信息是：<pre>{adminAlert.resMessage}</pre></p> : null }
+          { adminAlert.resBody ? <p>后端返回的信息是：</p> : null }
+          { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <Grid>
           <Row className="show-grid">

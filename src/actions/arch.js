@@ -27,11 +27,11 @@ function getQueryURL(type) {
 // Common helper -> utils.js/api.js
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
-    return response
+    return response;
   } else {
-    var error = new Error(response.statusText)
-    error.response = response
-    throw error
+    var error = new Error(response.statusText);
+    error.response = response;
+    throw error;
   }
 }
 
@@ -65,6 +65,13 @@ function requestTableData() {
   }
 }
 
+// 开始获取表格列模型
+function requestTableColumnsModel() {
+  return {
+    type: types.LOAD_TABLECOLUMNS
+  }
+}
+
 // 由于后端的数据结构改过几次，所以在这里处理变化后的映射关系。
 function receiveTableBodyData(json, itemsPerPage) {
   if (json.success === true) {
@@ -77,13 +84,20 @@ function receiveTableBodyData(json, itemsPerPage) {
       }
     };
   } else {
-    // TODO: resMessage不应该保存在adminAlert下，而是应该放在tableData下
-    return {
-      type: types.LOAD_TABLEDATA_FAIL,
-      message: '获取表格数据失败，后端返回的success是false',
-      resMessage: json.message
-    };
+    // TODO: resBody不应该保存在adminAlert下，而是应该放在tableData下
+    return receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
+      json.message);
   }
+}
+
+// message: 错误信息
+// resBody: HTTP response body
+function receiveTableBodyDataFail(message, resBody) {
+  return {
+    type: types.LOAD_TABLEDATA_FAIL,
+    message,
+    resBody
+  };
 }
 
 function receiveTableColumnsModel(json) {
@@ -111,7 +125,7 @@ function receiveTableColumnsModel(json) {
     return {
       type: types.LOAD_TABLECOLUMNS_FAIL,
       message: '获取表格数据失败，后端返回的success是false',
-      resMessage: json.message
+      resBody: json.message
     }
   }
 }
@@ -158,8 +172,20 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
     var url = getQueryURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
-        return response.json();
-      }).then(json => {
+        // TODO: HTTP状态检查，需要独立成helper function
+        if (response.status >= 200 && response.status < 300) {
+          return response;
+        } else {
+          var error = new Error(response.statusText);
+          error.response = response;
+          response.text().then(text => {
+            dispatch(receiveTableBodyDataFail('后端返回的HTTP status code不是200', text));
+          });
+          throw error;
+        }
+      })
+      .then(parseJSON)
+      .then(json => {
         dispatch(receiveTableBodyData(json, itemsPerPage));
       }).catch(function (err) {
         console.log("fetch error:", err);
@@ -169,7 +195,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
 
 export function fetchTableColumnsModel(baseDocId) {
   return (dispatch) => {
-    dispatch(requestTableData());
+    dispatch(requestTableColumnsModel());
 
     var opts = {
       method: 'post',

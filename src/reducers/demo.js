@@ -41,7 +41,7 @@ export default function arch(state = initState, action) {
         editFormData2: action.formData
       }
     default:
-      console.log('[Demo reduer] Unknown action type:', action.type);
+      //console.log('[Demo reduer] Unknown action type:', action.type);
       return state;
   }
 }
