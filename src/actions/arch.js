@@ -87,23 +87,31 @@ function receiveTableBodyData(json, itemsPerPage) {
 }
 
 function receiveTableColumnsModel(json) {
-  function fixFieldTypo (fields) {
-    return fields.map(field => {
-      field.label = field.lable; // API中将label错误的写成了lable
-      field.key = field.id; // API后来将key改成了id
-      // 将后端使用数字表示的data type转换成前端的名称
-      const TYPE = [
-        'string', 'integer', 'double', 'date', 'boolean', // 0~4
-        'ref', 'enum', '', 'datetime', 'text' // 5~9
-      ]
-      field.type = TYPE[field.datatype];
-      return field;
-    });
-  }
-  return {
-    type: types.LOAD_TABLECOLUMNS_SUCCESS,
-    data: {
-      fields: fixFieldTypo(json.data)
+  if (json.success === true) {
+    function fixFieldTypo (fields) {
+      return fields.map(field => {
+        field.label = field.lable; // API中将label错误的写成了lable
+        field.key = field.id; // API后来将key改成了id
+        // 将后端使用数字表示的data type转换成前端的名称
+        const TYPE = [
+          'string', 'integer', 'double', 'date', 'boolean', // 0~4
+          'ref', 'enum', '', 'datetime', 'text' // 5~9
+        ]
+        field.type = TYPE[field.datatype];
+        return field;
+      });
+    }
+    return {
+      type: types.LOAD_TABLECOLUMNS_SUCCESS,
+      data: {
+        fields: fixFieldTypo(json.data)
+      }
+    }
+  } else {
+    return {
+      type: types.LOAD_TABLECOLUMNS_FAIL,
+      message: '获取表格数据失败，后端返回的success是false',
+      resMessage: json.message
     }
   }
 }

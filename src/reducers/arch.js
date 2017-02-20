@@ -91,6 +91,14 @@ export default function arch(state = initState, action) {
       return {...state,
         fields: action.data.fields,
       };
+    case LOAD_TABLECOLUMNS_FAIL:
+      return {...state,
+        adminAlert: {...state.adminAlert,
+          show: true,
+          bsStyle: 'danger',
+          message: action.message
+        }
+      };
 
     // save table data
     case TABLEDATA_UPDATE_SUCCESS:
