@@ -3,19 +3,23 @@ import { Button, Alert } from 'react-bootstrap';
 
 class AdminAlert extends Component {
   static propTypes = {
-    //handleCreate: PropTypes.func.isRequired,
-    //handleUpdate: PropTypes.func.isRequired,
-    //handleDelete: PropTypes.func.isRequired
-    onDismiss: PropTypes.func.isRequired
+    show: PropTypes.bool,
+    bsStyle: PropTypes.string,
+    onDismiss: PropTypes.func
   };
+
   constructor(props) {
     super(props);
   }
+
   handleAlertDismiss() {
-    this.props.onDismiss();
+    if (this.props.onDismiss) {
+      this.props.onDismiss();
+    }
   }
+
   render() {
-    const { show, bsStyle } = this.props.adminAlert;
+    const { show, bsStyle } = this.props;
     if (show) {
       return (
         <div className='admin-alert'>

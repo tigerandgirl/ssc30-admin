@@ -73,25 +73,20 @@ function requestTableColumnsModel() {
 }
 
 // 由于后端的数据结构改过几次，所以在这里处理变化后的映射关系。
-function receiveTableBodyData(json, itemsPerPage) {
-  if (json.success === true) {
-    return {
-      type: types.LOAD_TABLEDATA_SUCCESS,
-      data: {
-        items: json.data,
-        totalCount: json.totalnum,
-        totalPage: Math.ceil(json.totalnum / itemsPerPage)
-      }
-    };
-  } else {
-    // TODO: resBody不应该保存在adminAlert下，而是应该放在tableData下
-    return receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
-      json.message);
-  }
+function receiveTableBodyDataSuccess(json, itemsPerPage) {
+  return {
+    type: types.LOAD_TABLEDATA_SUCCESS,
+    data: {
+      items: json.data,
+      totalCount: json.totalnum,
+      totalPage: Math.ceil(json.totalnum / itemsPerPage)
+    }
+  };
 }
 
 // message: 错误信息
 // resBody: HTTP response body
+// TODO: resBody不应该保存在adminAlert下，而是应该放在tableData下
 function receiveTableBodyDataFail(message, resBody) {
   return {
     type: types.LOAD_TABLEDATA_FAIL,
@@ -100,33 +95,20 @@ function receiveTableBodyDataFail(message, resBody) {
   };
 }
 
-function receiveTableColumnsModel(json) {
-  if (json.success === true) {
-    function fixFieldTypo (fields) {
-      return fields.map(field => {
-        field.label = field.lable; // API中将label错误的写成了lable
-        field.key = field.id; // API后来将key改成了id
-        // 将后端使用数字表示的data type转换成前端的名称
-        const TYPE = [
-          'string', 'integer', 'double', 'date', 'boolean', // 0~4
-          'ref', 'enum', '', 'datetime', 'text' // 5~9
-        ]
-        field.type = TYPE[field.datatype];
-        return field;
-      });
+function receiveTableColumnsModelSuccess(json, fields) {
+  return {
+    type: types.LOAD_TABLECOLUMNS_SUCCESS,
+    data: {
+      fields
     }
-    return {
-      type: types.LOAD_TABLECOLUMNS_SUCCESS,
-      data: {
-        fields: fixFieldTypo(json.data)
-      }
-    }
-  } else {
-    return {
-      type: types.LOAD_TABLECOLUMNS_FAIL,
-      message: '获取表格数据失败，后端返回的success是false',
-      resBody: json.message
-    }
+  }
+}
+
+function receiveTableColumnsModelFail(json) {
+  return {
+    type: types.LOAD_TABLECOLUMNS_FAIL,
+    message: '获取表格数据失败，后端返回的success是false',
+    resBody: json.message
   }
 }
 
@@ -148,6 +130,14 @@ function updateTableDataSuccess(json, rowIdx) {
       rowIdx,
       rowData: json.data // json.data中保存了后端返回的改行修改后的新数据
     }
+  }
+}
+
+function updateTableDataFail(message, resBody) {
+  return {
+    type: types.TABLEDATA_UPDATE_FAIL,
+    message,
+    resBody
   }
 }
 
@@ -186,9 +176,14 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
       })
       .then(parseJSON)
       .then(json => {
-        dispatch(receiveTableBodyData(json, itemsPerPage));
+        if (json.success === true) {
+          dispatch(receiveTableBodyDataSuccess(json, itemsPerPage));
+        } else {
+          dispatch(receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
+            json.message));
+        }
       }).catch(function (err) {
-        console.log("fetch error:", err);
+        console.log("fetch table body error:", err);
       });
   }
 }
@@ -211,9 +206,48 @@ export function fetchTableColumnsModel(baseDocId) {
       .then(response => {
         return response.json();
       }).then(json => {
-        dispatch(receiveTableColumnsModel(json));
+        if (json.success === true) {
+          function fixFieldTypo (fields) {
+            return fields.map(field => {
+              field.label = field.lable; // API中将label错误的写成了lable
+              field.key = field.id; // API后来将key改成了id
+              // 将后端使用数字表示的data type转换成前端的名称
+              const TYPE = [
+                'string', 'integer', 'double', 'date', 'boolean', // 0~4
+                'ref', 'enum', '', 'datetime', 'text' // 5~9
+              ]
+              field.type = TYPE[field.datatype];
+              return field;
+            });
+          }
+          function hideSpecialColumns(fileds) {
+            function shouldHideColumn(id) {
+              // id，主键
+              if ('id'.indexOf(id) !== -1) {
+                return true;
+              }
+              // name开头，后面跟数字
+              if (/^name\d+/g.exec(id) !== null) {
+                return true;
+              }
+              return false;
+            }
+            return fields.map(field => {
+              let newField = {...field};
+              if (shouldHideColumn(field.id)) {
+                newField.hidden = true;
+              }
+              return newField;
+            });
+          }
+          let fields = fixFieldTypo(json.data);
+          fields = hideSpecialColumns(fields);
+          dispatch(receiveTableColumnsModelSuccess(json, fields));
+        } else {
+          dispatch(receiveTableColumnsModelFail(json));
+        }
       }).catch(function (err) {
-        console.log("fetch error:", err);
+        console.log("fetch table columns error:", err);
       });
   }
 }
@@ -249,6 +283,30 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
 export function saveTableData(baseDocId, formData, rowIdx) {
   return (dispatch, getState) => {
     removeEmpty(formData);
+
+    function checkHTTPStatus(response) {
+      // TODO: HTTP状态检查，需要独立成helper function
+      if (response.status >= 200 && response.status < 300) {
+        return response;
+      } else {
+        var error = new Error(response.statusText);
+        error.response = response;
+        response.text().then(text => {
+          dispatch(updateTableDataFail(('后端返回的HTTP status code不是200', text)));
+        });
+        throw error;
+      }
+    }
+
+    function processJSONResult(json) {
+      if (json.success === true) {
+        dispatch(updateTableDataSuccess(json, rowIdx));
+      } else {
+        dispatch(updateTableDataFail('获取表格数据失败，后端返回的success是false',
+          json.message));
+      }
+    }
+
     var opts = {
       method: 'post',
       headers: {
@@ -260,13 +318,11 @@ export function saveTableData(baseDocId, formData, rowIdx) {
 
     var url = getSaveURL(baseDocId);
     return fetch(url, opts)
-      .then(response => {
-        return response.json();
-      }).then(json => {
-        dispatch(updateTableDataSuccess(json, rowIdx));
-      }).catch(function (err) {
-        alert('保存时候出现错误');
-        console.log("保存时候出现错误：", err);
+      .then(checkHTTPStatus)
+      .then(parseJSON)
+      .then(processJSONResult)
+      .catch(function (err) {
+        console.log("保存基础档案时候出现错误：", err);
       });
   }
 }
@@ -294,10 +350,10 @@ export function showEditDialog(rowIdx, rowData) {
   };
 }
 
-export function hideEditDialog() {
+export function closeEditDialog() {
   return (dispatch, getState) => {
     dispatch({
-      type: types.HIDE_EDIT_DIALOG,
+      type: types.EDIT_DIALOG_CLOSE,
       openDialog: false,
       formData: {},
       rowIdx: null
@@ -381,34 +437,13 @@ export function submitEditForm() {
  * When "CreateForm" call this, rowData will not pass, so we will try to get 
  * table column(form field) information from table rows.
  */
-export function showCreateDialog(rowId, rowData) {
+export function showCreateDialog(rowData) {
   return (dispatch, getState) => {
-    if (!rowData) {
-      let rowData;
-      const state = getState();
-      if (state.arch.tableData.length !== 0) {
-        rowData = state.arch.tableData[0];
-      } else {
-        // fake data
-        rowData = {};
-        rowData.cols = [
-          { type: 'text', label: 'col1', value: '' },
-          { type: 'text', label: 'col2', value: '' }
-        ];
-      }
-      dispatch({
-        type: types.SHOW_CREATE_DIALOG,
-        openDialog: true,
-        formData: rowData
-      })
-    } else {
-      dispatch({
-        type: types.SHOW_CREATE_DIALOG,
-        openDialog: true,
-        formData: rowData
-      })
-    }
-
+    dispatch({
+      type: types.SHOW_CREATE_DIALOG,
+      openDialog: true,
+      formData: rowData
+    });
   };
 }
 
@@ -490,6 +525,8 @@ export function updateCreateFormFieldValue(label, value) {
   };
 };
 
+// 页面上的消息框
+
 export function showAdminAlert() {
   return dispatch => {
     dispatch({
@@ -502,6 +539,24 @@ export function hideAdminAlert() {
   return dispatch => {
     dispatch({
       type: types.HIDE_ADMIN_ALERT
+    });
+  };
+};
+
+// 对话框中的消息框
+
+export function showFormAlert() {
+  return dispatch => {
+    dispatch({
+      type: types.FORM_ALERT_OPEN
+    });
+  };
+};
+
+export function hideFormAlert() {
+  return dispatch => {
+    dispatch({
+      type: types.FORM_ALERT_CLOSE
     });
   };
 };

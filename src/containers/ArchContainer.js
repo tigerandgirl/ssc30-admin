@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
-import { Grid as SSCGrid, Form } from 'ssc-comp';
+import { Grid as SSCGrid, Form } from 'ssc-grid';
 
 import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
@@ -47,11 +47,13 @@ class ArchContainer extends Component {
 
   // admin card actions
   handleCreate(event) {
-    this.props.showCreateDialog();
+    const { tableData } = this.props;
+    const rowData = tableData[0];
+    this.props.showCreateDialog(rowData);
   }
 
   closeEditDialog() {
-    this.props.hideEditDialog();
+    this.props.closeEditDialog();
   }
 
   closeCreateDialog() {
@@ -67,8 +69,6 @@ class ArchContainer extends Component {
     const { baseDocId } = this.props.params;
     //this.props.submitCreateForm();
     this.props.saveTableData(baseDocId, formData);
-    // 重新加载表格中的数据
-    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
     event.preventDefault();
   }
 
@@ -85,7 +85,11 @@ class ArchContainer extends Component {
     event.preventDefault();
   }
 
-  handleAlertDismiss(){
+  handlePageAlertDismiss(){
+    this.props.hideAdminAlert();
+  }
+
+  handleFormAlertDismiss(){
     this.props.hideAdminAlert();
   }
 
@@ -126,7 +130,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert
+      adminAlert, formAlert
     } = this.props;
 
     // 表单字段模型 / 表格列模型
@@ -139,8 +143,8 @@ class ArchContainer extends Component {
 
     return (
       <div>
-        <AdminAlert {...this.props} show={adminAlert.show} bsStyle={adminAlert.bsStyle} 
-          onDismiss={::this.handleAlertDismiss}
+        <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
+          onDismiss={::this.handlePageAlertDismiss}
         >
           <p>{adminAlert.message}</p>
           { adminAlert.resBody ? <p>后端返回的信息是：</p> : null }
@@ -172,6 +176,13 @@ class ArchContainer extends Component {
           </Row>
         </Grid>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
+          <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
+            onDismiss={::this.handleFormAlertDismiss}
+          >
+            <p>{formAlert.message}</p>
+            { formAlert.resBody ? <p>后端返回的信息是：</p> : null }
+            { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
+          </AdminAlert>
           <Form
             fieldsModel={cols}
             defaultData={editFormData}
@@ -197,8 +208,7 @@ const mapStateToProps = (state, ownProps) => {
     arch: state.arch,
     tableData: state.arch.tableData,
     fields: state.arch.fields,
-    totalPage: state.arch.totalPage,
-    adminAlert: state.arch.adminAlert
+    totalPage: state.arch.totalPage
   }
 }
 

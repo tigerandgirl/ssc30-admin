@@ -14,6 +14,11 @@ DB_TABLE.dept = function () {
     utils.string('id', '主键', 40),
     utils.string('code', '部门编码', 40),
     utils.string('name', '部门名称', 200),
+    utils.string('name2', '名称2', 200),
+    utils.string('name3', '名称3', 200),
+    utils.string('name4', '名称4', 200),
+    utils.string('name5', '名称5', 200),
+    utils.string('name6', '名称6', 200),
     utils.ref('parentid', '所属上级'),
     utils.ref('person', '部门主管'),
     utils.boolean('enable', '启用'),
@@ -22,66 +27,157 @@ DB_TABLE.dept = function () {
   // TODO; 去掉没用的`'value':`
   db_table.body = [
     {'id': '11', 'cols': [
-      {'value': '11'},
-      {'value': '263X2016111400000081'},
-      {'value': '部门1'},
-      {'value': '上级1'},
-      {'value': '主管1'},
-      {'value': true},
+      {value: '11'},
+      {value: '263X2016111400000081'},
+      {value: '部门1'},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: {
+        id: '384982394',
+        code: '1243',
+        name: '上级1'
+      }},
+      {value: {
+        id: 'a384982394',
+        code: 'a1243',
+        name: '主管1'
+      }},
+      {value: true},
       {value: '备注1'}
     ]},
     {'id': '22', 'cols': [
-      {'value': '22'},
-      {'value': 'D32016091200000022'},
-      {'value': '部门2'},
-      {'value': '上级2'},
-      {'value': '主管2'},
-      {'value': false},
+      {value: '22'},
+      {value: 'D32016091200000022'},
+      {value: '部门2'},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: {
+        id: '384982394',
+        code: '1243',
+        name: '上级1'
+      }},
+      {value: {
+        id: 'a384982394',
+        code: 'a1243',
+        name: '主管1'
+      }},
+      {value: false},
       {value: '备注2'}
     ]},
     {'id': '33', 'cols': [
-      {'value': '33'},
-      {'value': '263X2016083000000025'},
-      {'value': '部门3'},
-      {'value': '上级3'},
-      {'value': '主管3'},
-      {'value': true},
+      {value: '33'},
+      {value: '263X2016083000000025'},
+      {value: '部门3'},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: {
+        id: '384982394',
+        code: '1243',
+        name: '上级1'
+      }},
+      {value: {
+        id: 'a384982394',
+        code: 'a1243',
+        name: '主管1'
+      }},
+      {value: true},
       {value: '备注3'}
     ]},
     {'id': '44', 'cols': [
-      {'value': '44'},
-      {'value': '263X2016083000000025'},
-      {'value': '部门4'},
-      {'value': '上级4'},
-      {'value': '主管4'},
-      {'value': true},
+      {value: '44'},
+      {value: '263X2016083000000025'},
+      {value: '部门4'},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: {
+        id: '384982394',
+        code: '1243',
+        name: '上级1'
+      }},
+      {value: {
+        id: 'a384982394',
+        code: 'a1243',
+        name: '主管1'
+      }},
+      {value: true},
       {value: '备注4'}
     ]},
     {'id': '55', 'cols': [
-      {'value': '55'},
-      {'value': '263X2016083000000025'},
-      {'value': '部门5'},
-      {'value': '上级5'},
-      {'value': '主管5'},
-      {'value': true},
+      {value: '55'},
+      {value: '263X2016083000000025'},
+      {value: '部门5'},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: {
+        id: '384982394',
+        code: '1243',
+        name: '上级1'
+      }},
+      {value: {
+        id: 'a384982394',
+        code: 'a1243',
+        name: '主管1'
+      }},
+      {value: true},
       {value: '备注5'}
     ]},
     {'id': '66', 'cols': [
-      {'value': '66'},
-      {'value': '263X2016083000000025'},
-      {'value': '部门6'},
-      {'value': '上级6'},
-      {'value': '主管6'},
-      {'value': true},
+      {value: '66'},
+      {value: '263X2016083000000025'},
+      {value: '部门6'},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: {
+        id: '384982394',
+        code: '1243',
+        name: '上级1'
+      }},
+      {value: {
+        id: 'a384982394',
+        code: 'a1243',
+        name: '主管1'
+      }},
+      {value: true},
       {value: '备注6'}
     ]},
     {'id': '77', 'cols': [
-      {'value': '77'},
-      {'value': '263X2016083000000025'},
-      {'value': '部门7'},
-      {'value': '上级7'},
-      {'value': '主管7'},
-      {'value': true},
+      {value: '77'},
+      {value: '263X2016083000000025'},
+      {value: '部门7'},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: null},
+      {value: {
+        id: '384982394',
+        code: '1243',
+        name: '上级1'
+      }},
+      {value: {
+        id: 'a384982394',
+        code: 'a1243',
+        name: '主管1'
+      }},
+      {value: true},
       {value: '备注7'}
     ]}
   ];

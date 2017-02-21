@@ -62,7 +62,7 @@ function $ref(id, name) {
   return {
     "id": id,
     "lable": name,
-    "datatype": 999,
+    "datatype": 5,
     refinfo: "G001ZM0000BASEDOC0000DEPT000000000000000"
   };
 }

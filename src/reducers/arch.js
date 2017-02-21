@@ -8,7 +8,7 @@ import {
   TABLEDATA_UPDATE, TABLEDATA_UPDATE_SUCCESS, TABLEDATA_UPDATE_FAIL,
   CHANGE_SELECTED_ROWS,
 
-  SHOW_EDIT_DIALOG, HIDE_EDIT_DIALOG,
+  SHOW_EDIT_DIALOG, EDIT_DIALOG_CLOSE,
   ARCH_INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
   SUBMIT_EDIT_FORM, SUBMIT_EDIT_FORM_SUCCESS, SUBMIT_EDIT_FORM_FAIL,
 
@@ -16,7 +16,8 @@ import {
   INIT_CREATE_FORM_DATA, UPDATE_CREATE_FORM_FIELD_VALUE,
   SUBMIT_CREATE_FORM, SUBMIT_CREATE_FORM_SUCCESS, SUBMIT_CREATE_FORM_FAIL,
 
-  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT
+  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,
+  FORM_ALERT_OPEN, FORM_ALERT_CLOSE
 } from '../constants/ActionTypes';
 
 const initState = {
@@ -42,13 +43,22 @@ const initState = {
       bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
       message: ''
     }
+  },
+  // 当表单提交失败的时候，显示错误信息
+  formAlert: {
+    show: false,
+    error: {
+      code: 0,
+      bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
+      message: ''
+    }
   }
 };
 
 export default function arch(state = initState, action) {
   switch (action.type) {
 
-    // admin alert
+    // 页面上的消息框
     case SHOW_ADMIN_ALERT:
       return update(state, {
         adminAlert: {
@@ -62,7 +72,21 @@ export default function arch(state = initState, action) {
         }
       });
 
-    // table body data
+    // 对话框中的消息框
+    case FORM_ALERT_OPEN:
+      return update(state, {
+        formAlert: {
+          show: {$set: true}
+        }
+      });
+    case FORM_ALERT_CLOSE:
+      return update(state, {
+        formAlert: {
+          show: {$set: false}
+        }
+      });
+
+    // 获取表格体数据
     case LOAD_TABLEDATA:
       return {...state,
         loading: true
@@ -88,7 +112,7 @@ export default function arch(state = initState, action) {
         }
       };
 
-    // table columns model
+    // 获取表格头数据
     case LOAD_TABLECOLUMNS:
       return {...state,
         adminAlert: {
@@ -110,7 +134,7 @@ export default function arch(state = initState, action) {
         }
       };
 
-    // save table data
+    // 通过表单修改表格中的一行
     case TABLEDATA_UPDATE_SUCCESS:
       return update(state, {
         tableData: {
@@ -128,8 +152,19 @@ export default function arch(state = initState, action) {
           message: {$set: '保存成功'}
         }
       });
+    case TABLEDATA_UPDATE_FAIL:
+      return update(state, {
+        formAlert: {
+          $set: {
+            show: true,
+            bsStyle: 'danger',
+            message: action.message,
+            resBody: action.resBody
+          }
+        }
+      });
 
-    // delete table data
+    // 删除表格中的一行
     case DELETE_TABLEDATA_SUCCESS:
       return update(state, {
         adminAlert: {
@@ -144,17 +179,23 @@ export default function arch(state = initState, action) {
         selectedRows: action.selectedRows
       }
 
-    // edit dialog
+    // 对话框
+
     case SHOW_EDIT_DIALOG:
-    case HIDE_EDIT_DIALOG:
-      return {...state,
+    case EDIT_DIALOG_CLOSE:
+      return update(state, {
         editDialog: {
-          show: action.openDialog,
-          formData: action.formData,
-          rowIdx: action.rowIdx
+          $set: {
+            show: action.openDialog,
+            formData: action.formData,
+            rowIdx: action.rowIdx
+          }
         },
-        editFormData: action.formData
-      }
+        formAlert: {
+          show: {$set: false}
+        },
+        editFormData: {$set: action.formData}
+      });
     case UPDATE_EDIT_FORM_FIELD_VALUE:
       // Update single value inside specific array item
       // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux

@@ -55,9 +55,6 @@ class AdminEditDialog extends Component {
           </Modal.Header>
           <Modal.Body>
             {
-              //<h4>Text in a modal</h4>
-            }
-            {
               React.Children.map(this.props.children, child => {
                 return React.cloneElement(child, {
                 })
