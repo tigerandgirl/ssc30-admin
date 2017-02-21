@@ -97,7 +97,8 @@ const mockColumnsData = [
 ReactDOM.render(
     React.createElement(SSCGrid, {
       columnsModel: mockColumnsData,
-      tableData: tableData
+      tableData: tableData,
+      operateColumn: true
     }),
   document.getElementById('root')
 );
