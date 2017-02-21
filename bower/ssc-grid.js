@@ -137,9 +137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var _this = (0, _possibleConstructorReturn3['default'])(this, _Component.call(this, props));
 
-	    _this.state = {
-	      selectedRows: {}
-	    };
+	    _this.state = {};
 	    return _this;
 	  }
 
@@ -149,11 +147,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
-	  Grid.prototype.handleSelectAll = function handleSelectAll() {};
+	  // 当选中所有行的时候
 
-	  Grid.prototype.handleSelectOne = function handleSelectOne(rowIdx, checked) {
-	    if (this.props.onSelectOne) {
-	      this.props.onSelectOne(rowIdx, checked);
+
+	  Grid.prototype.handleSelectAll = function handleSelectAll(event) {
+	    var _props = this.props,
+	        selectRow = _props.selectRow,
+	        tableData = _props.tableData;
+
+	    var isSelected = event.target.checked;
+	    if (selectRow && selectRow.onSelectAll) {
+	      selectRow.onSelectAll(tableData, isSelected, event);
 	    }
 	  };
 
@@ -178,12 +182,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Grid.prototype.render = function render() {
 	    var _this2 = this;
 
-	    var _props = this.props,
-	        columnsModel = _props.columnsModel,
-	        tableData = _props.tableData,
-	        checkboxColumn = _props.checkboxColumn,
-	        operateColumn = _props.operateColumn,
-	        className = _props.className;
+	    var _props2 = this.props,
+	        columnsModel = _props2.columnsModel,
+	        tableData = _props2.tableData,
+	        selectRow = _props2.selectRow,
+	        operateColumn = _props2.operateColumn,
+	        className = _props2.className;
 
 	    // 表格数据非空判断
 
@@ -202,11 +206,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    var renderCheckboxHeader = function renderCheckboxHeader() {
-	      return checkboxColumn ? _react2['default'].createElement(
-	        'th',
-	        null,
-	        _react2['default'].createElement(_reactBootstrap.Checkbox, { onChange: _this2.handleSelectAll.bind(_this2) })
-	      ) : null;
+	      return (
+	        // selectRow ? <th><Checkbox onChange={this.handleSelectAll.bind(this)} /></th> : null
+	        selectRow ? _react2['default'].createElement('th', null) : null
+	      );
 	    };
 
 	    var pagination = _react2['default'].createElement(_reactBootstrap.Pagination, { className: 'pagination',
@@ -252,11 +255,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return _react2['default'].createElement(
 	              _GridRow2['default'],
 	              {
-	                checkboxColumn: checkboxColumn,
+	                selectRow: selectRow,
 	                operateColumn: operateColumn,
 	                rowObj: row, key: rowIdx,
 	                columnsModel: columnsModel, rowIdx: rowIdx,
-	                onRowSelection: self.handleSelectOne.bind(self),
 	                onEdit: self.handleEdit.bind(self),
 	                onRemove: self.handleRemove.bind(self),
 	                onCellChecked: self.handleCellChecked.bind(self)
@@ -298,10 +300,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  onPagination: _react.PropTypes.func,
 	  /**
-	   * 选择
-	   */
-	  onSelectOne: _react.PropTypes.func,
-	  /**
 	   * 删除
 	   */
 	  onRemove: _react.PropTypes.func,
@@ -310,9 +308,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  onEdit: _react.PropTypes.func,
 	  /**
-	   * 是否在表格的最左边一列显示复选框
+	   * 是否启用行选择，复选框/单选框<br>
+	   * 默认为<code>null</code>，不显示
+	   * <pre><code>{
+	   *   mode: 'checkbox',
+	   *   onSelect: (rowIdx, rowObj, isSelected, event) => {},
+	   *   onSelectAll: (tableData, isSelected, event) => {}
+	   * }</code></pre>
+	   * <code>mode</code>，<code>checkbox</code>复选，<code>radio</code>单选<br>
+	   * <code>onSelect</code>，当选择单行的时候触发，参数：
+	   * <ul>
+	   * <li><code>rowIdx</code></li>行index
+	   * <li><code>rowObj</code></li>行数据
+	   * <li><code>isSelected</code></li>复选框/单选框选中状态true/false
+	   * <li><code>event</code></li>Event对象
+	   * </ul>
+	   * <code>onSelectAll</code>，当选择所有行的时候触发，参数：
+	   * <ul>
+	   * <li><code>tableData</code></li>所有行的数据
+	   * <li><code>isSelected</code></li>复选框/单选框选中状态true/false
+	   * <li><code>event</code></li>Event对象
+	   * </ul>
 	   */
-	  checkboxColumn: _react.PropTypes.bool,
+	  selectRow: _react.PropTypes.object,
 	  /**
 	   * 是否在表格的最右边一列显示操作按钮
 	   */
@@ -335,7 +353,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  activePage: _react.PropTypes.number
 	};
 	Grid.defaultProps = {
-	  checkboxColumn: false,
+	  selectRow: null,
 	  operateColumn: false,
 	  paging: false
 	};
@@ -19189,9 +19207,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactBootstrap = __webpack_require__(82);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	// import { Button } from 'react-bootstrap';
 
 	/**
 	 * GridRow组件
@@ -19245,9 +19263,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return _this;
 	  }
 
-	  GridRow.prototype.handleSelection = function handleSelection(rowIdx, event) {
-	    // this.setState({value: event.target.value});
-	    this.props.onRowSelection(rowIdx, event.target.checked);
+	  GridRow.prototype.handleSelect = function handleSelect(rowIdx, rowObj, event) {
+	    var selectRow = this.props.selectRow;
+
+	    var isSelected = event.target.checked;
+	    if (selectRow && selectRow.onSelect) {
+	      selectRow.onSelect(rowIdx, rowObj, isSelected, event);
+	    }
 	  };
 
 	  GridRow.prototype.handleEdit = function handleEdit(rowIdx, rowData, event) {
@@ -19273,33 +19295,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        columnsModel = _props.columnsModel,
 	        rowObj = _props.rowObj,
 	        rowIdx = _props.rowIdx,
-	        checkboxColumn = _props.checkboxColumn,
+	        selectRow = _props.selectRow,
 	        operateColumn = _props.operateColumn;
 
 	    return _react2['default'].createElement(
 	      'tr',
 	      null,
-
-	      // <td><Checkbox onChange={::this.handleSelection} /></td>
-	      checkboxColumn ? _react2['default'].createElement(
+	      selectRow && selectRow.mode ? _react2['default'].createElement(
 	        'td',
 	        null,
-	        _react2['default'].createElement('input', { type: 'checkbox', onChange: this.handleSelection.bind(this, rowIdx) })
+	        _react2['default'].createElement('input', { type: selectRow.mode, onChange: this.handleSelect.bind(this, rowIdx, rowObj) })
 	      ) : null,
 	      this.renderCells(columnsModel, rowObj),
 	      operateColumn ? _react2['default'].createElement(
 	        'td',
 	        null,
-	        _react2['default'].createElement(
-	          _reactBootstrap.Button,
-	          { onClick: this.handleEdit.bind(this, rowIdx, rowObj) },
-	          '\u4FEE\u6539'
-	        ),
-	        _react2['default'].createElement(
-	          _reactBootstrap.Button,
-	          { onClick: this.handleRemove.bind(this, rowIdx, rowObj) },
-	          '\u5220\u9664'
-	        )
+	        _react2['default'].createElement('span', { onClick: this.handleEdit.bind(this, rowIdx, rowObj), className: 'glyphicon glyphicon-pencil' }),
+	        _react2['default'].createElement('span', { onClick: this.handleRemove.bind(this, rowIdx, rowObj), className: 'glyphicon glyphicon-trash' })
 	      ) : null,
 	      this.props.children
 	    );
@@ -19327,7 +19339,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * 表格中本行的index，从0开始，等同于key
 	   */
 	  rowIdx: _react.PropTypes.number.isRequired,
-	  onRowSelection: _react.PropTypes.func.isRequired,
+	  /**
+	   * 当点击行最左侧的复选框/单选框的时候
+	   */
+	  selectRow: _react.PropTypes.object,
 	  /**
 	   * 当点击“修改”按钮的时候
 	   */
@@ -19337,10 +19352,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  onRemove: _react.PropTypes.func.isRequired,
 	  /**
-	   * 每一行是否显示最左侧的复选框
-	   */
-	  checkboxColumn: _react.PropTypes.bool,
-	  /**
 	   * 每一行是否显示最右侧的操作按钮列
 	   */
 	  operateColumn: _react.PropTypes.bool,
@@ -19348,7 +19359,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	GridRow.defaultProps = {
 	  selectable: true,
-	  checkboxColumn: false,
+	  selectRow: null,
 	  operateColumn: false
 	};
 	exports['default'] = GridRow;
