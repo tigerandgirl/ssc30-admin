@@ -1,4 +1,4 @@
-const util = require('util');
+const low = require('lowdb');
 const utils = require('./utils');
 
 module.exports = {
@@ -6,20 +6,30 @@ module.exports = {
 };
 
 function post(req, res) {
+  const db = low(`${__dirname}/db_data/t_dept.json`);
   const data = req.body;
 
   const resObj = {
     __fake_server__: true,
-    success: true,
-    data: data
+    success: true
   };
 
   if (data.id) {
+    db.get('body')
+      .find({id: data.id})
+      .assign(data)
+      .write();
+    resObj.data = data;
+
     resObj.message = `保存成功：res.data.id = ${data.id}`;
   } else {
-    const primaryKey = utils.makeid(40);
-    resObj.message = `创建成功，新数据的主键：${primaryKey}`;
-    resObj.data.id = primaryKey;
+    const newData = Object.assign({id: utils.makeid(40)}, data);
+    db.get('body')
+      .push(newData)
+      .write();
+    resObj.data = newData;
+
+    resObj.message = `创建成功，新数据的主键：${newData.id}`;
   }
 
   res.json(resObj);
