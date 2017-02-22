@@ -1,4 +1,4 @@
-const util = require('util');
+const low = require('lowdb');
 const utils = require('./utils');
 
 module.exports = {
@@ -6,7 +6,12 @@ module.exports = {
 };
 
 function post(req, res) {
+  const db = low(`${__dirname}/db_data/t_dept.json`);
   const id = req.body.id;
+
+  db.get('body')
+    .remove({id: id})
+    .write();
 
   const basedoc = {
     __fake_server__: true,
