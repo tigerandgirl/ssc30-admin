@@ -27803,8 +27803,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        className = _props.className;
 
 	    return _react2['default'].createElement(
-	      'form',
-	      { className: (0, _classnames2['default'])(className) },
+	      _reactBootstrap.Form,
+	      { horizontal: true, className: (0, _classnames2['default'])(className) },
 	      fieldsModel.map(function (fieldModel, index) {
 	        var id = fieldModel.id,
 	            type = fieldModel.type,
@@ -27875,23 +27875,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	            controlId: 'formControl-' + id
 	          },
 	          _react2['default'].createElement(
-	            _reactBootstrap.ControlLabel,
-	            null,
+	            _reactBootstrap.Col,
+	            { componentClass: _reactBootstrap.ControlLabel, sm: 2 },
 	            label
 	          ),
-	          formCtrl,
+	          _react2['default'].createElement(
+	            _reactBootstrap.Col,
+	            { sm: 10 },
+	            formCtrl
+	          ),
 	          _react2['default'].createElement(_reactBootstrap.FormControl.Feedback, null)
 	        );
 	      }),
 	      _react2['default'].createElement(
-	        _reactBootstrap.Button,
-	        { onClick: this.handleSubmit.bind(this), type: 'submit' },
-	        '\u4FDD\u5B58'
-	      ),
-	      _react2['default'].createElement(
-	        _reactBootstrap.Button,
-	        { onClick: this.handleReset.bind(this), type: 'reset' },
-	        '\u6E05\u7A7A'
+	        _reactBootstrap.FormGroup,
+	        null,
+	        _react2['default'].createElement(
+	          _reactBootstrap.Col,
+	          { smOffset: 2, sm: 10 },
+	          _react2['default'].createElement(
+	            _reactBootstrap.Button,
+	            { onClick: this.handleReset.bind(this), type: 'reset' },
+	            '\u53D6\u6D88'
+	          ),
+	          _react2['default'].createElement(
+	            _reactBootstrap.Button,
+	            { onClick: this.handleSubmit.bind(this), type: 'submit' },
+	            '\u5B8C\u6210'
+	          )
+	        )
 	      )
 	    );
 	  };
