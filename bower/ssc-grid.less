@@ -1,0 +1,105 @@
+/** 通用色变量 */
+@mainColor: #1baede;      // 主色调（icon、提交按钮等）
+@darkColor: #189cc7;      // 深色调（按钮等悬停色）
+@btnHover: #f1f1f1;       // 普通按钮hover背景色
+@iconHover: #13799b;      // icon悬停色
+@hoverColor: #e9f7fc;     // 鼠标悬停色
+@focusColor: #c4eaf6;     // 点击选中色
+@borderColor: #cecece;    // 边框颜色
+@backColor: #eeeff1;      // 表头背景色
+
+/* 通用设置 */
+.btn-default:focus, .btn-default:hover {
+  background-color: @btnHover;
+}
+.btn-default:active:hover {
+  background-color: @btnHover;
+}
+
+/* form begin */
+.form-horizontal{
+  font-family: "Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+  .control-label {
+    font-weight: 400;
+    line-height: 34px;
+    padding: 0;
+    margin: 0;
+  }
+  #formControl-danjuriqi {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+  .form-group button {
+    width: 80px;
+    height: 34px;
+    margin-right: 20px;
+    background-image: none;
+  }
+  .form-group button[type="submit"] {
+    color: #ffffff;
+    background-color: @mainColor;
+    &:hover {
+      background-color: @darkColor;
+    }
+  }
+}
+/** form over **/
+
+/** table begin **/
+.table-striped {
+  font-family: "Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+  border: 1px solid @borderColor;
+  >thead>tr>th, >tbody>tr>td {
+    border: 0;
+    border-top: 1px solid @borderColor;
+  }
+  >thead {
+    >tr {
+      background-color: @backColor;
+      >th {
+        padding: 10px;
+        font-weight: 400;
+      }
+    }
+  }
+  >tbody {
+    >tr {
+      &:nth-of-type(odd) {
+        background-color: #ffffff;
+      }
+      &:hover {
+        background-color: @hoverColor;
+      }
+      &:focus, &:active {
+        background-color: @focusColor;
+      }
+      >td {
+        font-size: 12px;
+        padding: 10px;
+        height: 45px;
+        vertical-align: middle;
+        .glyphicon {
+          color: transparent;
+          width: 20px;
+        }
+      }
+    }
+  }
+  >tbody>tr:hover>td .glyphicon {
+    display: inline-block;
+    color: @mainColor;
+  }
+  >tbody>tr:focus>td .glyphicon {
+    display: inline-block;
+    color: @mainColor;
+  }
+  >tbody>tr:hover>td .glyphicon:hover {
+    color: @iconHover;
+    cursor: pointer;
+  }
+  >tbody>tr:focus>td .glyphicon:hover {
+    color: @iconHover;
+    cursor: pointer;
+  }
+}
+/** table over **/
