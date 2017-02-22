@@ -11,7 +11,8 @@
     "dev": "cross-env NODE_ENV=development node ./devServer.js",
     "prod": "cross-env NODE_ENV=production node ./devServer.js",
     "demo": "cross-env NODE_ENV=production node ./demoServer.js",
-    "release": "npm run build && .utils/deploy.sh"
+    "release": "npm run build && .utils/deploy.sh",
+    "db:reset": "node api/mocks/reset_db.js"
   },
   "devDependencies": {
     "babel-core": "^6.8.0",
