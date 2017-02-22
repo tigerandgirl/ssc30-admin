@@ -8,7 +8,7 @@ module.exports = {
 const DB_TABLE = {};
 
 DB_TABLE.dept = function () {
-  const db = low(__dirname + '/db_data/t_dept.json');
+  const db = low(`${__dirname}/db_data/t_dept.json`);
   return db.value();
 };
 

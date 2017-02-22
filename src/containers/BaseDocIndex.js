@@ -12,6 +12,7 @@ import AdminAlert from '../components/AdminAlert';
 import AdminEditForm from '../components/AdminEditForm';
 
 import * as Actions from '../actions/arch';
+import getBaseDocTypes from '../constants/BaseDocTypes';
 
 // Consants for table
 const itemsPerPage = 5;
@@ -105,34 +106,12 @@ class BaseDocIndex extends Component {
       adminAlert
     } = this.props;
     const cols = tableData[0] ? tableData[0].cols : [];
-    const basedocs = [
-      {id: 'accbook', name: '账簿'}
-      ,{id: 'accelement', name: '会计要素'}
-      ,{id: 'accperiod', name: '会计期间'}
-      ,{id: 'accperiodscheme', name: '会计期间方案'}
-      ,{id: 'accstandard', name: '会计准则'}
-      ,{id: 'accsubjectchart', name: '账簿科目表'}
-      ,{id: 'bank', name: '银行'}
-      ,{id: 'bankaccount', name: '银行账户'}
-      ,{id: 'bankclass', name: '银行类别'}
-      ,{id: 'currency', name: '币种'}
-      ,{id: 'dept', name: '部门'}
-      ,{id: 'feeitem', name: '费用项目'}
-      ,{id: 'feeitemclass', name: '费用项目类型'}
-      ,{id: 'measuredoc', name: '数量'}
-      ,{id: 'multidimension', name: '科目多维结构'}
-      ,{id: 'project', name: '项目'}
-      ,{id: 'projectclass', name: '项目类型'}
-      ,{id: 'subjectchart', name: '科目表'}
-      ,{id: 'user', name: '用户'}
-      ,{id: 'valuerang', name: '值集'}
-    ];
 
     return (
       <div>
         <h1>基础档案所有类型</h1>
         <ul>
-          {basedocs.map(basedoc => <span style={{marginRight: '10px'}} key={basedoc.id}><Link to={`/basedocs-no-sidebar/basedoc/${basedoc.id}`}>{basedoc.name}</Link></span>)}
+          {getBaseDocTypes().map(basedoc => <span style={{marginRight: '10px'}} key={basedoc.id}><Link to={`/basedocs-no-sidebar/basedoc/${basedoc.id}`}>{basedoc.name}</Link></span>)}
         </ul>
         <h2>详情</h2>
         <div>

@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = {
+  getDocTypeFromQueryPath: getDocTypeFromQueryPath,
   row: row,
   pagination: pagination,
   makeid: makeid,
@@ -9,6 +10,30 @@ module.exports = {
   ref: $ref,
   enum: $enum
 };
+
+function runRegex(path, regex) {
+  var m;
+  if ((m = regex.exec(path)) !== null) {console.log(m)
+    // The result can be accessed through the `m`-variable.
+    m.forEach((match, groupIndex) => {
+      console.log(`Found match, group ${groupIndex}: ${match}`);
+    });
+    return m[1];
+  }
+}
+
+// input `/dept/query` output `dept`
+function getDocTypeFromQueryPath(path) {
+  return runRegex(path, /\/(.*)\/query/);
+}
+
+function getDocTypeFromSavePath(path) {
+  return runRegex(path, /\/(.*)\/save/);
+}
+
+function getDocTypeFromDeletePath(path) {
+  return runRegex(path, /\/(.*)\/delete/);
+}
 
 function row(id, cols) {
   return {

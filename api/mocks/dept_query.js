@@ -1,13 +1,17 @@
-const util = require('util');
+const debug = require('debug')('ssc:mocks');
+const low = require('lowdb');
 const utils = require('./utils');
-const DB_TABLE = require('./db').db();
 
 module.exports = {
   post: post
 };
 
 function post(req, res) {
-  const doctype = 'dept';
+  // 这里使用通用处理的controller，需要从swaggerObj中获取到path
+  // path中含有对应的档案类型
+  // 比如`/dept/query`
+  const doctype = utils.getDocTypeFromQueryPath(
+    req.swagger.operation.pathObject.path);
 
   const condition = req.body.condition || '';
   const begin = req.body.begin;
@@ -19,18 +23,23 @@ function post(req, res) {
     "message": null,
   };
 
-  if (DB_TABLE[doctype]) {
-    // 根据基础档案类型，获取数据库中对应表的所有数据
-    var db_table = DB_TABLE[doctype]();
-    // 通过工具函数对所有数据进行分页，获取单页数据
-    // 由于数据库结构和后端定义的response结构不同，这里处理transform
-    resObj.data = db_table.body.slice(begin, begin + itemsPerPage);
+  // 根据基础档案类型，获取数据库中对应表的所有数据
+  debug(`Open database file: t_${doctype}.json`);
+  const db = low(`${__dirname}/db_data/t_${doctype}.json`);
+
+  // 为啥isEmpty返回的是Boolean对象?
+  if (!db.isEmpty().valueOf()) {
+    var body = db.get('body').value();
+    debug('body: %s', JSON.stringify(body));
+    // 对整个表数据进行分页，获取单页数据
+    // TODO 由于数据库结构和后端定义的response结构不同，这里处理transform
+    resObj.data = body.slice(begin, begin + itemsPerPage);
     resObj.begin = begin;
     resObj.num = itemsPerPage;
-    resObj.totalnum = db_table.body.length;
+    resObj.totalnum = body.length; // 表的总行数
   } else {
     resObj.success = false;
-    resObj.message = '未知的基础档案类型';
+    resObj.message = '对应该类型的数据表JSON文件不存在，请检查api/mocks/db_data/目录';
   }
 
   res.json(resObj);

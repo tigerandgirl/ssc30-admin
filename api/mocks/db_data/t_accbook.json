@@ -8,13 +8,13 @@
     },
     {
       "id": "code",
-      "lable": "部门编码",
+      "lable": "编码",
       "datatype": 0,
       "length": 40
     },
     {
       "id": "name",
-      "lable": "部门名称",
+      "lable": "名称",
       "datatype": 0,
       "length": 200
     },
