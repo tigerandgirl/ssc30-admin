@@ -71,6 +71,10 @@ class ArchContainer extends Component {
     this.props.saveTableData(baseDocId, formData);
     event.preventDefault();
   }
+  handleCreateFormReset(event) {
+    this.props.hideCreateDialog();
+    event.preventDefault();
+  }
 
   // edit form
   handleEditFormBlur(index, fieldModel, value) {
@@ -82,6 +86,10 @@ class ArchContainer extends Component {
     const { baseDocId } = this.props.params;
     //this.props.submitEditForm();
     this.props.saveTableData(baseDocId, formData, rowIdx);
+    event.preventDefault();
+  }
+  handleEditFormReset(event) {
+    this.props.closeEditDialog();
     event.preventDefault();
   }
 
@@ -188,6 +196,7 @@ class ArchContainer extends Component {
             defaultData={editFormData}
             onBlur={::this.handleEditFormBlur}
             onSubmit={::this.handleEditFormSubmit}
+            onReset={::this.handleEditFormReset}
           />
         </AdminEditDialog>
         <AdminEditDialog className='create-form' title='创建' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
@@ -196,6 +205,7 @@ class ArchContainer extends Component {
             defaultData={formDefaultData}
             onBlur={::this.handleCreateFormBlur}
             onSubmit={::this.handleCreateFormSubmit}
+            onReset={::this.handleCreateFormReset}
           />
         </AdminEditDialog>
       </div>

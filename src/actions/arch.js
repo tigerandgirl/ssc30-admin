@@ -10,10 +10,10 @@ function aliyun(enable, url) {
   if (process.env.NODE_ENV === 'production') enable = 1;
   return (enable ? '/ficloud' : '') + url;
 }
-var FICLOUDPUB_INITGRID_URL = aliyun(1, '/ficloud_pub/initgrid');
-const SAVE_URL   = 1;
-const DELETE_URL = 1;
-const QUERY_URL  = 1;
+var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
+const SAVE_URL   = 0;
+const DELETE_URL = 0;
+const QUERY_URL  = 0;
 function getSaveURL(type) {
   return aliyun(SAVE_URL, `/${type}/save`);
 }
