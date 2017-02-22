@@ -106,38 +106,26 @@ class BaseDocIndex extends Component {
     } = this.props;
     const cols = tableData[0] ? tableData[0].cols : [];
     const basedocs = [
-      {
-        "name": "部门",
-        "id": "dept"
-      }
-      //,{
-      //  "name": "人员",
-      //  "id": "person"
-      //},
-      ,{
-        "name": "项目",
-        "id": "project"
-      }
-      ,{
-        "name": "费用项目",
-        "id": "feeitem"
-      }
-      //,{
-      //  name: '角色',
-      //  id: 'role'
-      //}
-      ,{
-        id: 'bankclass',
-        name: '银行类别'
-      }
-      ,{
-        id: 'bank',
-        name: '银行'
-      }
-      ,{
-        id: 'bankaccount',
-        name: '银行账户'
-      }
+      {id: 'accbook', name: '账簿模型'}
+      ,{id: 'accelement', name: '会计要素模型'}
+      ,{id: 'accperiod', name: '会计期间模型'}
+      ,{id: 'accperiodscheme', name: '会计期间方案模型'}
+      ,{id: 'accstandard', name: '会计准则模型'}
+      ,{id: 'accsubjectchart', name: '账簿科目表模型'}
+      ,{id: 'bank', name: '银行模型'}
+      ,{id: 'bankaccount', name: '银行账户模型'}
+      ,{id: 'bankclass', name: '银行类别模型'}
+      ,{id: 'currency', name: '币种模型'}
+      ,{id: 'dept', name: '部门模型'}
+      ,{id: 'feeitem', name: '费用项目模型'}
+      ,{id: 'feeitemclass', name: '费用项目类型模型'}
+      ,{id: 'measuredoc', name: '数量模型'}
+      ,{id: 'multidimension', name: '科目多维结构模型'}
+      ,{id: 'project', name: '项目模型'}
+      ,{id: 'projectclass', name: '项目类型模型'}
+      ,{id: 'subjectchart', name: '科目表模型'}
+      ,{id: 'user', name: '用户模型'}
+      ,{id: 'valuerang', name: '值集模型'}
     ];
 
     return (
