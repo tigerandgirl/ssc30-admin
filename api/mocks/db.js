@@ -1,190 +1,194 @@
 const utils = require('./utils');
 const fs = require('fs');
-
+const low = require('lowdb');
 
 module.exports = {
-  db: db
+  db: db_func
 };
 
 const DB_TABLE = {};
 
 DB_TABLE.dept = function () {
-  var db_table = {};
-  db_table.head = [
-    utils.string('id', '主键', 40),
-    utils.string('code', '部门编码', 40),
-    utils.string('name', '部门名称', 200),
-    utils.string('name2', '名称2', 200),
-    utils.string('name3', '名称3', 200),
-    utils.string('name4', '名称4', 200),
-    utils.string('name5', '名称5', 200),
-    utils.string('name6', '名称6', 200),
-    utils.ref('parentid', '所属上级'),
-    utils.ref('person', '部门主管'),
-    utils.boolean('enable', '启用'),
-    utils.string('description', '备注', 500)
-  ];
-  // TODO; 去掉没用的`'value':`
-  db_table.body = [
-    {'id': '11', 'cols': [
-      {value: '11'},
-      {value: '263X2016111400000081'},
-      {value: '部门1'},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: {
-        id: '384982394',
-        code: '1243',
-        name: '上级1'
-      }},
-      {value: {
-        id: 'a384982394',
-        code: 'a1243',
-        name: '主管1'
-      }},
-      {value: true},
-      {value: '备注1'}
-    ]},
-    {'id': '22', 'cols': [
-      {value: '22'},
-      {value: 'D32016091200000022'},
-      {value: '部门2'},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: {
-        id: '384982394',
-        code: '1243',
-        name: '上级1'
-      }},
-      {value: {
-        id: 'a384982394',
-        code: 'a1243',
-        name: '主管1'
-      }},
-      {value: false},
-      {value: '备注2'}
-    ]},
-    {'id': '33', 'cols': [
-      {value: '33'},
-      {value: '263X2016083000000025'},
-      {value: '部门3'},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: {
-        id: '384982394',
-        code: '1243',
-        name: '上级1'
-      }},
-      {value: {
-        id: 'a384982394',
-        code: 'a1243',
-        name: '主管1'
-      }},
-      {value: true},
-      {value: '备注3'}
-    ]},
-    {'id': '44', 'cols': [
-      {value: '44'},
-      {value: '263X2016083000000025'},
-      {value: '部门4'},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: {
-        id: '384982394',
-        code: '1243',
-        name: '上级1'
-      }},
-      {value: {
-        id: 'a384982394',
-        code: 'a1243',
-        name: '主管1'
-      }},
-      {value: true},
-      {value: '备注4'}
-    ]},
-    {'id': '55', 'cols': [
-      {value: '55'},
-      {value: '263X2016083000000025'},
-      {value: '部门5'},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: {
-        id: '384982394',
-        code: '1243',
-        name: '上级1'
-      }},
-      {value: {
-        id: 'a384982394',
-        code: 'a1243',
-        name: '主管1'
-      }},
-      {value: true},
-      {value: '备注5'}
-    ]},
-    {'id': '66', 'cols': [
-      {value: '66'},
-      {value: '263X2016083000000025'},
-      {value: '部门6'},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: {
-        id: '384982394',
-        code: '1243',
-        name: '上级1'
-      }},
-      {value: {
-        id: 'a384982394',
-        code: 'a1243',
-        name: '主管1'
-      }},
-      {value: true},
-      {value: '备注6'}
-    ]},
-    {'id': '77', 'cols': [
-      {value: '77'},
-      {value: '263X2016083000000025'},
-      {value: '部门7'},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: null},
-      {value: {
-        id: '384982394',
-        code: '1243',
-        name: '上级1'
-      }},
-      {value: {
-        id: 'a384982394',
-        code: 'a1243',
-        name: '主管1'
-      }},
-      {value: true},
-      {value: '备注7'}
-    ]}
-  ];
+  const db = low(__dirname + '/db_data/t_dept.json');
 
-  //var jsonStr= fs.readFileSync('./db_data/t_dept.json', 'utf8');
-  //db_table = JSON.parse(jsonStr);
-  return db_table;
+  // 重置数据库表
+  if (0) {
+    var head = [
+      utils.string('id', '主键', 40),
+      utils.string('code', '部门编码', 40),
+      utils.string('name', '部门名称', 200),
+      utils.string('name2', '名称2', 200),
+      utils.string('name3', '名称3', 200),
+      utils.string('name4', '名称4', 200),
+      utils.string('name5', '名称5', 200),
+      utils.string('name6', '名称6', 200),
+      utils.ref('parentid', '所属上级'),
+      utils.ref('person', '部门主管'),
+      utils.boolean('enable', '启用'),
+      utils.string('description', '备注', 500)
+    ];
+    db.set('head', head);
+    // TODO; 去掉没用的`'value':`
+    var body = [
+      {
+        "id": "11",
+        "code": "263X2016111400000081",
+        "name": "部门1",
+        "name2": null,
+        "name3": null,
+        "name4": null,
+        "name5": null,
+        "name6": null,
+        "parentid": {
+          "id": "384982394",
+          "code": "1243",
+          "name": "上级1"
+        },
+        "person": {
+          "id": "a384982394",
+          "code": "a1243",
+          "name": "主管1"
+        },
+        "enable": true,
+        "description": "备注1"
+      },
+      {
+        "id": "22",
+        "code": "D32016091200000022",
+        "name": "部门2",
+        "name2": null,
+        "name3": null,
+        "name4": null,
+        "name5": null,
+        "name6": null,
+        "parentid": {
+          "id": "384982394",
+          "code": "1243",
+          "name": "上级1"
+        },
+        "person": {
+          "id": "a384982394",
+          "code": "a1243",
+          "name": "主管1"
+        },
+        "enable": false,
+        "description": "备注2"
+      },
+      {
+        "id": "33",
+        "code": "263X2016083000000025",
+        "name": "部门3",
+        "name2": null,
+        "name3": null,
+        "name4": null,
+        "name5": null,
+        "name6": null,
+        "parentid": {
+          "id": "384982394",
+          "code": "1243",
+          "name": "上级1"
+        },
+        "person": {
+          "id": "a384982394",
+          "code": "a1243",
+          "name": "主管1"
+        },
+        "enable": true,
+        "description": "备注3"
+      },
+      {
+        "id": "44",
+        "code": "263X2016083000000025",
+        "name": "部门4",
+        "name2": null,
+        "name3": null,
+        "name4": null,
+        "name5": null,
+        "name6": null,
+        "parentid": {
+          "id": "384982394",
+          "code": "1243",
+          "name": "上级1"
+        },
+        "person": {
+          "id": "a384982394",
+          "code": "a1243",
+          "name": "主管1"
+        },
+        "enable": true,
+        "description": "备注4"
+      },
+      {
+        "id": "55",
+        "code": "263X2016083000000025",
+        "name": "部门5",
+        "name2": null,
+        "name3": null,
+        "name4": null,
+        "name5": null,
+        "name6": null,
+        "parentid": {
+          "id": "384982394",
+          "code": "1243",
+          "name": "上级1"
+        },
+        "person": {
+          "id": "a384982394",
+          "code": "a1243",
+          "name": "主管1"
+        },
+        "enable": true,
+        "description": "备注5"
+      },
+      {
+        "id": "66",
+        "code": "263X2016083000000025",
+        "name": "部门6",
+        "name2": null,
+        "name3": null,
+        "name4": null,
+        "name5": null,
+        "name6": null,
+        "parentid": {
+          "id": "384982394",
+          "code": "1243",
+          "name": "上级1"
+        },
+        "person": {
+          "id": "a384982394",
+          "code": "a1243",
+          "name": "主管1"
+        },
+        "enable": true,
+        "description": "备注6"
+      },
+      {
+        "id": "77",
+        "code": "263X2016083000000025",
+        "name": "部门7",
+        "name2": null,
+        "name3": null,
+        "name4": null,
+        "name5": null,
+        "name6": null,
+        "parentid": {
+          "id": "384982394",
+          "code": "1243",
+          "name": "上级1"
+        },
+        "person": {
+          "id": "a384982394",
+          "code": "a1243",
+          "name": "主管1"
+        },
+        "enable": true,
+        "description": "备注7"
+      }
+    ];
+    db.set('body', body);
+  }
+
+  return db.value();
 };
 
 DB_TABLE.renyuan = function () {
@@ -234,7 +238,7 @@ DB_TABLE.feiyongxiangmu = function () {
   ];
 };
 
-function db() {
+function db_func() {
   return DB_TABLE;
 }
 

@@ -11,7 +11,7 @@ function post(req, res) {
 
   const condition = req.body.condition || '';
   const begin = req.body.begin;
-  const groupnum = req.body.groupnum; // 每页显示数量
+  const itemsPerPage = req.body.groupnum; // 每页显示数量
 
   const resObj = {
     __fake_server__: true,
@@ -24,15 +24,9 @@ function post(req, res) {
     var db_table = DB_TABLE[doctype]();
     // 通过工具函数对所有数据进行分页，获取单页数据
     // 由于数据库结构和后端定义的response结构不同，这里处理transform
-    resObj.data = utils.pagination(db_table, begin, groupnum).map(function (dbRow) {
-      const row = {};
-      db_table.head.forEach(function (fieldItem, columnIdx) {
-        row[fieldItem.id] = dbRow.cols[columnIdx].value;
-      })
-      return row;
-    });
+    resObj.data = db_table.body.slice(begin, begin + itemsPerPage);
     resObj.begin = begin;
-    resObj.num = groupnum;
+    resObj.num = itemsPerPage;
     resObj.totalnum = db_table.body.length;
   } else {
     resObj.success = false;

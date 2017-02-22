@@ -17,14 +17,25 @@ function row(id, cols) {
   };
 }
 
-function pagination(db_table, begin, itemPerPage) {
-  let ret = [];
-  let index = begin;
-  for (; index < (begin + itemPerPage); index++) {
-    if (!db_table.body[index]) continue;
-    ret.push(db_table.body[index]);
-  }
-  return ret;
+/**
+ * 输入整个数据库表中的所有数据，然后做分页
+ * @param db_table 需要进行分页的数据。例子：
+ * ```json
+ * {
+ *   body: [
+ *     {id: 'u11', name: 'A11', email: 'a1@test.com'},
+ *     {id: 'u22', name: 'A22', email: 'a1@test.com'}
+ *   ]
+ * }
+ * ```
+ * @param begin 分页其实的index
+ * @param itemPerPage 每页显示的数量
+ *
+ *
+ *
+ */
+function pagination(fullArr, begin, itemPerPage) {
+  return fullArr.slice(begin, begin + itemPerPage);
 }
 
 function makeid(length) {
