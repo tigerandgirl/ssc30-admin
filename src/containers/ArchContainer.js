@@ -69,6 +69,7 @@ class ArchContainer extends Component {
     const { baseDocId } = this.props.params;
     //this.props.submitCreateForm();
     this.props.saveTableData(baseDocId, formData);
+    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
     event.preventDefault();
   }
   handleCreateFormReset(event) {

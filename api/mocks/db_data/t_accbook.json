@@ -119,6 +119,27 @@
       "accperiodscheme": "",
       "subjectchart": "",
       "multidimension": ""
+    },
+    {
+      "id": "X7Y4hBN8LjeZZmGPA7m7dWiVxddhnnHLC3pqi7oG",
+      "code": "aaaaa",
+      "enable": true
+    },
+    {
+      "id": "hwpLiMCEJ0yHKE3u9htKukwGa57rk9uZ5OiX9uzo",
+      "code": "dddd"
+    },
+    {
+      "id": "eoquwzTcmfoMLPHvw2hWfuuIEm7qZSppXysiuLPs",
+      "code": "eeeeeeeeeee"
+    },
+    {
+      "id": "nSaFTsQHuZUftsPSjmmc1kbNsIs1w2BnFwlgIcFC",
+      "code": "ffffffffffffff"
+    },
+    {
+      "id": "he7bcI0r66j5T4UR9NxTBaQeWbiHiBoCiTWFPskX",
+      "code": "gggggggggggg"
     }
   ]
 }

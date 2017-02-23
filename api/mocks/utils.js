@@ -2,6 +2,8 @@
 
 module.exports = {
   getDocTypeFromQueryPath: getDocTypeFromQueryPath,
+  getDocTypeFromSavePath: getDocTypeFromSavePath,
+  getDocTypeFromDeletePath: getDocTypeFromDeletePath,
   row: row,
   pagination: pagination,
   makeid: makeid,
@@ -13,10 +15,10 @@ module.exports = {
 
 function runRegex(path, regex) {
   var m;
-  if ((m = regex.exec(path)) !== null) {console.log(m)
+  if ((m = regex.exec(path)) !== null) {
     // The result can be accessed through the `m`-variable.
     m.forEach((match, groupIndex) => {
-      console.log(`Found match, group ${groupIndex}: ${match}`);
+      //console.log(`Found match, group ${groupIndex}: ${match}`);
     });
     return m[1];
   }
