@@ -32,6 +32,8 @@ module.exports = class Root extends Component {
       <Provider store={store}>
         <div>
           <Router>
+            <Route path="/" component={Welcome}>
+            </Route>
             <Route path="/app" component={App}>
               <IndexRoute component={Welcome}/>
               <Route path="/welcome" component={Welcome}></Route>

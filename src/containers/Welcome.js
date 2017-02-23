@@ -22,6 +22,7 @@ class Welcome extends React.Component {
         <NormalWidget />
         <ul>
           <li><Link to={`/basedocs`}>所有基础档案类型</Link></li>
+          <li><Link to={`/basedocs-no-sidebar`}>所有基础档案类型(no-sidebar)</Link></li>
         </ul>
       </div>
     );
