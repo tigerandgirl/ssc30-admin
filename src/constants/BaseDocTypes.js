@@ -2,7 +2,7 @@
 // 除了提供前端页面引用这个数据，还提供给node后端（swagger mock controller）
 // 使用。
 
-export default function getBaseDocTypes() {
+module.exports = function getBaseDocTypes() {
   return [
     {id: 'accbook', name: '账簿'}
     ,{id: 'accelement', name: '会计要素'}

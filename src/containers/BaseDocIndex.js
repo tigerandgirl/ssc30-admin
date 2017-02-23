@@ -111,7 +111,10 @@ class BaseDocIndex extends Component {
       <div>
         <h1>基础档案所有类型</h1>
         <ul>
-          {getBaseDocTypes().map(basedoc => <span style={{marginRight: '10px'}} key={basedoc.id}><Link to={`/basedocs-no-sidebar/basedoc/${basedoc.id}`}>{basedoc.name}</Link></span>)}
+          {getBaseDocTypes().map(basedoc => <span style={{marginRight: '10px'}} key={basedoc.id}>
+              <Link to={`/basedocs-no-sidebar/basedoc/${basedoc.id}`}
+                activeStyle={{ color: 'red' }}
+              >{basedoc.name}</Link></span>)}
         </ul>
         <h2>详情</h2>
         <div>
