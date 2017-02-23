@@ -10,7 +10,7 @@ root_dir=`dirname $utils_dir`
 cd $root_dir
 
 # Building
-#npm run build
+npm run build
 
 # Bundle and upload
 rsync -arvzh -e "ssh -p $port" --progress dist/ $user@$ip:/data/ficloud/uiresources/manaaccount/
