@@ -150,6 +150,7 @@ class ArchContainer extends Component {
       formDefaultData[fieldModel.id] = '';
     })
 
+    //var url = require("url?name=picture.png!../assets/screenshot_20170224_011.jpg");
     var url = './screenshot_20170224_011.jpg';
     return (
       <div>

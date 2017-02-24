@@ -9,6 +9,9 @@ import ReactDOM from 'react-dom';
 import './styles/ssc-grid.css';
 import './styles/ssc-grid2.css';
 
+// 引入图片资源
+import './assets/screenshot_20170224_011.jpg';
+
 /**
  * Both configureStore and Root are required conditionally.
  * See configureStore.js and Root.js for more details.
