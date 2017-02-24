@@ -63,6 +63,14 @@ npm run build
 npm run release
 ```
 
+## 发布到私人的阿里云
+
+由于用友的阿里云服务器后端经常出现问题，所以在私人的阿里云也部署一份
+
+```
+.utils/deploy-aliyun-beijing.sh
+```
+
 ## Development
 
 ## API
