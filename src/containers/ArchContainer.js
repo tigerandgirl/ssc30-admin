@@ -117,21 +117,37 @@ class ArchContainer extends Component {
     });
   }
 
-  handleEdit(rowIdx, rowData, event) {
-    // 将rowData保存到store中
-    this.props.showEditDialog(rowIdx, rowData);
-    // 从store中取出editFormData填充到表单上
-    this.props.initEditFormData(rowData);
-  }
 
-  handleRemove(rowIdx, rowData, event) {
-    if (!confirm("是否删除？")) {
-      return;
-    }
-    const { startIndex } = this.state;
-    const { baseDocId } = this.props.params;
-    this.props.deleteTableData(baseDocId, rowIdx, rowData);
-    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
+  getCustomComponent() {
+    return React.createClass({
+      handleEdit(event) {
+        const { rowIdx, rowObj } = this.props;
+        // 将rowData保存到store中
+        this.props.showEditDialog(rowIdx, rowObj);
+        // 从store中取出editFormData填充到表单上
+        this.props.initEditFormData(rowObj);
+      },
+      handleRemove(event) {
+        if (!confirm("是否删除？")) {
+          return;
+        }
+        const { rowIdx, rowObj } = this.props;
+        const { startIndex } = this.state;
+        const { baseDocId } = this.props.params;
+        this.props.deleteTableData(baseDocId, rowIdx, rowObj);
+        this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
+      },
+      render() {
+        return (
+          <td>
+            <span onClick={this.handleEdit}
+              className="glyphicon glyphicon-pencil"></span>
+            <span onClick={this.handleRemove}
+              className="glyphicon glyphicon-trash"></span>
+          </td>
+        );
+      }
+    });
   }
 
   render() {
@@ -181,9 +197,8 @@ class ArchContainer extends Component {
                 totalPage={this.props.totalPage}
                 activePage={this.state.activePage}
                 onPagination={::this.handlePagination}
-                operateColumn
-                onEdit={::this.handleEdit}
-                onRemove={::this.handleRemove}
+                operationColumn={{}}
+                operationColumnClass={this.getCustomComponent()}
               />
             </Col>
           </Row>
