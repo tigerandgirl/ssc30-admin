@@ -14,3 +14,7 @@ npm run build
 
 # Bundle and upload
 rsync -arvzh -e "ssh -p $port" --progress dist/ $user@$ip:/data/ficloud/uiresources/manaaccount/
+
+# 有些设计图，不再产品范围内，在演示范围内
+rsync -avzh -e "ssh -p 22" --progress client/screenshot_20170224_011.jpg \
+  root@10.3.14.237:/data/ficloud/uiresources/manaaccount/
