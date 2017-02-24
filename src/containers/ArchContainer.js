@@ -117,15 +117,15 @@ class ArchContainer extends Component {
     });
   }
 
-
   getCustomComponent() {
+    var containerThis = this;
     return React.createClass({
       handleEdit(event) {
         const { rowIdx, rowObj } = this.props;
         // 将rowData保存到store中
-        this.props.showEditDialog(rowIdx, rowObj);
+        containerThis.props.showEditDialog(rowIdx, rowObj);
         // 从store中取出editFormData填充到表单上
-        this.props.initEditFormData(rowObj);
+        containerThis.props.initEditFormData(rowObj);
       },
       handleRemove(event) {
         if (!confirm("是否删除？")) {
@@ -134,8 +134,8 @@ class ArchContainer extends Component {
         const { rowIdx, rowObj } = this.props;
         const { startIndex } = this.state;
         const { baseDocId } = this.props.params;
-        this.props.deleteTableData(baseDocId, rowIdx, rowObj);
-        this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
+        containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
+        containerThis.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
       },
       render() {
         return (
