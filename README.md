@@ -42,6 +42,7 @@ Open http://127.0.0.1:3008/
 ```
 npm run build
 npm run demo
+# cp client/screenshot_20170224_011.jpg dist/   # 有些设计图，不再产品范围内，在演示范围内
 ```
 
 然后在浏览器中测试一下页面显示没有问题，点一点按钮看看是否可以正常提交数据。
