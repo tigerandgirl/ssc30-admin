@@ -132,8 +132,8 @@ class ArchContainer extends Component {
           return;
         }
         const { rowIdx, rowObj } = this.props;
-        const { startIndex } = this.state;
-        const { baseDocId } = this.props.params;
+        const { startIndex } = containerThis.state;
+        const { baseDocId } = containerThis.props.params;
         containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
         containerThis.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
       },
