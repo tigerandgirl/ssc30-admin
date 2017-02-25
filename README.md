@@ -42,7 +42,6 @@ Open http://127.0.0.1:3008/
 ```
 npm run build
 npm run demo
-# cp client/screenshot_20170224_011.jpg dist/   # 有些设计图，不再产品范围内，在演示范围内
 ```
 
 然后在浏览器中测试一下页面显示没有问题，点一点按钮看看是否可以正常提交数据。
@@ -52,6 +51,7 @@ npm run demo
 先修改`package.json`中的版本号
 
 ```
+git add package.json
 git commit -m 'new release'
 git tag -a v0.1.4 -m 'new release'
 git push --follow-tags
@@ -60,7 +60,6 @@ git push --follow-tags
 运行如下命令，先调用webpack进行打包，然后将结果通过rsync同步到阿里云服务器上。
 
 ```
-npm run build
 npm run release
 ```
 
