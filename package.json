@@ -9,6 +9,7 @@
     "publish": "webpack --config webpack.build.config.js -p",
     "build": "npm run clean && npm run build:webpack && npm run copy",
     "dev": "cross-env NODE_ENV=development nodemon --watch api --ignore db_data ./devServer.js",
+    "devBackend": "cross-env NODE_ENV=development nodemon --watch api --ignore db_data ./devBackendServer.js",
     "prod": "cross-env NODE_ENV=production node ./devServer.js",
     "demo": "cross-env NODE_ENV=production node ./demoServer.js",
     "release": "npm run build && .utils/deploy.sh",

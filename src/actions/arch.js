@@ -2,6 +2,9 @@ import * as types from '../constants/ActionTypes';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
+// 阿里云后端
+const ALIYUN_BACKEND_IP = '10.3.14.239';
+
 // 获取表格体数据(table body)，以及表格字段数据(table head)。
 
 // 是否连接到阿里云接口
@@ -9,12 +12,12 @@ function aliyun(enable, url) {
   // 在编译环境下，需要默认启用阿里云接口
   // 如果后端的阿里云服务器不好使了，比如出现500错误，那么注释掉下面一行。
   //if (process.env.NODE_ENV === 'production') enable = 1;
-  return (enable ? '/ficloud' : '') + url;
+  return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009') + url;
 }
-var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
-const SAVE_URL   = 0;
-const DELETE_URL = 0;
-const QUERY_URL  = 0;
+var FICLOUDPUB_INITGRID_URL = aliyun(1, '/ficloud_pub/initgrid');
+const SAVE_URL   = 1;
+const DELETE_URL = 1;
+const QUERY_URL  = 1;
 function getSaveURL(type) {
   return aliyun(SAVE_URL, `/${type}/save`);
 }
