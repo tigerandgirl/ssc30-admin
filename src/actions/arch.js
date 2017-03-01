@@ -5,19 +5,22 @@ import _ from 'lodash';
 // 阿里云后端
 const ALIYUN_BACKEND_IP = '10.3.14.239';
 
+// 后端接口是否需要权限校验
+const BACKEND_CREDENTIALS = false;
+
 // 获取表格体数据(table body)，以及表格字段数据(table head)。
 
 // 是否连接到阿里云接口
 function aliyun(enable, url) {
   // 在编译环境下，需要默认启用阿里云接口
   // 如果后端的阿里云服务器不好使了，比如出现500错误，那么注释掉下面一行。
-  //if (process.env.NODE_ENV === 'production') enable = 1;
+  if (process.env.NODE_ENV === 'production') enable = 1;
   return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009') + url;
 }
-var FICLOUDPUB_INITGRID_URL = aliyun(1, '/ficloud_pub/initgrid');
-const SAVE_URL   = 1;
-const DELETE_URL = 1;
-const QUERY_URL  = 1;
+var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
+const SAVE_URL   = 0;
+const DELETE_URL = 0;
+const QUERY_URL  = 0;
 function getSaveURL(type) {
   return aliyun(SAVE_URL, `/${type}/save`);
 }
@@ -27,6 +30,15 @@ function getDeleteURL(type) {
 function getQueryURL(type) {
   return aliyun(QUERY_URL, `/${type}/query`);
 }
+
+// 添加权限
+function appendCredentials(opts) {
+  if (BACKEND_CREDENTIALS) {
+    opts.credentials = 'include';
+  }
+  return opts;
+}
+
 
 // Common helper -> utils.js/api.js
 function checkStatus(response) {
@@ -162,6 +174,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
         groupnum: itemsPerPage
       })
     };
+    appendCredentials(opts);
 
     var url = getQueryURL(baseDocId);
     return fetch(url, opts)
@@ -199,11 +212,13 @@ export function fetchTableColumnsModel(baseDocId) {
     var opts = {
       method: 'post',
       headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
+        'Content-type': 'application/x-www-form-urlencoded'//,
+        //'Cookie': 'JSESSIONID=F0F88957BD3C1D6A07DFD36342DDA85F; JSESSIONID=D4D2196BE3223A695DA71EAED9AD93BD; _ga=GA1.1.359480174.1488286701; tenant_username=ST-36826-ojRQCYPdYRcN9IzSQa3H-cas01.example.org__635c1227-8bcb-4f65-b64d-4d07224101f5; tenant_token=YEI2AhHB42hgnqSuvuF8giN%2Bwjgm5LmzcXb0qRBee5sC8el7vf0Zi%2Bh%2B%2Bjn5HzH%2FKMhsx4DpzJsZNFZOvRffUg%3D%3D; SERVERID=aa7d5a15ad52d23df4ab9aa3ef3a436c|1488335283|1488335175'
       },
       mode: "cors",
       body: `doctype=${baseDocId}`
     };
+    appendCredentials(opts);
 
     var url = `${FICLOUDPUB_INITGRID_URL}`;
     return fetch(url, opts)
@@ -267,6 +282,7 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       mode: "cors",
       body: JSON.stringify({ id })
     };
+    appendCredentials(opts);
 
     var url = getDeleteURL(baseDocId);
     return fetch(url, opts)
@@ -319,6 +335,7 @@ export function saveTableData(baseDocId, formData, rowIdx) {
       mode: "cors",
       body: JSON.stringify(formData)
     };
+    appendCredentials(opts);
 
     var url = getSaveURL(baseDocId);
     return fetch(url, opts)
@@ -413,6 +430,7 @@ export function submitEditForm() {
       },
       body: JSON.stringify(editFormData)
     };
+    appendCredentials(options);
     return fetch(`/api/arch/${idField.value}`, options)
       .then(checkStatus)
       .then(parseJSON)
@@ -488,6 +506,7 @@ export function submitCreateForm() {
       },
       body: JSON.stringify(createFormData)
     };
+    appendCredentials(options);
     return fetch(`/api/arch`, options)
       .then(checkStatus)
       .then(parseJSON)
