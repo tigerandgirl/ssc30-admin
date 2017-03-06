@@ -17,7 +17,9 @@ import {
   SUBMIT_CREATE_FORM, SUBMIT_CREATE_FORM_SUCCESS, SUBMIT_CREATE_FORM_FAIL,
 
   SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,
-  FORM_ALERT_OPEN, FORM_ALERT_CLOSE
+  FORM_ALERT_OPEN, FORM_ALERT_CLOSE,
+
+  ERROR_MESSAGES_UPDATE
 } from '../constants/ActionTypes';
 
 const initState = {
@@ -45,6 +47,8 @@ const initState = {
       resBody: '' // 需要改成details，因为这里不仅仅会填写response body
     }
   },
+  // 当前页面所有的错误信息都扔进来
+  errorMessages: [],
   // 当表单提交失败的时候，显示错误信息
   formAlert: {
     show: false,
@@ -58,6 +62,14 @@ const initState = {
 
 export default function arch(state = initState, action) {
   switch (action.type) {
+
+    // 添加错误提示stack
+    case ERROR_MESSAGES_UPDATE:
+      return update(state, {
+        errorMessages: {
+          push: [action.message]
+        }
+      });
 
     // 页面上的消息框
     case SHOW_ADMIN_ALERT:

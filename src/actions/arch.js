@@ -268,6 +268,19 @@ export function fetchTableColumnsModel(baseDocId) {
     var url = `${FICLOUDPUB_INITGRID_URL}`;
     return fetch(url, opts)
       .then(response => {
+        // TODO: HTTP状态检查，需要独立成helper function
+        if (response.status >= 200 && response.status < 300) {
+          return response;
+        } else {
+          var error = new Error(response.statusText);
+          error.response = response;
+          response.text().then(text => {
+            dispatch(receiveTableBodyDataFail('后端返回的HTTP status code不是200', text));
+          });
+          throw error;
+        }
+      })
+      .then(response => {
         return response.json();
       }).then(json => {
         if (json.success === true) {
@@ -613,6 +626,13 @@ export function updateCreateFormFieldValue(label, value) {
 };
 
 // 页面上的消息框
+
+function updateErrorMessages(message) {
+  return {
+    type: types.ERROR_MESSAGES_UPDATE,
+    message
+  }
+}
 
 export function showAdminAlert() {
   return dispatch => {
