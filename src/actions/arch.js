@@ -289,7 +289,7 @@ export function fetchTableColumnsModel(baseDocId) {
           }
           // 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
           // 而是口口相传的，所以写在这里
-          function hideSpecialColumns(fileds) {
+          function hideSpecialColumns(fields) {
             function shouldHideColumn(id) {
               // id，主键
               if ('id'.indexOf(id) !== -1) {
@@ -313,7 +313,11 @@ export function fetchTableColumnsModel(baseDocId) {
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
-            dispatch(receiveTableColumnsModelSuccess(json, itemsPerPage));
+            // 处理后端数据
+            let fields = fixFieldTypo(json.data);
+            fields = hideSpecialColumns(fields);
+
+            dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
             dispatch(receiveTableColumnsModelFail(
               `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
@@ -322,11 +326,6 @@ export function fetchTableColumnsModel(baseDocId) {
             ));
           }
 
-          // 处理后端数据
-          let fields = fixFieldTypo(json.data);
-          fields = hideSpecialColumns(fields);
-
-          dispatch(receiveTableColumnsModelSuccess(json, fields));
         } else {
           dispatch(receiveTableColumnsModelFail(json));
         }
