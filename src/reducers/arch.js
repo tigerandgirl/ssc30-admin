@@ -41,7 +41,8 @@ const initState = {
     error: {
       code: 0,
       bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
-      message: ''
+      message: '',
+      resBody: '' // 需要改成details，因为这里不仅仅会填写response body
     }
   },
   // 当表单提交失败的时候，显示错误信息
@@ -130,7 +131,7 @@ export default function arch(state = initState, action) {
           show: true,
           bsStyle: 'danger',
           message: action.message,
-          resBody: action.resBody
+          resBody: action.details
         }
       };
 

@@ -17,10 +17,10 @@ function aliyun(enable, url) {
   if (process.env.NODE_ENV === 'production') enable = 1;
   return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009') + url;
 }
-var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
-const SAVE_URL   = 0;
-const DELETE_URL = 0;
-const QUERY_URL  = 0;
+var FICLOUDPUB_INITGRID_URL = aliyun(1, '/ficloud_pub/initgrid');
+const SAVE_URL   = 1;
+const DELETE_URL = 1;
+const QUERY_URL  = 1;
 function getSaveURL(type) {
   return aliyun(SAVE_URL, `/${type}/save`);
 }
@@ -75,20 +75,38 @@ const removeEmpty = (p) => {
   }
 };
 
-function requestTableData() {
-  return {
-    type: types.LOAD_TABLEDATA
-  }
-}
-
 // 开始获取表格列模型
 function requestTableColumnsModel() {
   return {
     type: types.LOAD_TABLECOLUMNS
   }
 }
+// 获取表格列模型成功
+function receiveTableColumnsModelSuccess(json, fields) {
+  return {
+    type: types.LOAD_TABLECOLUMNS_SUCCESS,
+    data: {
+      fields
+    }
+  }
+}
+// 获取表格列模型失败
+// message: 错误信息
+// details: 比如HTTP response body，或者其他为了踢皮球而写的比较啰嗦的文字
+function receiveTableColumnsModelFail(message, details) {
+  return {
+    type: types.LOAD_TABLECOLUMNS_FAIL,
+    message, details
+  }
+}
 
-// 由于后端的数据结构改过几次，所以在这里处理变化后的映射关系。
+// 开始获取表格体数据
+function requestTableData() {
+  return {
+    type: types.LOAD_TABLEDATA
+  }
+}
+// 成功获取到表格体数据
 function receiveTableBodyDataSuccess(json, itemsPerPage) {
   return {
     type: types.LOAD_TABLEDATA_SUCCESS,
@@ -99,7 +117,7 @@ function receiveTableBodyDataSuccess(json, itemsPerPage) {
     }
   };
 }
-
+// 获取表格体数据失败
 // message: 错误信息
 // resBody: HTTP response body
 // TODO: resBody不应该保存在adminAlert下，而是应该放在tableData下
@@ -109,23 +127,6 @@ function receiveTableBodyDataFail(message, resBody) {
     message,
     resBody
   };
-}
-
-function receiveTableColumnsModelSuccess(json, fields) {
-  return {
-    type: types.LOAD_TABLECOLUMNS_SUCCESS,
-    data: {
-      fields
-    }
-  }
-}
-
-function receiveTableColumnsModelFail(json) {
-  return {
-    type: types.LOAD_TABLECOLUMNS_FAIL,
-    message: '获取表格数据失败，后端返回的success是false',
-    resBody: json.message
-  }
 }
 
 function deleteTableDataSuccess(json) {
@@ -156,6 +157,40 @@ function updateTableDataFail(message, resBody) {
     resBody
   }
 }
+
+/**
+ * 对后端生成的JSON做校验
+ * 这里假设JSON本身是valid，但是需要再次确认业务层如何看待这些数据是否为valid
+ */
+const validation = {
+  /**
+   * 检查columnsModel中：
+   * - 是否有重复的id
+   * @param {object} 经过parse的后端返回的JSON
+   * @return {array} [isValid, message]
+   *   - `isValid` 是否校验成功
+   *   - `message` 校验失败的时候，用来提供相应的错误信息
+   */
+  tableColumnsModelData: json => {
+    let isValid = true;
+    let message = '';
+    // 获取所有columnModel的id，检查是否有重复，否则在之后表格的绘制，以及
+    // 基于现有model提交新数据等环节，都有很大可能导致意想不到的问题。
+    let ids = json.data.map(columnModel => columnModel.id);
+    let duplicatedIds = _.filter(ids, function (value, index, iteratee) {
+      return _.includes(iteratee, value, index + 1);
+    });
+    if (_.isEmpty(duplicatedIds)) {
+    } else {
+      isValid = false;
+      message = `JSON中出现了重复的id：${duplicatedIds}，请立即停止所有操作，
+        否则可能产生意想不到的结果！如果你不明白这里发生了什么事情，请咨询网站管理员。
+        由于当前网站管理员不存在，你可以尝试绕过网站管理员，直接联系程序员，比如
+        你可以尝试联系chenyangf@yonyou.com，也许可能会帮助到你。`;
+    }
+    return [isValid, message];
+  }
+};
 
 // 这个接口只获取表格体的数据
 export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
@@ -194,7 +229,17 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
       .then(parseJSON)
       .then(json => {
         if (json.success === true) {
-          dispatch(receiveTableBodyDataSuccess(json, itemsPerPage));
+          // 进行业务层的数据校验
+          const [isValid, validationMessage] = validation.tableColumnsModelData(json);
+          if (isValid) {
+            dispatch(receiveTableBodyDataSuccess(json, itemsPerPage));
+          } else {
+            dispatch(receiveTableBodyDataFail(
+              `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+              但是数据校验方法提示说：“${validationMessage}”`,
+              JSON.stringify(json.data, null, '  ')
+            ));
+          }
         } else {
           dispatch(receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
             json.message));
@@ -226,6 +271,9 @@ export function fetchTableColumnsModel(baseDocId) {
         return response.json();
       }).then(json => {
         if (json.success === true) {
+          // 做两件事情，需要拆分：
+          // 1. 后端使用lable，需要复制一份改成label，以保证Grid组件等没有问题
+          // 2. 对于数据类型，后端使用int，前端使用string，添加string类型的type字段
           function fixFieldTypo (fields) {
             return fields.map(field => {
               field.label = field.lable; // API中将label错误的写成了lable
@@ -239,6 +287,8 @@ export function fetchTableColumnsModel(baseDocId) {
               return field;
             });
           }
+          // 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
+          // 而是口口相传的，所以写在这里
           function hideSpecialColumns(fileds) {
             function shouldHideColumn(id) {
               // id，主键
@@ -259,8 +309,23 @@ export function fetchTableColumnsModel(baseDocId) {
               return newField;
             });
           }
+
+          // 进行业务层的数据校验
+          const [isValid, validationMessage] = validation.tableColumnsModelData(json);
+          if (isValid) {
+            dispatch(receiveTableColumnsModelSuccess(json, itemsPerPage));
+          } else {
+            dispatch(receiveTableColumnsModelFail(
+              `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+              但是数据校验方法提示说：“${validationMessage}”`,
+              JSON.stringify(json.data, null, '  ')
+            ));
+          }
+
+          // 处理后端数据
           let fields = fixFieldTypo(json.data);
           fields = hideSpecialColumns(fields);
+
           dispatch(receiveTableColumnsModelSuccess(json, fields));
         } else {
           dispatch(receiveTableColumnsModelFail(json));

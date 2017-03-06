@@ -173,7 +173,7 @@ class ArchContainer extends Component {
           onDismiss={::this.handlePageAlertDismiss}
         >
           <p>{adminAlert.message}</p>
-          { adminAlert.resBody ? <p>后端返回的信息是：</p> : null }
+          { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <Grid>
@@ -208,7 +208,7 @@ class ArchContainer extends Component {
             onDismiss={::this.handleFormAlertDismiss}
           >
             <p>{formAlert.message}</p>
-            { formAlert.resBody ? <p>后端返回的信息是：</p> : null }
+            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <Form
