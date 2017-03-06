@@ -52,6 +52,7 @@ module.exports = class Root extends Component {
             <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>
               <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
             </Route>
+            <Route path="/basedocs-no-sidebar-single-page/basedoc/:baseDocId" component={ArchContainer} />
           </Router>
           {/* Being the dev version of our Root component, we include DevTools below */}
           {/*<DevTools />*/}
