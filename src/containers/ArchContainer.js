@@ -179,7 +179,7 @@ class ArchContainer extends Component {
         <Grid>
           <Row className="show-grid">
             <Col md={12}>
-              <h3>基础档案id {this.props.params.baseDocId}</h3>
+              <h3>{}</h3>
               <div className="fuck" style={{ display: 'none' }}>
                 <img src={url} />
               </div>
