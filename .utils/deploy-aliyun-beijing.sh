@@ -1,8 +1,8 @@
 #!/bin/bash
 
 user=root
-ip=101.200.74.182
-port=9999
+ip=10.3.14.237
+port=22
 
 # Change to source root dir
 utils_dir=`dirname $(readlink -f $0)`

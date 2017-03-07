@@ -6,7 +6,7 @@ SSC 3.0 后台管理
 
 ## Online demo
 
-[http://101.200.74.182:3000/](http://101.200.74.182:3000/)
+[http://10.3.14.237:3000/](http://10.3.14.237:3000/)
 
 ## Prepare
 
@@ -360,7 +360,7 @@ https://medium.com/lexical-labs-engineering/redux-best-practices-64d59775802e#7f
 ## 常用网址
 
 - 内网测试地址 http://10.1.78.23:3008/admin
-- 外网测试地址 http://101.200.74.182:3008/admin
+- 外网测试地址 http://10.3.14.237:3000/admin
 - SSC 3.0 on Google Drive - https://drive.google.com/drive/folders/0B_RIK8efdyq-QUx6RG9yaVR2cjA?usp=sharing
 - API文档 https://xxd3vin.github.io/swagger-ui/?url=https://xxd3vin.github.io/attachments/yonyou-ssc30/swagger-api.json
 
