@@ -323,12 +323,22 @@ export function fetchTableColumnsModel(baseDocId) {
             });
           }
 
+          function setRequiredFields(field) {
+            field.validation = {
+              type: 'required'
+            };
+            return field;
+          }
+
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
             // 处理后端数据
             let fields = fixFieldTypo(json.data);
             fields = hideSpecialColumns(fields);
+
+            // 有些字段是必填项，暂时在前端写死
+            fields = fields.map(setRequiredFields);
 
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
