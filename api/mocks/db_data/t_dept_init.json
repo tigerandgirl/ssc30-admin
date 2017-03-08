@@ -61,6 +61,12 @@
       "refinfo": "G001ZM0000BASEDOC0000DEPT000000000000000"
     },
     {
+      "id": "pk_org",
+      "lable": "组织",
+      "datatype": 5,
+      "refinfo": "G001ZM0000BASEDOC0000DEPT000000000000000"
+    },
+    {
       "id": "enable",
       "lable": "启用",
       "datatype": 4
@@ -92,6 +98,11 @@
         "code": "a1243",
         "name": "主管1"
       },
+      "pk_org": {
+        "id": "a384982394",
+        "code": "a1243",
+        "name": "默认组织"
+      },
       "enable": true,
       "description": "备注1"
     },
@@ -114,6 +125,11 @@
         "code": "a1243",
         "name": "主管1"
       },
+      "pk_org": {
+        "id": "a384982394",
+        "code": "a1243",
+        "name": "默认组织"
+      },
       "enable": false,
       "description": "备注2"
     },
@@ -129,12 +145,17 @@
       "parentid": {
         "id": "384982394",
         "code": "1243",
-        "name": "上级1"
+        "name": "上级56"
       },
       "person": {
         "id": "a384982394",
         "code": "a1243",
-        "name": "主管1"
+        "name": "主管67"
+      },
+      "pk_org": {
+        "id": "a384982394",
+        "code": "a1243",
+        "name": "默认组织213"
       },
       "enable": true,
       "description": "备注3"
@@ -158,6 +179,11 @@
         "code": "a1243",
         "name": "主管1"
       },
+      "pk_org": {
+        "id": "a384982394",
+        "code": "a1243",
+        "name": "默认组织"
+      },
       "enable": true,
       "description": "备注4"
     },
@@ -175,10 +201,11 @@
         "code": "1243",
         "name": "上级1"
       },
-      "person": {
+      "person": null,
+      "pk_org": {
         "id": "a384982394",
         "code": "a1243",
-        "name": "主管1"
+        "name": "默认组织"
       },
       "enable": true,
       "description": "备注5"
@@ -202,6 +229,11 @@
         "code": "a1243",
         "name": "主管1"
       },
+      "pk_org": {
+        "id": "a384982394",
+        "code": "a1243",
+        "name": "默认组织"
+      },
       "enable": true,
       "description": "备注6"
     },
@@ -223,6 +255,11 @@
         "id": "a384982394",
         "code": "a1243",
         "name": "主管1"
+      },
+      "pk_org": {
+        "id": "a384982394",
+        "code": "a1243",
+        "name": "默认组织"
       },
       "enable": true,
       "description": "备注7"

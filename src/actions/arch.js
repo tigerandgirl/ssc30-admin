@@ -17,10 +17,10 @@ function aliyun(enable, url) {
   if (process.env.NODE_ENV === 'production') enable = 1;
   return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009') + url;
 }
-var FICLOUDPUB_INITGRID_URL = aliyun(1, '/ficloud_pub/initgrid');
-const SAVE_URL   = 1;
-const DELETE_URL = 1;
-const QUERY_URL  = 1;
+var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
+const SAVE_URL   = 0;
+const DELETE_URL = 0;
+const QUERY_URL  = 0;
 function getSaveURL(type) {
   return aliyun(SAVE_URL, `/${type}/save`);
 }
@@ -74,6 +74,21 @@ const removeEmpty = (p) => {
     }
   }
 };
+
+function isRequiredField(baseDocId, fieldId) {
+  const data = {
+    dept: {
+      code: true, // dept的code字段是必输字段
+      name: true,
+      pk_org: true
+    },
+    project: {
+    },
+    projectclass: {
+    }
+  };
+  return data[baseDocId] ? data[baseDocId][fieldId] === true : false;
+}
 
 // 开始获取表格列模型
 function requestTableColumnsModel() {
@@ -323,12 +338,24 @@ export function fetchTableColumnsModel(baseDocId) {
             });
           }
 
+          function setRequiredFields(field) {
+            if (isRequiredField(baseDocId, field.id)) {
+              field.validation = {
+                type: 'required'
+              };
+            }
+            return field;
+          }
+
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
             // 处理后端数据
             let fields = fixFieldTypo(json.data);
             fields = hideSpecialColumns(fields);
+
+            // 有些字段是必填项，暂时在前端写死
+            fields = fields.map(setRequiredFields);
 
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
