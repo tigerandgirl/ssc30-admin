@@ -145,17 +145,17 @@
       "parentid": {
         "id": "384982394",
         "code": "1243",
-        "name": "上级1"
+        "name": "上级56"
       },
       "person": {
         "id": "a384982394",
         "code": "a1243",
-        "name": "主管1"
+        "name": "主管67"
       },
       "pk_org": {
         "id": "a384982394",
         "code": "a1243",
-        "name": "默认组织"
+        "name": "默认组织213"
       },
       "enable": true,
       "description": "备注3"
@@ -201,11 +201,7 @@
         "code": "1243",
         "name": "上级1"
       },
-      "person": {
-        "id": "a384982394",
-        "code": "a1243",
-        "name": "主管1"
-      },
+      "person": null,
       "pk_org": {
         "id": "a384982394",
         "code": "a1243",
