@@ -13,8 +13,9 @@ import AdminAlert from '../components/AdminAlert';
 
 import * as Actions from '../actions/arch';
 
-// Consants for table
+// Consants for table and form
 const ItemsPerPage = 15;
+const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
 class ArchContainer extends Component {
   static PropTypes = {
@@ -150,21 +151,81 @@ class ArchContainer extends Component {
     });
   }
 
+  getReferConfig(baseDocId) {
+    return {
+      referConditions: {
+        refCode: baseDocId, // 'dept',
+        refType: 'tree',
+        rootName: '部门'
+      },
+      referDataUrl: ReferDataURL
+    };
+  }
+
+  /**
+   * 根据列模型和表格体数据来构建空表单需要的数据
+   * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
+   * tableData中获取参照的具体信息，一般是：
+   * ```json
+   * { id: '', code: '', name: '' }
+   * ```
+   */
+  getFormDefaultData(columnsModel, tableData, baseDocId) {
+    let formData = {};
+    columnsModel.forEach(fieldModel => {
+      const fieldId = fieldModel.id;
+      // 由于参照具体信息存在tableData中，所以需要确保第一行数据存在
+      if (fieldModel.type === 'ref' && tableData[0]) {
+        formData[fieldId] = {
+          ...tableData[0][fieldId],
+          config: { ...this.getReferConfig(baseDocId) }
+        };
+      } else {
+        formData[fieldModel.id] = '';
+      }
+    });
+    return formData;
+  }
+
+  /**
+   * 往formData上的参照字段添加参照的配置
+   */
+  initReferConfig(formData, columnsModel, tableData, baseDocId) {
+    columnsModel.forEach(fieldModel => {
+      const fieldId = fieldModel.id;
+      if (fieldModel.type !== 'ref' || !tableData[0]) {
+        return;
+      }
+      // 后端返回的数据可能为null
+      if (formData[fieldId] == null) {
+        return;
+      }
+      formData[fieldId].config = { ...this.getReferConfig(baseDocId) };
+    });
+    return formData;
+  }
+
   render() {
     const {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert
+      adminAlert, formAlert,
+      params: {
+        baseDocId
+      }
     } = this.props;
 
     // 表单字段模型 / 表格列模型
     const cols = fields || [];
 
-    const formDefaultData = {};
-    cols.map(fieldModel => {
-      formDefaultData[fieldModel.id] = '';
-    })
+    // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
+    const formDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
+
+    // 点击编辑按钮的时候，初始化参照数据
+    if (!_.isEmpty(editFormData)) {
+      this.initReferConfig(editFormData, cols, tableData, baseDocId);
+    }
 
     var url = './screenshot_20170224_011.jpg';
     return (
