@@ -3,6 +3,7 @@ const compression = require('compression');
 const express = require('express');
 const bodyParser = require('body-parser');
 //const multer = require('multer');
+const SwaggerExpress = require('swagger-express-mw');
 
 const app = express();
 app.use(compression());
@@ -25,8 +26,7 @@ app.use(require('./server/routes/fakeApiNCSync')());
 
 // Create a mock API with swagger
 
-const SwaggerExpress = require('swagger-express-mw');
-
+// 基础档案
 const swaggerConfig = {
   // Runner props
   //swagger: 'src/swagger/swagger.yaml', // 全部API
@@ -37,7 +37,22 @@ const swaggerConfig = {
   mockControllersDirs: 'src/api/mocks' // TODO: config not work for swagger-node-runner
 };
 
+// 参照
+const referSwaggerConfig = {
+  swagger: 'src/swagger/refer.yaml',
+  appRoot: __dirname,
+  configDir: 'src/swagger',
+  mockControllersDirs: 'src/api/mocks'
+};
+
 SwaggerExpress.create(swaggerConfig, function(err, swaggerExpress) {
+  if (err) { throw err; }
+
+  // install middleware
+  swaggerExpress.register(app);
+});
+
+SwaggerExpress.create(referSwaggerConfig, function(err, swaggerExpress) {
   if (err) { throw err; }
 
   // install middleware

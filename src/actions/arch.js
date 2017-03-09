@@ -8,9 +8,6 @@ const ALIYUN_BACKEND_IP = '10.3.14.239';
 // 后端接口是否需要权限校验
 const BACKEND_CREDENTIALS = false;
 
-// 参照的后端URL
-const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
-
 // 获取表格体数据(table body)，以及表格字段数据(table head)。
 
 // 是否连接到阿里云接口还是本地测试服务器
@@ -22,10 +19,13 @@ function getURL(path) {
   return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009/ficloud') + path;
 }
 
+// 基础档案
 const FICLOUDPUB_INITGRID_URL = getURL('/ficloud_pub/initgrid');
 const getSaveURL = type => getURL(`/${type}/save`);
 const getDeleteURL = type => getURL(`/${type}/delete`);
 const getQueryURL = type => getURL(`/${type}/query`);
+// 参照
+const ReferDataURL = getURL('/refbase_ctr/queryRefJSON');
 
 // 添加权限
 function appendCredentials(opts) {
