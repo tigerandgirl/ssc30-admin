@@ -8,6 +8,9 @@ const ALIYUN_BACKEND_IP = '10.3.14.239';
 // 后端接口是否需要权限校验
 const BACKEND_CREDENTIALS = false;
 
+// 参照的后端URL
+const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
+
 // 获取表格体数据(table body)，以及表格字段数据(table head)。
 
 // 是否连接到阿里云接口
@@ -15,15 +18,13 @@ function aliyun(enable, url) {
   // 在编译环境下，需要默认启用阿里云接口
   // 如果后端的阿里云服务器不好使了，比如出现500错误，那么注释掉下面一行。
   if (process.env.NODE_ENV === 'production') enable = 1;
-  return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009') + url;
+  return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009/ficloud') + url;
 }
 var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
-const SAVE_URL   = 0;
 const DELETE_URL = 0;
 const QUERY_URL  = 0;
-function getSaveURL(type) {
-  return aliyun(SAVE_URL, `/${type}/save`);
-}
+
+const getSaveURL = type => aliyun(0, `/${type}/save`);
 function getDeleteURL(type) {
   return aliyun(DELETE_URL, `/${type}/delete`);
 }
@@ -347,6 +348,22 @@ export function fetchTableColumnsModel(baseDocId) {
             return field;
           }
 
+          const getReferConfig = baseDocId => ({
+            referConditions: {
+              refCode: baseDocId, // 'dept',
+              refType: 'tree',
+              rootName: '部门'
+            },
+            referDataUrl: ReferDataURL
+          });
+
+          function setReferFields(field) {
+            if (field.type === 'ref') {
+              field.referConfig = getReferConfig(baseDocId);
+            }
+            return field;
+          }
+
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
@@ -356,6 +373,8 @@ export function fetchTableColumnsModel(baseDocId) {
 
             // 有些字段是必填项，暂时在前端写死
             fields = fields.map(setRequiredFields);
+            // 添加参照的配置
+            fields = fields.map(setReferFields);
 
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {

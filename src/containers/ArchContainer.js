@@ -174,14 +174,14 @@ class ArchContainer extends Component {
     let formData = {};
     columnsModel.forEach(fieldModel => {
       const fieldId = fieldModel.id;
-      // 由于参照具体信息存在tableData中，所以需要确保第一行数据存在
-      if (fieldModel.type === 'ref' && tableData[0]) {
+      if (fieldModel.type === 'ref') {
         formData[fieldId] = {
-          ...tableData[0][fieldId],
-          config: { ...this.getReferConfig(baseDocId) }
+          id: '',
+          code: '',
+          name: ''
         };
       } else {
-        formData[fieldModel.id] = '';
+        formData[fieldId] = '';
       }
     });
     return formData;
@@ -223,9 +223,9 @@ class ArchContainer extends Component {
     const formDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
 
     // 点击编辑按钮的时候，初始化参照数据
-    if (!_.isEmpty(editFormData)) {
-      this.initReferConfig(editFormData, cols, tableData, baseDocId);
-    }
+    //if (!_.isEmpty(editFormData)) {
+    //  this.initReferConfig(editFormData, cols, tableData, baseDocId);debugger;
+    //}
 
     var url = './screenshot_20170224_011.jpg';
     return (
