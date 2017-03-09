@@ -20,17 +20,11 @@ function aliyun(enable, url) {
   if (process.env.NODE_ENV === 'production') enable = 1;
   return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009/ficloud') + url;
 }
-var FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
-const DELETE_URL = 0;
-const QUERY_URL  = 0;
 
+const FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
 const getSaveURL = type => aliyun(0, `/${type}/save`);
-function getDeleteURL(type) {
-  return aliyun(DELETE_URL, `/${type}/delete`);
-}
-function getQueryURL(type) {
-  return aliyun(QUERY_URL, `/${type}/query`);
-}
+const getDeleteURL = type => aliyun(0, `/${type}/delete`);
+const getQueryURL = type => aliyun(0, `/${type}/query`);
 
 // 添加权限
 function appendCredentials(opts) {
@@ -81,11 +75,65 @@ function isRequiredField(baseDocId, fieldId) {
     dept: {
       code: true, // dept的code字段是必输字段
       name: true,
+      person: true,
       pk_org: true
     },
     project: {
+      code: true,
+      name: true,
+      classifyid: true
     },
     projectclass: {
+      code: true,
+      name: true
+    },
+    user: {
+      name: true,
+      sex: true,
+      email: true,
+      positionstate: true
+    },
+    accperiod: { // 会计期间
+      pk_org: true,
+      description: true,
+      code: true,
+      name: true,
+      accperiodscheme: true,
+      begindate: true,
+      enddate: true,
+      num: true,
+      enable: true
+    },
+    currency: { // 币种
+      pk_org: true,
+      description: true,
+      code: true,
+      name: true,
+      moneydigit: true,
+      moneyrount: true,
+      pricedigit: true,
+      pricerount: true,
+      sign: true
+    },
+    bank: { // 银行
+      pk_org: true,
+      description: true,
+      code: true,
+      name: true,
+      classifyid: true,
+      parentid: true,
+      enable: true
+    },
+    bankaccount: { // 银行账户
+      pk_org: true,
+      description: true,
+      code: true,
+      name: true,
+      depositbank: true,
+      bank: true,
+      accountproperty: true,
+      accounttype: true,
+      enable: true
     }
   };
   return data[baseDocId] ? data[baseDocId][fieldId] === true : false;
