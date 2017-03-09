@@ -7,7 +7,8 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(compression());
 // 反向代理中间件需要在body-parser之前处理请求，否则会导致请求hang up
-app.use(require('./server/routes/aliyun')());
+// 需求修改了，请求需要跨域，所以取消反向代理
+//app.use(require('./server/routes/aliyun')());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 //var upload = multer(); // for parsing multipart/form-data
