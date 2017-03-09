@@ -49,6 +49,15 @@
       "length": 200
     },
     {
+      "id": "person",
+      "lable": "项目主管",
+      "datatype": 5,
+      "length": 40,
+      "digit": 0,
+      "refinfo": "G001ZM0000BASEDOCPERSON0000000000000",
+      "enumdata": null
+    },
+    {
       "id": "enable",
       "lable": "启用",
       "datatype": 4
@@ -82,6 +91,7 @@
       "name_6": null,
       "parentid": null,
       "classifyid": null,
+      "person": null,
       "enable": false,
       "def1": null,
       "def2": null,
