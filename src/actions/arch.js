@@ -13,18 +13,19 @@ const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
 // 获取表格体数据(table body)，以及表格字段数据(table head)。
 
-// 是否连接到阿里云接口
-function aliyun(enable, url) {
+// 是否连接到阿里云接口还是本地测试服务器
+function getURL(path) {
+  let enable = 0;
   // 在编译环境下，需要默认启用阿里云接口
   // 如果后端的阿里云服务器不好使了，比如出现500错误，那么注释掉下面一行。
   if (process.env.NODE_ENV === 'production') enable = 1;
-  return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009/ficloud') + url;
+  return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009/ficloud') + path;
 }
 
-const FICLOUDPUB_INITGRID_URL = aliyun(0, '/ficloud_pub/initgrid');
-const getSaveURL = type => aliyun(0, `/${type}/save`);
-const getDeleteURL = type => aliyun(0, `/${type}/delete`);
-const getQueryURL = type => aliyun(0, `/${type}/query`);
+const FICLOUDPUB_INITGRID_URL = getURL('/ficloud_pub/initgrid');
+const getSaveURL = type => getURL(`/${type}/save`);
+const getDeleteURL = type => getURL(`/${type}/delete`);
+const getQueryURL = type => getURL(`/${type}/query`);
 
 // 添加权限
 function appendCredentials(opts) {
