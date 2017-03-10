@@ -2,34 +2,43 @@ import * as types from '../constants/ActionTypes';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
-// 阿里云后端
-const ALIYUN_BACKEND_IP = '10.3.14.239';
+// 我们自己的后端测试服务器
+const SSC_BACKEND_SERVER = '10.3.14.239/ficloud';
+
+// 联调环境
+const TESTING_BACKEND_SERVER = '172.20.13.230:8090'
 
 // 后端接口是否需要权限校验
-const BACKEND_CREDENTIALS = false;
+const ENABLE_BACKEND_CREDENTIALS = false;
 
 // 获取表格体数据(table body)，以及表格字段数据(table head)。
 
 // 是否连接到阿里云接口还是本地测试服务器
 function getURL(path) {
-  let enable = 0;
+  let enableRealBackend = 0;
   // 在编译环境下，需要默认启用阿里云接口
   // 如果后端的阿里云服务器不好使了，比如出现500错误，那么注释掉下面一行。
-  if (process.env.NODE_ENV === 'production') enable = 1;
-  return (enable ? `http://${ALIYUN_BACKEND_IP}/ficloud` : 'http://127.0.0.1:3009/ficloud') + path;
+  if (process.env.NODE_ENV === 'production') {
+    enableRealBackend = 1;
+  }
+  return (enableRealBackend ?
+    `http://${TESTING_BACKEND_SERVER}` :
+    'http://127.0.0.1:3009') + path;
 }
 
 // 基础档案
 const FICLOUDPUB_INITGRID_URL = getURL('/ficloud_pub/initgrid');
+const QUERY_DOCTYPE_URL = getURL('/ficloud_pub/querydoctype');
 const getSaveURL = type => getURL(`/${type}/save`);
 const getDeleteURL = type => getURL(`/${type}/delete`);
 const getQueryURL = type => getURL(`/${type}/query`);
 // 参照
 const ReferDataURL = getURL('/refbase_ctr/queryRefJSON');
+const ReferUserDataURL = getURL('/userCenter/queryIdAndNameByCode');
 
 // 添加权限
 function appendCredentials(opts) {
-  if (BACKEND_CREDENTIALS) {
+  if (ENABLE_BACKEND_CREDENTIALS) {
     opts.credentials = 'include';
   }
   return opts;
@@ -51,24 +60,32 @@ function parseJSON(response) {
   return response.json();
 }
 
-// 删除JSON object中的空值
-// {
-//   foo: 'bar',
-//   bar: ''
-// }
-// 转换为
-// {
-//   foo: 'bar'
-// }
-const removeEmpty = (p) => {
-  var key;
-  for (key in p) {
-    if (p.hasOwnProperty(key)) {
-      if (!p[key]) {
-        delete p[key]
+/**
+ * 删除JSON object中的空值，空字符串除外
+ * {
+ *   foo: 'bar',
+ *   bar: '',
+ *   bar2: null,
+ *   bar3: undefined
+ * }
+ * 转换为
+ * {
+ *   foo: 'bar'
+ *   bar: ''
+ * }
+ * 注意：不会修改输入的obj参数
+ */
+const removeEmpty = (obj) => {
+  var prop, newObj = {};
+  for (prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      if (obj[prop] == null || obj[prop] == undefined) {
+        continue;
       }
+      newObj[prop] = obj[prop];
     }
   }
+  return newObj
 };
 
 function isRequiredField(baseDocId, fieldId) {
@@ -340,14 +357,15 @@ export function fetchTableColumnsModel(baseDocId) {
           var error = new Error(response.statusText);
           error.response = response;
           response.text().then(text => {
-            dispatch(receiveTableBodyDataFail('后端返回的HTTP status code不是200', text));
+            dispatch(receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text));
           });
           throw error;
         }
       })
       .then(response => {
         return response.json();
-      }).then(json => {
+      })
+      .then(json => {
         if (json.success === true) {
           // 做两件事情，需要拆分：
           // 1. 后端使用lable，需要复制一份改成label，以保证Grid组件等没有问题
@@ -397,22 +415,6 @@ export function fetchTableColumnsModel(baseDocId) {
             return field;
           }
 
-          const getReferConfig = baseDocId => ({
-            referConditions: {
-              refCode: baseDocId, // 'dept',
-              refType: 'tree',
-              rootName: '部门'
-            },
-            referDataUrl: ReferDataURL
-          });
-
-          function setReferFields(field) {
-            if (field.type === 'ref') {
-              field.referConfig = getReferConfig(baseDocId);
-            }
-            return field;
-          }
-
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
@@ -422,10 +424,122 @@ export function fetchTableColumnsModel(baseDocId) {
 
             // 有些字段是必填项，暂时在前端写死
             fields = fields.map(setRequiredFields);
-            // 添加参照的配置
-            fields = fields.map(setReferFields);
 
-            dispatch(receiveTableColumnsModelSuccess(json, fields));
+
+
+
+
+
+
+            // 需要再往服务器端发送一次请求，以便获取到参照的信息
+            // 我们现在有refinfo，送给server，然后给我们参照对应的基础档案id
+            const refinfos = [];
+            fields.forEach(field => {
+              if (field.type === 'ref') {
+                refinfos.push(field.refinfo);
+              }
+            });
+            //const refinfos = [
+            //  'G001ZM0000BASEDOCDEPT000000000000000',
+            //  'G001ZM0000BASEDOCCURRENCY00000000000'
+            //];
+            const refinfosStr = refinfos.map(refinfo => `'${refinfo}'`).join(',');
+
+            var opts2 = {
+              method: 'post',
+              headers: {
+                'Content-type': 'application/x-www-form-urlencoded'//,
+                //'Cookie': 'JSESSIONID=F0F88957BD3C1D6A07DFD36342DDA85F; JSESSIONID=D4D2196BE3223A695DA71EAED9AD93BD; _ga=GA1.1.359480174.1488286701; tenant_username=ST-36826-ojRQCYPdYRcN9IzSQa3H-cas01.example.org__635c1227-8bcb-4f65-b64d-4d07224101f5; tenant_token=YEI2AhHB42hgnqSuvuF8giN%2Bwjgm5LmzcXb0qRBee5sC8el7vf0Zi%2Bh%2B%2Bjn5HzH%2FKMhsx4DpzJsZNFZOvRffUg%3D%3D; SERVERID=aa7d5a15ad52d23df4ab9aa3ef3a436c|1488335283|1488335175'
+              },
+              mode: "cors",
+              body: `condition=entityid in (${refinfosStr})`
+            };
+            appendCredentials(opts2);
+
+            return fetch(QUERY_DOCTYPE_URL, opts2)
+              .then(response => {
+                // TODO: HTTP状态检查，需要独立成helper function
+                if (response.status >= 200 && response.status < 300) {
+                  return response;
+                } else {
+                  var error = new Error(response.statusText);
+                  error.response = response;
+                  response.text().then(text => {
+                    dispatch(receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text));
+                  });
+                  throw error;
+                }
+              })
+              .then(parseJSON)
+              .then(json2 => {
+                if (json2.success === true) {
+                  // 遍历所有字段，将获取到的参照信息添加上来
+                  fields = fields.map(field => {
+                    if (field.type !== 'ref') {
+                      return field;
+                    }
+                    field.refCode = json2.data.find(
+                      doctype => doctype.entityid === field.refinfo).code;
+                    return field;
+                  });
+
+                  const getReferConfig = fieldDocType => {
+                    const config = {
+                      referConditions: {
+                        refCode: fieldDocType, // 'dept',
+                        refType: 'tree',
+                        rootName: '部门'
+                      }
+                    };
+                    if (fieldDocType === 'user') {
+                      config.referDataUrl = ReferUserDataURL;
+                    } else {
+                      config.referDataUrl = ReferDataURL;
+                    }
+                    return config;
+                  };
+
+                  function setReferFields(field) {
+                    if (field.type === 'ref') {
+                      field.referConfig = getReferConfig(field.refCode);
+                    }
+                    return field;
+                  }
+
+                  // 添加参照的配置
+                  fields = fields.map(setReferFields);
+
+                  dispatch(receiveTableColumnsModelSuccess(json, fields));
+                } else {
+                  dispatch(receiveTableColumnsModelFail(json2));
+                }
+              });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           } else {
             dispatch(receiveTableColumnsModelFail(
               `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
@@ -437,7 +551,8 @@ export function fetchTableColumnsModel(baseDocId) {
         } else {
           dispatch(receiveTableColumnsModelFail(json));
         }
-      }).catch(function (err) {
+      })
+      .catch(function (err) {
         console.log("fetch table columns error:", err);
       });
   }
@@ -472,9 +587,48 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
 // 创建和修改表格数据都会调用到这里
 // rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
 // 的时候才会传这个参数
-export function saveTableData(baseDocId, formData, rowIdx) {
+export function saveTableData(baseDocId, fields, formData, rowIdx) {
   return (dispatch, getState) => {
-    removeEmpty(formData);
+    var requestBodyObj = { ...formData };
+
+    // 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
+    requestBodyObj = processRefer(requestBodyObj, fields);
+    // 删除key:value中，当value为undefined/null
+    requestBodyObj = removeEmpty(requestBodyObj);
+
+    /**
+     * 将formData中参照存储的复杂类型（包含id,code,name）转换成单值类型
+     * ```json
+     * {
+     *   bumen: {
+     *     id: '02EDD0F9-F384-43BF-9398-5E5781DAC5D0',
+     *     code: '0502',
+     *     name: '二车间'
+     *   }
+     * }
+     * ```
+     * 转换成
+     * ```json
+     * {
+     *   bumen: '02EDD0F9-F384-43BF-9398-5E5781DAC5D0'
+     * }
+     * ```
+     */
+    function processRefer(obj, fields) {
+      const newObj = { ...obj };
+      fields.forEach(field => {
+        if (field.type === 'ref') {
+          var fieldId = field.id;
+          // 用户是否选择国参照
+          if (obj[fieldId].selected && obj[fieldId].selected[0]) {
+            newObj[fieldId] = obj[fieldId].selected[0].id;
+          } else {
+            newObj[fieldId] = null;
+          }
+        }
+      });
+      return newObj;
+    }
 
     function checkHTTPStatus(response) {
       // TODO: HTTP状态检查，需要独立成helper function
@@ -505,7 +659,7 @@ export function saveTableData(baseDocId, formData, rowIdx) {
         'Content-type': 'application/json'
       },
       mode: "cors",
-      body: JSON.stringify(formData)
+      body: JSON.stringify(requestBodyObj)
     };
     appendCredentials(opts);
 

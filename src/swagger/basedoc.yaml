@@ -10,7 +10,7 @@ schemes:
   - http
   - https
 # will be prefixed to all paths
-basePath: /ficloud
+basePath: /
 produces:
   - application/json
 paths:
@@ -24,12 +24,13 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/BaseDocsModel'
+
   /ficloud_pub/initgrid:
     x-swagger-router-controller: ficloud_pub_initgrid
     post:
       description: 查询基本档案字段定义
       tags:
-        - BaseDoc
+      - 通用接口
       consumes:
       - application/x-www-form-urlencoded
       produces:
@@ -50,6 +51,48 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/SuccessModel'
+        '404':
+          description: Not Found
+
+  /ficloud_pub/querydoctype:
+    x-swagger-router-controller: ficloud_pub_querydoctype
+    post:
+      description: 档案类型查询接口
+      tags:
+      - 通用接口
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - required: true
+        name: condition
+        in: formData
+        type: string
+        description: |
+          查询条件SQL部分语句
+          比如： 
+          ```
+          entityid IN ('G001ZM0000BASEDOCDEPT000000000000000', 'G001ZM0000BASEDOCPERSON0000000000000', 'G001ZM0000BASEDOCORG0000000000000000')
+          ```
+          其中每个id是通过`/ficloud_pub/initgrid`接口获取的数据中：
+          ```
+          {
+            "id": "parentid",
+            "lable": "上级部门",
+            "datatype": 5,
+            "length": 40,
+            "digit": 0,
+            "refinfo": "G001ZM0000BASEDOCDEPT000000000000000",
+            "enumdata": null
+          },
+          ```
+          其中的`refinfo`字段获取的。
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/CommonSuccessModel'
         '404':
           description: Not Found
 
@@ -853,7 +896,7 @@ paths:
     post:
       description: 部门修改接口
       tags:
-        - 部门
+      - 部门
       consumes:
       - application/json
       produces:
@@ -1681,6 +1724,21 @@ definitions:
       name:
         type: string
         description: 部门名称
+      name2:
+        type: string
+        description: name2
+      name3:
+        type: string
+        description: name3
+      name4:
+        type: string
+        description: name4
+      name5:
+        type: string
+        description: name5
+      name6:
+        type: string
+        description: name6
       parentid:
         type: string
         description: 上级部门
