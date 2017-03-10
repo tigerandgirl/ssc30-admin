@@ -13,3 +13,7 @@
 我们假定`dept`这个表名既是json文件名，也是
 [http://git.yonyou.com/sscplatform/fc_doc/blob/master/basedoc]中的markdown文件
 名。
+
+## 文件说明
+
+t_doctype.json - 档案类型查询接口`/ficloud/ficloud_pub/querydoctype`接口返回的全部数据，尚不清楚服务器端对应的数据库结构
