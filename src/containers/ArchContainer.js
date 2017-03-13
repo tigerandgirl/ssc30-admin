@@ -65,11 +65,26 @@ class ArchContainer extends Component {
   handleCreateFormBlur(label, value) {
     //this.props.updateCreateFormFieldValue(label, value);
   }
-  handleCreateFormSubmit(event, formData) {
+  /**
+   * formData
+   * 如果是refer
+   * ```
+   * {
+   *   pk_org: {
+   *     selected: [{
+   *       id: '',
+   *       code: '',
+   *       name: ''
+   *     }]
+   *   }
+   * }
+   * ```
+   */
+  handleCreateFormSubmit(event, formData) {debugger;
     const { startIndex } = this.state;
-    const { baseDocId } = this.props.params;
+    const { fields, params: { baseDocId } } = this.props;
     //this.props.submitCreateForm();
-    this.props.saveTableData(baseDocId, formData);
+    this.props.saveTableData(baseDocId, fields, formData);
     this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
     event.preventDefault();
   }
@@ -84,10 +99,10 @@ class ArchContainer extends Component {
   }
   handleEditFormSubmit(event, formData) {
     const { startIndex } = this.state;
-    const { editDialog: { rowIdx } } = this.props;
+    const { fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
     //this.props.submitEditForm();
-    this.props.saveTableData(baseDocId, formData, rowIdx);
+    this.props.saveTableData(baseDocId, fields, formData, rowIdx);
     event.preventDefault();
   }
   handleEditFormReset(event) {
@@ -151,10 +166,10 @@ class ArchContainer extends Component {
     });
   }
 
-  getReferConfig(baseDocId) {
+  getReferConfig(fieldRefCode) {
     return {
       referConditions: {
-        refCode: baseDocId, // 'dept',
+        refCode: fieldRefCode, // 'dept', 该参照类型的字段指向的档案类型
         refType: 'tree',
         rootName: '部门'
       },
@@ -200,7 +215,7 @@ class ArchContainer extends Component {
       if (formData[fieldId] == null) {
         return;
       }
-      formData[fieldId].config = { ...this.getReferConfig(baseDocId) };
+      formData[fieldId].config = { ...this.getReferConfig(fieldModel.refCode) };
     });
     return formData;
   }
@@ -253,6 +268,7 @@ class ArchContainer extends Component {
             <Col md={12}>
               <NormalWidget />
               <SSCGrid tableData={tableData} columnsModel={cols}
+                striped bordered condensed hover
                 paging
                 itemsPerPage={ItemsPerPage}
                 totalPage={this.props.totalPage}

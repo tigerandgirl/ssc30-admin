@@ -10,7 +10,7 @@ schemes:
   - http
   - https
 # will be prefixed to all paths
-basePath: /ficloud
+basePath: /
 produces:
   - application/json
 
@@ -22,6 +22,33 @@ paths:
       description: 参照查询接口
       tags:
         - 参照
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - required: true
+          name: body
+          in: body
+          description: 查询条件
+          schema:
+            $ref: '#/definitions/RequestModel'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessResponseModel'
+        '404':
+          description: Not Found
+
+  /userCenter/queryIdAndNameByCode:
+    x-swagger-router-controller: usercenter_queryidandnamebycode
+    post:
+      description: |
+        用户参照查询接口
+        这个参照比较另类，不在参照的通用查询接口中
+      tags:
+        - 用户参照
       consumes:
       - application/json
       produces:
