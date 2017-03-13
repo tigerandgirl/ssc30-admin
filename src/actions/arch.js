@@ -2,39 +2,69 @@ import * as types from '../constants/ActionTypes';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
-// 我们自己的后端测试服务器
-const SSC_BACKEND_SERVER = '10.3.14.239/ficloud';
+/**
+ * 配置后端服务器的IP和端口
+ */
 
-// 联调环境
-const TESTING_BACKEND_SERVER = '172.20.13.230:8090'
+/** 本地开发环境，使用swagger作为后端 */
+const LOCAL_EXPRESS_SERVER = '127.0.0.1:3009';
 
-// 后端接口是否需要权限校验
+/** 基础档案开发用后端服务器 */
+const BASEDOC_DEV_SERVER = '10.3.14.239';
+
+/** 参照的开发用后端服务器 */
+const REFER_DEV_SERVER = '172.20.13.230:8090'
+
+/** 实际联调环境 */
+const PROD_SERVER = '172.20.4.88:8088';
+
+/** 后端接口是否需要权限校验 */
 const ENABLE_BACKEND_CREDENTIALS = false;
 
-// 获取表格体数据(table body)，以及表格字段数据(table head)。
+/** 是否启用后端的开发用服务器 */
+const ENABLE_DEV_BACKEND = 0;
 
-// 是否连接到阿里云接口还是本地测试服务器
-function getURL(path) {
-  let enableRealBackend = 0;
-  // 在编译环境下，需要默认启用阿里云接口
-  // 如果后端的阿里云服务器不好使了，比如出现500错误，那么注释掉下面一行。
+/**
+ * 根据配置获取到基础档案的绝对路径
+ * 比如：http://127.0.0.1:3009/dept/query
+ */
+function getBaseDocURL(path) {
+  // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    enableRealBackend = 1;
+    return 'http://' + PROD_SERVER + path;
   }
-  return (enableRealBackend ?
-    `http://${TESTING_BACKEND_SERVER}` :
-    'http://127.0.0.1:3009') + path;
+  return (ENABLE_DEV_BACKEND
+    ? `http://${BASEDOC_DEV_SERVER}`
+    : `http://${LOCAL_EXPRESS_SERVER}`) + path;
 }
 
-// 基础档案
-const FICLOUDPUB_INITGRID_URL = getURL('/ficloud_pub/initgrid');
-const QUERY_DOCTYPE_URL = getURL('/ficloud_pub/querydoctype');
-const getSaveURL = type => getURL(`/${type}/save`);
-const getDeleteURL = type => getURL(`/${type}/delete`);
-const getQueryURL = type => getURL(`/${type}/query`);
-// 参照
-const ReferDataURL = getURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getURL('/userCenter/queryIdAndNameByCode');
+/**
+ * 根据配置获取到参照的绝对路径
+ * 比如：http://127.0.0.1:3009/userCenter/queryIdAndNameByCode
+ */
+function getReferURL(path) {
+  // 生产环境下直接使用生产服务器IP
+  if (process.env.NODE_ENV === 'production') {
+    return 'http://' + PROD_SERVER + path;
+  }
+  return (ENABLE_DEV_BACKEND
+    ? `http://${REFER_DEV_SERVER}`
+    : `http://${LOCAL_EXPRESS_SERVER}`) + path;
+}
+
+/**
+ * 基础档案 组装后端接口
+ */
+const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
+const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
+const getSaveURL = type => getBaseDocURL(`/${type}/save`);
+const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
+const getQueryURL = type => getBaseDocURL(`/${type}/query`);
+/**
+ * 参照 组装后端接口
+ */
+const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
+const ReferUserDataURL = getReferURL('/userCenter/queryIdAndNameByCode');
 
 // 添加权限
 function appendCredentials(opts) {
@@ -44,6 +74,10 @@ function appendCredentials(opts) {
   return opts;
 }
 
+/**
+ * 常用的helper function
+ * 可以扔到utils.js中
+ */
 
 // Common helper -> utils.js/api.js
 function checkStatus(response) {
@@ -88,6 +122,10 @@ const removeEmpty = (obj) => {
   return newObj
 };
 
+/**
+ * 根据指定的档案类型和字段id，判断指定字段是否为必填项
+ * 目前将这些数据在前端写死
+ */
 function isRequiredField(baseDocId, fieldId) {
   const data = {
     dept: {
@@ -157,12 +195,17 @@ function isRequiredField(baseDocId, fieldId) {
   return data[baseDocId] ? data[baseDocId][fieldId] === true : false;
 }
 
+/**
+ * 获取表格体数据(table body)，以及表格字段数据(table head)。
+ */
+
 // 开始获取表格列模型
 function requestTableColumnsModel() {
   return {
     type: types.LOAD_TABLECOLUMNS
   }
 }
+
 // 获取表格列模型成功
 function receiveTableColumnsModelSuccess(json, fields) {
   return {
@@ -172,6 +215,7 @@ function receiveTableColumnsModelSuccess(json, fields) {
     }
   }
 }
+
 // 获取表格列模型失败
 // message: 错误信息
 // details: 比如HTTP response body，或者其他为了踢皮球而写的比较啰嗦的文字
@@ -188,6 +232,7 @@ function requestTableData() {
     type: types.LOAD_TABLEDATA
   }
 }
+
 // 成功获取到表格体数据
 function receiveTableBodyDataSuccess(json, itemsPerPage) {
   return {
@@ -199,10 +244,14 @@ function receiveTableBodyDataSuccess(json, itemsPerPage) {
     }
   };
 }
-// 获取表格体数据失败
-// message: 错误信息
-// resBody: HTTP response body
-// TODO: resBody不应该保存在adminAlert下，而是应该放在tableData下
+
+/**
+ * 获取表格体数据失败
+ * @param {String} message 错误信息
+ * @param {String} resBody 比如，可以是HTTP response body，也可以是其他说明信息
+ *                         用来补充说明用的，因为message通常会很短
+ * TODO: resBody不应该保存在adminAlert下，而是应该放在tableData下
+ */
 function receiveTableBodyDataFail(message, resBody) {
   return {
     type: types.LOAD_TABLEDATA_FAIL,
@@ -511,7 +560,11 @@ export function fetchTableColumnsModel(baseDocId) {
 
                   dispatch(receiveTableColumnsModelSuccess(json, fields));
                 } else {
-                  dispatch(receiveTableColumnsModelFail(json2));
+                  dispatch(receiveTableColumnsModelFail(
+                    `成功获取到列模型之后，又发了一次请求去获取参照信息，
+                    但是就在这个第二次请求中，返回的success不是true`,
+                    JSON.stringify(json2, null, '  '))
+                  );
                 }
               });
 
@@ -549,7 +602,9 @@ export function fetchTableColumnsModel(baseDocId) {
           }
 
         } else {
-          dispatch(receiveTableColumnsModelFail(json));
+          dispatch(receiveTableColumnsModelFail(
+            '后端返回的success不是true', JSON.stringify(json, null, '  '))
+          );
         }
       })
       .catch(function (err) {
