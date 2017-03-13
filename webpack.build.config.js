@@ -1,8 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const moment = require('moment');
+const childProcess = require('child_process');
 
+// 获取版本
 const packageJSON = require('./package.json');
+const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
   entry:  [
@@ -35,7 +39,9 @@ module.exports = {
       template: 'client/index.hbs',
       hash: true,
       // User defined options
-      version: packageJSON.version
+      version: packageJSON.version,
+      revision: GIT_REVISION,
+      buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
     })
   ],
   module: {
