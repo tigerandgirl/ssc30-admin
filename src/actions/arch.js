@@ -257,22 +257,75 @@ function hideSpecialFields(baseDocId, {...field}) {
   // 将需要隐藏的字段设置为true，如果不指定，或者设定为false说明不隐藏
   // 仅需要将打算隐藏的字段列出来。
   const data = {
-    currency: {
-      pk_org: true,
-      description: true,
-      pricerount: true,
-      moneyrount: true
+    "accbook": {
+      "pk_org": true
     },
-    bank: {
+    "accelement": {
+      "pk_org": true
+    },
+    "accperiod": {
+      "pk_org": true
+    },
+    "accperiodscheme": {
+      "pk_org": true
+    },
+    "accstandard": {
+      "pk_org": true
+    },
+    "accsubjectchart": {
+      "pk_org": true
+    },
+    "bank": {
+      "pk_org": true,
       description: true,
       enable: true,
       classifyid: true
     },
-    bankaccount: {
+    "bankaccount": {
+      "pk_org": true,
+      description: true
+    },
+    "bankclass": {
+      "pk_org": true
+    },
+    "currency": {
+      "pk_org": true,
       description: true,
-      pk_org: true
+      pricerount: true,
+      moneyrount: true
+    },
+    "dept": {
+      "pk_org": true
+    },
+    "feeitem": {
+      "pk_org": true
+    },
+    "feeitemclass": {
+      "pk_org": true
+    },
+    "measuredoc": {
+      "pk_org": true
+    },
+    "multidimension": {
+      "pk_org": true
+    },
+    "project": {
+      "pk_org": true
+    },
+    "projectclass": {
+      "pk_org": true
+    },
+    "subjectchart": {
+      "pk_org": true
+    },
+    "user": {
+      "pk_org": true
+    },
+    "valuerang": {
+      "pk_org": true
     }
   };
+
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
     field.hidden = true;
   } else if (shouldHideColumn(field.id)) {
