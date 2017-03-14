@@ -214,19 +214,16 @@ function setRequiredFields(baseDocId, {...field}) {
       code: true,
       name: true,
       classifyid: true,
-      parentid: true,
       enable: true
     },
     bankaccount: { // 银行账户
       pk_org: true,
-      description: true,
       code: true,
       name: true,
       depositbank: true,
       bank: true,
       accountproperty: true,
-      accounttype: true,
-      enable: true
+      accounttype: true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
