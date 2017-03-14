@@ -9,12 +9,12 @@ const packageJSON = require('./package.json');
 const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
-  entry:  [
+  entry: [
     './src/index'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js' //Template based on keys in entry above
+    filename: 'bundle.js' // Template based on keys in entry above
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('common.js'),
