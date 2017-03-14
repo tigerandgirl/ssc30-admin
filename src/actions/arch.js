@@ -48,7 +48,7 @@ function getBaseDocURL(path) {
 
 /**
  * 根据配置获取到参照的绝对路径
- * 比如：http://127.0.0.1:3009/userCenter/queryIdAndNameByCode
+ * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
  */
 function getReferURL(path) {
   // 生产环境下直接使用生产服务器IP
@@ -72,7 +72,7 @@ const getQueryURL = type => getBaseDocURL(`/${type}/query`);
  * 参照 组装后端接口
  */
 const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getReferURL('/userCenter/queryIdAndNameByCode');
+const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
@@ -444,7 +444,7 @@ export function fetchTableColumnsModel(baseDocId) {
           // 而是口口相传的，所以写在这里
           function hideSpecialColumns(fields) {
             function shouldHideColumn(id) {
-              // id，主键
+              // id 主键
               if ('id'.indexOf(id) !== -1) {
                 return true;
               }
