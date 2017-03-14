@@ -131,10 +131,39 @@ const removeEmpty = (obj) => {
 };
 
 /**
+ * 处理后端数据的方法
+ * 这些方法应该是immutable
+ */
+
+/**
+ * 做两件事情，需要拆分：
+ * 1. 后端使用lable，需要复制一份改成label，以保证Grid组件等没有问题
+ * 2. 对于数据类型，后端使用int，前端使用string，添加string类型的type字段
+ */
+function fixFieldTypo ({...field}) {
+  field.label = field.lable; // API中将label错误的写成了lable
+  field.key = field.id; // API后来将key改成了id
+  return field;
+}
+
+/**
+ * 将后端使用数字表示的data type转换成前端的名称
+ * 后端使用datatype=0, 前端使用type='string'
+ */
+function convertDataType({...field}) {
+  const TYPE = [
+    'string', 'integer', 'double', 'date', 'boolean', // 0~4
+    'ref', 'enum', '', 'datetime', 'text' // 5~9
+  ]
+  field.type = TYPE[field.datatype];
+  return field;
+}
+
+/**
  * 根据指定的档案类型和字段id，判断指定字段是否为必填项
  * 目前将这些数据在前端写死
  */
-function isRequiredField(baseDocId, fieldId) {
+function setRequiredFields(baseDocId, {...field}) {
   const data = {
     dept: {
       code: true, // dept的code字段是必输字段
@@ -200,7 +229,56 @@ function isRequiredField(baseDocId, fieldId) {
       enable: true
     }
   };
-  return data[baseDocId] ? data[baseDocId][fieldId] === true : false;
+  if (data[baseDocId] && data[baseDocId][field.id] === true) {
+    field.validation = {
+      type: 'required'
+    };
+  }
+  return field;
+}
+
+/**
+ * 有些字段需要隐藏，暂时写死在前端
+ * 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
+ * 而是口口相传的，所以写在这里
+ */
+function hideSpecialFields(baseDocId, {...field}) {
+  function shouldHideColumn(id) {
+    // id 主键
+    if ('id'.indexOf(id) !== -1) {
+      return true;
+    }
+    // name开头，后面跟数字
+    if (/^name\d+/g.exec(id) !== null) {
+      return true;
+    }
+    return false;
+  }
+  // 将需要隐藏的字段设置为true，如果不指定，或者设定为false说明不隐藏
+  // 仅需要将打算隐藏的字段列出来。
+  const data = {
+    currency: {
+      pk_org: true,
+      description: true,
+      pricerount: true,
+      moneyrount: true
+    },
+    bank: {
+      description: true,
+      enable: true,
+      classifyid: true
+    },
+    bankaccount: {
+      description: true,
+      pk_org: true
+    }
+  };
+  if (data[baseDocId] && data[baseDocId][field.id] === true) {
+    field.hidden = true;
+  } else if (shouldHideColumn(field.id)) {
+    field.hidden = true;
+  }
+  return field;
 }
 
 /**
@@ -424,69 +502,18 @@ export function fetchTableColumnsModel(baseDocId) {
       })
       .then(json => {
         if (json.success === true) {
-          // 做两件事情，需要拆分：
-          // 1. 后端使用lable，需要复制一份改成label，以保证Grid组件等没有问题
-          // 2. 对于数据类型，后端使用int，前端使用string，添加string类型的type字段
-          function fixFieldTypo (fields) {
-            return fields.map(field => {
-              field.label = field.lable; // API中将label错误的写成了lable
-              field.key = field.id; // API后来将key改成了id
-              // 将后端使用数字表示的data type转换成前端的名称
-              const TYPE = [
-                'string', 'integer', 'double', 'date', 'boolean', // 0~4
-                'ref', 'enum', '', 'datetime', 'text' // 5~9
-              ]
-              field.type = TYPE[field.datatype];
-              return field;
-            });
-          }
-          // 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
-          // 而是口口相传的，所以写在这里
-          function hideSpecialColumns(fields) {
-            function shouldHideColumn(id) {
-              // id 主键
-              if ('id'.indexOf(id) !== -1) {
-                return true;
-              }
-              // name开头，后面跟数字
-              if (/^name\d+/g.exec(id) !== null) {
-                return true;
-              }
-              return false;
-            }
-            return fields.map(field => {
-              let newField = {...field};
-              if (shouldHideColumn(field.id)) {
-                newField.hidden = true;
-              }
-              return newField;
-            });
-          }
-
-          function setRequiredFields(field) {
-            if (isRequiredField(baseDocId, field.id)) {
-              field.validation = {
-                type: 'required'
-              };
-            }
-            return field;
-          }
 
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
-            // 处理后端数据
-            let fields = fixFieldTypo(json.data);
-            fields = hideSpecialColumns(fields);
-
-            // 有些字段是必填项，暂时在前端写死
-            fields = fields.map(setRequiredFields);
-
-
-
-
-
-
+            // 1. 处理后端数据
+            // 2. 有些字段是必填项，暂时在前端写死
+            // 3. 有些字段需要隐藏，暂时在前端写死
+            let fields = json.data
+              .map(fixFieldTypo)
+              .map(convertDataType)
+              .map(setRequiredFields.bind(this, baseDocId))
+              .map(hideSpecialFields.bind(this, baseDocId));
 
             // 需要再往服务器端发送一次请求，以便获取到参照的信息
             // 我们现在有refinfo，送给server，然后给我们参照对应的基础档案id

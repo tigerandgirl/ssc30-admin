@@ -1,124 +1,115 @@
 {
   "head": [
     {
-      "id": "id",
+      "enumdata": null,
+      "datatype": 0,
+      "length": 40,
       "lable": "主键",
-      "datatype": 0,
-      "length": 40
+      "refinfocode": null,
+      "id": "id",
+      "digit": 0,
+      "refinfo": null
     },
     {
-      "id": "code",
+      "enumdata": null,
+      "datatype": 0,
+      "length": 50,
       "lable": "编码",
-      "datatype": 0,
-      "length": 40
+      "refinfocode": null,
+      "id": "code",
+      "digit": 0,
+      "refinfo": null
     },
     {
-      "id": "name",
+      "enumdata": null,
+      "datatype": 0,
+      "length": 100,
       "lable": "名称",
-      "datatype": 0,
-      "length": 200
+      "refinfocode": null,
+      "id": "name",
+      "digit": 0,
+      "refinfo": null
     },
     {
-      "id": "name2",
-      "lable": "名称2",
-      "datatype": 0,
-      "length": 200
+      "enumdata": null,
+      "datatype": 5,
+      "length": 40,
+      "lable": "组织",
+      "refinfocode": "org",
+      "id": "pk_org",
+      "digit": 0,
+      "refinfo": "G001ZM0000BASEDOCORG0000000000000000"
     },
     {
-      "id": "name3",
-      "lable": "名称3",
-      "datatype": 0,
-      "length": 200
+      "enumdata": null,
+      "datatype": 5,
+      "length": 40,
+      "lable": "开户银行",
+      "refinfocode": "bank",
+      "id": "depositbank",
+      "digit": 0,
+      "refinfo": "G001ZM0000BASEDOCBANK000000000000000"
     },
     {
-      "id": "name4",
-      "lable": "名称4",
-      "datatype": 0,
-      "length": 200
+      "enumdata": null,
+      "datatype": 5,
+      "length": 40,
+      "lable": "所属银行",
+      "refinfocode": "bank",
+      "id": "bank",
+      "digit": 0,
+      "refinfo": "G001ZM0000BASEDOCBANK000000000000000"
     },
     {
-      "id": "name5",
-      "lable": "名称5",
+      "enumdata": null,
       "datatype": 0,
-      "length": 200
+      "length": 10,
+      "lable": "默认账户",
+      "refinfocode": null,
+      "id": "defaultaccount",
+      "digit": 0,
+      "refinfo": null
     },
     {
-      "id": "name6",
-      "lable": "名称6",
-      "datatype": 0,
-      "length": 200
-    },
-    {
-      "id": "enable",
+      "enumdata": null,
+      "datatype": 4,
+      "length": 10,
       "lable": "启用",
-      "datatype": 4
+      "refinfocode": null,
+      "id": "enable",
+      "digit": 0,
+      "refinfo": null
     },
     {
-      "id": "description",
-      "lable": "备注",
+      "enumdata": null,
       "datatype": 0,
-      "length": 500
+      "length": 400,
+      "lable": "备注",
+      "refinfocode": null,
+      "id": "description",
+      "digit": 0,
+      "refinfo": null
+    },
+    {
+      "enumdata": null,
+      "datatype": 0,
+      "length": 10,
+      "lable": "账户性质",
+      "refinfocode": null,
+      "id": "accountproperty",
+      "digit": 0,
+      "refinfo": null
+    },
+    {
+      "enumdata": null,
+      "datatype": 0,
+      "length": 10,
+      "lable": "账户类型",
+      "refinfocode": null,
+      "id": "accounttype",
+      "digit": 0,
+      "refinfo": null
     }
   ],
-  "body": [
-    {
-      "id": "0DFF5E92-4174-4DB2-9744-CBE14A588D29",
-      "creator": "#000#",
-      "creationtime": "2017-02-16 11:11:40",
-      "modifier": null,
-      "modifiedtime": "2017-02-16 11:11:40",
-      "pk_org": "",
-      "pk_group": null,
-      "description": null,
-      "ts": "2017-02-16 11:11:40",
-      "dr": 0,
-      "state": 0,
-      "code": "1234",
-      "name": "测试账簿",
-      "name_2": null,
-      "name_3": null,
-      "name_4": null,
-      "name_5": null,
-      "name_6": null,
-      "parentid": null,
-      "classifyid": null,
-      "enable": false,
-      "def1": null,
-      "def2": null,
-      "def3": null,
-      "def4": null,
-      "def5": null,
-      "def6": null,
-      "def7": null,
-      "def8": null,
-      "def9": null,
-      "def10": null,
-      "def11": null,
-      "def12": null,
-      "def13": null,
-      "def14": null,
-      "def15": null,
-      "def16": null,
-      "def17": null,
-      "def18": null,
-      "def19": null,
-      "def20": null,
-      "def21": null,
-      "def22": null,
-      "def23": null,
-      "def24": null,
-      "def25": null,
-      "def26": null,
-      "def27": null,
-      "def28": null,
-      "def29": null,
-      "def30": null,
-      "shortname": "招商银行",
-      "accstandard": "",
-      "currency": "",
-      "accperiodscheme": "",
-      "subjectchart": "",
-      "multidimension": ""
-    }
-  ]
+  "body": []
 }
