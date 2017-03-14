@@ -18,10 +18,18 @@ const REFER_DEV_SERVER = '172.20.13.230:8090'
 /** 实际联调环境 */
 const PROD_SERVER = '172.20.4.88:8088';
 
-/** 后端接口是否需要权限校验 */
-const ENABLE_BACKEND_CREDENTIALS = false;
+/**
+ * Fetch API credentials 选项
+ * - false 不往Fetch API中添加credentials选项
+ * - same-origin 在请求中添加Cookie
+ */
+const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
-/** 是否启用后端的开发用服务器 */
+/**
+ * 是否启用后端的开发用服务器
+ * - 0 使用本地的expressjs服务器伪造数据
+ * - 1 使用后端提供的测试服务器
+ */
 const ENABLE_DEV_BACKEND = 0;
 
 /**
@@ -66,10 +74,10 @@ const getQueryURL = type => getBaseDocURL(`/${type}/query`);
 const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
 const ReferUserDataURL = getReferURL('/userCenter/queryIdAndNameByCode');
 
-// 添加权限
+/** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
-  if (ENABLE_BACKEND_CREDENTIALS) {
-    opts.credentials = 'include';
+  if (FETCH_CREDENTIALS_OPTION) {
+    opts.credentials = FETCH_CREDENTIALS_OPTION;
   }
   return opts;
 }
