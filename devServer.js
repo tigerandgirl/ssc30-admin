@@ -1,35 +1,39 @@
 /* eslint-disable no-console, no-process-exit */
 
 const path = require('path');
+
+// HTTP server for local development
 const compression = require('compression');
 const express = require('express');
-const webpack = require('webpack');
 const bodyParser = require('body-parser');
 // const multer = require('multer');
 
+// Webpack for local development
+const webpack = require('webpack');
+const webpackMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+
+// Webpack config for local development
+const config = require('./webpack.config.dev');
+
+// Create a Express server, enable middlewares
 const app = express();
 app.use(compression());
 // 反向代理中间件需要在body-parser之前处理请求，否则会导致请求hang up
 app.use(require('./server/routes/aliyun')());
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-// var upload = multer(); // for parsing multipart/form-data
-
-let config;
-if (process.env.NODE_ENV === 'production') {
-  config = require('./webpack.config.prod');
-} else {
-  config = require('./webpack.config.dev');
-}
+// Parsing content-type: application/json
+app.use(bodyParser.json());
+// Parsing content-type: application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+// Parsing content-type: multipart/form-data
+// var upload = multer();
 
 const compiler = webpack(config);
-app.use(require('webpack-dev-middleware')(compiler, {
+app.use(webpackMiddleware(compiler, {
   noInfo: true,
   publicPath: config.output.publicPath
 }));
-if (process.env.NODE_ENV !== 'production') {
-  app.use(require('webpack-hot-middleware')(compiler));
-}
+app.use(webpackHotMiddleware(compiler));
 
 app.use('/', express.static(path.join(__dirname + '/client')));
 app.use('/swagger/basedoc.yaml',
