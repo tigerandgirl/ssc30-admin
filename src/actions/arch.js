@@ -222,6 +222,7 @@ function setRequiredFields(baseDocId, {...field}) {
       name: true,
       depositbank: true,
       bank: true,
+      defaultaccount: true,
       accountproperty: true,
       accounttype: true
     }
