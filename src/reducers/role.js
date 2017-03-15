@@ -1,6 +1,4 @@
 import update from 'react-addons-update';
-import { combineReducers } from 'redux';
-import { handleActions } from 'redux-actions';
 
 import {
   ROLE_REQUEST, ROLE_SUCCESS, ROLE_FAILURE,
@@ -21,11 +19,11 @@ import {
 const initState = {
   loaded: false,
   tableData: {
-    "currentItemCount": 5,
-    "itemsPerPage": 5,
-    "startIndex": 1,
-    "totalItems": 0,
-    "items": []
+    'currentItemCount': 5,
+    'itemsPerPage': 5,
+    'startIndex': 1,
+    'totalItems': 0,
+    'items': []
   },
   selectedRows: {},
   editDialog: {
@@ -47,15 +45,18 @@ const initState = {
   }
 };
 
-// Show case for redux-actions
-//export const roles = handleActions({
-//  [ROLE_SUCCESS]: (state, action) => ({...state,
-//    loading: false,
-//    loaded: true,
-//    data: {...action.payload}
-//  })
-//}, initState);
-
+/**
+ * Show case for redux-actions
+ * ```
+ * export const roles = handleActions({
+ *   [ROLE_SUCCESS]: (state, action) => ({...state,
+ *     loading: false,
+ *     loaded: true,
+ *     data: {...action.payload}
+ *   })
+ * }, initState);
+ * ```
+ */
 export function role(state = initState, action) {
   switch (action.type) {
 
@@ -98,13 +99,17 @@ export function role(state = initState, action) {
     case CHANGE_SELECTED_ROWS:
       return {...state,
         selectedRows: action.selectedRows
-      }
+      };
 
     // delete
+    case ROLE_DELETE_REQUEST:
+      return {};
     case ROLE_DELETE_SUCCESS:
-      return {...state/*,
-        tableData: {...action.payload}*/
+      return {...state/* ,
+        tableData: {...action.payload} */
       };
+    case ROLE_DELETE_FAILURE:
+      return {};
 
     // edit dialog
     case SHOW_EDIT_DIALOG:
@@ -115,12 +120,12 @@ export function role(state = initState, action) {
           formData: action.formData
         },
         editFormData: action.formData
-      }
+      };
     case UPDATE_EDIT_FORM_FIELD_VALUE:
       // Update single value inside specific array item
       // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
-      return update(state, { 
-        editFormData: { 
+      return update(state, {
+        editFormData: {
           [action.id]: {
             value: {$set: action.payload}
           }
@@ -129,7 +134,7 @@ export function role(state = initState, action) {
     case INIT_EDIT_FORM_DATA:
       return {...state,
         editFormData: action.editFormData
-      }
+      };
     case SUBMIT_EDIT_FORM:
       return {...state,
         submitting: true
@@ -164,12 +169,12 @@ export function role(state = initState, action) {
           formData: action.formData
         },
         createFormData: action.formData
-      }
+      };
     case UPDATE_CREATE_FORM_FIELD_VALUE:
       // Update single value inside specific array item
       // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
-      return update(state, { 
-        createFormData: { 
+      return update(state, {
+        createFormData: {
           [action.id]: {
             value: {$set: action.payload}
           }
@@ -178,7 +183,7 @@ export function role(state = initState, action) {
     case INIT_CREATE_FORM_DATA:
       return {...state,
         createFormData: action.formData
-      }
+      };
     case SUBMIT_CREATE_FORM:
       return {...state,
         submitting: true
