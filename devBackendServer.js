@@ -1,18 +1,20 @@
+/* eslint-disable no-console, no-process-exit */
+
 const path = require('path');
 const compression = require('compression');
 const express = require('express');
 const bodyParser = require('body-parser');
-//const multer = require('multer');
+// const multer = require('multer');
 const SwaggerExpress = require('swagger-express-mw');
 
 const app = express();
 app.use(compression());
 // 反向代理中间件需要在body-parser之前处理请求，否则会导致请求hang up
 // 需求修改了，请求需要跨域，所以取消反向代理
-//app.use(require('./server/routes/aliyun')());
+// app.use(require('./server/routes/aliyun')());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-//var upload = multer(); // for parsing multipart/form-data
+// var upload = multer(); // for parsing multipart/form-data
 
 app.use('/', express.static(path.join(__dirname + '/client')));
 app.use('/swagger/basedoc.yaml',
@@ -29,7 +31,7 @@ app.use(require('./server/routes/fakeApiNCSync')());
 // 基础档案
 const swaggerConfig = {
   // Runner props
-  //swagger: 'src/swagger/swagger.yaml', // 全部API
+  // swagger: 'src/swagger/swagger.yaml', // 全部API
   swagger: 'src/swagger/basedoc.yaml', // 仅有基础档案API
   // config props
   appRoot: __dirname,  // required config
@@ -45,14 +47,14 @@ const referSwaggerConfig = {
   mockControllersDirs: 'src/api/mocks'
 };
 
-SwaggerExpress.create(swaggerConfig, function(err, swaggerExpress) {
+SwaggerExpress.create(swaggerConfig, (err, swaggerExpress) => {
   if (err) { throw err; }
 
   // install middleware
   swaggerExpress.register(app);
 });
 
-SwaggerExpress.create(referSwaggerConfig, function(err, swaggerExpress) {
+SwaggerExpress.create(referSwaggerConfig, (err, swaggerExpress) => {
   if (err) { throw err; }
 
   // install middleware
@@ -62,7 +64,7 @@ SwaggerExpress.create(referSwaggerConfig, function(err, swaggerExpress) {
 const port = process.env.PORT || 3009;
 const ip = process.env.IP || '127.0.0.1';
 
-app.listen(port, ip, function (err) {
+app.listen(port, ip, err => {
   if (err) {
     console.log(err);
     return;

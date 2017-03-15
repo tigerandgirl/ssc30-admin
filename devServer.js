@@ -1,3 +1,5 @@
+/* eslint-disable no-console, no-process-exit */
+
 const path = require('path');
 const compression = require('compression');
 const express = require('express');

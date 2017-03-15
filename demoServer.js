@@ -1,8 +1,10 @@
+/* eslint-disable no-console, no-process-exit */
+
 const path = require('path');
 const compression = require('compression');
 const express = require('express');
 const bodyParser = require('body-parser');
-//const multer = require('multer');
+// const multer = require('multer');
 
 const app = express();
 app.use(compression());
@@ -10,7 +12,7 @@ app.use(compression());
 app.use(require('./server/routes/aliyun')());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-//var upload = multer(); // for parsing multipart/form-data
+// var upload = multer(); // for parsing multipart/form-data
 
 app.use('/swagger/basedoc.yaml',
   express.static(path.join(__dirname, 'src', 'swagger', 'basedoc.yaml')));
@@ -28,7 +30,7 @@ const SwaggerExpress = require('swagger-express-mw');
 
 const swaggerConfig = {
   // Runner props
-  //swagger: 'src/swagger/swagger.yaml', // 全部API
+  // swagger: 'src/swagger/swagger.yaml', // 全部API
   swagger: 'src/swagger/basedoc.yaml', // 仅有基础档案API
   // config props
   appRoot: __dirname,  // required config
@@ -36,7 +38,7 @@ const swaggerConfig = {
   mockControllersDirs: 'src/api/mocks' // TODO: config not work for swagger-node-runner
 };
 
-SwaggerExpress.create(swaggerConfig, function(err, swaggerExpress) {
+SwaggerExpress.create(swaggerConfig, (err, swaggerExpress) => {
   if (err) { throw err; }
 
   // install middleware
@@ -46,7 +48,7 @@ SwaggerExpress.create(swaggerConfig, function(err, swaggerExpress) {
 const port = process.env.PORT || 3008;
 const ip = process.env.IP || '127.0.0.1';
 
-app.listen(port, ip, function (err) {
+app.listen(port, ip, err => {
   if (err) {
     console.log(err);
     return;
