@@ -332,6 +332,34 @@ function hideSpecialFields(baseDocId, {...field}) {
 }
 
 /**
+ * 后端返回的数据类型可能有错误，在这里进行修复
+ * 说一个实际需求：
+ * 需求：https://www.teambition.com/project/5782fc6449d32145686e17d7/tasks/scrum/5782fc65fa04c23d7e9abf52/task/58c7410f95e23eae620600ab
+ * 【银行账号 - 账户性质应为下拉框形式】
+ * 对于“账户性质”这个字段，后端返回的datatype=0，也就是后端认为是string，也就是
+ * 字符串类型，但是需求让显示成下拉框，也就是：
+ * 1. 后端设定datatype=6，也就是前端的type=enum枚举型
+ * 2. 前端将该类型写死为枚举型
+ * 由于后端同事很难沟通，所以这里我们采用第二方案，由前端来写死了
+ */
+function fixDataTypes(baseDocId, {...field}) {
+  // 后端虽然使用字符串类型，但是字符串有固定格式，
+  // 后端文档针对accountproperty字段定义如下：
+  // > BASE("基本"),NORMAL("一般"),TEMPORARY("临时"),SPECIAL("专用")
+  if (baseDocId === 'bankaccount' && field.id === 'accountproperty') {
+    field.datatype = 6; // 枚举型
+    field.type = 'enum';
+    field.data = [
+      {key: 'BASE', value: '基本'},
+      {key: 'NORMAL', value: '一般'},
+      {key: 'TEMPORARY', value: '临时'},
+      {key: 'SPECIAL', value: '专用'}
+    ];
+  }
+  return field;
+}
+
+/**
  * 获取表格体数据(table body)，以及表格字段数据(table head)。
  */
 
@@ -517,6 +545,9 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
   }
 }
 
+/**
+ * 获取表格的列模型
+ */
 export function fetchTableColumnsModel(baseDocId) {
   return (dispatch) => {
     dispatch(requestTableColumnsModel());
@@ -556,14 +587,17 @@ export function fetchTableColumnsModel(baseDocId) {
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
-            // 1. 处理后端数据
-            // 2. 有些字段是必填项，暂时在前端写死
-            // 3. 有些字段需要隐藏，暂时在前端写死
+            // 1. 修复后端json中的错别字
+            // 2. 后端数据类型使用int，前端使用string
+            // 3. 有些字段是必填项，暂时在前端写死
+            // 4. 有些字段需要隐藏，暂时在前端写死
+            // 5. 有些字段的类型错误，暂时在前端写死新类型
             let fields = json.data
               .map(fixFieldTypo)
               .map(convertDataType)
               .map(setRequiredFields.bind(this, baseDocId))
-              .map(hideSpecialFields.bind(this, baseDocId));
+              .map(hideSpecialFields.bind(this, baseDocId))
+              .map(fixDataTypes.bind(this, baseDocId));
 
             // 需要再往服务器端发送一次请求，以便获取到参照的信息
             // 我们现在有refinfo，送给server，然后给我们参照对应的基础档案id

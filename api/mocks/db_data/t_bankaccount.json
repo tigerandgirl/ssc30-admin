@@ -111,5 +111,15 @@
       "refinfo": null
     }
   ],
-  "body": []
+  "body": [
+    {
+      "id": "",
+      "code": "1",
+      "name": "1",
+      "defaultaccount": "",
+      "description": "",
+      "accountproperty": "NORMAL",
+      "accounttype": "1"
+    }
+  ]
 }

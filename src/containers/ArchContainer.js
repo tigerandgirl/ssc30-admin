@@ -80,7 +80,7 @@ class ArchContainer extends Component {
    * }
    * ```
    */
-  handleCreateFormSubmit(event, formData) {debugger;
+  handleCreateFormSubmit(event, formData) {
     const { startIndex } = this.state;
     const { fields, params: { baseDocId } } = this.props;
     //this.props.submitCreateForm();
@@ -189,14 +189,19 @@ class ArchContainer extends Component {
     let formData = {};
     columnsModel.forEach(fieldModel => {
       const fieldId = fieldModel.id;
-      if (fieldModel.type === 'ref') {
-        formData[fieldId] = {
-          id: '',
-          code: '',
-          name: ''
-        };
-      } else {
-        formData[fieldId] = '';
+      switch(fieldModel.type) {
+        case 'ref':
+          formData[fieldId] = {
+            id: '',
+            code: '',
+            name: ''
+          };
+          break;
+        case 'boolean':
+          break;
+        default:
+          formData[fieldId] = '';
+          break;
       }
     });
     return formData;
@@ -238,9 +243,9 @@ class ArchContainer extends Component {
     const formDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
 
     // 点击编辑按钮的时候，初始化参照数据
-    //if (!_.isEmpty(editFormData)) {
-    //  this.initReferConfig(editFormData, cols, tableData, baseDocId);debugger;
-    //}
+    // if (!_.isEmpty(editFormData)) {
+    //   this.initReferConfig(editFormData, cols, tableData, baseDocId);
+    // }
 
     var url = './screenshot_20170224_011.jpg';
     return (
