@@ -240,18 +240,8 @@ function setRequiredFields(baseDocId, {...field}) {
  * 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
  * 而是口口相传的，所以写在这里
  */
-function hideSpecialFields(baseDocId, {...field}) {
-  function shouldHideColumn(id) {
-    // id 主键
-    if ('id'.indexOf(id) !== -1) {
-      return true;
-    }
-    // name开头，后面跟数字
-    if (/^name\d+/g.exec(id) !== null) {
-      return true;
-    }
-    return false;
-  }
+function shouldNotRemoveFields(baseDocId, {...field}) {
+  let shouldNotRemove = true;
   // 将需要隐藏的字段设置为true，如果不指定，或者设定为false说明不隐藏
   // 仅需要将打算隐藏的字段列出来。
   const data = {
@@ -324,9 +314,25 @@ function hideSpecialFields(baseDocId, {...field}) {
     }
   };
 
+  // 按照业务的要求，这些字段是不需要的，但是后端非得传，
+  // 所以暂时写死在前端
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
-    field.hidden = true;
-  } else if (shouldHideColumn(field.id)) {
+    shouldNotRemove = false;
+  }
+  // 以name开头后面跟数字，比如name2，这样的字段需要删除
+  if (/^name\d+/g.exec(field.id) !== null) {
+    shouldNotRemove = false;
+  }
+  return shouldNotRemove;
+}
+
+/**
+ * 设定隐藏字段
+ * 比如id字段是主键，不需要在表格中以及表单中显示，但是当往后端发送请求的时候，
+ * 需要带有该id
+ */
+function setHiddenFields({...field}) {
+  if (field.id === 'id') {
     field.hidden = true;
   }
   return field;
@@ -588,16 +594,18 @@ export function fetchTableColumnsModel(baseDocId) {
           // 进行业务层的数据校验
           const [isValid, validationMessage] = validation.tableColumnsModelData(json);
           if (isValid) {
-            // 1. 修复后端json中的错别字
-            // 2. 后端数据类型使用int，前端使用string
-            // 3. 有些字段是必填项，暂时在前端写死
-            // 4. 有些字段需要隐藏，暂时在前端写死
-            // 5. 有些字段的类型错误，暂时在前端写死新类型
+            // 1. 删除不用的字段，按理说应该后端从response中删除掉的
+            // 2. 修复后端json中的错别字，暂时在前端写死
+            // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
+            // 4. 有些字段是必填项，暂时在前端写死
+            // 5. 有些字段需要隐藏，暂时在前端写死
+            // 6. 有些字段的类型错误，暂时在前端写死新类型
             let fields = json.data
+              .filter(shouldNotRemoveFields.bind(this, baseDocId))
               .map(fixFieldTypo)
               .map(convertDataType)
               .map(setRequiredFields.bind(this, baseDocId))
-              .map(hideSpecialFields.bind(this, baseDocId))
+              .map(setHiddenFields)
               .map(fixDataTypes.bind(this, baseDocId));
 
             // 需要再往服务器端发送一次请求，以便获取到参照的信息
@@ -766,9 +774,10 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
   return (dispatch, getState) => {
     var requestBodyObj = { ...formData };
 
-    // 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
+    // 注意：处理是有顺序的，不要乱调整
+    // 1. 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
     requestBodyObj = processRefer(requestBodyObj, fields);
-    // 删除key:value中，当value为undefined/null
+    // 2. 删除key:value中，当value为undefined/null
     requestBodyObj = removeEmpty(requestBodyObj);
 
     /**
@@ -794,7 +803,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       fields.forEach(field => {
         if (field.type === 'ref') {
           var fieldId = field.id;
-          // 用户是否选择国参照
+          // 用户是否选择过参照
           if (obj[fieldId].selected && obj[fieldId].selected[0]) {
             newObj[fieldId] = obj[fieldId].selected[0].id;
           } else {

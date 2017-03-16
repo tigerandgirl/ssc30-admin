@@ -188,6 +188,10 @@ class ArchContainer extends Component {
   getFormDefaultData(columnsModel, tableData, baseDocId) {
     let formData = {};
     columnsModel.forEach(fieldModel => {
+      // 隐藏字段，比如id字段，不用初始化值
+      if (fieldModel.hidden === true) {
+        return;
+      }
       const fieldId = fieldModel.id;
       switch(fieldModel.type) {
         case 'ref':
