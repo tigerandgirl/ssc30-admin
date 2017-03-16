@@ -9,6 +9,7 @@ import Welcome from './Welcome';
 
 import BaseDocIndex from './BaseDocIndex'; // 基础档案列表页面
 import ArchContainer from './ArchContainer'; // 基础档案
+import ExternalDataModelling from './ExternalDataModelling'; // 外部数据建模
 import RoleContainer from './RoleContainer'; // 角色配置
 import PermissionPage from './PermissionPage'; // 权限配置/权限分配
 import ArchSettingPage from './ArchSettingPage'; // 基础档案配置
@@ -53,6 +54,7 @@ module.exports = class Root extends Component {
               <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
             </Route>
             <Route path="/basedocs-no-sidebar-single-page/basedoc/:baseDocId" component={ArchContainer} />
+            <Route path="/external-data-modelling-no-sidebar-single-page" component={ExternalDataModelling} />
           </Router>
           {/* Being the dev version of our Root component, we include DevTools below */}
           {/*<DevTools />*/}
