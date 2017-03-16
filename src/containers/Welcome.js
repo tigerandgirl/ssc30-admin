@@ -24,6 +24,7 @@ class Welcome extends React.Component {
           <li><Link to={`/basedocs`}>所有基础档案类型</Link></li>
           <li><Link to={`/basedocs-no-sidebar`}>所有基础档案类型(no-sidebar)</Link></li>
           <li><Link to={`/basedocs-no-sidebar-single-page/basedoc/dept`}>基础档案 - 部门(no-sidebar, single-page)</Link></li>
+          <li><Link to={`/external-data-modelling-no-sidebar-single-page`}>会计平台 - 外部数据建模(no-sidebar, single-page)</Link></li>
         </ul>
       </div>
     );
