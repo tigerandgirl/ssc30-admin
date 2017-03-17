@@ -306,6 +306,7 @@ class ArchContainer extends Component {
           />
         </AdminEditDialog>
         <AdminEditDialog className='create-form' title='创建' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
+          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
           <Form
             fieldsModel={cols}
             defaultData={formDefaultData}

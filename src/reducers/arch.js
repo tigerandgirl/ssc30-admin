@@ -57,7 +57,8 @@ const initState = {
       bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
       message: ''
     }
-  }
+  },
+  serverMessage: ''
 };
 
 export default function arch(state = initState, action) {
@@ -174,6 +175,9 @@ export default function arch(state = initState, action) {
             message: action.message,
             resBody: action.resBody
           }
+        },
+        serverMessage: {
+          $set: action.resBody
         }
       });
 
