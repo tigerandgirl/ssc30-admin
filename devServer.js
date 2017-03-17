@@ -36,35 +36,12 @@ app.use(webpackMiddleware(compiler, {
 app.use(webpackHotMiddleware(compiler));
 
 app.use('/', express.static(path.join(__dirname + '/client')));
-app.use('/swagger/basedoc.yaml',
-  express.static(path.join(__dirname, 'src', 'swagger', 'basedoc.yaml')));
 
 app.use(require('./server/routes/fakeApiArch')());
 app.use(require('./server/routes/fakeApiRole')());
 app.use(require('./server/routes/fakeApiPermission')());
 app.use(require('./server/routes/fakeApiArchSetting')());
 app.use(require('./server/routes/fakeApiNCSync')());
-
-// Create a mock API with swagger
-
-const SwaggerExpress = require('swagger-express-mw');
-
-const swaggerConfig = {
-  // Runner props
-  // swagger: 'src/swagger/swagger.yaml', // 全部API
-  swagger: 'src/swagger/basedoc.yaml', // 仅有基础档案API
-  // config props
-  appRoot: __dirname,  // required config
-  configDir: 'src/swagger', // TODO: should move to src/api/swagger
-  mockControllersDirs: 'src/api/mocks' // TODO: config not work for swagger-node-runner
-};
-
-SwaggerExpress.create(swaggerConfig, (err, swaggerExpress) => {
-  if (err) { throw err; }
-
-  // install middleware
-  swaggerExpress.register(app);
-});
 
 const port = process.env.PORT || 3008;
 const ip = process.env.IP || '127.0.0.1';
