@@ -803,9 +803,10 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       fields.forEach(field => {
         if (field.type === 'ref') {
           var fieldId = field.id;
+          var fieldObj = obj[fieldId];
           // 用户是否选择过参照
-          if (obj[fieldId].selected && obj[fieldId].selected[0]) {
-            newObj[fieldId] = obj[fieldId].selected[0].id;
+          if (fieldObj && fieldObj.selected && fieldObj.selected[0]) {
+            newObj[fieldId] = fieldObj.selected[0].id;
           } else {
             newObj[fieldId] = null;
           }
