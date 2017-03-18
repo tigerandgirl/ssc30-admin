@@ -367,6 +367,42 @@ function fixDataTypes(baseDocId, {...field}) {
 }
 
 /**
+ * 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+ */
+function fixReferKey(field) {
+  if (field.type !== 'ref') {
+    return field;
+  }
+  field.refCode = field.refinfocode;
+  return field;
+}
+
+/**
+ * 根据参照的类型来添加参照的config object
+ */
+function setReferFields(field) {
+  const getReferConfig = fieldDocType => {
+    const config = {
+      referConditions: {
+        refCode: fieldDocType, // 'dept',
+        refType: 'tree',
+        rootName: '部门'
+      }
+    };
+    if (fieldDocType === 'user') {
+      config.referDataUrl = ReferUserDataURL;
+    } else {
+      config.referDataUrl = ReferDataURL;
+    }
+    return config;
+  };
+  if (field.type === 'ref') {
+    field.referConfig = getReferConfig(field.refCode);
+  }
+  return field;
+}
+
+/**
  * 获取表格体数据(table body)，以及表格字段数据(table head)。
  */
 
@@ -600,127 +636,18 @@ export function fetchTableColumnsModel(baseDocId) {
             // 4. 有些字段是必填项，暂时在前端写死
             // 5. 有些字段需要隐藏，暂时在前端写死
             // 6. 有些字段的类型错误，暂时在前端写死新类型
+            // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+            // 8. 添加参照的配置
             let fields = json.data
-              .filter(shouldNotRemoveFields.bind(this, baseDocId))
-              .map(fixFieldTypo)
-              .map(convertDataType)
-              .map(setRequiredFields.bind(this, baseDocId))
-              .map(setHiddenFields)
-              .map(fixDataTypes.bind(this, baseDocId));
-
-            // 需要再往服务器端发送一次请求，以便获取到参照的信息
-            // 我们现在有refinfo，送给server，然后给我们参照对应的基础档案id
-            const refinfos = [];
-            fields.forEach(field => {
-              if (field.type === 'ref') {
-                refinfos.push(field.refinfo);
-              }
-            });
-            //const refinfos = [
-            //  'G001ZM0000BASEDOCDEPT000000000000000',
-            //  'G001ZM0000BASEDOCCURRENCY00000000000'
-            //];
-            const refinfosStr = refinfos.map(refinfo => `'${refinfo}'`).join(',');
-
-            var opts2 = {
-              method: 'post',
-              headers: {
-                'Content-type': 'application/x-www-form-urlencoded'//,
-                //'Cookie': 'JSESSIONID=F0F88957BD3C1D6A07DFD36342DDA85F; JSESSIONID=D4D2196BE3223A695DA71EAED9AD93BD; _ga=GA1.1.359480174.1488286701; tenant_username=ST-36826-ojRQCYPdYRcN9IzSQa3H-cas01.example.org__635c1227-8bcb-4f65-b64d-4d07224101f5; tenant_token=YEI2AhHB42hgnqSuvuF8giN%2Bwjgm5LmzcXb0qRBee5sC8el7vf0Zi%2Bh%2B%2Bjn5HzH%2FKMhsx4DpzJsZNFZOvRffUg%3D%3D; SERVERID=aa7d5a15ad52d23df4ab9aa3ef3a436c|1488335283|1488335175'
-              },
-              mode: "cors",
-              body: `condition=entityid in (${refinfosStr})`
-            };
-            appendCredentials(opts2);
-
-            return fetch(QUERY_DOCTYPE_URL, opts2)
-              .then(response => {
-                // TODO: HTTP状态检查，需要独立成helper function
-                if (response.status >= 200 && response.status < 300) {
-                  return response;
-                } else {
-                  var error = new Error(response.statusText);
-                  error.response = response;
-                  response.text().then(text => {
-                    dispatch(receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text));
-                  });
-                  throw error;
-                }
-              })
-              .then(parseJSON)
-              .then(json2 => {
-                if (json2.success === true) {
-                  // 遍历所有字段，将获取到的参照信息添加上来
-                  fields = fields.map(field => {
-                    if (field.type !== 'ref') {
-                      return field;
-                    }
-                    field.refCode = json2.data.find(
-                      doctype => doctype.entityid === field.refinfo).code;
-                    return field;
-                  });
-
-                  const getReferConfig = fieldDocType => {
-                    const config = {
-                      referConditions: {
-                        refCode: fieldDocType, // 'dept',
-                        refType: 'tree',
-                        rootName: '部门'
-                      }
-                    };
-                    if (fieldDocType === 'user') {
-                      config.referDataUrl = ReferUserDataURL;
-                    } else {
-                      config.referDataUrl = ReferDataURL;
-                    }
-                    return config;
-                  };
-
-                  function setReferFields(field) {
-                    if (field.type === 'ref') {
-                      field.referConfig = getReferConfig(field.refCode);
-                    }
-                    return field;
-                  }
-
-                  // 添加参照的配置
-                  fields = fields.map(setReferFields);
-
-                  dispatch(receiveTableColumnsModelSuccess(json, fields));
-                } else {
-                  dispatch(receiveTableColumnsModelFail(
-                    `成功获取到列模型之后，又发了一次请求去获取参照信息，
-                    但是就在这个第二次请求中，返回的success不是true`,
-                    JSON.stringify(json2, null, '  '))
-                  );
-                }
-              });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+              /* 1 */ .filter(shouldNotRemoveFields.bind(this, baseDocId))
+              /* 2 */ .map(fixFieldTypo)
+              /* 3 */ .map(convertDataType)
+              /* 4 */ .map(setRequiredFields.bind(this, baseDocId))
+              /* 5 */ .map(setHiddenFields)
+              /* 6 */ .map(fixDataTypes.bind(this, baseDocId))
+              /* 7 */ .map(fixReferKey)
+              /* 8 */ .map(setReferFields);
+            dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
             dispatch(receiveTableColumnsModelFail(
               `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
