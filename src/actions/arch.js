@@ -267,7 +267,7 @@ function shouldNotRemoveFields(baseDocId, {...field}) {
       "pk_org": true,
       description: true,
       enable: true,
-      classifyid: true
+      classifyid: false
     },
     "bankaccount": {
       "pk_org": true,
