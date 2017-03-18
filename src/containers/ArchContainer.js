@@ -202,6 +202,12 @@ class ArchContainer extends Component {
           };
           break;
         case 'boolean':
+          // XXDEBUG-START
+          // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
+          if (fieldId === 'enable') {
+            formData[fieldId] = true;
+          }
+          // XXDEBUG-END
           break;
         default:
           formData[fieldId] = '';
