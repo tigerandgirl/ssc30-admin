@@ -149,6 +149,16 @@ export default function arch(state = initState, action) {
         }
       };
 
+    case DELETE_TABLEDATA_FAIL:
+      return {...state,
+        adminAlert: {...state.adminAlert,
+          show: true,
+          bsStyle: 'danger',
+          message: action.message
+        }
+      };
+
+
     // 通过表单修改表格中的一行
     case TABLEDATA_UPDATE_SUCCESS:
       return update(state, {
