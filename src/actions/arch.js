@@ -532,8 +532,9 @@ const validation = {
 
 // 这个接口只获取表格体的数据
 export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(requestTableData());
+    const { arch } = getState();
 
     var opts = {
       method: 'post',
@@ -668,6 +669,12 @@ export function fetchTableColumnsModel(baseDocId) {
   }
 }
 
+/**
+ * 删除表格中的一行数据
+ * @param {String} baseDocId 基础档案类型名称
+ * @param {String} rowIdx 删除哪一行
+ * @param {Object} rowData 被删除的行的数据对象
+ */
 export function deleteTableData(baseDocId, rowIdx, rowData) {
   return (dispatch, getState) => {
     var { id } = rowData; // 40位主键 primary key
@@ -698,11 +705,18 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
   }
 }
 
-// 创建和修改表格数据都会调用到这里
-// rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
-// 的时候才会传这个参数
+/**
+ * 创建和修改表格数据都会调用到这里
+ * rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
+ * 的时候才会传这个参数
+ * @param {String} baseDocId 基础档案类型名称，比如dept
+ * @param {Array} fields 字段定义
+ * @param {Object} formData 表单提交的数据
+ * @param {Number} rowIndex 只有是修改了某一个行，才会传数字，否则传null
+ */
 export function saveTableData(baseDocId, fields, formData, rowIdx) {
   return (dispatch, getState) => {
+    const { startIndex, itemsPerPage } = getState().arch;
     var requestBodyObj = { ...formData };
 
     // 注意：处理是有顺序的，不要乱调整
@@ -788,6 +802,30 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
         console.log("保存基础档案时候出现错误：", err);
       });
   }
+}
+
+/**
+ * 复合操作：创建/保存并刷新表格
+ */
+export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex) {
+  return (dispatch, getState) => {
+    const { arch } = getState();
+    return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, startIndex));
+    });
+  };
+}
+
+/**
+ * 复合操作：创建/保存并刷新表格
+ */
+export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData, startIndex) {
+  return (dispatch, getState) => {
+    const { arch } = getState();
+    return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => {
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, startIndex));
+    });
+  };
 }
 
 /**

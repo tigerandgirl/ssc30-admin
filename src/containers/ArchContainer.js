@@ -14,7 +14,6 @@ import AdminAlert from '../components/AdminAlert';
 import * as Actions from '../actions/arch';
 
 // Consants for table and form
-const ItemsPerPage = 15;
 const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
 class ArchContainer extends Component {
@@ -32,16 +31,21 @@ class ArchContainer extends Component {
   }
 
   componentWillMount() {
-    this.props.fetchTableBodyData(this.props.params.baseDocId, ItemsPerPage, this.state.startIndex);
+    const { itemsPerPage } = this.props;
+    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, this.state.startIndex);
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
+  componentDidMount() {
+  }
+
   componentWillReceiveProps(nextProps) {
+    const { itemsPerPage } = this.props;
     const nextType = nextProps.params.baseDocId;
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableBodyData(nextType, ItemsPerPage, this.state.startIndex);
+      this.props.fetchTableBodyData(nextType, itemsPerPage, this.state.startIndex);
       this.props.fetchTableColumnsModel(nextType);
     }
   }
@@ -82,10 +86,11 @@ class ArchContainer extends Component {
    */
   handleCreateFormSubmit(event, formData) {
     const { startIndex } = this.state;
-    const { fields, params: { baseDocId } } = this.props;
-    //this.props.submitCreateForm();
-    this.props.saveTableData(baseDocId, fields, formData);
-    this.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
+    const { itemsPerPage, fields, params: { baseDocId } } = this.props;
+    // this.props.submitCreateForm();
+    // this.props.saveTableData(baseDocId, fields, formData);
+    // this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
     event.preventDefault();
   }
   handleCreateFormReset(event) {
@@ -101,8 +106,9 @@ class ArchContainer extends Component {
     const { startIndex } = this.state;
     const { fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
-    //this.props.submitEditForm();
-    this.props.saveTableData(baseDocId, fields, formData, rowIdx);
+    // this.props.submitEditForm();
+    // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
     event.preventDefault();
   }
   handleEditFormReset(event) {
@@ -121,11 +127,11 @@ class ArchContainer extends Component {
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
   //handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
-    const { tableData } = this.props;
+    const { itemsPerPage, tableData } = this.props;
     let nextPage = eventKey;
-    let startIndex = (nextPage-1) * ItemsPerPage;
+    let startIndex = (nextPage-1) * itemsPerPage;
 
-    this.props.fetchTableBodyData(this.props.params.baseDocId, ItemsPerPage, startIndex);
+    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex);
 
     this.setState({
       activePage: nextPage,
@@ -150,8 +156,9 @@ class ArchContainer extends Component {
         const { rowIdx, rowObj } = this.props;
         const { startIndex } = containerThis.state;
         const { baseDocId } = containerThis.props.params;
-        containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
-        containerThis.props.fetchTableBodyData(baseDocId, ItemsPerPage, startIndex);
+        // containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
+        // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
+        containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
       render() {
         return (
@@ -243,7 +250,8 @@ class ArchContainer extends Component {
       adminAlert, formAlert,
       params: {
         baseDocId
-      }
+      },
+      itemsPerPage
     } = this.props;
 
     // 表单字段模型 / 表格列模型
@@ -285,7 +293,7 @@ class ArchContainer extends Component {
               <SSCGrid tableData={tableData} columnsModel={cols}
                 striped bordered condensed hover
                 paging
-                itemsPerPage={ItemsPerPage}
+                itemsPerPage={itemsPerPage}
                 totalPage={this.props.totalPage}
                 activePage={this.state.activePage}
                 onPagination={::this.handlePagination}

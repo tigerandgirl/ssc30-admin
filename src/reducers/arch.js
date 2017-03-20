@@ -23,6 +23,7 @@ import {
 } from '../constants/ActionTypes';
 
 const initState = {
+  itemsPerPage: 15,
   loaded: false,
   tableData: [],
   fields: [],
