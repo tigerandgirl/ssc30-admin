@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
 
-import { Grid as SSCGrid, Form, Tree } from 'ssc-grid';
+import { Grid as SSCGrid, Form, Tree as SSCTree } from 'ssc-grid';
 
 import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
@@ -20,7 +20,10 @@ const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
 class ExternalDataModelling extends Component {
   static propTypes = {
-    //dispatch: PropTypes.func.isRequired
+    /**
+     * 左侧树的数据
+     */
+    outerEntityTree: PropTypes.array.isRequired
   }
 
   state = {
@@ -33,8 +36,7 @@ class ExternalDataModelling extends Component {
   }
 
   componentWillMount() {
-    // this.props.fetchTableBodyData(this.props.params.baseDocId, ItemsPerPage, this.state.startIndex);
-    // this.props.fetchTableColumnsModel(this.props.params.baseDocId);
+    this.props.fetchOuterEntityTree(this.props.params.billTypeCode);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -226,137 +228,85 @@ class ExternalDataModelling extends Component {
     return formData;
   }
 
-  render() {
+  handleChange(fieldId, value) {
+    const newState = { ...this.state };
+    newState.formData[fieldId] = value;
+    this.setState(newState);
+  }
 
-    const treeData = [
-      {
-        'title': '0-0-label',
-        'key': '0-0-key',
-        'children': [
-          {
-            'title': '0-0-0-label',
-            'key': '0-0-0-key',
-            'children': [
-              {
-                'title': '0-0-0-0-label',
-                'key': '0-0-0-0-key'
-              },
-              {
-                'title': '0-0-0-1-label',
-                'key': '0-0-0-1-key'
-              },
-              {
-                'title': '0-0-0-2-label',
-                'key': '0-0-0-2-key'
-              }
-            ]
-          },
-          {
-            'title': '0-0-1-label',
-            'key': '0-0-1-key',
-            'children': [
-              {
-                'title': '0-0-1-0-label',
-                'key': '0-0-1-0-key'
-              },
-              {
-                'title': '0-0-1-1-label',
-                'key': '0-0-1-1-key'
-              },
-              {
-                'title': '0-0-1-2-label',
-                'key': '0-0-1-2-key'
-              }
-            ]
-          },
-          {
-            'title': '0-0-2-label',
-            'key': '0-0-2-key'
-          }
-        ]
-      },
-      {
-        'title': '0-1-label',
-        'key': '0-1-key',
-        'children': [
-          {
-            'title': '0-1-0-label',
-            'key': '0-1-0-key',
-            'children': [
-              {
-                'title': '0-1-0-0-label',
-                'key': '0-1-0-0-key'
-              },
-              {
-                'title': '0-1-0-1-label',
-                'key': '0-1-0-1-key'
-              },
-              {
-                'title': '0-1-0-2-label',
-                'key': '0-1-0-2-key'
-              }
-            ]
-          },
-          {
-            'title': '0-1-1-label',
-            'key': '0-1-1-key',
-            'children': [
-              {
-                'title': '0-1-1-0-label',
-                'key': '0-1-1-0-key'
-              },
-              {
-                'title': '0-1-1-1-label',
-                'key': '0-1-1-1-key'
-              },
-              {
-                'title': '0-1-1-2-label',
-                'key': '0-1-1-2-key'
-              }
-            ]
-          },
-          {
-            'title': '0-1-2-label',
-            'key': '0-1-2-key'
-          }
-        ]
-      },
-      {
-        'title': '0-2-label',
-        'key': '0-2-key'
-      }
-    ];
+  handleSubmit(event, formData) {
+    alert('提交的数据: Form.state.formData: \n' + JSON.stringify(
+      formData,
+      null, '  '));
+    event.preventDefault();
+  }
+
+
+  render() {
+    const { outerEntityTree } = this.props;
 
     const properties = [
       {label: '显示名称', value: '家庭地址'},
       {label: '外部系统定义的表标签', value: ''}
     ];
 
+const mockFieldsModel = [
+  {type: 'string', id: 'id', label: '主键', hidden: true},
+  {type: 'string', id: 'danjubianhao', label: '单据编号'},
+  {type: 'string', id: 'name2', label: '名称2', hidden: true},
+  {type: 'string', id: 'name3', label: '名称3', hidden: true},
+  {type: 'string', id: 'name4', label: '名称4', hidden: true},
+  {type: 'enum', id: 'danjuleixing', label: '单据类型', placeholder: '请选择单据类型',
+    data: [
+      {key: '2631', value: '差旅费借款单'},
+      {key: '2632', value: '会议费借款单'},
+      {key: 'D3', value: '付款单'}
+    ]
+  },
+  {type: 'double', id: 'jine', label: '金额'},
+  {type: 'date', id: 'danjuriqi', label: '单据日期'},
+  {type: 'boolean', id: 'qiyong', label: '启用'}
+];
+
+const mockFormData = {
+  id: '22EA0EB9-FABA-4224-B290-4D041A1DF773',
+  danjubianhao: 'abc123',
+  name2: '名称2',
+  name3: '名称3',
+  name4: '名称4',
+  danjuleixing: 'D3',
+  jine: '12.00',
+  danjuriqi: new Date('2017-02-14').toISOString(),
+  qiyong: false
+};
+
+
+
     return (
       <div className="external-data-modelling-container">
         <Grid>
           <Row>
             <Col md={4}>
-              <Tree
-                className="left-tree"
-                showLine
-                checkable
-                defaultExpandAll
-                treeData={treeData}
-              />
+            {
+              outerEntityTree.length === 0
+              ? null
+              : <SSCTree
+                  className="left-tree"
+                  showLine
+                  checkable
+                  defaultExpandAll
+                  treeData={outerEntityTree}
+                />
+            }
             </Col>
             <Col md={8}>
               <h3>属性编辑器</h3>
-              <Table bordered>
-                <tbody>
-                  {properties.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.label}</td>
-                      <td>{item.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+              <Form
+                fieldsModel={mockFieldsModel}
+                defaultData={mockFormData}
+                onChange={::this.handleChange}
+                onSubmit={::this.handleSubmit}
+              />
             </Col>
           </Row>
         </Grid>

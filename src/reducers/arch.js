@@ -211,7 +211,8 @@ export default function arch(state = initState, action) {
         formAlert: {
           show: {$set: false}
         },
-        editFormData: {$set: action.formData}
+        editFormData: {$set: action.formData},
+        serverMessage: {$set: ''}
       });
     case UPDATE_EDIT_FORM_FIELD_VALUE:
       // Update single value inside specific array item
@@ -260,8 +261,9 @@ export default function arch(state = initState, action) {
           show: action.openDialog,
           formData: action.formData
         },
-        createFormData: action.formData
-      }
+        createFormData: action.formData,
+        serverMessage: ''
+      };
     case UPDATE_CREATE_FORM_FIELD_VALUE:
       // Update single value inside specific array item
       // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
