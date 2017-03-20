@@ -353,7 +353,10 @@ function fixDataTypes(baseDocId, {...field}) {
   // 后端虽然使用字符串类型，但是字符串有固定格式，
   // 后端文档针对accountproperty字段定义如下：
   // > BASE("基本"),NORMAL("一般"),TEMPORARY("临时"),SPECIAL("专用")
-  if (baseDocId === 'bankaccount' && field.id === 'accountproperty') {
+  //
+  // 暂时禁用掉了，因为这个bug
+  // http://172.16.50.197:8080/browse/YBZSAAS-106
+  if (0 && baseDocId === 'bankaccount' && field.id === 'accountproperty') {
     field.datatype = 6; // 枚举型
     field.type = 'enum';
     field.data = [
