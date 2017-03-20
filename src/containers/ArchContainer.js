@@ -164,9 +164,9 @@ class ArchContainer extends Component {
         return (
           <td>
             <span onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil"></span>
+              className="glyphicon glyphicon-pencil" title="编辑"></span>
             <span onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash"></span>
+              className="glyphicon glyphicon-trash" title="删除"></span>
           </td>
         );
       }
@@ -283,7 +283,7 @@ class ArchContainer extends Component {
                 <img src={url} />
               </div>
               <div style={{ display: 'inline-block', float: 'right' }}>
-                <Button onClick={::this.handleCreate}>创建</Button>
+                <Button onClick={::this.handleCreate}>新增</Button>
               </div>
             </Col>
           </Row>
