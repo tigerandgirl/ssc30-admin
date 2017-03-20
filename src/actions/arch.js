@@ -438,6 +438,13 @@ function deleteTableDataSuccess(json) {
   }
 }
 
+function deleteTableDataFail(message) {
+  return {
+    type: types.DELETE_TABLEDATA_FAIL,
+    message
+  }
+}
+
 // rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
 function updateTableDataSuccess(json, rowIdx) {
   // 后端返回的response总包含了修改之后的值，填写到表格中
@@ -695,32 +702,6 @@ export function fetchTableColumnsModel(baseDocId) {
                   );
                 }
               });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           } else {
             dispatch(receiveTableColumnsModelFail(
               `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
@@ -759,7 +740,11 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       .then(response => {
         return response.json();
       }).then(json => {
-        dispatch(deleteTableDataSuccess(json));
+         if( json.success ==  true ) {
+           dispatch(deleteTableDataSuccess(json));
+         }else{
+           dispatch(deleteTableDataFail(json.message));
+         }
       }).catch(function (err) {
         alert('删除时候出现错误');
         console.log("删除时候出现错误：", err);
