@@ -1,7 +1,11 @@
 import { combineReducers } from 'redux';
-import welcome from './welcome';
-import arch from './arch';
-import externalDataModelling from './externalDataModelling';
+
+import arch from './arch'; // 基础档案
+import entity from './entity'; // 实体模型
+import externalDataModelling from './externalDataModelling'; // 外部数据建模
+import welcome from './welcome'; // 调试用首页
+
+// 之前的代码，不知道是否还有用
 import { role } from './role';
 import permission from './permission';
 import archSetting from './archSetting';
@@ -9,9 +13,11 @@ import ncSync from './ncSync';
 import demo from './demo';
 
 const rootReducer = combineReducers({
-  welcome,
   arch,
+  entity,
   externalDataModelling,
+  welcome,
+
   role,
   permission,
   archSetting,
