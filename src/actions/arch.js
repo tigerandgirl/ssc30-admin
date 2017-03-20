@@ -360,6 +360,42 @@ function fixDataTypes(baseDocId, {...field}) {
 }
 
 /**
+ * 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+ */
+function fixReferKey(field) {
+  if (field.type !== 'ref') {
+    return field;
+  }
+  field.refCode = field.refinfocode;
+  return field;
+}
+
+/**
+ * 根据参照的类型来添加参照的config object
+ */
+function setReferFields(field) {
+  const getReferConfig = fieldDocType => {
+    const config = {
+      referConditions: {
+        refCode: fieldDocType, // 'dept',
+        refType: 'tree',
+        rootName: '部门'
+      }
+    };
+    if (fieldDocType === 'user') {
+      config.referDataUrl = ReferUserDataURL;
+    } else {
+      config.referDataUrl = ReferDataURL;
+    }
+    return config;
+  };
+  if (field.type === 'ref') {
+    field.referConfig = getReferConfig(field.refCode);
+  }
+  return field;
+}
+
+/**
  * 获取表格体数据(table body)，以及表格字段数据(table head)。
  */
 
