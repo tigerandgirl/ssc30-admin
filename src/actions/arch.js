@@ -3,20 +3,10 @@ import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
 /**
- * 配置后端服务器的IP和端口
+ * 后端接口
+ * 比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
  */
-
-/** 本地开发环境，使用swagger作为后端 */
-const LOCAL_EXPRESS_SERVER = '127.0.0.1:3009';
-
-/** 基础档案开发用后端服务器 */
-const BASEDOC_DEV_SERVER = '10.3.14.239';
-
-/** 参照的开发用后端服务器 */
-const REFER_DEV_SERVER = '172.20.13.230:8090'
-
-/** 实际联调环境 */
-const PROD_SERVER = '172.20.4.88:8088';
+import * as URL from '../constants/URLs';
 
 /**
  * Fetch API credentials 选项
@@ -39,11 +29,11 @@ const ENABLE_DEV_BACKEND = 0;
 function getBaseDocURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + PROD_SERVER + path;
+    return 'http://' + URL.PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
-    ? `http://${BASEDOC_DEV_SERVER}`
-    : `http://${LOCAL_EXPRESS_SERVER}`) + path;
+    ? `http://${URL.BASEDOC_DEV_SERVER}`
+    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
 }
 
 /**
@@ -53,11 +43,11 @@ function getBaseDocURL(path) {
 function getReferURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + PROD_SERVER + path;
+    return 'http://' + URL.PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
-    ? `http://${REFER_DEV_SERVER}`
-    : `http://${LOCAL_EXPRESS_SERVER}`) + path;
+    ? `http://${URL.REFER_DEV_SERVER}`
+    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
 }
 
 /**

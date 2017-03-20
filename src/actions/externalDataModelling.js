@@ -2,6 +2,95 @@ import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
 
+/**
+ * 后端接口
+ * 比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
+ */
+import * as URL from '../constants/URLs';
+
+/**
+ * Fetch API credentials 选项
+ * - false 不往Fetch API中添加credentials选项
+ * - same-origin 在请求中添加Cookie
+ */
+const FETCH_CREDENTIALS_OPTION = 'same-origin';
+
+/**
+ * 是否启用后端的开发用服务器
+ * - 0 使用本地的expressjs服务器伪造数据
+ * - 1 使用后端提供的测试服务器
+ */
+const ENABLE_DEV_BACKEND = 0;
+
+/**
+ * 根据配置获取到基础档案的绝对路径
+ * 比如：http://127.0.0.1:3009/dept/query
+ */
+function getBaseDocURL(path) {
+  // 生产环境下直接使用生产服务器IP
+  if (process.env.NODE_ENV === 'production') {
+    return 'http://' + URL.PROD_SERVER + path;
+  }
+  return (ENABLE_DEV_BACKEND
+    ? `http://${URL.BASEDOC_DEV_SERVER}`
+    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+}
+
+/**
+ * 根据配置获取到参照的绝对路径
+ * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
+ */
+function getReferURL(path) {
+  // 生产环境下直接使用生产服务器IP
+  if (process.env.NODE_ENV === 'production') {
+    return 'http://' + URL.PROD_SERVER + path;
+  }
+  return (ENABLE_DEV_BACKEND
+    ? `http://${URL.REFER_DEV_SERVER}`
+    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+}
+
+/**
+ * 根据配置获取到外部数据建模的绝对路径
+ * 比如：http://59.110.123.20/ficloud/outerentitytree/querytree
+ */
+function getExternalDataModellingURL(path) {
+  // 生产环境下直接使用生产服务器IP
+  if (process.env.NODE_ENV === 'production') {
+    return 'http://' + URL.PROD_SERVER + path;
+  }
+  return (ENABLE_DEV_BACKEND
+    ? `http://${URL.EXTERNAL_DATA_MODELLING_DEV_SERVER}`
+    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+}
+
+/**
+ * 基础档案 组装后端接口
+ */
+const OUTER_ENTITY_TREE_URL = getExternalDataModellingURL('/ficloud_web/outerentitytree/querytree');
+const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
+const getSaveURL = type => getBaseDocURL(`/${type}/save`);
+const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
+const getQueryURL = type => getBaseDocURL(`/${type}/query`);
+/**
+ * 参照 组装后端接口
+ */
+const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
+const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
+
+/** 配置Fetch API的credentials参数 */
+function appendCredentials(opts) {
+  if (FETCH_CREDENTIALS_OPTION) {
+    opts.credentials = FETCH_CREDENTIALS_OPTION;
+  }
+  return opts;
+}
+
+/**
+ * 常用的helper function
+ * 可以扔到utils.js中
+ */
+
 // Common helper -> utils.js/api.js
 const checkStatus = response => {
   if (response.status >= 200 && response.status < 300) {
@@ -21,7 +110,7 @@ export const EXTERNAL_DATA_MODELLING_REQUEST = 'EXTERNAL_DATA_MODELLING_REQUEST'
 export const EXTERNAL_DATA_MODELLING_SUCCESS = 'EXTERNAL_DATA_MODELLING_SUCCESS';
 export const EXTERNAL_DATA_MODELLING_FAILURE = 'EXTERNAL_DATA_MODELLING_FAILURE';
 
-export function fetchTableData(itemsPerPage, startIndex) {
+export function fetchOuterEntityTree(billTypeCode) {
   // use `callAPIMiddleware`
   return {
     types: [EXTERNAL_DATA_MODELLING_REQUEST, EXTERNAL_DATA_MODELLING_SUCCESS, EXTERNAL_DATA_MODELLING_FAILURE],
@@ -29,26 +118,28 @@ export function fetchTableData(itemsPerPage, startIndex) {
     //shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
       var opts = {
-        method: 'get',
+        method: 'post',
         headers: {
           'Content-type': 'application/json'
         },
-        mode: "cors"
+        mode: "cors",
+        body: JSON.stringify({
+          billtypecode: billTypeCode // {"billtypecode": "2643"}
+        })
       };
+      appendCredentials(opts);
 
-      var url = `/api/ncsync?itemsPerPage=${itemsPerPage}`;
-      if (typeof startIndex === 'undefined') {
-        url += `&startIndex=1`;
-      } else {
-        url += `&startIndex=${startIndex}`;
-      }
+      var url = `${OUTER_ENTITY_TREE_URL}`;
 
       return fetch(url, opts)
         .then(response => {
           return response.json();
         })
-    }//,
-    //payload: { itemsPerPage, startIndex }
+        .then(resObj => {
+          // 处理success: false
+          return resObj;
+        })
+    }
   }
 }
 

@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
 
-import { Grid as SSCGrid, Form, Tree } from 'ssc-grid';
+import { Grid as SSCGrid, Form, Tree as SSCTree } from 'ssc-grid';
 
 import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
@@ -20,7 +20,10 @@ const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
 class ExternalDataModelling extends Component {
   static propTypes = {
-    //dispatch: PropTypes.func.isRequired
+    /**
+     * 左侧树的数据
+     */
+    outerEntityTree: PropTypes.array.isRequired
   }
 
   state = {
@@ -33,8 +36,7 @@ class ExternalDataModelling extends Component {
   }
 
   componentWillMount() {
-    // this.props.fetchTableBodyData(this.props.params.baseDocId, ItemsPerPage, this.state.startIndex);
-    // this.props.fetchTableColumnsModel(this.props.params.baseDocId);
+    this.props.fetchOuterEntityTree(this.props.params.billTypeCode);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -227,8 +229,10 @@ class ExternalDataModelling extends Component {
   }
 
   render() {
+    const { outerEntityTree } = this.props;
+    console.log(outerEntityTree)
 
-    const treeData = [
+    let treeData = [
       {
         'title': '0-0-label',
         'key': '0-0-key',
@@ -327,6 +331,8 @@ class ExternalDataModelling extends Component {
       }
     ];
 
+    treeData = outerEntityTree;
+
     const properties = [
       {label: '显示名称', value: '家庭地址'},
       {label: '外部系统定义的表标签', value: ''}
@@ -337,13 +343,17 @@ class ExternalDataModelling extends Component {
         <Grid>
           <Row>
             <Col md={4}>
-              <Tree
-                className="left-tree"
-                showLine
-                checkable
-                defaultExpandAll
-                treeData={treeData}
-              />
+            {
+              treeData.length === 0
+              ? null
+              : <SSCTree
+                  className="left-tree"
+                  showLine
+                  checkable
+                  defaultExpandAll
+                  treeData={treeData}
+                />
+            }
             </Col>
             <Col md={8}>
               <h3>属性编辑器</h3>
