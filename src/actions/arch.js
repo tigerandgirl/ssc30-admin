@@ -530,8 +530,21 @@ const validation = {
   }
 };
 
+/**
+ * 跳转到页
+ */
+export function gotoPage(startIndex, nextPage) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: types.GOTO_PAGE,
+      startIndex,
+      nextPage
+    });
+  }
+}
+
 // 这个接口只获取表格体的数据
-export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
+export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage) {
   return (dispatch, getState) => {
     dispatch(requestTableData());
     const { arch } = getState();
@@ -587,6 +600,18 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex) {
         console.log("fetch table body error:", err);
       });
   }
+}
+
+/**
+ * 复合操作：获取表格数据并将页码设定为下一页
+ */
+export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage) {
+  return (dispatch, getState) => {
+    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex))
+      .then(() => {
+        return dispatch(gotoPage(startIndex, nextPage));
+      });
+  };
 }
 
 /**
@@ -716,7 +741,6 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
  */
 export function saveTableData(baseDocId, fields, formData, rowIdx) {
   return (dispatch, getState) => {
-    const { startIndex, itemsPerPage } = getState().arch;
     var requestBodyObj = { ...formData };
 
     // 注意：处理是有顺序的，不要乱调整
@@ -811,7 +835,7 @@ export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, 
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
     });
   };
 }
@@ -823,7 +847,7 @@ export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData,
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
     });
   };
 }

@@ -22,8 +22,6 @@ class ArchContainer extends Component {
   }
 
   state = {
-    activePage: 1,
-    startIndex: 0
   }
 
   constructor(props) {
@@ -31,8 +29,8 @@ class ArchContainer extends Component {
   }
 
   componentWillMount() {
-    const { itemsPerPage } = this.props;
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, this.state.startIndex);
+    const { itemsPerPage, startIndex } = this.props;
+    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex);
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
@@ -40,12 +38,12 @@ class ArchContainer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { itemsPerPage } = this.props;
+    const { itemsPerPage, startIndex } = this.props;
     const nextType = nextProps.params.baseDocId;
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableBodyData(nextType, itemsPerPage, this.state.startIndex);
+      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex);
       this.props.fetchTableColumnsModel(nextType);
     }
   }
@@ -85,8 +83,7 @@ class ArchContainer extends Component {
    * ```
    */
   handleCreateFormSubmit(event, formData) {
-    const { startIndex } = this.state;
-    const { itemsPerPage, fields, params: { baseDocId } } = this.props;
+    const { itemsPerPage, startIndex, fields, params: { baseDocId } } = this.props;
     // this.props.submitCreateForm();
     // this.props.saveTableData(baseDocId, fields, formData);
     // this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex);
@@ -103,8 +100,7 @@ class ArchContainer extends Component {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleEditFormSubmit(event, formData) {
-    const { startIndex } = this.state;
-    const { fields, editDialog: { rowIdx } } = this.props;
+    const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
     // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
@@ -124,6 +120,10 @@ class ArchContainer extends Component {
     this.props.hideAdminAlert();
   }
 
+  /**
+   * 用户点击下一页的时候，组件先向后端请求数据，等数据回来之后，再把分页组件
+   * 跳转到下一页。这样就能避免用户快速点击的问题了。
+   */
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
   //handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
@@ -131,12 +131,7 @@ class ArchContainer extends Component {
     let nextPage = eventKey;
     let startIndex = (nextPage-1) * itemsPerPage;
 
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex);
-
-    this.setState({
-      activePage: nextPage,
-      startIndex
-    });
+    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage);
   }
 
   getCustomComponent() {
@@ -154,7 +149,7 @@ class ArchContainer extends Component {
           return;
         }
         const { rowIdx, rowObj } = this.props;
-        const { startIndex } = containerThis.state;
+        const { startIndex } = containerThis.props;
         const { baseDocId } = containerThis.props.params;
         // containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
         // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
@@ -295,7 +290,7 @@ class ArchContainer extends Component {
                 paging
                 itemsPerPage={itemsPerPage}
                 totalPage={this.props.totalPage}
-                activePage={this.state.activePage}
+                activePage={this.props.activePage}
                 onPagination={::this.handlePagination}
                 operationColumn={{}}
                 operationColumnClass={this.getCustomComponent()}

@@ -19,11 +19,14 @@ import {
   SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,
   FORM_ALERT_OPEN, FORM_ALERT_CLOSE,
 
-  ERROR_MESSAGES_UPDATE
+  ERROR_MESSAGES_UPDATE,
+  GOTO_PAGE
 } from '../constants/ActionTypes';
 
 const initState = {
-  itemsPerPage: 15,
+  itemsPerPage: 3, // TODO 常量不应该放在这里
+  startIndex: 0,
+  activePage: 1,
   loaded: false,
   tableData: [],
   fields: [],
@@ -312,6 +315,12 @@ export default function arch(state = initState, action) {
           bsStyle: action.bsStyle,
           message: action.message
         }
+      };
+
+    case GOTO_PAGE:
+      return {...state,
+        startIndex: action.startIndex,
+        activePage: action.nextPage
       };
 
     default:
