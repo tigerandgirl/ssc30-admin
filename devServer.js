@@ -44,7 +44,7 @@ app.use(require('./server/routes/fakeApiArchSetting')());
 app.use(require('./server/routes/fakeApiNCSync')());
 
 const port = process.env.PORT || 3008;
-const ip = process.env.IP || '127.0.0.1';
+const ip = process.env.IP || '0.0.0.0';
 
 app.listen(port, ip, err => {
   if (err) {
