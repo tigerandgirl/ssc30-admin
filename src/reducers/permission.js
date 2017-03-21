@@ -1,18 +1,17 @@
 import update from 'react-addons-update';
-import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
-//import * as ActionTypes from '../constants/PermissionActionTypes';
+// import * as ActionTypes from '../constants/PermissionActionTypes';
 import * as ActionTypes from '../actions/permission';
 
 const initState = {
   loaded: false,
   tableData: {
-    "currentItemCount": 5,
-    "itemsPerPage": 5,
-    "startIndex": 1,
-    "totalItems": 0,
-    "items": []
+    'currentItemCount': 5,
+    'itemsPerPage': 5,
+    'startIndex': 1,
+    'totalItems': 0,
+    'items': []
   },
   selectedRows: {},
   editDialog: {
@@ -38,7 +37,7 @@ const initState = {
 export default handleActions({
 
   // Fetch permission data, fill in the table
-  [ActionTypes.PERMISSION_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.PERMISSION_REQUEST]: (state) => ({...state,
     loading: true
   }),
   [ActionTypes.PERMISSION_SUCCESS]: (state, action) => ({...state,
@@ -69,26 +68,26 @@ export default handleActions({
       }
     })
   ),
-  [ActionTypes.PERMISSION_CHANGED_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.PERMISSION_CHANGED_SUCCESS]: (state) => ({...state,
     changeLoading: false,
     changeLoaded: true
   }),
-  [ActionTypes.PERMISSION_CHANGED_FAILURE]: (state, action) => ({...state,
+  [ActionTypes.PERMISSION_CHANGED_FAILURE]: (state) => ({...state,
     changeLoading: false,
     changeLoaded: false
   }),
 
   // Remove premission data
-  [ActionTypes.PERMISSION_DELETE_SUCCESS]: (state, action) => ({...state/*,
-    tableData: {...action.payload}*/
+  [ActionTypes.PERMISSION_DELETE_SUCCESS]: (state) => ({...state/* ,
+    tableData: {...action.payload} */
   }),
 
   // edit dialog
   [ActionTypes.UPDATE_EDIT_FORM_FIELD_VALUE]: (state, action) => (
     // Update single value inside specific array item
     // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
-    update(state, { 
-      editFormData: { 
+    update(state, {
+      editFormData: {
         [action.id]: {
           value: {$set: action.payload}
         }
@@ -98,7 +97,7 @@ export default handleActions({
   [ActionTypes.INIT_EDIT_FORM_DATA]: (state, action) => ({...state,
     editFormData: action.editFormData
   }),
-  [ActionTypes.SUBMIT_EDIT_FORM]: (state, action) => ({...state,
+  [ActionTypes.SUBMIT_EDIT_FORM]: (state) => ({...state,
     submitting: true
   }),
   [ActionTypes.SUBMIT_EDIT_FORM_SUCCESS]: (state, action) => ({...state,
@@ -124,8 +123,8 @@ export default handleActions({
   [ActionTypes.UPDATE_CREATE_FORM_FIELD_VALUE]: (state, action) => (
     // Update single value inside specific array item
     // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
-    update(state, { 
-      createFormData: { 
+    update(state, {
+      createFormData: {
         [action.id]: {
           value: {$set: action.payload}
         }
@@ -135,7 +134,7 @@ export default handleActions({
   [ActionTypes.INIT_CREATE_FORM_DATA]: (state, action) => ({...state,
     createFormData: action.formData
   }),
-  [ActionTypes.SUBMIT_CREATE_FORM]: (state, action) => ({...state,
+  [ActionTypes.SUBMIT_CREATE_FORM]: (state) => ({...state,
     submitting: true
   }),
   [ActionTypes.SUBMIT_CREATE_FORM_SUCCESS]: (state, action) => ({...state,
@@ -160,14 +159,14 @@ export default handleActions({
   // View state
 
   // admin alert
-  [ActionTypes.PERMISSION_ADMIN_ALERT_SHOW]: (state, action) => (
+  [ActionTypes.PERMISSION_ADMIN_ALERT_SHOW]: (state) => (
     update(state, {
       adminAlert: {
         show: {$set: true}
       }
     })
   ),
-  [ActionTypes.PERMISSION_ADMIN_ALERT_HIDE]: (state, action) => (
+  [ActionTypes.PERMISSION_ADMIN_ALERT_HIDE]: (state) => (
     update(state, {
       adminAlert: {
         show: {$set: false}

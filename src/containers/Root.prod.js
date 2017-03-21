@@ -8,6 +8,10 @@ import Welcome from './Welcome';
 
 import BaseDocIndex from './BaseDocIndex'; // 基础档案列表页面
 import ArchContainer from './ArchContainer'; // 基础档案
+import ExternalDataModelling from './ExternalDataModelling'; // 外部数据建模
+import Entity from './Entity'; // 实体模型
+
+/** 2016年做的，不知道以后是否还有用 */
 import RoleContainer from './RoleContainer'; // 角色配置
 import PermissionPage from './PermissionPage'; // 权限配置/权限分配
 import ArchSettingPage from './ArchSettingPage'; // 基础档案配置
@@ -32,6 +36,8 @@ module.exports = class Root extends Component {
       <Provider store={store}>
         <div>
           <Router>
+            <Route path="/" component={Welcome}>
+            </Route>
             <Route path="/app" component={App}>
               <IndexRoute component={Welcome}/>
               <Route path="/welcome" component={Welcome}></Route>
@@ -49,6 +55,9 @@ module.exports = class Root extends Component {
             <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>
               <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
             </Route>
+            <Route path="/basedocs-no-sidebar-single-page/basedoc/:baseDocId" component={ArchContainer} />
+            <Route path="/external-data-modelling-no-sidebar-single-page/:billTypeCode" component={ExternalDataModelling} />
+            <Route path="/entity-no-sidebar-single-page" component={Entity} />
           </Router>
         </div>
       </Provider>

@@ -48,6 +48,8 @@ export const SUBMIT_CREATE_FORM_FAIL = 'SUBMIT_CREATE_FORM_FAIL';
 
 // 页面中的消息框
 
+export const ERROR_MESSAGES_UPDATE = 'ERROR_MESSAGES_UPDATE';
+
 export const SHOW_ADMIN_ALERT = 'SHOW_ADMIN_ALERT';
 export const HIDE_ADMIN_ALERT = 'HIDE_ADMIN_ALERT';
 
@@ -55,3 +57,7 @@ export const HIDE_ADMIN_ALERT = 'HIDE_ADMIN_ALERT';
 
 export const FORM_ALERT_OPEN = 'FORM_ALERT_OPEN';
 export const FORM_ALERT_CLOSE = 'FORM_ALERT_CLOSE';
+
+// 跳转到页
+
+export const GOTO_PAGE = 'GOTO_PAGE';

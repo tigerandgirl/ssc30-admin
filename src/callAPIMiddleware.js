@@ -36,7 +36,7 @@ export default function callAPIMiddleware({ dispatch, getState }) {
 
     return callAPI().then(
       response => dispatch({
-        payload: {...response.data},
+        payload: {...response},
         type: successType
       }),
       error => dispatch({

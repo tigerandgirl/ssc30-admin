@@ -17,10 +17,16 @@ import {
   SUBMIT_CREATE_FORM, SUBMIT_CREATE_FORM_SUCCESS, SUBMIT_CREATE_FORM_FAIL,
 
   SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,
-  FORM_ALERT_OPEN, FORM_ALERT_CLOSE
+  FORM_ALERT_OPEN, FORM_ALERT_CLOSE,
+
+  ERROR_MESSAGES_UPDATE,
+  GOTO_PAGE
 } from '../constants/ActionTypes';
 
 const initState = {
+  itemsPerPage: 15, // TODO 常量不应该放在这里
+  startIndex: 0,
+  activePage: 1,
   loaded: false,
   tableData: [],
   fields: [],
@@ -41,9 +47,12 @@ const initState = {
     error: {
       code: 0,
       bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
-      message: ''
+      message: '',
+      resBody: '' // 需要改成details，因为这里不仅仅会填写response body
     }
   },
+  // 当前页面所有的错误信息都扔进来
+  errorMessages: [],
   // 当表单提交失败的时候，显示错误信息
   formAlert: {
     show: false,
@@ -52,11 +61,20 @@ const initState = {
       bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
       message: ''
     }
-  }
+  },
+  serverMessage: ''
 };
 
 export default function arch(state = initState, action) {
   switch (action.type) {
+
+    // 添加错误提示stack
+    case ERROR_MESSAGES_UPDATE:
+      return update(state, {
+        errorMessages: {
+          push: [action.message]
+        }
+      });
 
     // 页面上的消息框
     case SHOW_ADMIN_ALERT:
@@ -130,9 +148,19 @@ export default function arch(state = initState, action) {
           show: true,
           bsStyle: 'danger',
           message: action.message,
-          resBody: action.resBody
+          resBody: action.details
         }
       };
+
+    case DELETE_TABLEDATA_FAIL:
+      return {...state,
+        adminAlert: {...state.adminAlert,
+          show: true,
+          bsStyle: 'danger',
+          message: action.message
+        }
+      };
+
 
     // 通过表单修改表格中的一行
     case TABLEDATA_UPDATE_SUCCESS:
@@ -161,6 +189,9 @@ export default function arch(state = initState, action) {
             message: action.message,
             resBody: action.resBody
           }
+        },
+        serverMessage: {
+          $set: action.resBody
         }
       });
 
@@ -194,7 +225,8 @@ export default function arch(state = initState, action) {
         formAlert: {
           show: {$set: false}
         },
-        editFormData: {$set: action.formData}
+        editFormData: {$set: action.formData},
+        serverMessage: {$set: ''}
       });
     case UPDATE_EDIT_FORM_FIELD_VALUE:
       // Update single value inside specific array item
@@ -243,8 +275,9 @@ export default function arch(state = initState, action) {
           show: action.openDialog,
           formData: action.formData
         },
-        createFormData: action.formData
-      }
+        createFormData: action.formData,
+        serverMessage: ''
+      };
     case UPDATE_CREATE_FORM_FIELD_VALUE:
       // Update single value inside specific array item
       // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
@@ -282,6 +315,12 @@ export default function arch(state = initState, action) {
           bsStyle: action.bsStyle,
           message: action.message
         }
+      };
+
+    case GOTO_PAGE:
+      return {...state,
+        startIndex: action.startIndex,
+        activePage: action.nextPage
       };
 
     default:

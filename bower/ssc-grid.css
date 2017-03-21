@@ -1,86 +1,91 @@
-/** form-group begin **/
-/*.control-label {*/
-    /*width: 15%;*/
-    /*min-width: 100px;*/
-    /*line-height: 34px;*/
-    /*text-align: right;*/
-    /*padding-right: 20px;*/
-/*}*/
-/*.form-control {*/
-    /*display: inline-block;*/
-    /*width: 80%;*/
-/*}*/
-/*.has-feedback {*/
-    /*height: 34px;*/
-/*}*/
-/*.has-feedback .input-group {*/
-    /*width: 80%;*/
-    /*left: 15%;*/
-    /*top: -39px;*/
-/*}*/
-/*.has-feedback .checkbox {*/
-    /*display: inline-block;*/
-    /*vertical-align: top;*/
-    /*top: -3px;*/
-/*}*/
-
-/** form-group over **/
-
-
+/** 通用色变量 */
+/* 通用设置 */
+.btn-default:focus,
+.btn-default:hover {
+  background-color: #f1f1f1;
+}
+.btn-default:active:hover {
+  background-color: #f1f1f1;
+}
+/* form begin */
+.form-horizontal {
+  font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.form-horizontal .control-label {
+  font-weight: 400;
+  line-height: 34px;
+  padding: 0;
+  margin: 0;
+}
+.form-horizontal #formControl-danjuriqi {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.form-horizontal .form-group button {
+  width: 80px;
+  height: 34px;
+  margin-right: 20px;
+  background-image: none;
+}
+.form-horizontal .form-group button[type="submit"] {
+  color: #ffffff;
+  background-color: #1baede;
+}
+.form-horizontal .form-group button[type="submit"]:hover {
+  background-color: #189cc7;
+}
+/** form over **/
 /** table begin **/
 .table-striped {
-    font-family: "Microsoft YaHei";
-    border: 1px solid #cecece;
+  font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border: 1px solid #cecece;
 }
-.table-striped>thead>tr {
-    background-color: #eeeff1;
+.table-striped > thead > tr > th,
+.table-striped > tbody > tr > td {
+  border: 0;
+  border-top: 1px solid #cecece;
 }
-.table-condensed > thead >tr >th {
-    padding: 10px;
-    font-weight: 400;
+.table-striped > thead > tr {
+  background-color: #eeeff1;
+}
+.table-striped > thead > tr > th {
+  padding: 10px;
+  font-weight: 400;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+.table-striped > tbody > tr:hover {
+  background-color: #e9f7fc;
+}
+.table-striped > tbody > tr:focus,
+.table-striped > tbody > tr:active {
+  background-color: #c4eaf6;
 }
 .table-striped > tbody > tr > td {
-    font-size: 12px;
-    padding: 10px;
-    height: 45px;
-    vertical-align: middle;
+  font-size: 12px;
+  padding: 10px;
+  height: 45px;
+  vertical-align: middle;
 }
-.table-striped>tbody>tr:nth-of-type(odd) {
-    background-color: #ffffff;
+.table-striped > tbody > tr > td .glyphicon {
+  color: transparent;
+  width: 20px;
 }
-.table-hover>tbody>tr:hover {
-    background-color: #e9f7fc;
+.table-striped > tbody > tr:hover > td .glyphicon {
+  display: inline-block;
+  color: #1baede;
 }
-.table-hover>tbody>tr:focus {
-    background-color: #c4eaf6;
+.table-striped > tbody > tr:focus > td .glyphicon {
+  display: inline-block;
+  color: #1baede;
 }
-.table-hover>tbody>tr:active {
-    background-color: #c4eaf6;
+.table-striped > tbody > tr:hover > td .glyphicon:hover {
+  color: #13799b;
+  cursor: pointer;
 }
-.table-bordered>tbody>tr>td, .table-bordered>thead>tr>th {
-    border: 0;
-    border-top: 1px solid #cecece;
+.table-striped > tbody > tr:focus > td .glyphicon:hover {
+  color: #13799b;
+  cursor: pointer;
 }
-.table-bordered>tbody>tr >td .glyphicon {
-    color: transparent;
-    width: 20px;
-}
-.table-bordered>tbody>tr:hover>td .glyphicon {
-    display: inline-block;
-    color: #1baede;
-}
-.table-bordered>tbody>tr:focus>td .glyphicon {
-    display: inline-block;
-    color: #1baede;
-}
-.table-bordered>tbody>tr:hover>td .glyphicon:hover {
-    color: #13799b;
-    cursor: pointer;
-}
-.table-bordered>tbody>tr:focus>td .glyphicon:hover {
-    color: #13799b;
-    cursor: pointer;
-}
-
 /** table over **/
-

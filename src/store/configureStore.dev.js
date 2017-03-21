@@ -12,15 +12,15 @@ import callAPIMiddleware from '../callAPIMiddleware';
  * flexibility!
  */
 const logger = createLogger({
-    predicate: (getState, action) => true, // log all actions
-    level: `info`,
-    duration: true,
-    actionTransformer: (action) => {
-        return {
-            ...action,
-            type: String(action.type || action.types)
-        };
-    }
+  predicate: (/* getState, action */) => true, // log all actions
+  level: `info`,
+  duration: true,
+  actionTransformer: (action) => {
+    return {
+      ...action,
+      type: String(action.type || action.types)
+    };
+  }
 });
 
 const finalCreateStore = compose(
@@ -31,7 +31,8 @@ const finalCreateStore = compose(
 
   // Setup dev tools - start
   // vanilla Redux DevTools
-  //DevTools.instrument()
+  // DevTools.instrument();
+
   // zalmoxisus Redux DevTools Extension
   typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ? window.devToolsExtension() : f => f
   // Setup dev tools - end
