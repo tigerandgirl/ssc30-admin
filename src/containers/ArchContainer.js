@@ -87,6 +87,13 @@ class ArchContainer extends Component {
     // this.props.submitCreateForm();
     // this.props.saveTableData(baseDocId, fields, formData);
     // this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex);
+
+    // add param : personmobile
+    // bug des: 传入手机号为空
+    if(formData.person.phone){
+      formData.personmobile =  formData.person.phone ;
+    }
+
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
     event.preventDefault();
   }
