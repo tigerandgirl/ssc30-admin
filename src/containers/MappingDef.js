@@ -12,7 +12,7 @@ import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
-import * as Actions from '../actions/conversionRuleDefinition';
+import * as Actions from '../actions/mappingDef';
 
 // Consants for table and form
 const ItemsPerPage = 15;
@@ -24,7 +24,7 @@ const BASE_DOC_ID = 'mapdef';
  * 会计平台 - 转换规则定义
  */
 
-class ConversionRuleDefinition extends Component {
+class MappingDef extends Component {
   static propTypes = {
     /**
      * store中存储的表体数据
@@ -122,7 +122,7 @@ class ConversionRuleDefinition extends Component {
     const { tableColumnsModel, tableBodyData } = this.props;
 
     return (
-      <div className="conversion-rule-definition-container">
+      <div className="mapping-def-container">
         <Grid>
           <Row className="show-grid">
             <Col md={12}>
@@ -158,7 +158,7 @@ class ConversionRuleDefinition extends Component {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  return {...state.conversionRuleDefinition};
+  return {...state.mappingDef};
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -166,4 +166,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 // The component will subscribe to Redux store updates.
-export default connect(mapStateToProps, mapDispatchToProps)(ConversionRuleDefinition);
+export default connect(mapStateToProps, mapDispatchToProps)(MappingDef);

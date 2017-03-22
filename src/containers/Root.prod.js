@@ -8,7 +8,7 @@ import Welcome from './Welcome';
 
 import ArchContainer from './ArchContainer'; // 基础档案
 import BaseDocIndex from './BaseDocIndex'; // 基础档案列表页面
-import ConversionRuleDefinition from './ConversionRuleDefinition'; // 转换规则定义
+import MappingDef from './MappingDef'; // 转换规则定义
 import ExternalDataModelling from './ExternalDataModelling'; // 外部数据建模
 import Entity from './Entity'; // 实体模型
 import Template from './Template'; // 模板
@@ -62,8 +62,8 @@ module.exports = class Root extends Component {
             <Route path="/entity-no-sidebar-single-page" component={Entity} />
             <Route path="/template-no-sidebar-single-page" component={Template} />
             <Route
-              path="/conversion-rule-definition-no-sidebar-single-page"
-              component={ConversionRuleDefinition}
+              path="/mapping-def-no-sidebar-single-page"
+              component={MappingDef}
             />
           </Router>
         </div>

@@ -2,7 +2,7 @@ import update from 'react-addons-update';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
-import * as ActionTypes from '../actions/conversionRuleDefinition';
+import * as ActionTypes from '../actions/mappingDef';
 
 const initState = {
   // 表头
