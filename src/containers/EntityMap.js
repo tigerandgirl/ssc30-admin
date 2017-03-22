@@ -57,25 +57,39 @@ class EntityMap extends Component {
     /**
      * [store] 左侧树的数据
      */
-    treeData: PropTypes.array.isRequired
-  }
-
-  state = {
-    activePage: 1,
-    startIndex: 0,
-    checkedKeys: []
+    treeData: PropTypes.array.isRequired,
+    /**
+     * URL传参
+     */
+    params: PropTypes.object.isRequired
+    /**
+     * [URL传参] billtypecode
+     */
+    // params.billTypeCode: PropTypes.string.isRequired,
+    /**
+     * [URL传参] mappingdefid
+     */
+    // params.mappingDefId: PropTypes.string.isRequired
   }
 
   constructor(props) {
     super(props);
+    this.state = {
+      activePage: 1,
+      startIndex: 0,
+      checkedKeys: [],
+      billTypeCode: this.props.params.billTypeCode,
+      mappingDefId: this.props.params.mappingDefId
+    };
   }
 
   componentWillMount() {
   }
 
   componentDidMount() {
-    this.props.fetchEntityFieldsModel();
-    this.props.fetchLeftTree('2643');
+    const { billTypeCode, mappingDefId } = this.state;
+    // this.props.fetchEntityFieldsModel();
+    this.props.fetchLeftTree(billTypeCode, mappingDefId);
   }
 
   componentWillReceiveProps(nextProps) {

@@ -61,7 +61,10 @@ module.exports = class Root extends Component {
             <Route path="/basedocs-no-sidebar-single-page/basedoc/:baseDocId" component={ArchContainer} />
             <Route path="/external-data-modelling-no-sidebar-single-page/:billTypeCode" component={ExternalDataModelling} />
             <Route path="/entity-no-sidebar-single-page" component={Entity} />
-            <Route path="/entity-map-no-sidebar-single-page" component={EntityMap} />
+            <Route
+              path="/entity-map-no-sidebar-single-page/:billTypeCode/:mappingDefId"
+              component={EntityMap}
+            />
             <Route
               path="/mapping-def-no-sidebar-single-page"
               component={MappingDef}

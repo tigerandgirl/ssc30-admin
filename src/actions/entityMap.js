@@ -55,8 +55,8 @@ function getReferURL(path) {
 }
 
 /**
- * 根据配置获取到外部数据建模的绝对路径
- * 比如：http://59.110.123.20/ficloud/outerentitytree/querytree
+ * 根据配置获取到实体映射的绝对路径
+ * 比如：http://59.110.123.20/ficloud/outerentitytree/querymdtree
  */
 function getURL(path) {
   // 生产环境下直接使用生产服务器IP
@@ -70,12 +70,14 @@ function getURL(path) {
 
 // 基础档案 组装后端接口
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
+
 // 实体映射模型 exchanger/entitymap.md
-const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
-const OUTER_ENTITY_TREE_NODE_URL = getURL('/ficloud_web/template/node');
-/**
- * 参照 组装后端接口
- */
+//const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
+const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/outerentitytree/querymdtree');
+//const OUTER_ENTITY_TREE_NODE_URL = getURL('/ficloud_web/template/node');
+const OUTER_ENTITY_TREE_NODE_URL = getURL('/ficloud_web/outerentitytree/querynodedata');
+
+// 参照 组装后端接口
 const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
 const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
@@ -99,7 +101,11 @@ export const TEMPLATE_REQUEST = 'TEMPLATE_REQUEST';
 export const TEMPLATE_SUCCESS = 'TEMPLATE_SUCCESS';
 export const TEMPLATE_FAILURE = 'TEMPLATE_FAILURE';
 
-export function fetchLeftTree(billTypeCode) {
+/**
+ * @param {String} billTypeCode
+ * @param {String} mappingDefId
+ */
+export function fetchLeftTree(billTypeCode, mappingDefId) {
   // use `callAPIMiddleware`
   return {
     types: [TEMPLATE_REQUEST, TEMPLATE_SUCCESS, TEMPLATE_FAILURE],
@@ -113,7 +119,8 @@ export function fetchLeftTree(billTypeCode) {
         },
         mode: "cors",
         body: JSON.stringify({
-          billtypecode: billTypeCode // {"billtypecode": "2643"}
+          billtypecode: billTypeCode, // "C0"
+          mappingdefid: mappingDefId // "1"
         })
       };
       appendCredentials(opts);
