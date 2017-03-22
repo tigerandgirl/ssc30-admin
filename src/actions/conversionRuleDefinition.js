@@ -24,7 +24,7 @@ const ENABLE_DEV_BACKEND = 0;
 
 /**
  * 根据配置获取到实体模型的绝对路径
- * 比如：http://10.1.218.36:8080/ficloud_web/md/qryEntity
+ * 比如：http://10.1.218.36:8080/ficloud_web/mappingdef/query
  */
 function getMappingDefAPI(path) {
   // 生产环境下直接使用生产服务器IP
@@ -37,9 +37,9 @@ function getMappingDefAPI(path) {
 }
 
 /**
- * 实体模型 组装后端接口
+ * 转换规则模型 组装后端接口
  */
-const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud_web/md/qryEntity');
+const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud_web/mappingdef/query');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {

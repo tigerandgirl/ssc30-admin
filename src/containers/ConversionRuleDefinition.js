@@ -18,10 +18,14 @@ import * as Actions from '../actions/conversionRuleDefinition';
 const ItemsPerPage = 15;
 const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
+/**
+ * 会计平台 - 转换规则定义
+ */
+
 class ConversionRuleDefinition extends Component {
   static propTypes = {
     /**
-     * 左侧树的数据
+     * store中存储的表格数据
      */
     tableData: PropTypes.array.isRequired
   }
@@ -293,4 +297,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 // The component will subscribe to Redux store updates.
-export default connect(mapStateToProps, mapDispatchToProps)(ConversioinRuleDefinition);
+export default connect(mapStateToProps, mapDispatchToProps)(ConversionRuleDefinition);
