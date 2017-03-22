@@ -7,25 +7,27 @@
 - 友账表 - 基础档案（基本档案）
 - 友账表 - 会计平台（部分页面）
 
-## Online demo
+## 在线演示
 
 [http://10.3.14.237:3000/](http://10.3.14.237:3000/)
 
-## Prepare
+## 进行开发
+
+安装依赖
 
 ```
 npm install
 ```
 
-## Run in development mode
+以调试模式运行
 
 ```
 npm run dev
 ```
 
-Open http://127.0.0.1:3008/
+打开 http://127.0.0.1:3008/ 访问首页
 
-## Run in demo mode
+## 在本地测试编译结果
 
 Development feature, like webpack HMR, is not include in demo mode. As this you could host this demo on a web server.
 
