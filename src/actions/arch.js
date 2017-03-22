@@ -231,6 +231,7 @@ function setRequiredFields(baseDocId, {...field}) {
  * 而是口口相传的，所以写在这里
  */
 function shouldNotRemoveFields(baseDocId, {...field}) {
+  
   let shouldNotRemove = true;
   // 将需要隐藏的字段设置为true，如果不指定，或者设定为false说明不隐藏
   // 仅需要将打算隐藏的字段列出来。
@@ -261,6 +262,7 @@ function shouldNotRemoveFields(baseDocId, {...field}) {
     },
     "bankaccount": {
       "pk_org": true,
+      bank:true ,
       description: true
     },
     "bankclass": {
