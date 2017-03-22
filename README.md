@@ -1,8 +1,11 @@
 # ssc30-admin
 
-注意：**停止维护**，项目已经转移到http://git.yonyou.com/sscplatform/FC_MANA
+本项目覆盖的功能包括并不限于：
 
-SSC 3.0 后台管理
+- SSC 3.0 后台管理
+- 友报账 - 基础档案（基本档案）
+- 友账表 - 基础档案（基本档案）
+- 友账表 - 会计平台（部分页面）
 
 ## Online demo
 
