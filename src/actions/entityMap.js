@@ -99,7 +99,7 @@ export const TEMPLATE_REQUEST = 'TEMPLATE_REQUEST';
 export const TEMPLATE_SUCCESS = 'TEMPLATE_SUCCESS';
 export const TEMPLATE_FAILURE = 'TEMPLATE_FAILURE';
 
-export function fetchTemplateTree(billTypeCode) {
+export function fetchLeftTree(billTypeCode) {
   // use `callAPIMiddleware`
   return {
     types: [TEMPLATE_REQUEST, TEMPLATE_SUCCESS, TEMPLATE_FAILURE],
@@ -211,11 +211,11 @@ function hasChildren(state, key) {
       }
     });
   };
-  loop(state.template.treeData);
+  loop(state.entityMap.treeData);
   return has;
 }
 
-export function fetchTemplateTreeNode(key) {
+export function fetchLeftTreeNode(key) {
   // use `callAPIMiddleware`
   return {
     types: [TEMPLATE_NODE_REQUEST, TEMPLATE_NODE_SUCCESS, TEMPLATE_NODE_FAILURE],
@@ -244,7 +244,7 @@ export function fetchTemplateTreeNode(key) {
           // 处理success: false
 
           // 从store中取得树数据，然后添加节点，再保存回store中
-          const treeData = [...state.template.treeData];
+          const treeData = [...state.entityMap.treeData];
           const newTreeData = genNewTreeData(treeData, key, resObj.data/* , 9999 */);
 
           return {

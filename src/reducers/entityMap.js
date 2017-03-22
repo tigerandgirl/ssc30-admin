@@ -2,7 +2,7 @@ import update from 'react-addons-update';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
-import * as ActionTypes from '../actions/template';
+import * as ActionTypes from '../actions/entityMap';
 
 const initState = {
   loading: false,

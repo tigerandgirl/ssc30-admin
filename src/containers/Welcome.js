@@ -54,8 +54,8 @@ class Welcome extends React.Component {
               </Link>
             </li>
             <li>
-              <Link to={`/template-no-sidebar-single-page`}>
-                实体映射 Template （模板）(no-sidebar, single-page)
+              <Link to={`/entity-map-no-sidebar-single-page`}>
+                实体映射 EntityMap (no-sidebar, single-page)
               </Link>
             </li>
           </ul>

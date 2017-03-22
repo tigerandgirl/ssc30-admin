@@ -13,7 +13,7 @@ import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
-import * as Actions from '../actions/template';
+import * as Actions from '../actions/entityMap';
 
 const DEFAULT_EXPANDED_LEVEL = 3;
 
@@ -52,7 +52,7 @@ function getDefaultExpandedKeys([...treeData]) {
  * 1. 右卡：http://git.yonyou.com/sscplatform/fc_doc/blob/master/exchanger/entitytreenode.md
  */
 
-class Template extends Component {
+class EntityMap extends Component {
   static propTypes = {
     /**
      * [store] 左侧树的数据
@@ -75,7 +75,7 @@ class Template extends Component {
 
   componentDidMount() {
     this.props.fetchEntityFieldsModel();
-    this.props.fetchTemplateTree('2643');
+    this.props.fetchLeftTree('2643');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -100,7 +100,7 @@ class Template extends Component {
   onLoadData(treeNode) {
     // TODO 因为使用了callAPIMiddleware导致如下调用返回的结果可能是Promise也可能
     // 是undefined
-    const promise = this.props.fetchTemplateTreeNode(treeNode.props.eventKey);
+    const promise = this.props.fetchLeftTreeNode(treeNode.props.eventKey);
     if (promise) {
       return promise;
     } else {
@@ -111,7 +111,7 @@ class Template extends Component {
   }
 
   render() {
-    const { columnsModel, templateTree } = this.props;
+    const { columnsModel } = this.props;
 
     let level = 0;
     const loop = (data) => {
@@ -133,7 +133,7 @@ class Template extends Component {
     const defaultExpandedKeys = getDefaultExpandedKeys(this.props.treeData);
 
     return (
-      <div className="template-container">
+      <div className="entity-map-container">
         <Grid>
           <Row>
             <Col md={4}>
@@ -162,7 +162,7 @@ class Template extends Component {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  return {...state.template};
+  return {...state.entityMap};
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -170,4 +170,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 // The component will subscribe to Redux store updates.
-export default connect(mapStateToProps, mapDispatchToProps)(Template);
+export default connect(mapStateToProps, mapDispatchToProps)(EntityMap);

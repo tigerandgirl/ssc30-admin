@@ -98,7 +98,7 @@ class MappingDef extends Component {
       render() {
         return (
           <td>
-            <Link to={`/template-no-sidebar-single-page`}>
+            <Link to={`/entity-map-no-sidebar-single-page`}>
               编辑
             </Link>
           </td>
