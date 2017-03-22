@@ -7,17 +7,13 @@ import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
 import Tree, { TreeNode } from 'rc-tree';
 
-import { Grid as SSCGrid, Form, Tree as SSCTree } from 'ssc-grid';
+import { Grid as SSCGrid, Form as SSCForm, Tree as SSCTree } from 'ssc-grid';
 
 import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
 import * as Actions from '../actions/template';
-
-// Consants for table and form
-const ItemsPerPage = 15;
-const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
 const DEFAULT_EXPANDED_LEVEL = 3;
 
@@ -48,6 +44,14 @@ function getDefaultExpandedKeys([...treeData]) {
   return expandedKeys;
 }
 
+/**
+ * 【友账表】 会计平台 - 实体映射
+ * UI：左树右卡
+ * API文档：
+ * 1. 左树：
+ * 1. 右卡：http://git.yonyou.com/sscplatform/fc_doc/blob/master/exchanger/entitytreenode.md
+ */
+
 class Template extends Component {
   static propTypes = {
     /**
@@ -67,18 +71,23 @@ class Template extends Component {
   }
 
   componentWillMount() {
-    // this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
   componentDidMount() {
+    this.props.fetchEntityFieldsModel();
     this.props.fetchTemplateTree('2643');
   }
 
   componentWillReceiveProps(nextProps) {
   }
 
-  onSelect(info) {
-    console.log('selected', info);
+  /**
+   * @param {Array} selectedKeys
+   * @param {Object} e {selected: bool, selectedNodes, node, event}
+   */
+  onSelect(selectedKeys, e) {
+    // console.log('selected', selectedKeys);
+    console.log(e.node.props.eventKey);
   }
 
   onCheck(checkedKeys) {

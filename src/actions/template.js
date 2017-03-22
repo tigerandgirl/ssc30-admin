@@ -1,11 +1,15 @@
+/**
+ * 【友账表】 会计平台 - 实体映射
+ */
+
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
 
-/**
- * 后端接口
- * 比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
- */
+// help functions
+import * as utils from './utils';
+
+// 后端接口URL，比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
 import * as URL from '../constants/URLs';
 
 /**
@@ -54,7 +58,7 @@ function getReferURL(path) {
  * 根据配置获取到外部数据建模的绝对路径
  * 比如：http://59.110.123.20/ficloud/outerentitytree/querytree
  */
-function getExternalDataModellingURL(path) {
+function getURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return 'http://' + URL.PROD_SERVER + path;
@@ -64,11 +68,11 @@ function getExternalDataModellingURL(path) {
     : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
 }
 
-/**
- * 基础档案 组装后端接口
- */
-const OUTER_ENTITY_TREE_URL = getExternalDataModellingURL('/ficloud_web/template/tree');
-const OUTER_ENTITY_TREE_NODE_URL = getExternalDataModellingURL('/ficloud_web/template/node');
+// 基础档案 组装后端接口
+const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
+// 实体映射模型 exchanger/entitymap.md
+const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
+const OUTER_ENTITY_TREE_NODE_URL = getURL('/ficloud_web/template/node');
 /**
  * 参照 组装后端接口
  */
@@ -82,24 +86,6 @@ function appendCredentials(opts) {
   }
   return opts;
 }
-
-/**
- * 常用的helper function
- * 可以扔到utils.js中
- */
-
-// Common helper -> utils.js/api.js
-const checkStatus = response => {
-  if (response.status >= 200 && response.status < 300) {
-    return response
-  } else {
-    var error = new Error(response.statusText)
-    error.response = response
-    throw error
-  }
-};
-
-const parseJSON = response => response.json();
 
 /**
  * 2) A clever exploit of the JSON library to deep-clone objects
@@ -268,3 +254,112 @@ export function fetchTemplateTreeNode(key) {
     }
   }
 }
+
+/**
+ * 获取表格的列模型
+ */
+
+export const ENTITY_FIELDS_MODEL_REQUEST = 'ENTITY_FIELDS_MODEL_REQUEST';
+export const ENTITY_FIELDS_MODEL_SUCCESS = 'ENTITY_FIELDS_MODEL_SUCCESS';
+export const ENTITY_FIELDS_MODEL_FAILURE = 'ENTITY_FIELDS_MODEL_FAILURE';
+
+// 获取表格列模型失败
+// message: 错误信息
+// details: 比如HTTP response body，或者其他为了踢皮球而写的比较啰嗦的文字
+function receiveTableColumnsModelFail(message, details) {
+  return {
+    type: types.LOAD_TABLECOLUMNS_FAIL,
+    message, details
+  }
+}
+
+/**
+ * 获取实体（Entity）的字段模型
+ * 好像是后端复用了基础档案查询接口initgrid接口
+ * 这个字段模型用于显示页面右侧的表单
+ */
+
+export function fetchEntityFieldsModel(baseDocId = 'entity') {
+  // use `callAPIMiddleware`
+  return {
+    types: [ENTITY_FIELDS_MODEL_REQUEST, ENTITY_FIELDS_MODEL_SUCCESS, ENTITY_FIELDS_MODEL_FAILURE],
+    // Check the cache (optional):
+    //shouldCallAPI: (state) => !state.posts[userId],
+    callAPI: () => {
+      const opts = {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/x-www-form-urlencoded'
+        },
+        mode: "cors",
+        body: `doctype=${baseDocId}`
+      };
+      appendCredentials(opts);
+      const url = `${FICLOUDPUB_INITGRID_URL}`;
+
+      return fetch(url, opts)
+        .then(response => {
+          // TODO: HTTP状态检查，需要独立成helper function
+          if (response.status >= 200 && response.status < 300) {
+            return response;
+          } else {
+            var error = new Error(response.statusText);
+            error.response = response;
+            response.text().then(text => {
+              return receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text);
+            });
+            throw error;
+          }
+        })
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          if (json.success === true) {
+
+            // 进行业务层的数据校验
+            const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
+            if (isValid) {
+              // 1. 删除不用的字段，按理说应该后端从response中删除掉的
+              // 2. 修复后端json中的错别字，暂时在前端写死
+              // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
+              // 4. 有些字段是必填项，暂时在前端写死
+              // 5. 有些字段需要隐藏，暂时在前端写死
+              // 6. 有些字段的类型错误，暂时在前端写死新类型
+              // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+              // 8. 添加参照的配置
+              let fields = json.data
+                /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+                /* 2 */ .map(utils.fixFieldTypo)
+                /* 3 */ .map(utils.convertDataType)
+                /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+                /* 5 */ .map(utils.setHiddenFields)
+                /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+                /* 7 */ .map(utils.fixReferKey)
+                /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
+              return {
+                data: fields
+              };
+            } else {
+              return receiveTableColumnsModelFail(
+                `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+                但是数据校验方法提示说：“${validationMessage}”`,
+                JSON.stringify(json.data, null, '  ')
+              );
+            }
+
+          } else {
+            return receiveTableColumnsModelFail(
+              '后端返回的success不是true', JSON.stringify(json, null, '  ')
+            );
+          }
+        })
+        .catch(function (err) {
+          console.log("获取表格列模型失败，错误信息：", err);
+        });
+    }
+  }
+}
+
+
+
