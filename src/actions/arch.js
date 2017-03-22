@@ -2,10 +2,10 @@ import * as types from '../constants/ActionTypes';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 
-/**
- * 后端接口
- * 比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
- */
+// help functions
+import * as utils from './utils';
+
+// 后端接口URL，比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
 import * as URL from '../constants/URLs';
 
 /**
@@ -72,330 +72,6 @@ function appendCredentials(opts) {
   return opts;
 }
 
-/**
- * 常用的helper function
- * 可以扔到utils.js中
- */
-
-// Common helper -> utils.js/api.js
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    var error = new Error(response.statusText);
-    error.response = response;
-    throw error;
-  }
-}
-
-function parseJSON(response) {
-  return response.json();
-}
-
-/**
- * 删除JSON object中的空值，空字符串除外
- * {
- *   foo: 'bar',
- *   bar: '',
- *   bar2: null,
- *   bar3: undefined
- * }
- * 转换为
- * {
- *   foo: 'bar'
- *   bar: ''
- * }
- * 注意：不会修改输入的obj参数
- */
-const removeEmpty = (obj) => {
-  var prop, newObj = {};
-  for (prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      if (obj[prop] == null || obj[prop] == undefined) {
-        continue;
-      }
-      newObj[prop] = obj[prop];
-    }
-  }
-  return newObj
-};
-
-/**
- * 处理后端数据的方法
- * 这些方法应该是immutable
- */
-
-/**
- * 做两件事情，需要拆分：
- * 1. 后端使用lable，需要复制一份改成label，以保证Grid组件等没有问题
- * 2. 对于数据类型，后端使用int，前端使用string，添加string类型的type字段
- */
-function fixFieldTypo ({...field}) {
-  field.label = field.lable; // API中将label错误的写成了lable
-  field.key = field.id; // API后来将key改成了id
-  return field;
-}
-
-/**
- * 将后端使用数字表示的data type转换成前端的名称
- * 后端使用datatype=0, 前端使用type='string'
- */
-function convertDataType({...field}) {
-  const TYPE = [
-    'string', 'integer', 'double', 'date', 'boolean', // 0~4
-    'ref', 'enum', '', 'datetime', 'text' // 5~9
-  ]
-  field.type = TYPE[field.datatype];
-  return field;
-}
-
-/**
- * 根据指定的档案类型和字段id，判断指定字段是否为必填项
- * 目前将这些数据在前端写死
- */
-function setRequiredFields(baseDocId, {...field}) {
-  const data = {
-    dept: {
-      code: true, // dept的code字段是必输字段
-      name: true,
-      person: true,
-      pk_org: true
-    },
-    project: {
-      code: true,
-      name: true,
-      classifyid: true
-    },
-    projectclass: {
-      code: true,
-      name: true
-    },
-    user: {
-      name: true,
-      sex: true,
-      email: true,
-      positionstate: true
-    },
-    accperiod: { // 会计期间
-      pk_org: true,
-      description: true,
-      code: true,
-      name: true,
-      accperiodscheme: true,
-      begindate: true,
-      enddate: true,
-      num: true,
-      enable: true
-    },
-    currency: { // 币种
-      pk_org: true,
-      description: true,
-      code: true,
-      name: true,
-      moneydigit: true,
-      moneyrount: true,
-      pricedigit: true,
-      pricerount: true,
-      sign: true
-    },
-    bank: { // 银行
-      pk_org: true,
-      description: true,
-      code: true,
-      name: true,
-      classifyid: true,
-      enable: true
-    },
-    bankaccount: { // 银行账户
-      pk_org: true,
-      code: true,
-      name: true,
-      depositbank: true,
-      bank: true,
-      defaultaccount: false,
-      accountproperty: true,
-      accounttype: true
-    }
-  };
-  if (data[baseDocId] && data[baseDocId][field.id] === true) {
-    field.validation = {
-      type: 'required'
-    };
-  }
-  return field;
-}
-
-/**
- * 有些字段需要隐藏，暂时写死在前端
- * 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
- * 而是口口相传的，所以写在这里
- */
-function shouldNotRemoveFields(baseDocId, {...field}) {
-  
-  let shouldNotRemove = true;
-  // 将需要隐藏的字段设置为true，如果不指定，或者设定为false说明不隐藏
-  // 仅需要将打算隐藏的字段列出来。
-  const data = {
-    "accbook": {
-      "pk_org": true
-    },
-    "accelement": {
-      "pk_org": true
-    },
-    "accperiod": {
-      "pk_org": true
-    },
-    "accperiodscheme": {
-      "pk_org": true
-    },
-    "accstandard": {
-      "pk_org": true
-    },
-    "accsubjectchart": {
-      "pk_org": true
-    },
-    "bank": {
-      "pk_org": true,
-      description: true,
-      enable: true,
-      classifyid: false
-    },
-    "bankaccount": {
-      "pk_org": true,
-      bank:true ,
-      description: true
-    },
-    "bankclass": {
-      "pk_org": true
-    },
-    "currency": {
-      "pk_org": true,
-      description: true,
-      pricerount: true,
-      moneyrount: true
-    },
-    "dept": {
-      "pk_org": true
-    },
-    "feeitem": {
-      "pk_org": true
-    },
-    "feeitemclass": {
-      "pk_org": true
-    },
-    "measuredoc": {
-      "pk_org": true
-    },
-    "multidimension": {
-      "pk_org": true
-    },
-    "project": {
-      "pk_org": true
-    },
-    "projectclass": {
-      "pk_org": true
-    },
-    "subjectchart": {
-      "pk_org": true
-    },
-    "user": {
-      "pk_org": true
-    },
-    "valuerang": {
-      "pk_org": true
-    }
-  };
-
-  // 按照业务的要求，这些字段是不需要的，但是后端非得传，
-  // 所以暂时写死在前端
-  if (data[baseDocId] && data[baseDocId][field.id] === true) {
-    shouldNotRemove = false;
-  }
-  // 以name开头后面跟数字，比如name2，这样的字段需要删除
-  if (/^name\d+/g.exec(field.id) !== null) {
-    shouldNotRemove = false;
-  }
-  return shouldNotRemove;
-}
-
-/**
- * 设定隐藏字段
- * 比如id字段是主键，不需要在表格中以及表单中显示，但是当往后端发送请求的时候，
- * 需要带有该id
- */
-function setHiddenFields({...field}) {
-  if (field.id === 'id') {
-    field.hidden = true;
-  }
-  return field;
-}
-
-/**
- * 后端返回的数据类型可能有错误，在这里进行修复
- * 说一个实际需求：
- * 需求：https://www.teambition.com/project/5782fc6449d32145686e17d7/tasks/scrum/5782fc65fa04c23d7e9abf52/task/58c7410f95e23eae620600ab
- * 【银行账号 - 账户性质应为下拉框形式】
- * 对于“账户性质”这个字段，后端返回的datatype=0，也就是后端认为是string，也就是
- * 字符串类型，但是需求让显示成下拉框，也就是：
- * 1. 后端设定datatype=6，也就是前端的type=enum枚举型
- * 2. 前端将该类型写死为枚举型
- * 由于后端同事很难沟通，所以这里我们采用第二方案，由前端来写死了
- */
-function fixDataTypes(baseDocId, {...field}) {
-  // 后端虽然使用字符串类型，但是字符串有固定格式，
-  // 后端文档针对accountproperty字段定义如下：
-  // > BASE("基本"),NORMAL("一般"),TEMPORARY("临时"),SPECIAL("专用")
-  //
-  // 暂时禁用掉了，因为这个bug
-  // http://172.16.50.197:8080/browse/YBZSAAS-106
-  if (0 && baseDocId === 'bankaccount' && field.id === 'accountproperty') {
-    field.datatype = 6; // 枚举型
-    field.type = 'enum';
-    field.data = [
-      {key: 'BASE', value: '基本'},
-      {key: 'NORMAL', value: '一般'},
-      {key: 'TEMPORARY', value: '临时'},
-      {key: 'SPECIAL', value: '专用'}
-    ];
-  }
-  return field;
-}
-
-/**
- * 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
- */
-function fixReferKey(field) {
-  if (field.type !== 'ref') {
-    return field;
-  }
-  field.refCode = field.refinfocode;
-  return field;
-}
-
-/**
- * 根据参照的类型来添加参照的config object
- */
-function setReferFields(field) {
-  const getReferConfig = fieldDocType => {
-    const config = {
-      referConditions: {
-        refCode: fieldDocType, // 'dept',
-        refType: 'tree',
-        rootName: '部门'
-      }
-    };
-    if (fieldDocType === 'user') {
-      config.referDataUrl = ReferUserDataURL;
-    } else {
-      config.referDataUrl = ReferDataURL;
-    }
-    return config;
-  };
-  if (field.type === 'ref') {
-    field.referConfig = getReferConfig(field.refCode);
-  }
-  return field;
-}
 
 /**
  * 获取表格体数据(table body)，以及表格字段数据(table head)。
@@ -499,40 +175,6 @@ function updateTableDataFail(message, resBody) {
 }
 
 /**
- * 对后端生成的JSON做校验
- * 这里假设JSON本身是valid，但是需要再次确认业务层如何看待这些数据是否为valid
- */
-const validation = {
-  /**
-   * 检查columnsModel中：
-   * - 是否有重复的id
-   * @param {object} 经过parse的后端返回的JSON
-   * @return {array} [isValid, message]
-   *   - `isValid` 是否校验成功
-   *   - `message` 校验失败的时候，用来提供相应的错误信息
-   */
-  tableColumnsModelData: json => {
-    let isValid = true;
-    let message = '';
-    // 获取所有columnModel的id，检查是否有重复，否则在之后表格的绘制，以及
-    // 基于现有model提交新数据等环节，都有很大可能导致意想不到的问题。
-    let ids = json.data.map(columnModel => columnModel.id);
-    let duplicatedIds = _.filter(ids, function (value, index, iteratee) {
-      return _.includes(iteratee, value, index + 1);
-    });
-    if (_.isEmpty(duplicatedIds)) {
-    } else {
-      isValid = false;
-      message = `JSON中出现了重复的id：${duplicatedIds}，请立即停止所有操作，
-        否则可能产生意想不到的结果！如果你不明白这里发生了什么事情，请咨询网站管理员。
-        由于当前网站管理员不存在，你可以尝试绕过网站管理员，直接联系程序员，比如
-        你可以尝试联系chenyangf@yonyou.com，也许可能会帮助到你。`;
-    }
-    return [isValid, message];
-  }
-};
-
-/**
  * 跳转到页
  */
 export function gotoPage(startIndex, nextPage) {
@@ -580,11 +222,11 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
           throw error;
         }
       })
-      .then(parseJSON)
+      .then(utils.parseJSON)
       .then(json => {
         if (json.success === true) {
           // 进行业务层的数据校验
-          const [isValid, validationMessage] = validation.tableColumnsModelData(json);
+          const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
           if (isValid) {
             dispatch(receiveTableBodyDataSuccess(json, itemsPerPage));
           } else {
@@ -656,7 +298,7 @@ export function fetchTableColumnsModel(baseDocId) {
         if (json.success === true) {
 
           // 进行业务层的数据校验
-          const [isValid, validationMessage] = validation.tableColumnsModelData(json);
+          const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
           if (isValid) {
             // 1. 删除不用的字段，按理说应该后端从response中删除掉的
             // 2. 修复后端json中的错别字，暂时在前端写死
@@ -667,14 +309,14 @@ export function fetchTableColumnsModel(baseDocId) {
             // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
             // 8. 添加参照的配置
             let fields = json.data
-              /* 1 */ .filter(shouldNotRemoveFields.bind(this, baseDocId))
-              /* 2 */ .map(fixFieldTypo)
-              /* 3 */ .map(convertDataType)
-              /* 4 */ .map(setRequiredFields.bind(this, baseDocId))
-              /* 5 */ .map(setHiddenFields)
-              /* 6 */ .map(fixDataTypes.bind(this, baseDocId))
-              /* 7 */ .map(fixReferKey)
-              /* 8 */ .map(setReferFields);
+              /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+              /* 2 */ .map(utils.fixFieldTypo)
+              /* 3 */ .map(utils.convertDataType)
+              /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+              /* 5 */ .map(utils.setHiddenFields)
+              /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+              /* 7 */ .map(utils.fixReferKey)
+              /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL));
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
             dispatch(receiveTableColumnsModelFail(
@@ -749,7 +391,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
     // 1. 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
     requestBodyObj = processRefer(requestBodyObj, fields);
     // 2. 删除key:value中，当value为undefined/null
-    requestBodyObj = removeEmpty(requestBodyObj);
+    requestBodyObj = utils.removeEmpty(requestBodyObj);
 
     /**
      * 将formData中参照存储的复杂类型（包含id,code,name）转换成单值类型
@@ -822,7 +464,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
     var url = getSaveURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
-      .then(parseJSON)
+      .then(utils.parseJSON)
       .then(processJSONResult)
       .catch(function (err) {
         console.log("保存基础档案时候出现错误：", err);
@@ -938,8 +580,8 @@ export function submitEditForm() {
     };
     appendCredentials(options);
     return fetch(`/api/arch/${idField.value}`, options)
-      .then(checkStatus)
-      .then(parseJSON)
+      .then(utils.checkStatus)
+      .then(utils.parseJSON)
       .then(processResult)
       .catch(error => {
         dispatch({
@@ -1014,8 +656,8 @@ export function submitCreateForm() {
     };
     appendCredentials(options);
     return fetch(`/api/arch`, options)
-      .then(checkStatus)
-      .then(parseJSON)
+      .then(utils.checkStatus)
+      .then(utils.parseJSON)
       .then(processResult)
       .catch(error => {
         dispatch({

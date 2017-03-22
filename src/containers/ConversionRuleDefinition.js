@@ -18,6 +18,8 @@ import * as Actions from '../actions/conversionRuleDefinition';
 const ItemsPerPage = 15;
 const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
+const BASE_DOC_ID = 'mapdef';
+
 /**
  * 会计平台 - 转换规则定义
  */
@@ -25,9 +27,13 @@ const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 class ConversionRuleDefinition extends Component {
   static propTypes = {
     /**
-     * store中存储的表格数据
+     * store中存储的表体数据
      */
-    tableData: PropTypes.array.isRequired
+    tableBodyData: PropTypes.array.isRequired,
+    /**
+     * store中存储的表头数据
+     */
+    tableColumnsModel: PropTypes.array.isRequired
   }
 
   state = {
@@ -40,25 +46,12 @@ class ConversionRuleDefinition extends Component {
   }
 
   componentWillMount() {
-    this.props.fetchTableData(ItemsPerPage, this.state.startIndex);
-    // this.props.fetchTableColumnsModel(this.props.params.baseDocId);
+    const { itemsPerPage, startIndex } = this.props;
+    this.props.fetchTableColumnsModel(BASE_DOC_ID);
+    this.props.fetchTableBodyData(itemsPerPage, startIndex);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const nextType = nextProps.params.baseDocId;
-    const currentType = this.props.params.baseDocId;
-    // 当跳转到其他类型的基础档案时候，重新加载表格数据
-    if (nextType !== currentType) {
-      this.props.fetchTableData(ItemsPerPage, this.state.startIndex);
-      this.props.fetchTableColumnsModel(nextType);
-    }
-  }
-
-  // admin card actions
-  handleCreate(event) {
-    const { tableData } = this.props;
-    const rowData = tableData[0];
-    this.props.showCreateDialog(rowData);
+  componentWillReceiveProps(/* nextProps */) {
   }
 
   closeEditDialog() {
@@ -67,55 +60,6 @@ class ConversionRuleDefinition extends Component {
 
   closeCreateDialog() {
     this.props.hideCreateDialog();
-  }
-
-  // create form
-  handleCreateFormBlur(label, value) {
-    //this.props.updateCreateFormFieldValue(label, value);
-  }
-  /**
-   * formData
-   * 如果是refer
-   * ```
-   * {
-   *   pk_org: {
-   *     selected: [{
-   *       id: '',
-   *       code: '',
-   *       name: ''
-   *     }]
-   *   }
-   * }
-   * ```
-   */
-  handleCreateFormSubmit(event, formData) {
-    const { startIndex } = this.state;
-    const { fields, params: { baseDocId } } = this.props;
-    //this.props.submitCreateForm();
-    this.props.saveTableData(baseDocId, fields, formData);
-    this.props.fetchTableData(ItemsPerPage, startIndex);
-    event.preventDefault();
-  }
-  handleCreateFormReset(event) {
-    this.props.hideCreateDialog();
-    event.preventDefault();
-  }
-
-  // edit form
-  handleEditFormBlur(index, fieldModel, value) {
-    //this.props.updateEditFormFieldValue(index, fieldModel, value);
-  }
-  handleEditFormSubmit(event, formData) {
-    const { startIndex } = this.state;
-    const { fields, editDialog: { rowIdx } } = this.props;
-    const { baseDocId } = this.props.params;
-    //this.props.submitEditForm();
-    this.props.saveTableData(baseDocId, fields, formData, rowIdx);
-    event.preventDefault();
-  }
-  handleEditFormReset(event) {
-    this.props.closeEditDialog();
-    event.preventDefault();
   }
 
   handlePageAlertDismiss(){
@@ -129,7 +73,7 @@ class ConversionRuleDefinition extends Component {
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
   //handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
-    const { tableData } = this.props;
+    const { tableBodyData } = this.props;
     let nextPage = eventKey;
     let startIndex = (nextPage-1) * ItemsPerPage;
 
@@ -174,80 +118,8 @@ class ConversionRuleDefinition extends Component {
     });
   }
 
-  getReferConfig(fieldRefCode) {
-    return {
-      referConditions: {
-        refCode: fieldRefCode, // 'dept', 该参照类型的字段指向的档案类型
-        refType: 'tree',
-        rootName: '部门'
-      },
-      referDataUrl: ReferDataURL
-    };
-  }
-
-  /**
-   * 根据列模型和表格体数据来构建空表单需要的数据
-   * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
-   * tableData中获取参照的具体信息，一般是：
-   * ```json
-   * { id: '', code: '', name: '' }
-   * ```
-   */
-  getFormDefaultData(columnsModel, tableData, baseDocId) {
-    let formData = {};
-    columnsModel.forEach(fieldModel => {
-      const fieldId = fieldModel.id;
-      switch(fieldModel.type) {
-        case 'ref':
-          formData[fieldId] = {
-            id: '',
-            code: '',
-            name: ''
-          };
-          break;
-        case 'boolean':
-          break;
-        default:
-          formData[fieldId] = '';
-          break;
-      }
-    });
-    return formData;
-  }
-
-  /**
-   * 往formData上的参照字段添加参照的配置
-   */
-  initReferConfig(formData, columnsModel, tableData, baseDocId) {
-    columnsModel.forEach(fieldModel => {
-      const fieldId = fieldModel.id;
-      if (fieldModel.type !== 'ref' || !tableData[0]) {
-        return;
-      }
-      // 后端返回的数据可能为null
-      if (formData[fieldId] == null) {
-        return;
-      }
-      formData[fieldId].config = { ...this.getReferConfig(fieldModel.refCode) };
-    });
-    return formData;
-  }
-
-  handleChange(fieldId, value) {
-    const newState = { ...this.state };
-    newState.formData[fieldId] = value;
-    this.setState(newState);
-  }
-
-  handleSubmit(event, formData) {
-    alert('提交的数据: Form.state.formData: \n' + JSON.stringify(
-      formData,
-      null, '  '));
-    event.preventDefault();
-  }
-
   render() {
-    const { columnsModel, tableData } = this.props;
+    const { tableColumnsModel, tableBodyData } = this.props;
 
     return (
       <div className="conversion-rule-definition-container">
@@ -255,17 +127,14 @@ class ConversionRuleDefinition extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <h3>{}</h3>
-              <div style={{ display: 'inline-block', float: 'right' }}>
-                <Button onClick={::this.handleCreate}>创建</Button>
-              </div>
             </Col>
           </Row>
           <Row className="show-grid">
             <Col md={12}>
               <NormalWidget />
               <SSCGrid
-                columnsModel={columnsModel}
-                tableData={tableData}
+                columnsModel={tableColumnsModel}
+                tableData={tableBodyData}
                 // 样式
                 striped
                 bordered
