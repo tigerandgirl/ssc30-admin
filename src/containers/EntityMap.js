@@ -13,9 +13,11 @@ import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
+import EntityMapTable from './EntityMapTable';
+
 import * as Actions from '../actions/entityMap';
 
-const DEFAULT_EXPANDED_LEVEL = 3;
+const DEFAULT_EXPANDED_LEVEL = 2;
 
 /**
  * 需求是让默认展开三层结构
@@ -101,26 +103,41 @@ class EntityMap extends Component {
    */
   onSelect(selectedKeys, e) {
     // console.log('selected', selectedKeys);
-    console.log(e.node.props.eventKey);
+    // console.log(e.node.props.eventKey);
+    const { title, key } = e.node.props;
+    this.props.fetchTreeNodeData({
+      title,
+      key
+    });
   }
 
   onCheck(checkedKeys) {
-    console.log(checkedKeys);
+    // console.log(checkedKeys);
     this.setState({
       checkedKeys,
     });
   }
 
+  /**
+   * 用户点击节点左侧加号打开节点的时候
+   */
   onLoadData(treeNode) {
+    const emptyPromise = new Promise((resolve, reject) => {
+      return resolve();
+    });
+
+    const ENABLE_LAZY_LOAD = 0;
+    if (!ENABLE_LAZY_LOAD) {
+      return emptyPromise;
+    }
+
     // TODO 因为使用了callAPIMiddleware导致如下调用返回的结果可能是Promise也可能
     // 是undefined
-    const promise = this.props.fetchLeftTreeNode(treeNode.props.eventKey);
+    const promise = this.props.fetchLeftTreeNodeChildren(treeNode.props.eventKey);
     if (promise) {
       return promise;
     } else {
-      return new Promise((resolve, reject) => {
-        return resolve();
-      });
+      return emptyPromise;
     }
   }
 
@@ -167,6 +184,7 @@ class EntityMap extends Component {
             </Col>
             <Col md={8}>
               <h3>属性编辑器</h3>
+              <EntityMapTable />
             </Col>
           </Row>
         </Grid>

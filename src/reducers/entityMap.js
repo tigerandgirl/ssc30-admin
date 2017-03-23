@@ -11,7 +11,37 @@ const initState = {
   // 表头
   entityFieldsModelloading: false,
   entityFieldsModelloaded: false,
-  entityFieldsModel: [] // 表格/表单字段模型
+  entityFieldsModel: [], // 表单/表格字段模型
+  entityTableBodyData: [], // 表体数据
+  // 创建对话框
+  createDialog: {
+    show: false
+  },
+  // 编辑对话框
+  editDialog: {
+    show: false,
+    rowIdx: null // 当前编辑框对应表格的行index
+  },
+  editFormData: {},
+  // 页面上的错误提示
+  adminAlert: {
+    show: false,
+    error: {
+      code: 0,
+      bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
+      message: '',
+      resBody: '' // 需要改成details，因为这里不仅仅会填写response body
+    }
+  },
+  // 当表单提交失败的时候，在对话框中显示错误提示
+  formAlert: {
+    show: false,
+    error: {
+      code: 0,
+      bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
+      message: ''
+    }
+  }
 };
 
 // Show case for redux-actions
@@ -68,7 +98,7 @@ export default handleActions({
   }),
 
   /**
-   * 获取实体的字段定义
+   * 右表的字段模型和表体数据
    */
   [ActionTypes.ENTITY_FIELDS_MODEL_REQUEST]: (state, action) => ({...state,
     entityFieldsModelloading: true
@@ -76,7 +106,8 @@ export default handleActions({
   [ActionTypes.ENTITY_FIELDS_MODEL_SUCCESS]: (state, action) => ({...state,
     entityFieldsModelloading: false,
     entityFieldsModelloaded: true,
-    entityFieldsModel: [...action.payload.data]
+    entityFieldsModel: [...action.payload.fieldsModel],
+    entityTableBodyData: [...action.payload.tableBodyData]
   }),
   [ActionTypes.ENTITY_FIELDS_MODEL_FAILURE]: (state, action) => ({...state,
     entityFieldsModelloading: false,
@@ -86,6 +117,18 @@ export default handleActions({
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
     }
-  })
+  }),
+
+  /**
+   * 带表单的编辑对话框
+   */
+
+  [ActionTypes.ENTITY_MAP_EDIT_DIALOG_SHOW]: (state, action) => ({...state,
+    editDialog: {
+      show: action.show,
+      rowIdx: action.rowIdx
+    },
+    editFormData: action.editFormData
+  }),
 
 }, initState);

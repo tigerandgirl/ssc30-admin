@@ -8,6 +8,7 @@ import { createAction } from 'redux-actions';
 
 // help functions
 import * as utils from './utils';
+import * as treeUtils from './utils.tree';
 
 // 后端接口URL，比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
 import * as URL from '../constants/URLs';
@@ -71,11 +72,17 @@ function getURL(path) {
 // 基础档案 组装后端接口
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
 
-// 实体映射模型 exchanger/entitymap.md
+/**
+ * 实体映射模型 exchanger/entitymap.md
+ */
+
+// 左树查询服务
 //const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
 const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/outerentitytree/querymdtree');
-//const OUTER_ENTITY_TREE_NODE_URL = getURL('/ficloud_web/template/node');
-const OUTER_ENTITY_TREE_NODE_URL = getURL('/ficloud_web/outerentitytree/querynodedata');
+// 左树节点查询服务
+//const OUTER_ENTITY_TREE_NODE_CHILDREN_URL = getURL('/ficloud_web/template/node');
+// 右表查询服务
+const OUTER_ENTITY_TREE_NODE_DATA_URL = getURL('/ficloud_web/outerentitytree/querynodedata');
 
 // 参照 组装后端接口
 const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
@@ -89,12 +96,6 @@ function appendCredentials(opts) {
   return opts;
 }
 
-/**
- * 2) A clever exploit of the JSON library to deep-clone objects
- * http://heyjavascript.com/4-creative-ways-to-clone-objects/#
- */
-const deepCopy = old => JSON.parse(JSON.stringify(old));
-
 // 获取模板树数据
 
 export const TEMPLATE_REQUEST = 'TEMPLATE_REQUEST';
@@ -102,6 +103,7 @@ export const TEMPLATE_SUCCESS = 'TEMPLATE_SUCCESS';
 export const TEMPLATE_FAILURE = 'TEMPLATE_FAILURE';
 
 /**
+ * 获取左边的树
  * @param {String} billTypeCode
  * @param {String} mappingDefId
  */
@@ -140,94 +142,19 @@ export function fetchLeftTree(billTypeCode, mappingDefId) {
 }
 
 /**
- * 更新树
- */
-
-/**
- * 遍历tree然后对没有child的节点设定为叶子节点
- * @param {Array} treeData 当前树的数据
- * @param {String} curKey 在该节点下添加了新的child
- * @param {Number} level 树
- */
-function setLeaf(treeData, curKey, level) {
-  const loopLeaf = (data, lev) => {
-    const l = lev - 1;
-    data.forEach((item) => {
-      if ((item.key.length > curKey.length) ? item.key.indexOf(curKey) !== 0 :
-        curKey.indexOf(item.key) !== 0) {
-        return;
-      }
-      if (item.children) {
-        loopLeaf(item.children, l);
-      } else if (l < 1) {
-        item.isLeaf = true;
-      }
-    });
-  };
-  loopLeaf(treeData, level + 1);
-}
-
-/**
- * 基于现有的tree，在指定node添加child，创建出来新的tree
- * @param {Array} oldTreeData 没有插入新节点的树
- * @param {String} curKey 将数据添加到这个节点上
- * @param {Array} child 将这个数据添加到指定节点上
- * @param {Number} level 添加的级别，已废弃
- * @return {Array} 插入新节点之后生成的新树
- */
-function genNewTreeData(oldTreeData, curKey, child/* , level */) {
-  var newTreeData = deepCopy(oldTreeData);
-  const loop = (data) => {
-    // if (level < 1 || curKey.length - 3 > level * 2) return;
-    data.forEach((item) => {
-      if (curKey === item.key) {
-        item.children = child;
-      } else {
-        if (item.children) {
-          loop(item.children);
-        }
-      }
-    });
-  };
-  loop(newTreeData);
-  //setLeaf(oldTreeData, curKey, level);
-  return newTreeData;
-}
-
-/**
- * 获取模板树上指定节点的子节点
+ * 获取左边树上指定节点的子节点，用于节点展开的查询
  */
 
 export const TEMPLATE_NODE_REQUEST = 'TEMPLATE_NODE_REQUEST';
 export const TEMPLATE_NODE_SUCCESS = 'TEMPLATE_NODE_SUCCESS';
 export const TEMPLATE_NODE_FAILURE = 'TEMPLATE_NODE_FAILURE';
 
-/**
- * 树中是否有指定名称的节点是否还有子节点
- */
-function hasChildren(state, key) {
-  var has = false;
-  const loop = nodes => {
-    nodes.forEach(node => {
-      if (node.key === key && node.children) {
-        has = true;
-        return;
-      }
-      if (node.children) {
-        loop(node.children);
-      }
-    });
-  };
-  loop(state.entityMap.treeData);
-  return has;
-}
-
-export function fetchLeftTreeNode(key) {
+export function fetchLeftTreeNodeChildren(key) {
   // use `callAPIMiddleware`
   return {
     types: [TEMPLATE_NODE_REQUEST, TEMPLATE_NODE_SUCCESS, TEMPLATE_NODE_FAILURE],
     // Check the cache (optional):
-    shouldCallAPI: (state) => !hasChildren(state, key),
+    shouldCallAPI: (state) => !treeUtils.hasChildren(state.entityMap.treeData, key),
     callAPI: (state) => {
       var opts = {
         method: 'post',
@@ -241,7 +168,7 @@ export function fetchLeftTreeNode(key) {
       };
       appendCredentials(opts);
 
-      var url = `${OUTER_ENTITY_TREE_NODE_URL}`;
+      var url = `${OUTER_ENTITY_TREE_NODE_CHILDREN_URL}`;
 
       return fetch(url, opts)
         .then(response => {
@@ -252,7 +179,7 @@ export function fetchLeftTreeNode(key) {
 
           // 从store中取得树数据，然后添加节点，再保存回store中
           const treeData = [...state.entityMap.treeData];
-          const newTreeData = genNewTreeData(treeData, key, resObj.data/* , 9999 */);
+          const newTreeData = treeUtils.genNewTreeData(treeData, key, resObj.data/* , 9999 */);
 
           return {
             treeData: newTreeData
@@ -263,7 +190,7 @@ export function fetchLeftTreeNode(key) {
 }
 
 /**
- * 获取表格的列模型
+ * 获取指定节点的数据，用于填充右侧的表格和表单
  */
 
 export const ENTITY_FIELDS_MODEL_REQUEST = 'ENTITY_FIELDS_MODEL_REQUEST';
@@ -281,12 +208,20 @@ function receiveTableColumnsModelFail(message, details) {
 }
 
 /**
- * 获取实体（Entity）的字段模型
- * 好像是后端复用了基础档案查询接口initgrid接口
- * 这个字段模型用于显示页面右侧的表单
+ * 根据一个节点提供的信息，包括title和key，发送请求获取该节点的数据，用于显示
+ * 右侧的表单
+ * @param {Object} nodeData 节点数据，比如
+ * ```json
+ * {
+ *   "parentKey": null,
+ *   "title": "总账凭证:友账簿凭证",
+ *   "key": "@E@:G001ZM0000BILLTYPE000000000000000003",
+ *   "isLeaf": false,
+ *   "infoKey": "1"
+ * }
+ * ```
  */
-
-export function fetchEntityFieldsModel(baseDocId = 'entity') {
+export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
   // use `callAPIMiddleware`
   return {
     types: [ENTITY_FIELDS_MODEL_REQUEST, ENTITY_FIELDS_MODEL_SUCCESS, ENTITY_FIELDS_MODEL_FAILURE],
@@ -296,13 +231,13 @@ export function fetchEntityFieldsModel(baseDocId = 'entity') {
       const opts = {
         method: 'post',
         headers: {
-          'Content-type': 'application/x-www-form-urlencoded'
+          'Content-type': 'application/json'
         },
         mode: "cors",
-        body: `doctype=${baseDocId}`
+        body: JSON.stringify(nodeData)
       };
       appendCredentials(opts);
-      const url = `${FICLOUDPUB_INITGRID_URL}`;
+      const url = `${OUTER_ENTITY_TREE_NODE_DATA_URL}`;
 
       return fetch(url, opts)
         .then(response => {
@@ -324,36 +259,37 @@ export function fetchEntityFieldsModel(baseDocId = 'entity') {
         .then(json => {
           if (json.success === true) {
 
-            // 进行业务层的数据校验
-            const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
-            if (isValid) {
-              // 1. 删除不用的字段，按理说应该后端从response中删除掉的
-              // 2. 修复后端json中的错别字，暂时在前端写死
-              // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
-              // 4. 有些字段是必填项，暂时在前端写死
-              // 5. 有些字段需要隐藏，暂时在前端写死
-              // 6. 有些字段的类型错误，暂时在前端写死新类型
-              // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
-              // 8. 添加参照的配置
-              let fields = json.data
-                /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
-                /* 2 */ .map(utils.fixFieldTypo)
-                /* 3 */ .map(utils.convertDataType)
-                /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
-                /* 5 */ .map(utils.setHiddenFields)
-                /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
-                /* 7 */ .map(utils.fixReferKey)
-                /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
-              return {
-                data: fields
-              };
-            } else {
-              return receiveTableColumnsModelFail(
-                `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
-                但是数据校验方法提示说：“${validationMessage}”`,
-                JSON.stringify(json.data, null, '  ')
-              );
-            }
+            // // 对字段模型进行业务层的数据校验
+            // const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
+            // if (isValid) {
+                // 1. 删除不用的字段，按理说应该后端从response中删除掉的
+                // 2. 修复后端json中的错别字，暂时在前端写死
+                // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
+                // 4. 有些字段是必填项，暂时在前端写死
+                // 5. 有些字段需要隐藏，暂时在前端写死
+                // 6. 有些字段的类型错误，暂时在前端写死新类型
+                // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+                // 8. 添加参照的配置
+                let fieldsModel = json.data.head
+                  /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+                  /* 2 */ .map(utils.fixFieldTypo)
+                  /* 3 */ .map(utils.convertDataType)
+                  /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+                  /* 5 */ .map(utils.setHiddenFields)
+                  /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+                  /* 7 */ .map(utils.fixReferKey)
+                  /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
+                return {
+                  fieldsModel,
+                  tableBodyData: json.data.body
+                };
+            // } else {
+            //   return receiveTableColumnsModelFail(
+            //     `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+            //     但是数据校验方法提示说：“${validationMessage}”`,
+            //     JSON.stringify(json.data, null, '  ')
+            //   );
+            // }
 
           } else {
             return receiveTableColumnsModelFail(
@@ -368,5 +304,21 @@ export function fetchEntityFieldsModel(baseDocId = 'entity') {
   }
 }
 
+export const ENTITY_MAP_EDIT_DIALOG_SHOW = 'ENTITY_MAP_EDIT_DIALOG_SHOW';
 
-
+/**
+ * 显示/隐藏编辑/创建窗口
+ * @param {boolean} show 是否显示
+ * @param {Number} rowIdx 编辑行的index
+ * @param {Object} editFormData 编辑行的数据，用于填充表单
+ */
+export function showEditDialog(show, rowIdx, editFormData) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: ENTITY_MAP_EDIT_DIALOG_SHOW,
+      show,
+      rowIdx,
+      editFormData
+    });
+  };
+}
