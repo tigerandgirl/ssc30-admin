@@ -314,7 +314,6 @@ class ArchContainer extends Component {
       for (var i in newTr) {
         if (newTr.hasOwnProperty(i)) {
           if (newTr[i]) {
-            console.log(i, newTr[i])
             if (typeof newTr[i] === 'string') {
               if (newTr[i].length > 10) {
                 newTr[i] = newTr[i].substr(0, 10);
