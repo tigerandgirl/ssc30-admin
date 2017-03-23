@@ -7,19 +7,17 @@ import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import { Table } from 'react-bootstrap';
 import Tree, { TreeNode } from 'rc-tree';
 
-import { Grid as SSCGrid, Form, Tree as SSCTree } from 'ssc-grid';
+import { Grid as SSCGrid, Form as SSCForm, Tree as SSCTree } from 'ssc-grid';
 
 import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
-import * as Actions from '../actions/template';
+import EntityMapTable from './EntityMapTable';
 
-// Consants for table and form
-const ItemsPerPage = 15;
-const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
+import * as Actions from '../actions/entityMap';
 
-const DEFAULT_EXPANDED_LEVEL = 3;
+const DEFAULT_EXPANDED_LEVEL = 2;
 
 /**
  * 需求是让默认展开三层结构
@@ -48,61 +46,103 @@ function getDefaultExpandedKeys([...treeData]) {
   return expandedKeys;
 }
 
-class Template extends Component {
+/**
+ * 【友账表】 会计平台 - 实体映射
+ * UI：左树右卡
+ * API文档：
+ * 1. 左树：
+ * 1. 右卡：http://git.yonyou.com/sscplatform/fc_doc/blob/master/exchanger/entitytreenode.md
+ */
+
+class EntityMap extends Component {
   static propTypes = {
     /**
      * [store] 左侧树的数据
      */
-    treeData: PropTypes.array.isRequired
-  }
-
-  state = {
-    activePage: 1,
-    startIndex: 0,
-    checkedKeys: []
+    treeData: PropTypes.array.isRequired,
+    /**
+     * URL传参
+     */
+    params: PropTypes.object.isRequired
+    /**
+     * [URL传参] billtypecode
+     */
+    // params.billTypeCode: PropTypes.string.isRequired,
+    /**
+     * [URL传参] mappingdefid
+     */
+    // params.mappingDefId: PropTypes.string.isRequired
   }
 
   constructor(props) {
     super(props);
+    this.state = {
+      activePage: 1,
+      startIndex: 0,
+      checkedKeys: [],
+      billTypeCode: this.props.params.billTypeCode,
+      mappingDefId: this.props.params.mappingDefId
+    };
   }
 
   componentWillMount() {
-    // this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
   componentDidMount() {
-    this.props.fetchTemplateTree('2643');
+    const { billTypeCode, mappingDefId } = this.state;
+    // this.props.fetchEntityFieldsModel();
+    this.props.fetchLeftTree(billTypeCode, mappingDefId);
   }
 
   componentWillReceiveProps(nextProps) {
   }
 
-  onSelect(info) {
-    console.log('selected', info);
+  /**
+   * @param {Array} selectedKeys
+   * @param {Object} e {selected: bool, selectedNodes, node, event}
+   */
+  onSelect(selectedKeys, e) {
+    // console.log('selected', selectedKeys);
+    // console.log(e.node.props.eventKey);
+    const { title, key } = e.node.props;
+    this.props.fetchTreeNodeData({
+      title,
+      key
+    });
   }
 
   onCheck(checkedKeys) {
-    console.log(checkedKeys);
+    // console.log(checkedKeys);
     this.setState({
       checkedKeys,
     });
   }
 
+  /**
+   * 用户点击节点左侧加号打开节点的时候
+   */
   onLoadData(treeNode) {
+    const emptyPromise = new Promise((resolve, reject) => {
+      return resolve();
+    });
+
+    const ENABLE_LAZY_LOAD = 0;
+    if (!ENABLE_LAZY_LOAD) {
+      return emptyPromise;
+    }
+
     // TODO 因为使用了callAPIMiddleware导致如下调用返回的结果可能是Promise也可能
     // 是undefined
-    const promise = this.props.fetchTemplateTreeNode(treeNode.props.eventKey);
+    const promise = this.props.fetchLeftTreeNodeChildren(treeNode.props.eventKey);
     if (promise) {
       return promise;
     } else {
-      return new Promise((resolve, reject) => {
-        return resolve();
-      });
+      return emptyPromise;
     }
   }
 
   render() {
-    const { columnsModel, templateTree } = this.props;
+    const { columnsModel } = this.props;
 
     let level = 0;
     const loop = (data) => {
@@ -124,7 +164,7 @@ class Template extends Component {
     const defaultExpandedKeys = getDefaultExpandedKeys(this.props.treeData);
 
     return (
-      <div className="template-container">
+      <div className="entity-map-container">
         <Grid>
           <Row>
             <Col md={4}>
@@ -144,6 +184,7 @@ class Template extends Component {
             </Col>
             <Col md={8}>
               <h3>属性编辑器</h3>
+              <EntityMapTable />
             </Col>
           </Row>
         </Grid>
@@ -153,7 +194,7 @@ class Template extends Component {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  return {...state.template};
+  return {...state.entityMap};
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -161,4 +202,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 // The component will subscribe to Redux store updates.
-export default connect(mapStateToProps, mapDispatchToProps)(Template);
+export default connect(mapStateToProps, mapDispatchToProps)(EntityMap);

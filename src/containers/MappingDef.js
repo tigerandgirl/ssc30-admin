@@ -16,12 +16,12 @@ import * as Actions from '../actions/mappingDef';
 
 // Consants for table and form
 const ItemsPerPage = 15;
-const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 
 const BASE_DOC_ID = 'mapdef';
 
 /**
  * 会计平台 - 转换规则定义
+ * 后端接口文档：http://git.yonyou.com/sscplatform/fc_doc/blob/master/exchanger/mapdef.md
  */
 
 class MappingDef extends Component {
@@ -73,11 +73,11 @@ class MappingDef extends Component {
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
   //handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
-    const { tableBodyData } = this.props;
+    const { itemsPerPage, tableBodyData } = this.props;
     let nextPage = eventKey;
-    let startIndex = (nextPage-1) * ItemsPerPage;
+    let startIndex = (nextPage-1) * itemsPerPage;
 
-    this.props.fetchTableData(ItemsPerPage, startIndex);
+    this.props.fetchTableData(itemsPerPage, startIndex);
 
     this.setState({
       activePage: nextPage,
@@ -95,23 +95,16 @@ class MappingDef extends Component {
         // 从store中取出editFormData填充到表单上
         containerThis.props.initEditFormData(rowObj);
       },
-      handleRemove(event) {
-        if (!confirm("是否删除？")) {
-          return;
-        }
-        const { rowIdx, rowObj } = this.props;
-        const { startIndex } = containerThis.state;
-        const { baseDocId } = containerThis.props.params;
-        containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
-        containerThis.props.fetchTableData(ItemsPerPage, startIndex);
-      },
       render() {
+        const {rowObj: {
+          id,
+          des_billtype
+        }} = this.props;
         return (
           <td>
-            <span onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil"></span>
-            <span onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash"></span>
+            <Link to={`/entity-map-no-sidebar-single-page/${des_billtype}/${id}`}>
+              编辑
+            </Link>
           </td>
         );
       }
@@ -119,7 +112,7 @@ class MappingDef extends Component {
   }
 
   render() {
-    const { tableColumnsModel, tableBodyData } = this.props;
+    const { itemsPerPage, tableColumnsModel, tableBodyData } = this.props;
 
     return (
       <div className="mapping-def-container">
@@ -142,7 +135,7 @@ class MappingDef extends Component {
                 hover
                 // 分页
                 paging
-                itemsPerPage={ItemsPerPage}
+                itemsPerPage={itemsPerPage}
                 totalPage={this.props.totalPage}
                 activePage={this.state.activePage}
                 onPagination={::this.handlePagination}
