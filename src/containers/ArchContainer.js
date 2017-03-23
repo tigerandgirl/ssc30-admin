@@ -159,15 +159,13 @@ class ArchContainer extends Component {
         const { fields } = containerThis.props;
         const { baseDocId } = containerThis.props.params;
         
-        var refInd  = 0 ;  
-        if( baseDocId == "dept"){
-          _.map( fields , function(obj ,ind ){
-              if( obj.refCode == "dept" ) { //上级部门
-                  refInd = ind ;              }
-           })
-          var rowObjCode = '{\"id\"=\" ' + rowObj.id +'\"}';
-          containerThis.props.updateReferFields(rowObjCode, refInd );
-        }
+        var refInd  = 0 ;
+        _.map( fields , function(obj ,ind ){
+            if( obj.refCode == "dept" || obj.refCode == "feeitemclass") { //上级部门
+                refInd = ind ;              }
+         })
+        var rowObjCode = '{\"id\"=\" ' + rowObj.id +'\"}';
+        containerThis.props.updateReferFields(rowObjCode, refInd );
 
   		// start
   		// 判断
