@@ -5,19 +5,23 @@ import { Link } from 'react-router';
 
 import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
-import { Grid as SSCGrid, Form } from 'ssc-grid';
+import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
 import * as Actions from '../actions/arch';
 
-// Consants for table and form
-const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
-
 class ArchContainer extends Component {
   static PropTypes = {
-    //dispatch: PropTypes.func.isRequired
+    /**
+     * [store] 字段模型
+     */
+    fields: PropTypes.array.isRequired,
+      /**
+       * [store] 表体数据
+       */
+    tableData: PropTypes.array.isRequired
   }
 
   state = {
@@ -216,17 +220,6 @@ class ArchContainer extends Component {
     });
   }
 
-  getReferConfig(fieldRefCode) {
-    return {
-      referConditions: {
-        refCode: fieldRefCode, // 'dept', 该参照类型的字段指向的档案类型
-        refType: 'tree',
-        rootName: '部门'
-      },
-      referDataUrl: ReferDataURL
-    };
-  }
-
   /**
    * 根据列模型和表格体数据来构建空表单需要的数据
    * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
@@ -267,24 +260,6 @@ class ArchContainer extends Component {
     return formData;
   }
 
-  /**
-   * 往formData上的参照字段添加参照的配置
-   */
-  initReferConfig(formData, columnsModel, tableData, baseDocId) {
-    columnsModel.forEach(fieldModel => {
-      const fieldId = fieldModel.id;
-      if (fieldModel.type !== 'ref' || !tableData[0]) {
-        return;
-      }
-      // 后端返回的数据可能为null
-      if (formData[fieldId] == null) {
-        return;
-      }
-      formData[fieldId].config = { ...this.getReferConfig(fieldModel.refCode) };
-    });
-    return formData;
-  }
-
   render() {
     const {
       tableData, fields,
@@ -302,28 +277,6 @@ class ArchContainer extends Component {
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
-
-    // 点击编辑按钮的时候，初始化参照数据
-    // if (!_.isEmpty(editFormData)) {
-    //   this.initReferConfig(editFormData, cols, tableData, baseDocId);
-    // }
-
-    // YBZSAAS-228
-    let tableData2 = tableData.map(tr => {
-      let newTr = JSON.parse(JSON.stringify(tr));
-      for (var i in newTr) {
-        if (newTr.hasOwnProperty(i)) {
-          if (newTr[i]) {
-            if (typeof newTr[i] === 'string') {
-              if (newTr[i].length > 10) {
-                newTr[i] = newTr[i].substr(0, 10);
-              }
-            }
-          }
-        }
-      }
-      return newTr;
-    });
 
     return (
       <div>
@@ -345,7 +298,7 @@ class ArchContainer extends Component {
           </Row>
           <Row className="show-grid">
             <Col md={12}>
-              <SSCGrid tableData={tableData2} columnsModel={cols}
+              <SSCGrid tableData={tableData} columnsModel={cols}
                 striped bordered condensed hover
                 paging
                 itemsPerPage={itemsPerPage}
@@ -366,7 +319,7 @@ class ArchContainer extends Component {
             { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
-          <Form
+          <SSCForm
             fieldsModel={cols}
             defaultData={editFormData}
             onBlur={::this.handleEditFormBlur}
@@ -376,7 +329,7 @@ class ArchContainer extends Component {
         </AdminEditDialog>
         <AdminEditDialog className='create-form' title='新增' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
           <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
-          <Form
+          <SSCForm
             fieldsModel={cols}
             defaultData={formDefaultData}
             onBlur={::this.handleCreateFormBlur}
