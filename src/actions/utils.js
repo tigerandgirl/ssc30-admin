@@ -138,8 +138,7 @@ export function setRequiredFields(baseDocId, {...field}) {
       depositbank: true,
       bank: true,
       defaultaccount: false,
-      accountproperty: true,
-      accounttype: true
+      accountproperty: true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
@@ -187,7 +186,8 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
     "bankaccount": {
       "pk_org": true,
       bank: true,
-      description: true
+      description: true,
+      accounttype:true
     },
     "bankclass": {
       "pk_org": true
