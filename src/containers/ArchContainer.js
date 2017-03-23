@@ -90,11 +90,16 @@ class ArchContainer extends Component {
     //ref is " user " add param : personmobile
     // bug des: 传入手机号为空
 
-  if(baseDocId == "project"){
-    if(formData.person.phone){
-      formData.personmobile =  formData.person.phone ;
-    }
-  }
+
+    var phoneList =  ["project" , "dept" , "feeitem"] ;  
+      _.map(phoneList,function( obj ,ind ){
+          if( baseDocId == obj ){
+              if(formData.person.phone){
+                  formData.personmobile =  formData.person.phone ;
+               }
+          }
+    })
+
   if(baseDocId == "bankaccount"){
      if(formData.depositbank){
          formData.bank = formData.depositbank ; 
@@ -119,12 +124,15 @@ class ArchContainer extends Component {
 
     // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
-    if(baseDocId == "project"){
-      if(formData.person.phone){
-        formData.personmobile =  formData.person.phone ;
-      }
-    }
-
+    var phoneList =  ["project" , "dept" , "feeitem"] ;  
+    _.map(phoneList,function( obj ,ind ){
+        if( baseDocId == obj ){
+            if(formData.person.phone){
+                formData.personmobile =  formData.person.phone ;
+             }
+        }
+    })
+ 
     if(baseDocId == "bankaccount"){
      if(formData.depositbank){
          formData.bank = formData.depositbank ; 
