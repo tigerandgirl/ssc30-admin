@@ -325,7 +325,6 @@ class ArchContainer extends Component {
       return newTr;
     });
 
-    var url = './screenshot_20170224_011.jpg';
     return (
       <div>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
@@ -339,9 +338,6 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <h3>{}</h3>
-              <div className="fuck" style={{ display: 'none' }}>
-                <img src={url} />
-              </div>
               <div style={{ display: 'inline-block', float: 'right' }}>
                 <Button onClick={::this.handleCreate}>新增</Button>
               </div>
