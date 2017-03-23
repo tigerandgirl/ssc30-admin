@@ -18,7 +18,7 @@ const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 class ArchContainer extends Component {
   static PropTypes = {
     //dispatch: PropTypes.func.isRequired
-  } 
+  }
 
   state = {
   }
@@ -91,7 +91,7 @@ class ArchContainer extends Component {
     // bug des: 传入手机号为空
 
 
-    var phoneList =  ["project" , "dept" , "feeitem"] ;  
+    var phoneList =  ["project" , "dept" , "feeitem"] ;
       _.map(phoneList,function( obj ,ind ){
           if( baseDocId == obj ){
               if(formData.person.phone){
@@ -102,8 +102,8 @@ class ArchContainer extends Component {
 
   if(baseDocId == "bankaccount"){
      if(formData.depositbank){
-         formData.bank = formData.depositbank ; 
-     } 
+         formData.bank = formData.depositbank ;
+     }
   }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
@@ -124,7 +124,7 @@ class ArchContainer extends Component {
 
     // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
-    var phoneList =  ["project" , "dept" , "feeitem"] ;  
+    var phoneList =  ["project" , "dept" , "feeitem"] ;
     _.map(phoneList,function( obj ,ind ){
         if( baseDocId == obj ){
             if(formData.person.phone){
@@ -132,11 +132,11 @@ class ArchContainer extends Component {
              }
         }
     })
- 
+
     if(baseDocId == "bankaccount"){
      if(formData.depositbank){
-         formData.bank = formData.depositbank ; 
-     } 
+         formData.bank = formData.depositbank ;
+     }
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
@@ -173,15 +173,15 @@ class ArchContainer extends Component {
     var containerThis = this;
     return React.createClass({
       handleEdit(event) {
-       
+
         const { rowIdx, rowObj } = this.props;
         const { fields } = containerThis.props;
-        
+
         var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
         _.map( fields , function(obj ,ind ){
             _.map(control, function( con ,i  ){
                 if( con == obj.refCode  ){
-                  var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';   
+                  var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
                   containerThis.props.updateReferFields(rowObjCode, ind );
                 }
             })
@@ -314,8 +314,11 @@ class ArchContainer extends Component {
       for (var i in newTr) {
         if (newTr.hasOwnProperty(i)) {
           if (newTr[i]) {
-            if (String(newTr[i]).length > 10) {
-              newTr[i] = String(newTr[i]).substr(0, 10);
+            console.log(i, newTr[i])
+            if (typeof newTr[i] === 'string') {
+              if (newTr[i].length > 10) {
+                newTr[i] = newTr[i].substr(0, 10);
+              }
             }
           }
         }
