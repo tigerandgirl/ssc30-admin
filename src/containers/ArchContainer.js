@@ -96,6 +96,12 @@ class ArchContainer extends Component {
       formData.personmobile =  formData.person.phone ;
     }
   }
+  if(baseDocId == "bankaccount"){
+     if(formData.depositbank){
+         formData.bank = formData.depositbank ; 
+     } 
+  }
+
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
     event.preventDefault();
   }
@@ -118,6 +124,12 @@ class ArchContainer extends Component {
       if(formData.person.phone){
         formData.personmobile =  formData.person.phone ;
       }
+    }
+
+    if(baseDocId == "bankaccount"){
+     if(formData.depositbank){
+         formData.bank = formData.depositbank ; 
+     } 
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
@@ -157,8 +169,8 @@ class ArchContainer extends Component {
        
         const { rowIdx, rowObj } = this.props;
         const { fields } = containerThis.props;
-
-        var control = ["dept", "feeitemclass" , "projectclass" ]; // 需要过滤的参照类型
+        
+        var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
         _.map( fields , function(obj ,ind ){
             _.map(control, function( con ,i  ){
                 if( con == obj.refCode  ){
@@ -167,14 +179,6 @@ class ArchContainer extends Component {
                 }
             })
          })
-
-
-  		// start
-  		// 判断
-  	
-  		// console.log('yy', fields[4].id);
-  		// containerThis.props.updateReferFields(rowObj.code, 4);
-	   	// end
 
         // 将rowData保存到store中
         containerThis.props.showEditDialog(rowIdx, rowObj);
