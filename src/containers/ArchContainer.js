@@ -113,6 +113,11 @@ class ArchContainer extends Component {
     const { baseDocId } = this.props.params;
     // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
+    if(baseDocId == "project"){
+      if(formData.person.phone){
+        formData.personmobile =  formData.person.phone ;
+      }
+    }
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
     event.preventDefault();
   }
