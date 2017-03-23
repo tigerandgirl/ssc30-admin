@@ -19,7 +19,7 @@ const ReferDataURL = 'http://10.3.14.239/ficloud/refbase_ctr/queryRefJSON';
 class ArchContainer extends Component {
   static PropTypes = {
     //dispatch: PropTypes.func.isRequired
-  }
+  } 
 
   state = {
   }
@@ -111,6 +111,7 @@ class ArchContainer extends Component {
   handleEditFormSubmit(event, formData) {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
+
     // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
     if(baseDocId == "project"){
@@ -118,6 +119,7 @@ class ArchContainer extends Component {
         formData.personmobile =  formData.person.phone ;
       }
     }
+
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
     event.preventDefault();
   }
@@ -152,11 +154,32 @@ class ArchContainer extends Component {
     var containerThis = this;
     return React.createClass({
       handleEdit(event) {
+       
         const { rowIdx, rowObj } = this.props;
+        const { fields } = containerThis.props;
+        const { baseDocId } = containerThis.props.params;
+        
+        var refInd  = 0 ;  
+        if( baseDocId == "dept"){
+          _.map( fields , function(obj ,ind ){
+              if( obj.refCode == "dept" ) { //上级部门
+                  refInd = ind ;              }
+           })
+          var rowObjCode = '{\"id\"=\" ' + rowObj.id +'\"}';
+          containerThis.props.updateReferFields(rowObjCode, refInd );
+        }
+
+  		// start
+  		// 判断
+  	
+  		// console.log('yy', fields[4].id);
+  		// containerThis.props.updateReferFields(rowObj.code, 4);
+	   	// end
+
         // 将rowData保存到store中
         containerThis.props.showEditDialog(rowIdx, rowObj);
         // 从store中取出editFormData填充到表单上
-        containerThis.props.initEditFormData(rowObj);
+        //containerThis.props.initEditFormData(rowObj);
       },
       handleRemove(event) {
         if (!confirm("是否删除？")) {
@@ -262,6 +285,8 @@ class ArchContainer extends Component {
       },
       itemsPerPage
     } = this.props;
+
+    
 
     // 表单字段模型 / 表格列模型
     const cols = fields || [];

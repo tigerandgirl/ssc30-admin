@@ -20,7 +20,8 @@ import {
   FORM_ALERT_OPEN, FORM_ALERT_CLOSE,
 
   ERROR_MESSAGES_UPDATE,
-  GOTO_PAGE
+  GOTO_PAGE,
+  REFER_FIELDS_UPDATE
 } from '../constants/ActionTypes';
 
 const initState = {
@@ -322,6 +323,19 @@ export default function arch(state = initState, action) {
         startIndex: action.startIndex,
         activePage: action.nextPage
       };
+
+    case REFER_FIELDS_UPDATE:
+      return update(state, {
+		fields: {
+		  [action.fieldIndex]: {
+			referConfig: {
+			  referConditions: {
+				filterNotContainCondition: { $set : action.code }
+			  }
+			}
+		  }
+		}
+      });
 
     default:
       return state;
