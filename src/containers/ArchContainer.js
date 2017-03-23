@@ -158,13 +158,14 @@ class ArchContainer extends Component {
         const { rowIdx, rowObj } = this.props;
         const { fields } = containerThis.props;
 
-        var refInd  = 0 ;
+        var control = ["dept", "feeitemclass" , "projectclass" ]; // 需要过滤的参照类型
         _.map( fields , function(obj ,ind ){
-            if( obj.refCode == "dept" || obj.refCode == "feeitemclass") { //上级部门
-                refInd = ind ;
-                var rowObjCode = '{\"id\"=\" ' + rowObj.id +'\"}';   // refcode 唯一的
-                containerThis.props.updateReferFields(rowObjCode, refInd );
-            }
+            _.map(control, function( con ,i  ){
+                if( con == obj.refCode  ){
+                  var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';   
+                  containerThis.props.updateReferFields(rowObjCode, ind );
+                }
+            })
          })
 
 
