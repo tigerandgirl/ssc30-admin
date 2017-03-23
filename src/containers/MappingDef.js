@@ -96,9 +96,13 @@ class MappingDef extends Component {
         containerThis.props.initEditFormData(rowObj);
       },
       render() {
+        const {rowObj: {
+          id,
+          des_billtype
+        }} = this.props;
         return (
           <td>
-            <Link to={`/entity-map-no-sidebar-single-page`}>
+            <Link to={`/entity-map-no-sidebar-single-page/${des_billtype}/${id}`}>
               编辑
             </Link>
           </td>
