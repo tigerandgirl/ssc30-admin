@@ -8,6 +8,8 @@ import ReactDOM from 'react-dom';
 //import './styles/main.scss';
 import './styles/ssc-grid.css';
 import './styles/ssc-grid2.css';
+// 参照组件样式
+import './styles/refer/referStyle.css';
 
 /**
  * Both configureStore and Root are required conditionally.

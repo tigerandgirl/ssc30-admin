@@ -88,12 +88,14 @@ class ArchContainer extends Component {
     // this.props.saveTableData(baseDocId, fields, formData);
     // this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex);
 
-    // add param : personmobile
+    //ref is " user " add param : personmobile
     // bug des: 传入手机号为空
+
+  if(baseDocId == "project"){
     if(formData.person.phone){
       formData.personmobile =  formData.person.phone ;
     }
-
+  }
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
     event.preventDefault();
   }
@@ -111,6 +113,11 @@ class ArchContainer extends Component {
     const { baseDocId } = this.props.params;
     // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
+    if(baseDocId == "project"){
+      if(formData.person.phone){
+        formData.personmobile =  formData.person.phone ;
+      }
+    }
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
     event.preventDefault();
   }
