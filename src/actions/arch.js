@@ -307,6 +307,7 @@ export function fetchTableColumnsModel(baseDocId) {
             // 6. 有些字段的类型错误，暂时在前端写死新类型
             // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
             // 8. 添加参照的配置
+            // 9. 枚举的存储结构和前端不一致，需要转化一下
             let fields = json.data
               /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
               /* 2 */ .map(utils.fixFieldTypo)
@@ -315,7 +316,8 @@ export function fetchTableColumnsModel(baseDocId) {
               /* 5 */ .map(utils.setHiddenFields)
               /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
               /* 7 */ .map(utils.fixReferKey)
-              /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL));
+              /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+              /* 9 */ .map(utils.fixEnumData);
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
             dispatch(receiveTableColumnsModelFail(
@@ -502,7 +504,7 @@ export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData,
  *   name: '456',
  *   mobileNumber: '1112223333'
  * }
- * When "CreateForm" call this, rowData will not pass, so we will try to get 
+ * When "CreateForm" call this, rowData will not pass, so we will try to get
  * table column(form field) information from table rows.
  *
  * rowIdx表示当前打开的编辑框对应是表格中的哪一行，第一行的rowIdx=0
@@ -603,7 +605,7 @@ export function submitEditForm() {
  *     {}
  *   ]
  * }
- * When "CreateForm" call this, rowData will not pass, so we will try to get 
+ * When "CreateForm" call this, rowData will not pass, so we will try to get
  * table column(form field) information from table rows.
  */
 export function showCreateDialog(rowData) {

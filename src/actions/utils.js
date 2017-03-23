@@ -286,6 +286,32 @@ export function fixDataTypes(baseDocId, {...field}) {
 }
 
 /**
+ * 后端返回的保存枚举的数据结构和前端不同，需要适配一下
+ * 后端给的结构，array不像array，object不像object的
+ * ```json
+ * {
+ *   enumdata: [
+ *     {BASE: '基本'},
+ *     {NORMAL: '一般'}
+ *   ]
+ * }
+ * ```
+ */
+export function fixEnumData({...field}) {
+  if (field.type === 'enum') {
+    field.data = [];
+    field.enumdata.forEach(item => {
+      let key = Object.keys(item)[0];
+      field.data.push({
+        key,
+        value: item[key]
+      });
+    })
+  }
+  return field;
+}
+
+/**
  * 根据参照的类型来添加参照的config object
  * TODO 需要转移到utils.js中
  */
