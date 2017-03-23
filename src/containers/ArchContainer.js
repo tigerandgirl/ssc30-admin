@@ -7,7 +7,6 @@ import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
 import { Grid as SSCGrid, Form } from 'ssc-grid';
 
-import NormalWidget from '../components/NormalWidget';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
@@ -286,8 +285,6 @@ class ArchContainer extends Component {
       itemsPerPage
     } = this.props;
 
-    
-
     // 表单字段模型 / 表格列模型
     const cols = fields || [];
 
@@ -298,6 +295,21 @@ class ArchContainer extends Component {
     // if (!_.isEmpty(editFormData)) {
     //   this.initReferConfig(editFormData, cols, tableData, baseDocId);
     // }
+
+    // YBZSAAS-228
+    let tableData2 = tableData.map(tr => {
+      let newTr = JSON.parse(JSON.stringify(tr));
+      for (var i in newTr) {
+        if (newTr.hasOwnProperty(i)) {
+          if (newTr[i]) {
+            if (String(newTr[i]).length > 10) {
+              newTr[i] = String(newTr[i]).substr(0, 10);
+            }
+          }
+        }
+      }
+      return newTr;
+    });
 
     var url = './screenshot_20170224_011.jpg';
     return (
@@ -323,8 +335,7 @@ class ArchContainer extends Component {
           </Row>
           <Row className="show-grid">
             <Col md={12}>
-              <NormalWidget />
-              <SSCGrid tableData={tableData} columnsModel={cols}
+              <SSCGrid tableData={tableData2} columnsModel={cols}
                 striped bordered condensed hover
                 paging
                 itemsPerPage={itemsPerPage}
