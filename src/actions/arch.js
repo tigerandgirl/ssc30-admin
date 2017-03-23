@@ -296,7 +296,6 @@ export function fetchTableColumnsModel(baseDocId) {
       })
       .then(json => {
         if (json.success === true) {
-
           // 进行业务层的数据校验
           const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
           if (isValid) {
@@ -738,3 +737,15 @@ export function hideFormAlert() {
     });
   };
 };
+
+export function updateReferFields(code, fieldIndex) {
+  return (dispatch, getState) => {
+	const { arch } = getState();
+	// console.log('xx', arch.fields[4].id);
+    dispatch({
+      type: types.REFER_FIELDS_UPDATE,
+	    fieldIndex,
+      code
+    });
+  }
+}

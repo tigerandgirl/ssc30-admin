@@ -61,3 +61,7 @@ export const FORM_ALERT_CLOSE = 'FORM_ALERT_CLOSE';
 // 跳转到页
 
 export const GOTO_PAGE = 'GOTO_PAGE';
+
+// 修复refer fields
+
+export const REFER_FIELDS_UPDATE = 'REFER_FIELDS_UPDATE';
