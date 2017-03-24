@@ -15,6 +15,10 @@ import {
   ARCH_INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
   SUBMIT_EDIT_FORM, SUBMIT_EDIT_FORM_SUCCESS, SUBMIT_EDIT_FORM_FAIL,
 
+  SHOW_CHILD_DIALOG, CHILD_DIALOG_CLOSE,
+  ARCH_INIT_CHILD_FORM_DATA, UPDATE_CHILD_FORM_FIELD_VALUE,
+  SUBMIT_CHILD_FORM, SUBMIT_CHILD_FORM_SUCCESS, SUBMIT_CHILD_FORM_FAIL,
+
   SHOW_CREATE_DIALOG, HIDE_CREATE_DIALOG,
   INIT_CREATE_FORM_DATA, UPDATE_CREATE_FORM_FIELD_VALUE,
   SUBMIT_CREATE_FORM, SUBMIT_CREATE_FORM_SUCCESS, SUBMIT_CREATE_FORM_FAIL,
@@ -46,6 +50,12 @@ const initState = {
     show: false
   },
   createFormData: [],
+  childDialog: {
+    show: false,
+    formData: [],
+    rowIdx: null // 当前编辑框对应表格的行index
+  },
+  childFormData: {},
   adminAlert: {
     show: false,
     error: {
@@ -261,6 +271,62 @@ export default function accountingSubject(state = initState, action) {
         }
       };
     case SUBMIT_EDIT_FORM_FAIL:
+      return {...state,
+        submitting: false,
+        submitted: false,
+        adminAlert: {...state.adminAlert,
+          show: true,
+          bsStyle: action.bsStyle,
+          message: action.message
+        }
+      };
+
+    // child dialog
+    case SHOW_CHILD_DIALOG:
+    case CHILD_DIALOG_CLOSE:
+      return update(state, {
+        childDialog: {
+          $set: {
+            show: action.openDialog,
+            formData: action.formData,
+            rowIdx: action.rowIdx
+          }
+        },
+        formAlert: {
+          show: {$set: false}
+        },
+        childFormData: {$set: action.formData},
+        serverMessage: {$set: ''}
+      });
+    case UPDATE_CHILD_FORM_FIELD_VALUE:
+      // Update single value inside specific array item
+      // http://stackoverflow.com/questions/35628774/how-to-update-single-value-inside-specific-array-item-in-redux
+      return update(state, {
+        childFormData: {
+          [action.id]: {
+            $set: action.payload
+          }
+        }
+      });
+    case ARCH_INIT_CHILD_FORM_DATA:
+      return {...state,
+        childFormData: action.childFormData
+      }
+    case SUBMIT_CHILD_FORM:
+      return {...state,
+        submitting: true
+      };
+    case SUBMIT_CHILD_FORM_SUCCESS:
+      return {...state,
+        submitting: false,
+        submited: true,
+        adminAlert: {...state.adminAlert,
+          show: true,
+          bsStyle: action.bsStyle,
+          message: action.message
+        }
+      };
+    case SUBMIT_CHILD_FORM_FAIL:
       return {...state,
         submitting: false,
         submitted: false,

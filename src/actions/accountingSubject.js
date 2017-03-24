@@ -54,7 +54,7 @@ function getReferURL(path) {
 }
 
 /**
- * 基础档案 组装后端接口
+ * 会计平台 组装后端接口
  */
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
 const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
@@ -597,6 +597,107 @@ export function submitEditForm() {
       });
   };
 };
+
+// child dialog
+
+/**
+ * @param {Object} [rowData] -  Table row data, e.g.
+ * {
+ *   id: '123',
+ *   name: '456',
+ *   mobileNumber: '1112223333'
+ * }
+ * When "CreateForm" call this, rowData will not pass, so we will try to get
+ * table column(form field) information from table rows.
+ *
+ * rowIdx表示当前打开的编辑框对应是表格中的哪一行，第一行的rowIdx=0
+ */
+export function showChildDialog(rowIdx, rowData) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: types.SHOW_CHILD_DIALOG,
+      openDialog: true,
+      formData: rowData,
+      rowIdx
+    })
+  };
+}
+
+export function closeChildDialog() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: types.CHILD_DIALOG_CLOSE,
+      openDialog: false,
+      formData: {},
+      rowIdx: null
+    })
+  };
+}
+
+export function updateChildFormFieldValue(index, fieldModel, value) {
+  return (dispatch, getState) => {
+    // TODO(chenyangf@yonyou.com): Dont touch state when value not changed.
+    dispatch({
+      type: types.UPDATE_CHILD_FORM_FIELD_VALUE,
+      id: fieldModel.id,
+      payload: value
+    });
+  };
+};
+
+export function initChildFormData(editFormData) {
+  return dispatch => {
+    dispatch({
+      type: types.ARCH_INIT_CHILD_FORM_DATA,
+      editFormData
+    });
+  };
+};
+
+export function submitChildForm() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: types.SUBMIT_CHILD_FORM
+    });
+    const processResult = result => {
+      result.error ?
+        dispatch({
+          type: types.SUBMIT_CHILD_FORM_FAIL,
+          bsStyle: 'danger',
+          message: result.error.message
+        })
+        :
+        dispatch({
+          type: types.SUBMIT_CHILD_FORM_SUCCESS,
+          bsStyle: 'success',
+          message: '提交成功'
+        })
+    };
+    const { arch: { editFormData } } = getState();
+    const idField = editFormData.find(field => field.label === 'id');
+    const options = {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(editFormData)
+    };
+    appendCredentials(options);
+    return fetch(`/api/arch/${idField.value}`, options)
+      .then(utils.checkStatus)
+      .then(utils.parseJSON)
+      .then(processResult)
+      .catch(error => {
+        dispatch({
+          type: types.SUBMIT_CHILD_FORM_FAIL,
+          bsStyle: 'danger',
+          message: error.message
+        });
+        throw error;
+      });
+  };
+};
+
 
 // create dialog
 

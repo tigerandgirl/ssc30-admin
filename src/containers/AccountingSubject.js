@@ -69,6 +69,10 @@ class AccountingSubject extends Component {
     this.props.hideCreateDialog();
   }
 
+  closeChildDialog() {
+    this.props.closeChildDialog();
+  }
+
   // create form
   handleCreateFormBlur(label, value) {
     //this.props.updateCreateFormFieldValue(label, value);
@@ -154,6 +158,39 @@ class AccountingSubject extends Component {
     event.preventDefault();
   }
 
+  // add child form
+  handleChildFormBlur(index, fieldModel, value) {
+    //this.props.updateEditFormFieldValue(index, fieldModel, value);
+  }
+  handleChildFormSubmit(event, formData) {
+    const { startIndex, fields, editDialog: { rowIdx } } = this.props;
+    const { baseDocId } = this.props.params;
+
+    // this.props.submitEditForm();
+    // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
+    var phoneList =  ["project" , "dept" , "feeitem"] ;
+    _.map(phoneList,function( obj ,ind ){
+      if( baseDocId == obj ){
+        if(formData.person.phone){
+          formData.personmobile =  formData.person.phone ;
+        }
+      }
+    })
+
+    if(baseDocId == "bankaccount"){
+      if(formData.depositbank){
+        formData.bank = formData.depositbank ;
+      }
+    }
+
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
+    event.preventDefault();
+  }
+  handleChildFormReset(event) {
+    this.props.closeEditDialog();
+    event.preventDefault();
+  }
+
   handlePageAlertDismiss(){
     this.props.hideAdminAlert();
   }
@@ -210,8 +247,22 @@ class AccountingSubject extends Component {
         // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
         containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
-      handleAddItem(event) {
-        return;
+      handleAddChildSubject(event) {
+        const { rowIdx, rowObj } = this.props;
+        const { fields } = containerThis.props;
+
+        var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
+        _.map( fields , function(obj ,ind ){
+          _.map(control, function( con ,i  ){
+            if( con == obj.refCode  ){
+              var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
+              containerThis.props.updateReferFields(rowObjCode, ind );
+            }
+          })
+        })
+
+        // 将rowData保存到store中
+        containerThis.props.showChildDialog(rowIdx, rowObj);
       },
       render() {
         return (
@@ -220,7 +271,7 @@ class AccountingSubject extends Component {
                   className="glyphicon glyphicon-pencil" title="编辑"></span>
             <span onClick={this.handleRemove}
                   className="glyphicon glyphicon-trash" title="删除"></span>
-            <span onClick={this.handleAddItem}
+            <span onClick={this.handleAddChildSubject}
                   className="glyphicon glyphicon-plus" title="新增"></span>
           </td>
         );
@@ -272,6 +323,7 @@ class AccountingSubject extends Component {
     const {
       tableData, fields,
       editDialog, editFormData,
+      childDialog, childFormData,
       createDialog,
       adminAlert, formAlert,
       params: {
@@ -345,17 +397,33 @@ class AccountingSubject extends Component {
             onReset={::this.handleCreateFormReset}
           />
         </AdminEditDialog>
+        <AdminEditDialog className='child-form' title='新增子科目' {...this.props} show={childDialog.show} onHide={::this.closeChildDialog}>
+          <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
+                      onDismiss={::this.handleFormAlertDismiss}
+          >
+            <p>{formAlert.message}</p>
+            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
+            { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
+          </AdminAlert>
+          <SSCForm
+            fieldsModel={cols}
+            defaultData={childFormData}
+            onBlur={::this.handleChildFormBlur}
+            onSubmit={::this.handleChildFormSubmit}
+            onReset={::this.handleChildFormReset}
+          />
+        </AdminEditDialog>
       </div>
     );
   }
 };
 
 const mapStateToProps = (state, ownProps) => {
-  return {...state.arch,
-    arch: state.arch,
-    tableData: state.arch.tableData,
-    fields: state.arch.fields,
-    totalPage: state.arch.totalPage
+  return {...state.accountingSubject,
+    accountingSubject: state.accountingSubject,
+    tableData: state.accountingSubject.tableData,
+    fields: state.accountingSubject.fields,
+    totalPage: state.accountingSubject.totalPage
   }
 }
 
