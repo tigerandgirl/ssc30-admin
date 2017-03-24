@@ -58,7 +58,7 @@ function getMappingDefAPI(path) {
 /**
  * 基础档案 组装后端接口
  */
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
+const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 
 /**
  * 转换规则模型 组装后端接口
