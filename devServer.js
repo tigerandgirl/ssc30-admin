@@ -53,5 +53,5 @@ app.listen(port, ip, err => {
   }
 
   console.log('Listening at http://%s:%s', ip, port);
-  console.log('webpack is building now, please wait...');
+  console.log('webpack is building now, please wait...' , new Date().getHours() , new Date().getMinutes());
 });

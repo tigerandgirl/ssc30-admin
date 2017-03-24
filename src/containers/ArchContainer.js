@@ -9,6 +9,7 @@ import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
+import Spinner  from '../components/spinner/spinner';
 
 import * as Actions from '../actions/arch';
 
@@ -265,7 +266,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert,
+      adminAlert, formAlert,spinner,
       params: {
         baseDocId
       },
@@ -280,6 +281,7 @@ class ArchContainer extends Component {
 
     return (
       <div>
+        <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >
