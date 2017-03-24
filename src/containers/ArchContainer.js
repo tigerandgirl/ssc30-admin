@@ -99,12 +99,14 @@ class ArchContainer extends Component {
     var phoneList =  ["project" , "dept" , "feeitem"] ;
       _.map(phoneList,function( obj ,ind ){
           if( baseDocId == obj ){
+            if(formData.person){
               if(formData.person.phone){
                   formData.personmobile =  formData.person.phone ;
                }
               if(formData.person.mobile ){
                 formData.personmobile =  formData.person.mobile ;
               }
+            }
           }
     })
 
@@ -136,12 +138,14 @@ class ArchContainer extends Component {
     var phoneList =  ["project" , "dept" , "feeitem"] ;
     _.map(phoneList,function( obj ,ind ){
         if( baseDocId == obj ){
+          if(formData.person){
             if(formData.person.phone ){
                 formData.personmobile =  formData.person.phone ;
              }
             if(formData.person.mobile ){
               formData.personmobile =  formData.person.mobile ;
             }
+          }
 
         }
     })
