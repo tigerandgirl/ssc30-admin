@@ -6,6 +6,10 @@
 export const LOCAL_EXPRESS_SERVER = '127.0.0.1:3009';
 
 /**
+ * 友报账
+ */
+
+/**
  * 后端开发服务器
  */
 
@@ -13,12 +17,33 @@ export const LOCAL_EXPRESS_SERVER = '127.0.0.1:3009';
 export const BASEDOC_DEV_SERVER = '10.3.14.239';
 /** 参照 */
 export const REFER_DEV_SERVER = '172.20.13.230:8090';
+
+/**
+ * 实际联调环境
+ * 测试不是直接在这些服务器上使用
+ */
+
+export const PROD_SERVER = '172.20.4.88:8088';
+
+/******************************************************************************
+ * 友账表
+ ******************************************************************************/
+
+/**
+ * 实际联调环境
+ * 测试不是直接在这些服务器上使用
+ */
+
+// 友账表
+export const YZB_PROD_SERVER = '10.3.14.240';
+
+/**
+ * 后端开发服务器
+ */
+
 /** 外部数据建模左树模型，郭老师私服 */
 export const EXTERNAL_DATA_MODELLING_DEV_SERVER = '10.1.218.36:8080';
 /** 实体模型，郭老师私服 */
 export const ENTITY_DEV_SERVER = '10.1.218.36:8080';
 /** 转换规则模型，郭老师私服 */
 export const CONVERSION_RULE_DEFINITION_DEV_SERVER = '10.1.218.36:8080';
-
-/** 实际联调环境 */
-export const PROD_SERVER = '172.20.4.88:8088';
