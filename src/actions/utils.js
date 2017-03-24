@@ -79,11 +79,10 @@ export function convertDataType({...field}) {
  * 目前将这些数据在前端写死
  */
 export function setRequiredFields(baseDocId, {...field}) {
-  const data = {
+  const databix = {
     dept: {
       code: true, // dept的code字段是必输字段
       name: true,
-      person: true,
       pk_org: true
     },
     project: {
@@ -205,7 +204,9 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
       "pk_org": true
     },
     "feeitemclass": {
-      "pk_org": true
+      "pk_org": true,
+      "code":true , 
+      "name":true 
     },
     "measuredoc": {
       "pk_org": true
