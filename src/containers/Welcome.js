@@ -60,6 +60,15 @@ class Welcome extends React.Component {
             </li>
           </ul>
         </div>
+        <div>
+          <ul>
+            <li>
+              <Link to={`/accsubs-no-sidebar`}>
+                会计平台科目
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
     );
   }
