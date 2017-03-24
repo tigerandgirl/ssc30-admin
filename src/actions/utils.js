@@ -138,6 +138,10 @@ export function setRequiredFields(baseDocId, {...field}) {
       bank: true,
       defaultaccount: false,
       accountproperty: true
+    },
+    feeitemclass:{
+      code:true ,
+      name :true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
@@ -204,9 +208,7 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
       "pk_org": true
     },
     "feeitemclass": {
-      "pk_org": true,
-      "code":true , 
-      "name":true 
+      "pk_org": true
     },
     "measuredoc": {
       "pk_org": true
