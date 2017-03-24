@@ -308,16 +308,18 @@ export function fetchTableColumnsModel(baseDocId) {
             // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
             // 8. 添加参照的配置
             // 9. 枚举的存储结构和前端不一致，需要转化一下
+            // 10. 在字段上设置长度校验
             let fields = json.data
-              /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
-              /* 2 */ .map(utils.fixFieldTypo)
-              /* 3 */ .map(utils.convertDataType)
-              /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
-              /* 5 */ .map(utils.setHiddenFields)
-              /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
-              /* 7 */ .map(utils.fixReferKey)
-              /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
-              /* 9 */ .map(utils.fixEnumData);
+              /*  1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+              /*  2 */ .map(utils.fixFieldTypo)
+              /*  3 */ .map(utils.convertDataType)
+              /*  4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+              /*  5 */ .map(utils.setHiddenFields)
+              /*  6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+              /*  7 */ .map(utils.fixReferKey)
+              /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+              /*  9 */ .map(utils.fixEnumData)
+              /* 10 */ .map(utils.setLengthValidation);
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
             dispatch(receiveTableColumnsModelFail(

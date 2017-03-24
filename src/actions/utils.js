@@ -145,9 +145,12 @@ export function setRequiredFields(baseDocId, {...field}) {
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
-    field.validation = {
+    if (!field.validators) {
+      field.validators = [];
+    }
+    field.validators.push({
       type: 'required'
-    };
+    });
   }
   return field;
 }
@@ -348,6 +351,25 @@ export function fixReferKey(field) {
     return field;
   }
   field.refCode = field.refinfocode;
+  return field;
+}
+
+/**
+ * 给字段设置长度校验
+ */
+export function setLengthValidation(field) {
+  if (typeof field.length === 'number') {
+    if (!field.validators) {
+      field.validators = [];
+    }
+    field.validators.push({
+      type: 'length',
+      options: {
+        min: 0,
+        max: field.length
+      }
+    });
+  }
   return field;
 }
 
