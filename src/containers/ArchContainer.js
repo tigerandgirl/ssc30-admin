@@ -1,20 +1,19 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 
-import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
+import { Grid, Row, Col, Button } from 'react-bootstrap';
 
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
-import Spinner  from '../components/spinner/spinner';
+import Spinner from '../components/spinner/spinner';
 
 import * as Actions from '../actions/arch';
 
 class ArchContainer extends Component {
-  static PropTypes = {
+  static propTypes = {
     /**
      * [store] 字段模型
      */
@@ -22,7 +21,15 @@ class ArchContainer extends Component {
       /**
        * [store] 表体数据
        */
-    tableData: PropTypes.array.isRequired
+    tableData: PropTypes.array.isRequired,
+    itemsPerPage: PropTypes.number.isRequired,
+    startIndex: PropTypes.number.isRequired,
+    fetchTableBodyData: PropTypes.func.isRequired,
+    fetchTableColumnsModel: PropTypes.func.isRequired,
+    params: PropTypes.object.isRequired,
+    showCreateDialog: PropTypes.func.isRequired,
+    closeEditDialog: PropTypes.func.isRequired,
+    hideCreateDialog: PropTypes.func.isRequired,
   }
 
   state = {
@@ -53,7 +60,7 @@ class ArchContainer extends Component {
   }
 
   // admin card actions
-  handleCreate(event) {
+  handleCreate(/* event */) {
     const { tableData } = this.props;
     const rowData = tableData[0];
     this.props.showCreateDialog(rowData);
@@ -68,8 +75,8 @@ class ArchContainer extends Component {
   }
 
   // create form
-  handleCreateFormBlur(label, value) {
-    //this.props.updateCreateFormFieldValue(label, value);
+  handleCreateFormBlur(/* label , value */) {
+    // this.props.updateCreateFormFieldValue(label, value);
   }
   /**
    * formData
@@ -87,16 +94,15 @@ class ArchContainer extends Component {
    * ```
    */
   handleCreateFormSubmit(event, formData) {
-    const { itemsPerPage, startIndex, fields, params: { baseDocId } } = this.props;
+    const { startIndex, fields, params: { baseDocId } } = this.props;
     // this.props.submitCreateForm();
     // this.props.saveTableData(baseDocId, fields, formData);
     // this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex);
 
-    //ref is " user " add param : personmobile
+    // ref is " user " add param : personmobile
     // bug des: 传入手机号为空
 
-
-    var phoneList =  ["project" , "dept" , "feeitem"] ;
+    let phoneList =  ["project" , "dept" , "feeitem"];
       _.map(phoneList,function( obj ,ind ){
           if( baseDocId == obj ){
             if(formData.person){
@@ -108,13 +114,13 @@ class ArchContainer extends Component {
               }
             }
           }
-    })
+    });
 
-  if(baseDocId == "bankaccount"){
-     if(formData.depositbank){
-         formData.bank = formData.depositbank ;
-     }
-  }
+    if (baseDocId === 'bankaccount') {
+      if (formData.depositbank) {
+        formData.bank = formData.depositbank;
+      }
+    }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
     event.preventDefault();
