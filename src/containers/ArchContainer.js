@@ -102,6 +102,9 @@ class ArchContainer extends Component {
               if(formData.person.phone){
                   formData.personmobile =  formData.person.phone ;
                }
+              if(formData.person.mobile ){
+                formData.personmobile =  formData.person.mobile ;
+              }
           }
     })
 
