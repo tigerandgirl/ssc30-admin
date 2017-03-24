@@ -3,9 +3,8 @@
   "version": "0.1.12",
   "private": true,
   "scripts": {
-    "start": "node ./devServer.js",
-    "dev": "cross-env NODE_ENV=development nodemon --watch api --ignore db_data ./devServer.js",
-    "devBackend": "cross-env NODE_ENV=development nodemon --watch api --ignore db_data ./devBackendServer.js",
+    "start": "npm run dev",
+    "dev": "cross-env NODE_ENV=development nodemon --watch devServer.js --ignore db_data ./devServer.js",
     "clean": "rimraf dist",
     "webpack:build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --profile --progress",
     "webpack:build-min": "cross-env NODE_ENV=production webpack --config webpack.build.min.config.js --profile --progress",

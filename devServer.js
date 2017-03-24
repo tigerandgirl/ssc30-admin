@@ -1,12 +1,13 @@
 /* eslint-disable no-console, no-process-exit */
 
 const path = require('path');
+const moment = require('moment');
 
 // HTTP server for local development
 const compression = require('compression');
 const express = require('express');
 const bodyParser = require('body-parser');
-// const multer = require('multer');
+// const multer = require('multer'); // for multipart/form-data
 
 // Webpack for local development
 const webpack = require('webpack');
@@ -53,5 +54,5 @@ app.listen(port, ip, err => {
   }
 
   console.log('Listening at http://%s:%s', ip, port);
-  console.log('webpack is building now, please wait...' , new Date().getHours() , new Date().getMinutes());
+  console.log(moment().format('YYYY-MM-DD HH:mm:SS'), 'webpack is building now, please wait...');
 });
