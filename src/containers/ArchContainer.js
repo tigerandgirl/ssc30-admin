@@ -124,6 +124,7 @@ class ArchContainer extends Component {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleEditFormSubmit(event, formData) {
+    debugger;
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
 
@@ -132,9 +133,13 @@ class ArchContainer extends Component {
     var phoneList =  ["project" , "dept" , "feeitem"] ;
     _.map(phoneList,function( obj ,ind ){
         if( baseDocId == obj ){
-            if(formData.person.phone){
+            if(formData.person.phone ){
                 formData.personmobile =  formData.person.phone ;
              }
+            if(formData.person.mobile ){
+              formData.personmobile =  formData.person.mobile ;
+            }
+
         }
     })
 
