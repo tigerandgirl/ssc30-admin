@@ -83,7 +83,6 @@ export function setRequiredFields(baseDocId, {...field}) {
     dept: {
       code: true, // dept的code字段是必输字段
       name: true,
-      person: true,
       pk_org: true
     },
     project: {
@@ -139,6 +138,10 @@ export function setRequiredFields(baseDocId, {...field}) {
       bank: true,
       defaultaccount: false,
       accountproperty: true
+    },
+    feeitemclass:{
+      code:true ,
+      name :true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {

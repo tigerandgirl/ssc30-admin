@@ -1,3 +1,8 @@
+/**
+ * 转换规则定义
+ * mapdef.md
+ */
+
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
@@ -29,7 +34,7 @@ const ENABLE_DEV_BACKEND = 0;
 function getBaseDocURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + URL.PROD_SERVER + path;
+    return 'http://' + URL.YZB_PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
     ? `http://${URL.BASEDOC_DEV_SERVER}`
@@ -38,12 +43,12 @@ function getBaseDocURL(path) {
 
 /**
  * 根据配置获取到实体模型的绝对路径
- * 比如：http://10.1.218.36:8080/ficloud_web/mappingdef/query
+ * 比如：http://10.1.218.36:8080/ficloud/mappingdef/query
  */
 function getMappingDefAPI(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + URL.PROD_SERVER + path;
+    return 'http://' + URL.YZB_PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
     ? `http://${URL.CONVERSION_RULE_DEFINITION_DEV_SERVER}`
@@ -53,12 +58,12 @@ function getMappingDefAPI(path) {
 /**
  * 基础档案 组装后端接口
  */
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
+const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 
 /**
  * 转换规则模型 组装后端接口
  */
-const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud_web/mappingdef/query');
+const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud/mappingdef/query');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {

@@ -17,7 +17,7 @@ import * as Actions from '../actions/mappingDef';
 // Consants for table and form
 const ItemsPerPage = 15;
 
-const BASE_DOC_ID = 'mapdef';
+const BASE_DOC_ID = 'mappingdef';
 
 /**
  * 会计平台 - 转换规则定义

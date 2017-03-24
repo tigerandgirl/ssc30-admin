@@ -9,6 +9,7 @@ import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
+import Spinner  from '../components/spinner/spinner';
 
 import * as Actions from '../actions/arch';
 
@@ -98,9 +99,14 @@ class ArchContainer extends Component {
     var phoneList =  ["project" , "dept" , "feeitem"] ;
       _.map(phoneList,function( obj ,ind ){
           if( baseDocId == obj ){
+            if(formData.person){
               if(formData.person.phone){
                   formData.personmobile =  formData.person.phone ;
                }
+              if(formData.person.mobile ){
+                formData.personmobile =  formData.person.mobile ;
+              }
+            }
           }
     })
 
@@ -123,6 +129,7 @@ class ArchContainer extends Component {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleEditFormSubmit(event, formData) {
+    debugger;
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
 
@@ -131,9 +138,15 @@ class ArchContainer extends Component {
     var phoneList =  ["project" , "dept" , "feeitem"] ;
     _.map(phoneList,function( obj ,ind ){
         if( baseDocId == obj ){
-            if(formData.person.phone){
+          if(formData.person){
+            if(formData.person.phone ){
                 formData.personmobile =  formData.person.phone ;
              }
+            if(formData.person.mobile ){
+              formData.personmobile =  formData.person.mobile ;
+            }
+          }
+
         }
     })
 
@@ -265,7 +278,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert,
+      adminAlert, formAlert,spinner,
       params: {
         baseDocId
       },
@@ -280,6 +293,7 @@ class ArchContainer extends Component {
 
     return (
       <div>
+        <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >

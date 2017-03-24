@@ -52,6 +52,9 @@ const initState = {
       resBody: '' // 需要改成details，因为这里不仅仅会填写response body
     }
   },
+  spinner:{
+    show:true 
+  },
   // 当前页面所有的错误信息都扔进来
   errorMessages: [],
   // 当表单提交失败的时候，显示错误信息
@@ -108,12 +111,18 @@ export default function arch(state = initState, action) {
     // 获取表格体数据
     case LOAD_TABLEDATA:
       return {...state,
-        loading: true
+        loading: true,
+        spinner:{
+          show:true
+        },
       };
     case LOAD_TABLEDATA_SUCCESS:
       return {...state,
         loading: false,
         loaded: true,
+        spinner:{
+          show:false
+        },
         tableData: action.data.items,
         totalDataCount: action.data.totalCount,
         totalPage: action.data.totalPage
@@ -179,6 +188,9 @@ export default function arch(state = initState, action) {
           show: {$set: true},
           bsStyle: {$set: 'success'},
           message: {$set: '保存成功'}
+        },
+        spinner:{
+          show:{$set:false }
         }
       });
     case TABLEDATA_UPDATE_FAIL:
