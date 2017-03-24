@@ -48,7 +48,7 @@ function getBaseDocURL(path) {
 function getMappingDefAPI(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + URL.PROD_SERVER + path;
+    return 'http://' + URL.YZB_PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
     ? `http://${URL.CONVERSION_RULE_DEFINITION_DEV_SERVER}`
