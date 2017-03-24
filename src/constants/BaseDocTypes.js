@@ -24,5 +24,6 @@ module.exports = function getBaseDocTypes() {
     ,{id: 'subjectchart', name: '科目表'}
     ,{id: 'user', name: '用户'}
     ,{id: 'valuerang', name: '值集'}
+    ,{id: 'accountingsubject', name: '会计平台科目'}
   ];
 }

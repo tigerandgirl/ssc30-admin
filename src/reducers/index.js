@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 
 import arch from './arch'; // 基础档案
+import accountingSubject from './accountingSubject'; // 基础档案
 import mappingDef from './mappingDef'; // 转换规则定义
 import entity from './entity'; // 实体模型
 import externalDataModelling from './externalDataModelling'; // 外部数据建模
@@ -16,6 +17,7 @@ import demo from './demo';
 
 const rootReducer = combineReducers({
   arch,
+  accountingSubject,
   mappingDef,
   entity,
   externalDataModelling,

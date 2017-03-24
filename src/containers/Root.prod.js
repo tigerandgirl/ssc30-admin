@@ -7,7 +7,9 @@ import NoMatch from '../components/NoMatch';
 import Welcome from './Welcome';
 
 import ArchContainer from './ArchContainer'; // 基础档案
+import AccountingSubject from './AccountingSubject'; // 会计平台科目
 import BaseDocIndex from './BaseDocIndex'; // 基础档案列表页面
+import AccSubIndex from './AccSubIndex'; // 会计平台列表页面
 import MappingDef from './MappingDef'; // 转换规则定义
 import ExternalDataModelling from './ExternalDataModelling'; // 外部数据建模
 import Entity from './Entity'; // 实体模型
@@ -46,6 +48,9 @@ module.exports = class Root extends Component {
               <Route path="/basedocs" component={BaseDocIndex}>
                 <Route path="/basedoc/:baseDocId" component={ArchContainer} />
               </Route>
+              <Route path="/accsubs" component={AccSubIndex}>
+                <Route path="/accsub/:baseDocId" component={AccountingSubject} />
+              </Route>
               <Route path="/role" component={RoleContainer}></Route>
               <Route path="/permission" component={PermissionPage}></Route>
               <Route path="/archsetting" component={ArchSettingPage}></Route>
@@ -56,6 +61,9 @@ module.exports = class Root extends Component {
             </Route>
             <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>
               <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
+            </Route>
+            <Route path="/accsubs-no-sidebar" component={AccSubIndex}>
+              <Route path="/accsubs-no-sidebar/accsub/:baseDocId" component={AccountingSubject} />
             </Route>
             <Route path="/basedocs-no-sidebar-single-page/basedoc/:baseDocId" component={ArchContainer} />
             <Route path="/external-data-modelling-no-sidebar-single-page/:billTypeCode" component={ExternalDataModelling} />
