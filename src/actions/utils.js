@@ -79,7 +79,7 @@ export function convertDataType({...field}) {
  * 目前将这些数据在前端写死
  */
 export function setRequiredFields(baseDocId, {...field}) {
-  const databix = {
+  const data = {
     dept: {
       code: true, // dept的code字段是必输字段
       name: true,
