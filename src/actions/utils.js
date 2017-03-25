@@ -358,6 +358,9 @@ export function fixReferKey(field) {
  * 给字段设置长度校验
  */
 export function setLengthValidation(field) {
+  const NOT_CHECK_THESE_TYPES = [
+    'boolean', 'enum', 'ref'
+  ];
   // 隐藏字段不进行长度校验
   if (field.hidden === true) {
     return field;
@@ -366,8 +369,8 @@ export function setLengthValidation(field) {
   if (typeof field.length !== 'number') {
     return field;
   }
-  // 对于boolean型，不校验长度
-  if (field.type === 'boolean') {
+  // 对于boolean型/枚举/参照，不校验长度
+  if (NOT_CHECK_THESE_TYPES.indexOf(field.type) !== -1) {
     return field;
   }
   if (!field.validators) {
