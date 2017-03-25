@@ -41,7 +41,7 @@ export default handleActions({
   [ActionTypes.CONVERSION_RULE_DEFINITION_SUCCESS]: (state, action) => ({...state,
     loading: false,
     loaded: true,
-    tableBodyData: [...action.payload.data]
+    tableBodyData: [...action.payload.data.data]
   }),
   [ActionTypes.CONVERSION_RULE_DEFINITION_FAILURE]: (state, action) => ({...state,
     loading: false,
