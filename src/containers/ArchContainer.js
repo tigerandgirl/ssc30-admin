@@ -13,6 +13,7 @@ import Spinner from '../components/spinner/spinner';
 import * as Actions from '../actions/arch';
 
 class ArchContainer extends Component {
+  static displayName = 'ArchContainer'
   static propTypes = {
     /**
      * [store] 字段模型
