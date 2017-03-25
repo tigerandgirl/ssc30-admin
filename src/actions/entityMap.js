@@ -78,7 +78,7 @@ const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
 
 // 左树查询服务
 //const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
-const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/outerentitytree/querymdtree');
+const OUTER_ENTITY_TREE_URL = getURL('/ficloud/outerentitytree/querymdtree');
 // 左树节点查询服务
 //const OUTER_ENTITY_TREE_NODE_CHILDREN_URL = getURL('/ficloud_web/template/node');
 // 右表查询服务
