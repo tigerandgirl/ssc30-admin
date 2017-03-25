@@ -358,18 +358,28 @@ export function fixReferKey(field) {
  * 给字段设置长度校验
  */
 export function setLengthValidation(field) {
-  if (typeof field.length === 'number') {
-    if (!field.validators) {
-      field.validators = [];
-    }
-    field.validators.push({
-      type: 'length',
-      options: {
-        min: 0,
-        max: field.length
-      }
-    });
+  // 隐藏字段不进行长度校验
+  if (field.hidden === true) {
+    return field;
   }
+  // 只有字段定义了length属性才认为是需要校验长度的
+  if (typeof field.length !== 'number') {
+    return field;
+  }
+  // 对于boolean型，不校验长度
+  if (field.type === 'boolean') {
+    return field;
+  }
+  if (!field.validators) {
+    field.validators = [];
+  }
+  field.validators.push({
+    type: 'length',
+    options: {
+      min: 0,
+      max: field.length
+    }
+  });
   return field;
 }
 

@@ -247,7 +247,7 @@ class ArchContainer extends Component {
    * { id: '', code: '', name: '' }
    * ```
    */
-  getFormDefaultData(columnsModel, tableData, baseDocId) {
+  getFormDefaultData(columnsModel, baseDocId) {
     let formData = {};
     columnsModel.forEach(fieldModel => {
       // 隐藏字段，比如id字段，不用初始化值
@@ -264,6 +264,10 @@ class ArchContainer extends Component {
           };
           break;
         case 'boolean':
+          // 复选框应该设置默认值为false，也就是没有勾选
+          if (fieldModel.type === 'boolean') {
+            formData[fieldId] = false;
+          }
           // XXDEBUG-START
           // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
           if (fieldId === 'enable') {
@@ -295,7 +299,7 @@ class ArchContainer extends Component {
     const cols = fields || [];
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
+    const formDefaultData = this.getFormDefaultData(cols, baseDocId);
 
     return (
       <div>
