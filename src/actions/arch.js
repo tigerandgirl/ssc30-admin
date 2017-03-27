@@ -29,7 +29,7 @@ const ENABLE_DEV_BACKEND = 0;
 function getBaseDocURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + URL.PROD_SERVER + path;
+    return 'http://' + process.env.YBZ_PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
     ? `http://${URL.BASEDOC_DEV_SERVER}`
@@ -43,7 +43,7 @@ function getBaseDocURL(path) {
 function getReferURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + URL.PROD_SERVER + path;
+    return 'http://' + process.env.YBZ_PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
     ? `http://${URL.REFER_DEV_SERVER}`
