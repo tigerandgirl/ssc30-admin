@@ -34,7 +34,7 @@ class EntityMapTable extends Component {
   componentWillReceiveProps(nextProps) {
   }
 
-  // admin card actions
+  // 点击“创建”按钮
   handleCreate(event) {
     const { entityTableBodyData } = this.props;
     const rowData = entityTableBodyData[0];
@@ -84,7 +84,7 @@ class EntityMapTable extends Component {
   }
   handleEditFormSubmit(event, formData) {
     const { editDialog: { rowIdx } } = this.props;
-    this.props.saveTableDataAndFetchTableBodyData(formData, rowIdx);
+    this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
     event.preventDefault();
   }
   handleEditFormReset(event) {
@@ -115,12 +115,12 @@ class EntityMapTable extends Component {
   }
 
   getCustomComponent() {
-    var containerThis = this;
+    var container = this;
     return React.createClass({
       handleEdit(event) {
         const { rowIdx, rowObj } = this.props;
         // 显示编辑对话框并填充表单
-        containerThis.props.showEditDialog(true, rowIdx, rowObj);
+        container.props.showEditDialog(true, rowIdx, rowObj);
       },
       handleRemove(event) {
         if (!confirm("是否删除？")) {
@@ -128,9 +128,7 @@ class EntityMapTable extends Component {
         }
         const { rowIdx, rowObj } = this.props;
         const { startIndex } = containerThis.props;
-        // containerThis.props.deleteTableData('entity', rowIdx, rowObj);
-        // containerThis.props.fetchTableBodyData('entity', containerThis.props.itemsPerPage, startIndex);
-        containerThis.props.deleteTableDataAndFetchTableBodyData('entity', rowIdx, rowObj, startIndex);
+        container.props.deleteTreeNodeDataAndFetchTreeNodeData(rowObj);
       },
       render() {
         return (
@@ -192,7 +190,7 @@ class EntityMapTable extends Component {
       editDialog,
       editFormData,
       createDialog,
-      adminAlert,
+      pageAlert,
       formAlert,
       itemsPerPage
     } = this.props;
@@ -205,12 +203,12 @@ class EntityMapTable extends Component {
 
     return (
       <div>
-        <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
+        <AdminAlert
+          show={pageAlert.show}
+          bsStyle={pageAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >
-          <p>{adminAlert.message}</p>
-          { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
-          { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
+          <p>{pageAlert.message}</p>
         </AdminAlert>
         <div style={{ display: 'inline-block', float: 'right' }}>
           <Button onClick={::this.handleCreate}>新增</Button>
@@ -226,18 +224,17 @@ class EntityMapTable extends Component {
           operationColumnClass={this.getCustomComponent()}
         />
         <AdminEditDialog
-          {...this.props}
           className='edit-form'
           title='编辑'
           show={editDialog.show}
           onHide={::this.closeEditDialog}
         >
-          <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
+          <AdminAlert
+            show={formAlert.show}
+            bsStyle={formAlert.bsStyle}
             onDismiss={::this.handleFormAlertDismiss}
           >
             <p>{formAlert.message}</p>
-            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
-            { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <Form
             fieldsModel={cols}
@@ -247,7 +244,12 @@ class EntityMapTable extends Component {
             onReset={::this.handleEditFormReset}
           />
         </AdminEditDialog>
-        <AdminEditDialog className='create-form' title='新增' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
+        <AdminEditDialog
+          className='create-form'
+          title='新增'
+          show={createDialog.show}
+          onHide={::this.closeCreateDialog}
+        >
           <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
           <Form
             fieldsModel={cols}
