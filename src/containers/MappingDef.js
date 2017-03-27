@@ -33,7 +33,11 @@ class MappingDef extends Component {
     /**
      * store中存储的表头数据
      */
-    tableColumnsModel: PropTypes.array.isRequired
+    tableColumnsModel: PropTypes.array.isRequired,
+    totalPage: PropTypes.number,
+    itemsPerPage: PropTypes.number,
+    pageAlert: PropTypes.object.isRequired,
+    showPageAlert: PropTypes.func.isRequired
   }
 
   state = {
@@ -62,8 +66,8 @@ class MappingDef extends Component {
     this.props.hideCreateDialog();
   }
 
-  handlePageAlertDismiss(){
-    this.props.hideAdminAlert();
+  handlePageAlertDismiss() {
+    this.props.showPageAlert(false);
   }
 
   handleFormAlertDismiss(){
@@ -112,19 +116,25 @@ class MappingDef extends Component {
   }
 
   render() {
-    const { itemsPerPage, tableColumnsModel, tableBodyData } = this.props;
+    const { itemsPerPage, tableColumnsModel, tableBodyData, pageAlert } = this.props;
 
     return (
       <div className="mapping-def-container">
         <Grid>
-          <Row className="show-grid">
+          <Row>
             <Col md={12}>
               <h3>{}</h3>
             </Col>
           </Row>
-          <Row className="show-grid">
+          <Row>
             <Col md={12}>
-              <NormalWidget />
+              <AdminAlert
+                show={pageAlert.show}
+                bsStyle={pageAlert.bsStyle}
+                onDismiss={::this.handlePageAlertDismiss}
+              >
+                <p>{pageAlert.message}</p>
+              </AdminAlert>
               <SSCGrid
                 columnsModel={tableColumnsModel}
                 tableData={tableBodyData}
@@ -148,7 +158,7 @@ class MappingDef extends Component {
       </div>
     );
   }
-};
+}
 
 const mapStateToProps = (state, ownProps) => {
   return {...state.mappingDef};
