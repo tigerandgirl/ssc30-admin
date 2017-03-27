@@ -136,7 +136,6 @@ class ArchContainer extends Component {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleEditFormSubmit(event, formData) {
-    debugger;
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
 
@@ -210,6 +209,15 @@ class ArchContainer extends Component {
                 }
             })
          })
+
+        // 修复后端数据中的null
+        fields.forEach(field => {
+          if (field.type === 'string') {
+            if (rowObj[field.id] === null) {
+              rowObj[field.id] = '';
+            }
+          }
+        });
 
         // 将rowData保存到store中
         containerThis.props.showEditDialog(rowIdx, rowObj);
