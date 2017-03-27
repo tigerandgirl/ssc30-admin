@@ -58,7 +58,7 @@ const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
 const getSaveURL = type => getBaseDocURL(`/${type}/save`);
 const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
 const getQueryURL = type => getBaseDocURL(`/${type}/query`);
-const getEnableURL = type => getBaseDocURL(`/${type}/enable`);
+const getEnableURL = type => getBaseDocURL(`/${type}/trunenable`);
 /**
  * 参照 组装后端接口
  */
@@ -395,10 +395,10 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
 /**
  * 启用 / 停用
  * */
-export function enableTableData(baseDocId, rowObj,enable){
+export function enableTableData(baseDocId, rowObj){
   debugger;
   return (dispatch, getState) => {
-     var { id } = rowObj; // 40位主键 primary key
+     var { id,enable } = rowObj; // 40位主键 primary key
     var opts = {
       method: 'post',
       headers: {
@@ -552,10 +552,10 @@ export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData,
 /**
  * 复合操作：启用/停用并刷新表格
  */
-export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj, enable ) {
+export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj ) {
   return (dispatch, getState) => {
     const { arch } = getState();
-    return dispatch(enableTableData(baseDocId, rowObj,enable )).then(() => {
+    return dispatch(enableTableData(baseDocId, rowObj )).then(() => {
       return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
     });
   };
