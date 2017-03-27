@@ -248,11 +248,11 @@ class ArchContainer extends Component {
         containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
 
-      handleEnable(enable){
+      handleEnable(){
         const { rowObj } = this.props;
         const { baseDocId } = containerThis.props.params;
 
-        containerThis.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj ,enable);
+        containerThis.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
       },
 
       render() {
@@ -261,7 +261,7 @@ class ArchContainer extends Component {
         return (
           <td>
             <span onClick={this.handleEdit}>修改</span>
-            <span onClick={this.handleEnable.bind(this,enable)}>{enable==true ?"停用":"启用"}</span>
+            <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span>
           </td>
         );
       }
