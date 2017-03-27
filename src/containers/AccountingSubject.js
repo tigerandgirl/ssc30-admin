@@ -167,28 +167,11 @@ class AccountingSubject extends Component {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
 
-    // this.props.submitEditForm();
-    // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
-    var phoneList =  ["project" , "dept" , "feeitem"] ;
-    _.map(phoneList,function( obj ,ind ){
-      if( baseDocId == obj ){
-        if(formData.person.phone){
-          formData.personmobile =  formData.person.phone ;
-        }
-      }
-    })
-
-    if(baseDocId == "bankaccount"){
-      if(formData.depositbank){
-        formData.bank = formData.depositbank ;
-      }
-    }
-
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
     event.preventDefault();
   }
   handleChildFormReset(event) {
-    this.props.closeEditDialog();
+    this.props.closeChildDialog();
     event.preventDefault();
   }
 

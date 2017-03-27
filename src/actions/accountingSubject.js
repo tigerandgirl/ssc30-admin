@@ -226,7 +226,7 @@ function receiveChildSubjectFieldsFail(message, details) {
 export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage) {
   return (dispatch, getState) => {
     dispatch(requestTableData());
-    const { arch } = getState();
+    const { accountingSubject } = getState();
 
     var opts = {
       method: 'post',
@@ -599,9 +599,9 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
  */
 export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex) {
   return (dispatch, getState) => {
-    const { arch } = getState();
+    const { accountingSubject } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, accountingSubject.itemsPerPage, accountingSubject.startIndex));
     });
   };
 }
@@ -611,9 +611,9 @@ export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, 
  */
 export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData, startIndex) {
   return (dispatch, getState) => {
-    const { arch } = getState();
+    const { accountingSubject } = getState();
     return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, accountingSubject.itemsPerPage, accountingSubject.startIndex));
     });
   };
 }
@@ -691,7 +691,7 @@ export function submitEditForm() {
           message: '提交成功'
         })
     };
-    const { arch: { editFormData } } = getState();
+    const { accountingSubject: { editFormData } } = getState();
     const idField = editFormData.find(field => field.label === 'id');
     const options = {
       method: 'put',
@@ -791,7 +791,7 @@ export function submitChildForm() {
           message: '提交成功'
         })
     };
-    const { arch: { editFormData } } = getState();
+    const { accountingSubject: { editFormData } } = getState();
     const idField = editFormData.find(field => field.label === 'id');
     const options = {
       method: 'put',
@@ -869,7 +869,7 @@ export function submitCreateForm() {
           message: '提交成功'
         })
     };
-    const { arch: { createFormData } } = getState();
+    const { accountingSubject: { createFormData } } = getState();
     const options = {
       method: 'post',
       headers: {
@@ -904,7 +904,7 @@ export function initCreateFormData(formData) {
 
 export function updateCreateFormFieldValue(label, value) {
   return (dispatch, getState) => {
-    const { arch: { fields } } = getState();
+    const { accountingSubject: { fields } } = getState();
     const id = _.findIndex(fields, field => field.label === label);
     if (id === -1) {
       console.log('Not found this field:', label, ', in fields:', fields);
@@ -964,8 +964,8 @@ export function hideFormAlert() {
 
 export function updateReferFields(code, fieldIndex) {
   return (dispatch, getState) => {
-    const { arch } = getState();
-    // console.log('xx', arch.fields[4].id);
+    const { accountingSubject } = getState();
+    // console.log('xx', accountingSubject.fields[4].id);
     dispatch({
       type: types.REFER_FIELDS_UPDATE,
       fieldIndex,
