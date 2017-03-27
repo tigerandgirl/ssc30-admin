@@ -195,7 +195,7 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
         },
         mode: 'cors',
         body: JSON.stringify({
-          condition: '',
+          condition: [],
           paras: [],
           fields: [],
           begin: startIndex,
