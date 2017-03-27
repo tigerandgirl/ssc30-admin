@@ -419,3 +419,21 @@ export const validation = {
     return [isValid, message];
   }
 };
+
+/**
+ * 会计科目平台中添加子科目时 过滤掉不需要的字段
+ * 目前vr段只需要vr1,vr2,vr3
+ * @param field
+ * @returns {boolean}
+ */
+function filterChildSubFileds({...field}) {
+  if(field.id == 'code' || field.id == 'name' || field.id == 'direction') {
+    return true;
+  }/*else if(/^vr\d+/g.exec(field.id) !== null) {
+   return true;
+   }*/else if(field.id == 'vr1' || field.id == 'vr2' || field.id == 'vr3') {
+    return true;
+  } else {
+    return false;
+  }
+}
