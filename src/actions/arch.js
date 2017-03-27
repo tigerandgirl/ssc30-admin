@@ -58,6 +58,7 @@ const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
 const getSaveURL = type => getBaseDocURL(`/${type}/save`);
 const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
 const getQueryURL = type => getBaseDocURL(`/${type}/query`);
+const getEnableURL = type => getBaseDocURL(`/${type}/enable`);
 /**
  * 参照 组装后端接口
  */
@@ -152,6 +153,20 @@ function deleteTableDataFail(message) {
   }
 }
 
+function enableTableDataSuccess(json){
+  return {
+    type: types.ENABLE_TABLEDATA_SUCCESS,
+    data: json.data
+  }
+}
+
+function enableTableDataFail(message){
+  return {
+    type: types.ENABLE_TABLEDATA_FAIL,
+    message
+  }
+}
+
 // rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
 function updateTableDataSuccess(json, rowIdx) {
   // 后端返回的response总包含了修改之后的值，填写到表格中
@@ -188,7 +203,7 @@ export function gotoPage(startIndex, nextPage) {
 }
 
 // 这个接口只获取表格体的数据
-export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage) {
+export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage, conditions) {
   return (dispatch, getState) => {
     dispatch(requestTableData());
     const { arch } = getState();
@@ -200,9 +215,9 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
       },
       mode: "cors",
       body: JSON.stringify({
-        condition: [],
         begin: startIndex,
-        groupnum: itemsPerPage
+        groupnum: itemsPerPage,
+        conditions
       })
     };
     appendCredentials(opts);
@@ -251,7 +266,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
  */
 export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage) {
   return (dispatch, getState) => {
-    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex))
+    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex,null,[]))
       .then(() => {
         return dispatch(gotoPage(startIndex, nextPage));
       });
@@ -319,7 +334,8 @@ export function fetchTableColumnsModel(baseDocId) {
               /*  7 */ .map(utils.fixReferKey)
               /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
               /*  9 */ .map(utils.fixEnumData)
-              /* 10 */ .map(utils.setLengthValidation);
+              /* 10 */ .map(utils.setLengthValidation)
+              /* 11 */
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
             dispatch(receiveTableColumnsModelFail(
@@ -376,6 +392,40 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       });
   }
 }
+/**
+ * 启用 / 停用
+ * */
+export function enableTableData(baseDocId, rowObj,enable){
+  debugger;
+  return (dispatch, getState) => {
+     var { id } = rowObj; // 40位主键 primary key
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: "cors",
+      body: JSON.stringify({ id,enable })
+    };
+    appendCredentials(opts);
+
+    var url = getEnableURL(baseDocId);
+    return fetch(url, opts)
+        .then(response => {
+          return response.json();
+        }).then(json => {
+          if( json.success ==  true ) {
+            dispatch(enableTableDataSuccess(json));
+          }else{
+            dispatch(enableTableDataFail(json.message));
+          }
+        }).catch(function (err) {
+          console.log("操作出现错误：", err);
+        });
+  }
+
+}
+
 
 /**
  * 创建和修改表格数据都会调用到这里
@@ -482,7 +532,7 @@ export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, 
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
     });
   };
 }
@@ -494,7 +544,19 @@ export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData,
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
+    });
+  };
+}
+
+/**
+ * 复合操作：启用/停用并刷新表格
+ */
+export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj, enable ) {
+  return (dispatch, getState) => {
+    const { arch } = getState();
+    return dispatch(enableTableData(baseDocId, rowObj,enable )).then(() => {
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
     });
   };
 }
