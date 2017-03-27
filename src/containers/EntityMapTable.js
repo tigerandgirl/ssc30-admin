@@ -38,7 +38,8 @@ class EntityMapTable extends Component {
   handleCreate(event) {
     const { entityTableBodyData } = this.props;
     const rowData = entityTableBodyData[0];
-    this.props.showCreateDialog(rowData);
+    this.props.showCreateDialog(true, rowData);
+    event.preventDefault();
   }
 
   closeEditDialog() {
@@ -69,12 +70,7 @@ class EntityMapTable extends Component {
    * ```
    */
   handleCreateFormSubmit(event, formData) {
-    const { itemsPerPage, startIndex, entityFieldsModel } = this.props;
-    // this.props.submitCreateForm();
-    // this.props.saveTableData('entity', entityFieldsModel, formData);
-    // this.props.fetchTableBodyData('entity', itemsPerPage, startIndex);
-
-    this.props.saveTableDataAndFetchTableBodyData('entity', entityFieldsModel, formData, null, startIndex);
+    this.props.addTreeNodeDataAndFetchTableBodyData(formData);
     event.preventDefault();
   }
   handleCreateFormReset(event) {
@@ -87,10 +83,8 @@ class EntityMapTable extends Component {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleEditFormSubmit(event, formData) {
-    const { startIndex, entityFieldsModel, editDialog: { rowIdx } } = this.props;
-    // this.props.submitEditForm();
-    // this.props.saveTableData('entity', entityFieldsModel, formData, rowIdx);
-    this.props.saveTableDataAndFetchTableBodyData('entity', entityFieldsModel, formData, rowIdx, startIndex);
+    const { editDialog: { rowIdx } } = this.props;
+    this.props.saveTableDataAndFetchTableBodyData(formData, rowIdx);
     event.preventDefault();
   }
   handleEditFormReset(event) {

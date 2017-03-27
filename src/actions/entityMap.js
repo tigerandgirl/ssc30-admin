@@ -65,7 +65,7 @@ function getURL(path) {
     return 'http://' + process.env.YZB_PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
-    ? `http://${URL.TEMPLATE_DEV_SERVER}`
+    ? `http://${URL.ENTITYMAP_DEV_SERVER}/ficloud_web`
     : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
 }
 
@@ -82,7 +82,10 @@ const OUTER_ENTITY_TREE_URL = getURL('/ficloud/outerentitytree/querymdtree');
 // 左树节点查询服务
 //const OUTER_ENTITY_TREE_NODE_CHILDREN_URL = getURL('/ficloud_web/template/node');
 // 右表查询服务
-const OUTER_ENTITY_TREE_NODE_DATA_URL = getURL('/ficloud_web/outerentitytree/querynodedata');
+const OUTER_ENTITY_TREE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/querynodedata');
+const OUTER_ENTITY_TREE_ADD_NODE_DATA_URL = getURL('/ficloud/outerentitytree/addnodedata');
+const OUTER_ENTITY_TREE_UPDATE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/updatenodedata');
+const OUTER_ENTITY_TREE_DEL_NODE_DATA_URL = getURL('/ficloud/outerentitytree/delnodedata');
 
 // 参照 组装后端接口
 const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
@@ -96,11 +99,13 @@ function appendCredentials(opts) {
   return opts;
 }
 
-// 获取模板树数据
+/**
+ * 左边的树
+ */
 
-export const TEMPLATE_REQUEST = 'TEMPLATE_REQUEST';
-export const TEMPLATE_SUCCESS = 'TEMPLATE_SUCCESS';
-export const TEMPLATE_FAILURE = 'TEMPLATE_FAILURE';
+export const LEFT_TREE_REQUEST = 'LEFT_TREE_REQUEST';
+export const LEFT_TREE_SUCCESS = 'LEFT_TREE_SUCCESS';
+export const LEFT_TREE_FAILURE = 'LEFT_TREE_FAILURE';
 
 /**
  * 获取左边的树
@@ -110,7 +115,7 @@ export const TEMPLATE_FAILURE = 'TEMPLATE_FAILURE';
 export function fetchLeftTree(billTypeCode, mappingDefId) {
   // use `callAPIMiddleware`
   return {
-    types: [TEMPLATE_REQUEST, TEMPLATE_SUCCESS, TEMPLATE_FAILURE],
+    types: [LEFT_TREE_REQUEST, LEFT_TREE_SUCCESS, LEFT_TREE_FAILURE],
     // Check the cache (optional):
     //shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
@@ -119,7 +124,7 @@ export function fetchLeftTree(billTypeCode, mappingDefId) {
         headers: {
           'Content-type': 'application/json'
         },
-        mode: "cors",
+        mode: 'cors',
         body: JSON.stringify({
           billtypecode: billTypeCode, // "C0"
           mappingdefid: mappingDefId // "1"
@@ -161,7 +166,7 @@ export function fetchLeftTreeNodeChildren(key) {
         headers: {
           'Content-type': 'application/json'
         },
-        mode: "cors",
+        mode: 'cors',
         body: JSON.stringify({
           key // 0-1
         })
@@ -193,19 +198,9 @@ export function fetchLeftTreeNodeChildren(key) {
  * 获取指定节点的数据，用于填充右侧的表格和表单
  */
 
-export const ENTITY_FIELDS_MODEL_REQUEST = 'ENTITY_FIELDS_MODEL_REQUEST';
-export const ENTITY_FIELDS_MODEL_SUCCESS = 'ENTITY_FIELDS_MODEL_SUCCESS';
-export const ENTITY_FIELDS_MODEL_FAILURE = 'ENTITY_FIELDS_MODEL_FAILURE';
-
-// 获取表格列模型失败
-// message: 错误信息
-// details: 比如HTTP response body，或者其他为了踢皮球而写的比较啰嗦的文字
-function receiveTableColumnsModelFail(message, details) {
-  return {
-    type: types.LOAD_TABLECOLUMNS_FAIL,
-    message, details
-  }
-}
+export const ENTITY_TREE_NODE_DATA_REQUEST = 'ENTITY_TREE_NODE_DATA_REQUEST';
+export const ENTITY_TREE_NODE_DATA_SUCCESS = 'ENTITY_TREE_NODE_DATA_SUCCESS';
+export const ENTITY_TREE_NODE_DATA_FAILURE = 'ENTITY_TREE_NODE_DATA_FAILURE';
 
 /**
  * 根据一个节点提供的信息，包括title和key，发送请求获取该节点的数据，用于显示
@@ -224,7 +219,7 @@ function receiveTableColumnsModelFail(message, details) {
 export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
   // use `callAPIMiddleware`
   return {
-    types: [ENTITY_FIELDS_MODEL_REQUEST, ENTITY_FIELDS_MODEL_SUCCESS, ENTITY_FIELDS_MODEL_FAILURE],
+    types: [ENTITY_TREE_NODE_DATA_REQUEST, ENTITY_TREE_NODE_DATA_SUCCESS, ENTITY_TREE_NODE_DATA_FAILURE],
     // Check the cache (optional):
     //shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
@@ -233,7 +228,7 @@ export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
         headers: {
           'Content-type': 'application/json'
         },
-        mode: "cors",
+        mode: 'cors',
         body: JSON.stringify(nodeData)
       };
       appendCredentials(opts);
@@ -281,7 +276,8 @@ export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
                   /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
                 return {
                   fieldsModel,
-                  tableBodyData: json.data.body
+                  tableBodyData: json.data.body,
+                  nodeData
                 };
             // } else {
             //   return receiveTableColumnsModelFail(
@@ -322,3 +318,147 @@ export function showEditDialog(show, rowIdx, editFormData) {
     });
   };
 }
+
+export const ENTITY_MAP_CREATE_DIALOG_SHOW = 'ENTITY_MAP_CREATE_DIALOG_SHOW';
+
+/**
+ * @param {Boolean} show 显示/隐藏对话框
+ * @param {Object} formData 需要填充到表单中的数据
+ */
+export function showCreateDialog(show, formData) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: ENTITY_MAP_CREATE_DIALOG_SHOW,
+      show,
+      formData
+    });
+  };
+}
+
+/**
+ * 右侧表格，保存操作
+ */
+
+export const TREE_NODE_DATA_UPDATE_REQUEST = 'TREE_NODE_DATA_UPDATE_REQUEST';
+export const TREE_NODE_DATA_UPDATE_SUCCESS = 'TREE_NODE_DATA_UPDATE_SUCCESS';
+export const TREE_NODE_DATA_UPDATE_FAILURE = 'TREE_NODE_DATA_UPDATE_FAILURE';
+
+/**
+ * @param {Object} formData 表单提交的数据
+ * @param {Number} rowIndex 只有是修改了某一个行，才会传数字，否则传null
+ */
+export function updateTreeNodeData(formData, rowIdx) {
+  // use `callAPIMiddleware`
+  return {
+    types: [
+      TREE_NODE_DATA_UPDATE_REQUEST,
+      TREE_NODE_DATA_UPDATE_SUCCESS,
+      TREE_NODE_DATA_UPDATE_FAILURE
+    ],
+    callAPI: (state) => {
+      var requestBodyObj = { ...formData };
+      var opts = {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        mode: "cors",
+        body: JSON.stringify(requestBodyObj)
+      };
+      appendCredentials(opts);
+
+      const url = OUTER_ENTITY_TREE_UPDATE_NODE_DATA_URL;
+      return fetch(url, opts)
+        .then(utils.checkHTTPStatus)
+        .then(utils.parseJSON)
+        .then(resObj => {
+          if (resObj.success === true) {
+          } else {
+            throw {
+              name: 'SUCCESS_FALSE',
+              message: resObj.message
+            };
+          }
+        })
+    }
+  }
+}
+
+/**
+ * 右侧表格，新建操作
+ */
+
+export const TREE_NODE_DATA_ADD_REQUEST = 'TREE_NODE_DATA_ADD_REQUEST';
+export const TREE_NODE_DATA_ADD_SUCCESS = 'TREE_NODE_DATA_ADD_SUCCESS';
+export const TREE_NODE_DATA_ADD_FAILURE = 'TREE_NODE_DATA_ADD_FAILURE';
+
+/**
+ * 创建
+ * @param {Object} formData 表单提交的数据
+ */
+export function addTreeNodeData(formData) {
+  // use `callAPIMiddleware`
+  return {
+    types: [
+      TREE_NODE_DATA_ADD_REQUEST,
+      TREE_NODE_DATA_ADD_SUCCESS,
+      TREE_NODE_DATA_ADD_FAILURE
+    ],
+    callAPI: (state) => {
+      var requestBodyObj = { ...formData };
+      var opts = {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        mode: "cors",
+        body: JSON.stringify(requestBodyObj)
+      };
+      appendCredentials(opts);
+
+      const url = OUTER_ENTITY_TREE_ADD_NODE_DATA_URL;
+      return fetch(url, opts)
+        .then(utils.checkHTTPStatus)
+        .then(utils.parseJSON)
+        .then(resObj => {
+          if (resObj.success === true) {
+          } else {
+            throw {
+              name: 'SUCCESS_FALSE',
+              message: resObj.message
+            };
+          }
+        })
+    }
+  }
+}
+
+/**
+ * 复合操作：创建并刷新表格
+ */
+export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getState) => {
+  const { entityMap } = getState();
+  return dispatch(addTreeNodeData(formData))
+    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedNodeData)));
+}
+
+
+/**
+ * 复合操作：更新并刷新表格
+ */
+export const updateTreeNodeDataAndFetchTreeNodeData = (formData, rowIdx) => (dispatch, getState) => {
+  const { entityMap } = getState();
+  return dispatch(updateTreeNodeData(formData, rowIdx))
+    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedNodeData)));
+};
+
+
+/**
+ * 复合操作：删除并刷新表格
+ */
+export const deleteTreeNodeDataAndFetchTreeNodeData = rowIdx => (dispatch, getState) => {
+  const { entityMap } = getState();
+  return dispatch(deleteTreeNodeData(rowIdx))
+    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedNodeData)));
+};
+

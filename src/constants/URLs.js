@@ -42,5 +42,7 @@ export const PROD_SERVER = '172.20.4.88:8088';
 export const EXTERNAL_DATA_MODELLING_DEV_SERVER = '10.1.218.36:8080';
 /** 实体模型，郭老师私服 */
 export const ENTITY_DEV_SERVER = '10.1.218.36:8080';
+/** 实体映射，郭老师私服 */
+export const ENTITYMAP_DEV_SERVER = '10.1.218.36:8080';
 /** 转换规则模型，郭老师私服 */
 export const CONVERSION_RULE_DEFINITION_DEV_SERVER = '10.1.218.36:8080';

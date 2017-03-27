@@ -8,11 +8,12 @@ const initState = {
   loading: false,
   loaded: false,
   treeData: [],
-  // 表头
+  // 右表表头和表体
   entityFieldsModelloading: false,
   entityFieldsModelloaded: false,
   entityFieldsModel: [], // 表单/表格字段模型
   entityTableBodyData: [], // 表体数据
+  selectedNodeData: {}, // 被选中的左侧的节点信息
   // 创建对话框
   createDialog: {
     show: false
@@ -107,7 +108,8 @@ export default handleActions({
     entityFieldsModelloading: false,
     entityFieldsModelloaded: true,
     entityFieldsModel: [...action.payload.fieldsModel],
-    entityTableBodyData: [...action.payload.tableBodyData]
+    entityTableBodyData: [...action.payload.tableBodyData],
+    selectedNodeData: {...action.payload.nodeData}
   }),
   [ActionTypes.ENTITY_FIELDS_MODEL_FAILURE]: (state, action) => ({...state,
     entityFieldsModelloading: false,
@@ -130,5 +132,16 @@ export default handleActions({
     },
     editFormData: action.editFormData
   }),
+
+  /**
+   * 带表单的创建对话框
+   */
+
+  [ActionTypes.ENTITY_MAP_CREATE_DIALOG_SHOW]: (state, action) => ({...state,
+    editDialog: {
+      show: action.show
+    },
+    createFormData: action.formData
+  })
 
 }, initState);

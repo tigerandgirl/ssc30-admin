@@ -13,6 +13,26 @@ export function checkStatus(response) {
   }
 }
 
+/**
+ * Check HTTP response status code
+ * @param {Object} response
+ * @return {Object}
+ * @throws {InvalidArgumentException}
+ */
+export function checkHTTPStatus(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  } else {
+    var error = new Error(response.statusText);
+    error.response = response;
+    // response.text().then(text => {
+    //   // How to get HTTP response body
+    //   console.log(text);
+    // });
+    throw error;
+  }
+}
+
 export function parseJSON(response) {
   return response.json();
 }
