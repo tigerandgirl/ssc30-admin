@@ -133,7 +133,6 @@ class AccountingSubject extends Component {
   handleEditFormSubmit(event, formData) {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
-
     // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
     var phoneList =  ["project" , "dept" , "feeitem"] ;
@@ -164,10 +163,12 @@ class AccountingSubject extends Component {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleChildFormSubmit(event, formData) {
-    const { startIndex, fields, editDialog: { rowIdx } } = this.props;
+    const { startIndex, fields, editDialog: { rowIdx }, childFormData } = this.props;
     const { baseDocId } = this.props.params;
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
+    // childFormData 是rowData
+    let rowData = childFormData;
+    this.props.addTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowData, rowIdx, startIndex);
     event.preventDefault();
   }
   handleChildFormReset(event) {
@@ -234,7 +235,6 @@ class AccountingSubject extends Component {
       handleAddChildSubject(event) {
         const { rowIdx, rowObj } = this.props;
         const { fields } = containerThis.props;
-
         var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
         _.map( fields , function(obj ,ind ){
           _.map(control, function( con ,i  ){
@@ -413,7 +413,8 @@ const mapStateToProps = (state, ownProps) => {
     accountingSubject: state.accountingSubject,
     tableData: state.accountingSubject.tableData,
     fields: state.accountingSubject.fields,
-    totalPage: state.accountingSubject.totalPage
+    totalPage: state.accountingSubject.totalPage,
+    childFormData: state.accountingSubject.childDialog.formData
   }
 }
 
