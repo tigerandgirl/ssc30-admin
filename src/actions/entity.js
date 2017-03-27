@@ -89,7 +89,7 @@ export function fetchEntity() {
         },
         mode: 'cors',
         body: JSON.stringify({
-          condition: '',
+          condition: [],
           paras: [],
           fields: [],
           begin: 0

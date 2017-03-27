@@ -200,7 +200,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
       },
       mode: "cors",
       body: JSON.stringify({
-        condition: '',
+        condition: [],
         begin: startIndex,
         groupnum: itemsPerPage
       })
