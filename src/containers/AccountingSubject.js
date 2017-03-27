@@ -1,36 +1,30 @@
+/**
+ * Created by Tiger on 17/3/23.
+ */
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
-import { Grid, Row, Col, Button } from 'react-bootstrap';
+import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
-import Spinner from '../components/spinner/spinner';
 
-import * as Actions from '../actions/arch';
+import * as Actions from '../actions/accountingSubject';
 
-class ArchContainer extends Component {
-  static displayName = 'ArchContainer'
-  static propTypes = {
+class AccountingSubject extends Component {
+  static PropTypes = {
     /**
      * [store] 字段模型
      */
     fields: PropTypes.array.isRequired,
-      /**
-       * [store] 表体数据
-       */
-    tableData: PropTypes.array.isRequired,
-    itemsPerPage: PropTypes.number.isRequired,
-    startIndex: PropTypes.number.isRequired,
-    fetchTableBodyData: PropTypes.func.isRequired,
-    fetchTableColumnsModel: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired,
-    showCreateDialog: PropTypes.func.isRequired,
-    closeEditDialog: PropTypes.func.isRequired,
-    hideCreateDialog: PropTypes.func.isRequired,
+    /**
+     * [store] 表体数据
+     */
+    tableData: PropTypes.array.isRequired
   }
 
   state = {
@@ -44,6 +38,7 @@ class ArchContainer extends Component {
     const { itemsPerPage, startIndex } = this.props;
     this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex);
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
+    this.props.fetchChildSubjectTableColumnsModel(this.props.params.baseDocId);
   }
 
   componentDidMount() {
@@ -61,7 +56,7 @@ class ArchContainer extends Component {
   }
 
   // admin card actions
-  handleCreate(/* event */) {
+  handleCreate(event) {
     const { tableData } = this.props;
     const rowData = tableData[0];
     this.props.showCreateDialog(rowData);
@@ -75,9 +70,13 @@ class ArchContainer extends Component {
     this.props.hideCreateDialog();
   }
 
+  closeChildDialog() {
+    this.props.closeChildDialog();
+  }
+
   // create form
-  handleCreateFormBlur(/* label , value */) {
-    // this.props.updateCreateFormFieldValue(label, value);
+  handleCreateFormBlur(label, value) {
+    //this.props.updateCreateFormFieldValue(label, value);
   }
   /**
    * formData
@@ -95,31 +94,27 @@ class ArchContainer extends Component {
    * ```
    */
   handleCreateFormSubmit(event, formData) {
-    const { startIndex, fields, params: { baseDocId } } = this.props;
+    const { itemsPerPage, startIndex, fields, params: { baseDocId } } = this.props;
     // this.props.submitCreateForm();
     // this.props.saveTableData(baseDocId, fields, formData);
     // this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex);
 
-    // ref is " user " add param : personmobile
+    //ref is " user " add param : personmobile
     // bug des: 传入手机号为空
 
-    let phoneList =  ["project" , "dept" , "feeitem"];
-      _.map(phoneList,function( obj ,ind ){
-          if( baseDocId == obj ){
-            if(formData.person){
-              if(formData.person.phone){
-                  formData.personmobile =  formData.person.phone ;
-               }
-              if(formData.person.mobile ){
-                formData.personmobile =  formData.person.mobile ;
-              }
-            }
-          }
-    });
 
-    if (baseDocId === 'bankaccount') {
-      if (formData.depositbank) {
-        formData.bank = formData.depositbank;
+    var phoneList =  ["project" , "dept" , "feeitem"] ;
+    _.map(phoneList,function( obj ,ind ){
+      if( baseDocId == obj ){
+        if(formData.person.phone){
+          formData.personmobile =  formData.person.phone ;
+        }
+      }
+    })
+
+    if(baseDocId == "bankaccount"){
+      if(formData.depositbank){
+        formData.bank = formData.depositbank ;
       }
     }
 
@@ -143,23 +138,17 @@ class ArchContainer extends Component {
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
     var phoneList =  ["project" , "dept" , "feeitem"] ;
     _.map(phoneList,function( obj ,ind ){
-        if( baseDocId == obj ){
-          if(formData.person){
-            if(formData.person.phone ){
-                formData.personmobile =  formData.person.phone ;
-             }
-            if(formData.person.mobile ){
-              formData.personmobile =  formData.person.mobile ;
-            }
-          }
-
+      if( baseDocId == obj ){
+        if(formData.person.phone){
+          formData.personmobile =  formData.person.phone ;
         }
+      }
     })
 
     if(baseDocId == "bankaccount"){
-     if(formData.depositbank){
-         formData.bank = formData.depositbank ;
-     }
+      if(formData.depositbank){
+        formData.bank = formData.depositbank ;
+      }
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
@@ -167,6 +156,22 @@ class ArchContainer extends Component {
   }
   handleEditFormReset(event) {
     this.props.closeEditDialog();
+    event.preventDefault();
+  }
+
+  // add child form
+  handleChildFormBlur(index, fieldModel, value) {
+    //this.props.updateEditFormFieldValue(index, fieldModel, value);
+  }
+  handleChildFormSubmit(event, formData) {
+    const { startIndex, fields, editDialog: { rowIdx } } = this.props;
+    const { baseDocId } = this.props.params;
+
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
+    event.preventDefault();
+  }
+  handleChildFormReset(event) {
+    this.props.closeChildDialog();
     event.preventDefault();
   }
 
@@ -202,22 +207,13 @@ class ArchContainer extends Component {
 
         var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
         _.map( fields , function(obj ,ind ){
-            _.map(control, function( con ,i  ){
-                if( con == obj.refCode  ){
-                  var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
-                  containerThis.props.updateReferFields(rowObjCode, ind );
-                }
-            })
-         })
-
-        // 修复后端数据中的null
-        fields.forEach(field => {
-          if (field.type === 'string') {
-            if (rowObj[field.id] === null) {
-              rowObj[field.id] = '';
+          _.map(control, function( con ,i  ){
+            if( con == obj.refCode  ){
+              var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
+              containerThis.props.updateReferFields(rowObjCode, ind );
             }
-          }
-        });
+          })
+        })
 
         // 将rowData保存到store中
         containerThis.props.showEditDialog(rowIdx, rowObj);
@@ -235,13 +231,32 @@ class ArchContainer extends Component {
         // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
         containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
+      handleAddChildSubject(event) {
+        const { rowIdx, rowObj } = this.props;
+        const { fields } = containerThis.props;
+
+        var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
+        _.map( fields , function(obj ,ind ){
+          _.map(control, function( con ,i  ){
+            if( con == obj.refCode  ){
+              var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
+              containerThis.props.updateReferFields(rowObjCode, ind );
+            }
+          })
+        })
+
+        // 将rowData保存到store中
+        containerThis.props.showChildDialog(rowIdx, rowObj);
+      },
       render() {
         return (
           <td>
             <span onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil" title="编辑"></span>
+                  className="glyphicon glyphicon-pencil" title="编辑"></span>
             <span onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash" title="删除"></span>
+                  className="glyphicon glyphicon-trash" title="删除"></span>
+            <span onClick={this.handleAddChildSubject}
+                  className="glyphicon glyphicon-plus" title="新增"></span>
           </td>
         );
       }
@@ -256,7 +271,7 @@ class ArchContainer extends Component {
    * { id: '', code: '', name: '' }
    * ```
    */
-  getFormDefaultData(columnsModel, baseDocId) {
+  getFormDefaultData(columnsModel, tableData, baseDocId) {
     let formData = {};
     columnsModel.forEach(fieldModel => {
       // 隐藏字段，比如id字段，不用初始化值
@@ -273,10 +288,6 @@ class ArchContainer extends Component {
           };
           break;
         case 'boolean':
-          // 复选框应该设置默认值为false，也就是没有勾选
-          if (fieldModel.type === 'boolean') {
-            formData[fieldId] = false;
-          }
           // XXDEBUG-START
           // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
           if (fieldId === 'enable') {
@@ -294,10 +305,11 @@ class ArchContainer extends Component {
 
   render() {
     const {
-      tableData, fields,
+      tableData, fields, childSubjectFields,
       editDialog, editFormData,
+      childDialog, childFormData,
       createDialog,
-      adminAlert, formAlert,spinner,
+      adminAlert, formAlert,
       params: {
         baseDocId
       },
@@ -307,14 +319,19 @@ class ArchContainer extends Component {
     // 表单字段模型 / 表格列模型
     const cols = fields || [];
 
+    // 会计平台子科目表单字段模型 / 表格列模型
+    const childSubjectCols = childSubjectFields || [];
+
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData(cols, baseDocId);
+    const formDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
+
+    // 会计平台子科目的初始值设置为空
+    const childFormDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
 
     return (
       <div>
-        <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
-          onDismiss={::this.handlePageAlertDismiss}
+                    onDismiss={::this.handlePageAlertDismiss}
         >
           <p>{adminAlert.message}</p>
           { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
@@ -332,21 +349,21 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <SSCGrid tableData={tableData} columnsModel={cols}
-                striped bordered condensed hover
-                paging
-                itemsPerPage={itemsPerPage}
-                totalPage={this.props.totalPage}
-                activePage={this.props.activePage}
-                onPagination={::this.handlePagination}
-                operationColumn={{}}
-                operationColumnClass={this.getCustomComponent()}
+                       striped bordered condensed hover
+                       paging
+                       itemsPerPage={itemsPerPage}
+                       totalPage={this.props.totalPage}
+                       activePage={this.props.activePage}
+                       onPagination={::this.handlePagination}
+                       operationColumn={{}}
+                       operationColumnClass={this.getCustomComponent()}
               />
             </Col>
           </Row>
         </Grid>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
           <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
-            onDismiss={::this.handleFormAlertDismiss}
+                      onDismiss={::this.handleFormAlertDismiss}
           >
             <p>{formAlert.message}</p>
             { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
@@ -370,17 +387,33 @@ class ArchContainer extends Component {
             onReset={::this.handleCreateFormReset}
           />
         </AdminEditDialog>
+        <AdminEditDialog className='child-form' title='新增子科目' {...this.props} show={childDialog.show} onHide={::this.closeChildDialog}>
+          <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
+                      onDismiss={::this.handleFormAlertDismiss}
+          >
+            <p>{formAlert.message}</p>
+            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
+            { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
+          </AdminAlert>
+          <SSCForm
+            fieldsModel={childSubjectCols}
+            defaultData={childFormDefaultData}
+            onBlur={::this.handleChildFormBlur}
+            onSubmit={::this.handleChildFormSubmit}
+            onReset={::this.handleChildFormReset}
+          />
+        </AdminEditDialog>
       </div>
     );
   }
 };
 
 const mapStateToProps = (state, ownProps) => {
-  return {...state.arch,
-    arch: state.arch,
-    tableData: state.arch.tableData,
-    fields: state.arch.fields,
-    totalPage: state.arch.totalPage
+  return {...state.accountingSubject,
+    accountingSubject: state.accountingSubject,
+    tableData: state.accountingSubject.tableData,
+    fields: state.accountingSubject.fields,
+    totalPage: state.accountingSubject.totalPage
   }
 }
 
@@ -389,4 +422,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 // The component will subscribe to Redux store updates.
-export default connect(mapStateToProps, mapDispatchToProps)(ArchContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AccountingSubject);

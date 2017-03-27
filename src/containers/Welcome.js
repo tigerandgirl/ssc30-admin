@@ -20,12 +20,55 @@ class Welcome extends React.Component {
     return (
       <div className="welcomeContainer">
         <NormalWidget />
-        <ul>
-          <li><Link to={`/basedocs`}>所有基础档案类型</Link></li>
-          <li><Link to={`/basedocs-no-sidebar`}>所有基础档案类型(no-sidebar)</Link></li>
-          <li><Link to={`/basedocs-no-sidebar-single-page/basedoc/dept`}>基础档案 - 部门(no-sidebar, single-page)</Link></li>
-          <li><Link to={`/external-data-modelling-no-sidebar-single-page`}>会计平台 - 外部数据建模(no-sidebar, single-page)</Link></li>
-        </ul>
+        <div>
+          <h2>基础档案</h2>
+          <ul>
+            <li>
+              <Link to={`/basedocs`}>
+                所有基础档案类型
+              </Link>
+            </li>
+            <li>
+              <Link to={`/basedocs-no-sidebar`}>
+                所有基础档案类型(no-sidebar)
+              </Link>
+            </li>
+            <li>
+              <Link to={`/basedocs-no-sidebar-single-page/basedoc/dept`}>
+                基础档案 - 部门(no-sidebar, single-page)
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2>会计平台</h2>
+          <ul>
+            <li>
+              <Link to={`/external-data-modelling-no-sidebar-single-page`}>
+                外部数据建模 ExternalDataModelling (no-sidebar, single-page)
+              </Link>
+            </li>
+            <li>
+              <Link to={`/entity-no-sidebar-single-page`}>
+                实体模型 Entity (no-sidebar, single-page)
+              </Link>
+            </li>
+            <li>
+              <Link to={`/entity-map-no-sidebar-single-page`}>
+                实体映射 EntityMap (no-sidebar, single-page)
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li>
+              <Link to={`/accsubs-no-sidebar`}>
+                会计平台科目
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
     );
   }

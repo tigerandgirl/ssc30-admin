@@ -1,28 +1,33 @@
 # ssc30-admin
 
-注意：**停止维护**，项目已经转移到http://git.yonyou.com/sscplatform/FC_MANA
+本项目覆盖的功能包括并不限于：
 
-SSC 3.0 后台管理
+- SSC 3.0 后台管理
+- 友报账 - 基础档案（基本档案）
+- 友账表 - 基础档案（基本档案）
+- 友账表 - 会计平台（部分页面）
 
-## Online demo
+## 在线演示
 
 [http://10.3.14.237:3000/](http://10.3.14.237:3000/)
 
-## Prepare
+## 进行开发
+
+安装依赖
 
 ```
 npm install
 ```
 
-## Run in development mode
+以调试模式运行
 
 ```
 npm run dev
 ```
 
-Open http://127.0.0.1:3008/
+打开 http://127.0.0.1:3008/ 访问首页
 
-## Run in demo mode
+## 在本地测试编译结果
 
 Development feature, like webpack HMR, is not include in demo mode. As this you could host this demo on a web server.
 
@@ -61,106 +66,7 @@ git push --follow-tags
 
 ```
 npm run release
-```
-
-## 发布到私人的阿里云
-
-由于用友的阿里云服务器后端经常出现问题，所以在私人的阿里云也部署一份
-
-```
-.utils/deploy-aliyun-beijing.sh
-```
-
-## Development
-
-## API
-
-```
-/api/v1/res/arch/grid
-```
-
-```
-GET /api/v1/res/arch/grid?itemsPerPage=5&startIndex=1 HTTP/1.1
-Host: 127.0.0.1:3008
-```
-
-## Mock API with swagger
-
-### swagger.yaml
-
-Edit API with [Swagger Editor](http://editor.swagger.io/), and export to `src/swagger/swagger.yaml`
-
-Test API with cURL
-
-```
-curl -X POST -H "Content-Type: application/json" -d '{
-  "pk_doctype": "string1",
-  "condition": "string",
-  "paras": [],
-  "fields": [],
-  "begin": 0,
-  "max": 10
-}' "http://localhost:3008/plat/basedoc/qrybd"
-```
-
-View generated API docs with Swagger UI: https://xxd3vin.github.io/swagger-ui/?url=https://raw.githubusercontent.com/yyssc/ssc30-admin/master/src/swagger/swagger.yaml
-
-### basedoc.yaml
-
-Edit API with [Swagger Editor](http://editor.swagger.io/), and export to `src/swagger/basedoc.yaml`
-
-Test API with cURL
-
-```
-curl -X GET "http://localhost:3008/plat/basedoc/qrybd?id=1"
-```
-
-View generated API docs with Swagger UI: https://xxd3vin.github.io/swagger-ui/?url=https://raw.githubusercontent.com/yyssc/ssc30-admin/master/src/swagger/swagger.yaml
-
-## JSON
-
-```json
-{
-  "apiVersion": "1.0",
-  "data": {
-    "currentItemCount": 5,
-    "itemsPerPage": 5,
-    "startIndex": 1,
-    "totalItems": 22,
-    "items": [
-      {
-        "id": 0,
-        "col1": "col1",
-        "col2": "col2",
-        "col3": "col3"
-      },
-      {
-        "id": 1,
-        "col1": "col1",
-        "col2": "col2",
-        "col3": "col3"
-      },
-      {
-        "id": 2,
-        "col1": "col1",
-        "col2": "col2",
-        "col3": "col3"
-      },
-      {
-        "id": 3,
-        "col1": "col1",
-        "col2": "col2",
-        "col3": "col3"
-      },
-      {
-        "id": 4,
-        "col1": "col1",
-        "col2": "col2",
-        "col3": "col3"
-      }
-    ]
-  }
-}
+YBZ_PROD_SERVER=10.3.14.240 npm run release # 重新指定后端服务器地址
 ```
 
 ## React components tree

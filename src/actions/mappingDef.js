@@ -1,11 +1,16 @@
+/**
+ * 转换规则定义
+ * mapdef.md
+ */
+
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
 import { createAction } from 'redux-actions';
 
-/**
- * 后端接口
- * 比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
- */
+// help functions
+import * as utils from './utils';
+
+// 后端接口URL，比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
 import * as URL from '../constants/URLs';
 
 /**
@@ -37,46 +42,28 @@ function getBaseDocURL(path) {
 }
 
 /**
- * 根据配置获取到参照的绝对路径
- * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
+ * 根据配置获取到实体模型的绝对路径
+ * 比如：http://10.1.218.36:8080/ficloud/mappingdef/query
  */
-function getReferURL(path) {
+function getMappingDefAPI(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return 'http://' + process.env.YZB_PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
-    ? `http://${URL.REFER_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
-}
-
-/**
- * 根据配置获取到外部数据建模的绝对路径
- * 比如：http://59.110.123.20/ficloud/outerentitytree/querytree
- */
-function getExternalDataModellingURL(path) {
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.YZB_PROD_SERVER + path;
-  }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.EXTERNAL_DATA_MODELLING_DEV_SERVER}`
+    ? `http://${URL.CONVERSION_RULE_DEFINITION_DEV_SERVER}`
     : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
 }
 
 /**
  * 基础档案 组装后端接口
  */
-const OUTER_ENTITY_TREE_URL = getExternalDataModellingURL('/ficloud_web/outerentitytree/querytree');
-const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
-const getSaveURL = type => getBaseDocURL(`/${type}/save`);
-const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
-const getQueryURL = type => getBaseDocURL(`/${type}/query`);
+const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
+
 /**
- * 参照 组装后端接口
+ * 转换规则模型 组装后端接口
  */
-const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
+const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud/mappingdef/query');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
@@ -87,33 +74,117 @@ function appendCredentials(opts) {
 }
 
 /**
- * 常用的helper function
- * 可以扔到utils.js中
+ * 获取表格的列模型
  */
 
-// Common helper -> utils.js/api.js
-const checkStatus = response => {
-  if (response.status >= 200 && response.status < 300) {
-    return response
-  } else {
-    var error = new Error(response.statusText)
-    error.response = response
-    throw error
+export const TABLE_COLUMNS_MODEL_REQUEST = 'TABLE_COLUMNS_MODEL_REQUEST';
+export const TABLE_COLUMNS_MODEL_SUCCESS = 'TABLE_COLUMNS_MODEL_SUCCESS';
+export const TABLE_COLUMNS_MODEL_FAILURE = 'TABLE_COLUMNS_MODEL_FAILURE';
+
+// 获取表格列模型失败
+// message: 错误信息
+// details: 比如HTTP response body，或者其他为了踢皮球而写的比较啰嗦的文字
+function receiveTableColumnsModelFail(message, details) {
+  return {
+    type: types.LOAD_TABLECOLUMNS_FAIL,
+    message, details
   }
-};
+}
 
-const parseJSON = response => response.json();
-
-// NC sync: fetch data
-
-export const EXTERNAL_DATA_MODELLING_REQUEST = 'EXTERNAL_DATA_MODELLING_REQUEST';
-export const EXTERNAL_DATA_MODELLING_SUCCESS = 'EXTERNAL_DATA_MODELLING_SUCCESS';
-export const EXTERNAL_DATA_MODELLING_FAILURE = 'EXTERNAL_DATA_MODELLING_FAILURE';
-
-export function fetchOuterEntityTree(billTypeCode) {
+export function fetchTableColumnsModel(baseDocId) {
   // use `callAPIMiddleware`
   return {
-    types: [EXTERNAL_DATA_MODELLING_REQUEST, EXTERNAL_DATA_MODELLING_SUCCESS, EXTERNAL_DATA_MODELLING_FAILURE],
+    types: [TABLE_COLUMNS_MODEL_REQUEST, TABLE_COLUMNS_MODEL_SUCCESS, TABLE_COLUMNS_MODEL_FAILURE],
+    // Check the cache (optional):
+    //shouldCallAPI: (state) => !state.posts[userId],
+    callAPI: () => {
+      const opts = {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/x-www-form-urlencoded'
+        },
+        mode: "cors",
+        body: `doctype=${baseDocId}`
+      };
+      appendCredentials(opts);
+      const url = `${FICLOUDPUB_INITGRID_URL}`;
+
+      return fetch(url, opts)
+        .then(response => {
+          // TODO: HTTP状态检查，需要独立成helper function
+          if (response.status >= 200 && response.status < 300) {
+            return response;
+          } else {
+            var error = new Error(response.statusText);
+            error.response = response;
+            response.text().then(text => {
+              return receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text);
+            });
+            throw error;
+          }
+        })
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          if (json.success === true) {
+
+            // 进行业务层的数据校验
+            const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
+            if (isValid) {
+              // 1. 删除不用的字段，按理说应该后端从response中删除掉的
+              // 2. 修复后端json中的错别字，暂时在前端写死
+              // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
+              // 4. 有些字段是必填项，暂时在前端写死
+              // 5. 有些字段需要隐藏，暂时在前端写死
+              // 6. 有些字段的类型错误，暂时在前端写死新类型
+              // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+              // 8. 添加参照的配置
+              let fields = json.data
+                /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+                /* 2 */ .map(utils.fixFieldTypo)
+                /* 3 */ .map(utils.convertDataType)
+                /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+                /* 5 */ .map(utils.setHiddenFields)
+                /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+                /* 7 */ .map(utils.fixReferKey)
+                /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
+              return {
+                data: fields
+              };
+            } else {
+              return receiveTableColumnsModelFail(
+                `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+                但是数据校验方法提示说：“${validationMessage}”`,
+                JSON.stringify(json.data, null, '  ')
+              );
+            }
+
+          } else {
+            return receiveTableColumnsModelFail(
+              '后端返回的success不是true', JSON.stringify(json, null, '  ')
+            );
+          }
+        })
+        .catch(function (err) {
+          console.log("获取表格列模型失败，错误信息：", err);
+        });
+    }
+  }
+}
+
+/**
+ * 获取实体模型
+ */
+
+export const CONVERSION_RULE_DEFINITION_REQUEST = 'CONVERSION_RULE_DEFINITION_REQUEST';
+export const CONVERSION_RULE_DEFINITION_SUCCESS = 'CONVERSION_RULE_DEFINITION_SUCCESS';
+export const CONVERSION_RULE_DEFINITION_FAILURE = 'CONVERSION_RULE_DEFINITION_FAILURE';
+
+export function fetchTableBodyData(itemsPerPage, startIndex) {
+  // use `callAPIMiddleware`
+  return {
+    types: [CONVERSION_RULE_DEFINITION_REQUEST, CONVERSION_RULE_DEFINITION_SUCCESS, CONVERSION_RULE_DEFINITION_FAILURE],
     // Check the cache (optional):
     //shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
@@ -122,14 +193,18 @@ export function fetchOuterEntityTree(billTypeCode) {
         headers: {
           'Content-type': 'application/json'
         },
-        mode: "cors",
+        mode: 'cors',
         body: JSON.stringify({
-          billtypecode: billTypeCode // {"billtypecode": "2643"}
+          condition: [],
+          paras: [],
+          fields: [],
+          begin: startIndex,
+          groupnum: itemsPerPage
         })
       };
       appendCredentials(opts);
 
-      var url = `${OUTER_ENTITY_TREE_URL}`;
+      var url = `${QUERY_CONVERSION_RULE_DEFINITION_URL}`;
 
       return fetch(url, opts)
         .then(response => {
@@ -145,13 +220,13 @@ export function fetchOuterEntityTree(billTypeCode) {
 
 // NC sync: delete data
 
-export const EXTERNAL_DATA_MODELLING_DELETE_REQUEST  = 'EXTERNAL_DATA_MODELLING_DELETE_REQUEST';
-export const EXTERNAL_DATA_MODELLING_DELETE_SUCCESS  = 'EXTERNAL_DATA_MODELLING_DELETE_SUCCESS';
-export const EXTERNAL_DATA_MODELLING_DELETE_FAILURE  = 'EXTERNAL_DATA_MODELLING_DELETE_FAILURE';
+export const CONVERSION_RULE_DEFINITION_DELETE_REQUEST  = 'CONVERSION_RULE_DEFINITION_DELETE_REQUEST';
+export const CONVERSION_RULE_DEFINITION_DELETE_SUCCESS  = 'CONVERSION_RULE_DEFINITION_DELETE_SUCCESS';
+export const CONVERSION_RULE_DEFINITION_DELETE_FAILURE  = 'CONVERSION_RULE_DEFINITION_DELETE_FAILURE';
 
-const deleteNCSyncRequest = createAction(EXTERNAL_DATA_MODELLING_DELETE_REQUEST);
-const deleteNCSyncSuccess = createAction(EXTERNAL_DATA_MODELLING_DELETE_SUCCESS, data => data);
-const deleteNCSyncFailure = createAction(EXTERNAL_DATA_MODELLING_DELETE_FAILURE,
+const deleteNCSyncRequest = createAction(CONVERSION_RULE_DEFINITION_DELETE_REQUEST);
+const deleteNCSyncSuccess = createAction(CONVERSION_RULE_DEFINITION_DELETE_SUCCESS, data => data);
+const deleteNCSyncFailure = createAction(CONVERSION_RULE_DEFINITION_DELETE_FAILURE,
   (bsStyle, message) => ({bsStyle, message})
 );
 
@@ -176,8 +251,8 @@ export const deleteTableData = () => {
     // /api/ncsync/100,102,103
     var url = `/api/ncsync/${dataIdsStr}`;
     return fetch(url, opts)
-      .then( checkStatus )
-      .then( parseJSON )
+      .then( utils.checkStatus )
+      .then( utils.parseJSON )
       .then( json => dispatch(deleteNCSyncSuccess(json.data)) )
       .catch( error => dispatch(deleteNCSyncFailure('danger', error.message)) );
   }
@@ -218,8 +293,8 @@ export function submitEditForm() {
       body: JSON.stringify(editFormData)
     };
     return fetch(`/api/ncsync/${idField.value}`, options)
-      .then(checkStatus)
-      .then(parseJSON)
+      .then(utils.checkStatus)
+      .then(utils.parseJSON)
       .then(processResult)
       .catch(error => {
         dispatch({
@@ -266,8 +341,8 @@ export function submitCreateForm() {
       body: JSON.stringify(createFormData)
     };
     return fetch(`/api/ncsync`, options)
-      .then(checkStatus)
-      .then(parseJSON)
+      .then(utils.checkStatus)
+      .then(utils.parseJSON)
       .then(processResult)
       .catch(error => {
         dispatch({
@@ -282,13 +357,13 @@ export function submitCreateForm() {
 
 // NC sync config: fetch data
 
-export const EXTERNAL_DATA_MODELLING_CONFIG_REQUEST = 'EXTERNAL_DATA_MODELLING_CONFIG_REQUEST';
-export const EXTERNAL_DATA_MODELLING_CONFIG_SUCCESS = 'EXTERNAL_DATA_MODELLING_CONFIG_SUCCESS';
-export const EXTERNAL_DATA_MODELLING_CONFIG_FAILURE = 'EXTERNAL_DATA_MODELLING_CONFIG_FAILURE';
+export const CONVERSION_RULE_DEFINITION_CONFIG_REQUEST = 'CONVERSION_RULE_DEFINITION_CONFIG_REQUEST';
+export const CONVERSION_RULE_DEFINITION_CONFIG_SUCCESS = 'CONVERSION_RULE_DEFINITION_CONFIG_SUCCESS';
+export const CONVERSION_RULE_DEFINITION_CONFIG_FAILURE = 'CONVERSION_RULE_DEFINITION_CONFIG_FAILURE';
 
-const configRequest = createAction(EXTERNAL_DATA_MODELLING_CONFIG_REQUEST);
-const configSuccess = createAction(EXTERNAL_DATA_MODELLING_CONFIG_SUCCESS, data => data);
-const configFailure = createAction(EXTERNAL_DATA_MODELLING_CONFIG_FAILURE,
+const configRequest = createAction(CONVERSION_RULE_DEFINITION_CONFIG_REQUEST);
+const configSuccess = createAction(CONVERSION_RULE_DEFINITION_CONFIG_SUCCESS, data => data);
+const configFailure = createAction(CONVERSION_RULE_DEFINITION_CONFIG_FAILURE,
   (bsStyle, message) => ({bsStyle, message})
 );
 
@@ -340,8 +415,8 @@ export function changeSelectedRows(rowId, checked) {
 
 // AdminEditDialog view
 
-export const EXTERNAL_DATA_MODELLING_EDIT_DIALOG_SHOW = 'EXTERNAL_DATA_MODELLING_EDIT_DIALOG_SHOW';
-export const EXTERNAL_DATA_MODELLING_EDIT_DIALOG_HIDE = 'EXTERNAL_DATA_MODELLING_EDIT_DIALOG_HIDE';
+export const CONVERSION_RULE_DEFINITION_EDIT_DIALOG_SHOW = 'CONVERSION_RULE_DEFINITION_EDIT_DIALOG_SHOW';
+export const CONVERSION_RULE_DEFINITION_EDIT_DIALOG_HIDE = 'CONVERSION_RULE_DEFINITION_EDIT_DIALOG_HIDE';
 
 /**
  * @param {Object} [rowData] -  Table row data, e.g.
@@ -370,13 +445,13 @@ export function showEditDialog(rowId, rowData) {
         ];
       }
       dispatch({
-        type: EXTERNAL_DATA_MODELLING_EDIT_DIALOG_SHOW,
+        type: CONVERSION_RULE_DEFINITION_EDIT_DIALOG_SHOW,
         openDialog: true,
         formData: rowData.cols
       })
     } else {
       dispatch({
-        type: EXTERNAL_DATA_MODELLING_EDIT_DIALOG_HIDE,
+        type: CONVERSION_RULE_DEFINITION_EDIT_DIALOG_HIDE,
         openDialog: true,
         formData: rowData.cols
       })
@@ -388,7 +463,7 @@ export function showEditDialog(rowId, rowData) {
 export function hideEditDialog() {
   return (dispatch, getState) => {
     dispatch({
-      type: EXTERNAL_DATA_MODELLING_EDIT_DIALOG_HIDE,
+      type: CONVERSION_RULE_DEFINITION_EDIT_DIALOG_HIDE,
       openDialog: false,
       formData: []
     })
@@ -428,8 +503,8 @@ export function initEditFormData(editFormData) {
 
 // dialog view
 
-export const EXTERNAL_DATA_MODELLING_CREATE_DIALOG_SHOW = 'EXTERNAL_DATA_MODELLING_CREATE_DIALOG_SHOW';
-export const EXTERNAL_DATA_MODELLING_CREATE_DIALOG_HIDE = 'EXTERNAL_DATA_MODELLING_CREATE_DIALOG_HIDE';
+export const CONVERSION_RULE_DEFINITION_CREATE_DIALOG_SHOW = 'CONVERSION_RULE_DEFINITION_CREATE_DIALOG_SHOW';
+export const CONVERSION_RULE_DEFINITION_CREATE_DIALOG_HIDE = 'CONVERSION_RULE_DEFINITION_CREATE_DIALOG_HIDE';
 
 /**
  * @param {Object} [rowData] -  Table row data, e.g.
@@ -458,13 +533,13 @@ export function showCreateDialog(rowId, rowData) {
         ];
       }
       dispatch({
-        type: EXTERNAL_DATA_MODELLING_CREATE_DIALOG_SHOW,
+        type: CONVERSION_RULE_DEFINITION_CREATE_DIALOG_SHOW,
         openDialog: true,
         formData: rowData.cols
       })
     } else {
       dispatch({
-        type: EXTERNAL_DATA_MODELLING_CREATE_DIALOG_SHOW,
+        type: CONVERSION_RULE_DEFINITION_CREATE_DIALOG_SHOW,
         openDialog: true,
         formData: rowData.cols
       })
@@ -476,7 +551,7 @@ export function showCreateDialog(rowId, rowData) {
 export function hideCreateDialog() {
   return (dispatch, getState) => {
     dispatch({
-      type: EXTERNAL_DATA_MODELLING_CREATE_DIALOG_HIDE,
+      type: CONVERSION_RULE_DEFINITION_CREATE_DIALOG_HIDE,
       openDialog: false,
       formData: []
     })
@@ -514,13 +589,13 @@ export function updateCreateFormFieldValue(label, value) {
 
 // alert view
 
-export const EXTERNAL_DATA_MODELLING_ADMIN_ALERT_SHOW = 'EXTERNAL_DATA_MODELLING_ADMIN_ALERT_SHOW';
-export const EXTERNAL_DATA_MODELLING_ADMIN_ALERT_HIDE = 'EXTERNAL_DATA_MODELLING_ADMIN_ALERT_HIDE';
+export const CONVERSION_RULE_DEFINITION_ADMIN_ALERT_SHOW = 'CONVERSION_RULE_DEFINITION_ADMIN_ALERT_SHOW';
+export const CONVERSION_RULE_DEFINITION_ADMIN_ALERT_HIDE = 'CONVERSION_RULE_DEFINITION_ADMIN_ALERT_HIDE';
 
 export function showAdminAlert() {
   return dispatch => {
     dispatch({
-      type: EXTERNAL_DATA_MODELLING_ADMIN_ALERT_SHOW
+      type: CONVERSION_RULE_DEFINITION_ADMIN_ALERT_SHOW
     });
   };
 };
@@ -528,7 +603,7 @@ export function showAdminAlert() {
 export function hideAdminAlert() {
   return dispatch => {
     dispatch({
-      type: EXTERNAL_DATA_MODELLING_ADMIN_ALERT_HIDE
+      type: CONVERSION_RULE_DEFINITION_ADMIN_ALERT_HIDE
     });
   };
 };

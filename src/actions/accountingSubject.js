@@ -1,3 +1,6 @@
+/**
+ * Created by Tiger on 17/3/23.
+ */
 import * as types from '../constants/ActionTypes';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
@@ -29,11 +32,11 @@ const ENABLE_DEV_BACKEND = 0;
 function getBaseDocURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.YBZ_PROD_SERVER + path;
+    return 'http://' + URL.PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
-    ? `http://${URL.BASEDOC_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+      ? `http://${URL.BASEDOC_DEV_SERVER}`
+      : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
 }
 
 /**
@@ -43,15 +46,15 @@ function getBaseDocURL(path) {
 function getReferURL(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.YBZ_PROD_SERVER + path;
+    return 'http://' + URL.PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
-    ? `http://${URL.REFER_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+      ? `http://${URL.REFER_DEV_SERVER}`
+      : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
 }
 
 /**
- * 基础档案 组装后端接口
+ * 会计平台 组装后端接口
  */
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
 const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
@@ -187,11 +190,43 @@ export function gotoPage(startIndex, nextPage) {
   }
 }
 
+
+/**
+ * 获取会计平台子科目字段
+ */
+
+// 开始获取表格列模型
+function requestChildSubjectFields() {
+  return {
+    type: types.LOAD_CHILDSUBJECTFIELDS
+  }
+}
+
+// 获取表格列模型成功
+function receiveChildSubjectFieldsSuccess(json, fields) {
+  return {
+    type: types.LOAD_CHILDSUBJECTFIELDS_SUCCESS,
+    data: {
+      fields
+    }
+  }
+}
+
+// 获取表格列模型失败
+// message: 错误信息
+// details: 比如HTTP response body，或者其他为了踢皮球而写的比较啰嗦的文字
+function receiveChildSubjectFieldsFail(message, details) {
+  return {
+    type: types.LOAD_CHILDSUBJECTFIELDS_FAIL,
+    message, details
+  }
+}
+
 // 这个接口只获取表格体的数据
 export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage) {
   return (dispatch, getState) => {
     dispatch(requestTableData());
-    const { arch } = getState();
+    const { accountingSubject } = getState();
 
     var opts = {
       method: 'post',
@@ -200,7 +235,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
       },
       mode: "cors",
       body: JSON.stringify({
-        condition: [],
+        condition: '',
         begin: startIndex,
         groupnum: itemsPerPage
       })
@@ -263,7 +298,7 @@ export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startInde
  */
 export function fetchTableColumnsModel(baseDocId) {
   return (dispatch) => {
-    dispatch(requestTableColumnsModel());
+    dispatch(requestChildSubjectFields());
 
     var opts = {
       method: 'post',
@@ -308,18 +343,16 @@ export function fetchTableColumnsModel(baseDocId) {
             // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
             // 8. 添加参照的配置
             // 9. 枚举的存储结构和前端不一致，需要转化一下
-            // 10. 在字段上设置长度校验
             let fields = json.data
-              /*  1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
-              /*  2 */ .map(utils.fixFieldTypo)
-              /*  3 */ .map(utils.convertDataType)
-              /*  4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
-              /*  5 */ .map(utils.setHiddenFields)
-              /*  6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
-              /*  7 */ .map(utils.fixReferKey)
-              /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
-              /*  9 */ .map(utils.fixEnumData)
-              /* 10 */ .map(utils.setLengthValidation);
+            /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+            /* 2 */ .map(utils.fixFieldTypo)
+            /* 3 */ .map(utils.convertDataType)
+            /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+            /* 5 */ .map(utils.setHiddenFields)
+            /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+            /* 7 */ .map(utils.fixReferKey)
+            /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+            /* 9 */ .map(utils.fixEnumData);
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
             dispatch(receiveTableColumnsModelFail(
@@ -340,6 +373,92 @@ export function fetchTableColumnsModel(baseDocId) {
       });
   }
 }
+
+
+/**
+ * 获取会计平台子科目的表格的列模型
+ */
+export function fetchChildSubjectTableColumnsModel(baseDocId) {
+  if(baseDocId!=='accsubject') return;
+  return (dispatch) => {
+    dispatch(requestChildSubjectFields());
+
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'//,
+        //'Cookie': 'JSESSIONID=F0F88957BD3C1D6A07DFD36342DDA85F; JSESSIONID=D4D2196BE3223A695DA71EAED9AD93BD; _ga=GA1.1.359480174.1488286701; tenant_username=ST-36826-ojRQCYPdYRcN9IzSQa3H-cas01.example.org__635c1227-8bcb-4f65-b64d-4d07224101f5; tenant_token=YEI2AhHB42hgnqSuvuF8giN%2Bwjgm5LmzcXb0qRBee5sC8el7vf0Zi%2Bh%2B%2Bjn5HzH%2FKMhsx4DpzJsZNFZOvRffUg%3D%3D; SERVERID=aa7d5a15ad52d23df4ab9aa3ef3a436c|1488335283|1488335175'
+      },
+      mode: "cors",
+      body: `doctype=${baseDocId}`
+    };
+    appendCredentials(opts);
+
+    var url = `${FICLOUDPUB_INITGRID_URL}`;
+    return fetch(url, opts)
+      .then(response => {
+        // TODO: HTTP状态检查，需要独立成helper function
+        if (response.status >= 200 && response.status < 300) {
+          return response;
+        } else {
+          var error = new Error(response.statusText);
+          error.response = response;
+          response.text().then(text => {
+            dispatch(receiveChildSubjectFieldsFail('后端返回的HTTP status code不是200', text));
+          });
+          throw error;
+        }
+      })
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        if (json.success === true) {
+          // 进行业务层的数据校验
+          const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
+          if (isValid) {
+            // 1. 删除不用的字段，按理说应该后端从response中删除掉的
+            // 2. 修复后端json中的错别字，暂时在前端写死
+            // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
+            // 4. 有些字段是必填项，暂时在前端写死
+            // 5. 有些字段需要隐藏，暂时在前端写死
+            // 6. 有些字段的类型错误，暂时在前端写死新类型
+            // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+            // 8. 添加参照的配置
+            // 9. 枚举的存储结构和前端不一致，需要转化一下
+            // 10. 过滤会计平台子科目需要的字段
+            let fields = json.data
+            /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+            /* 2 */ .map(utils.fixFieldTypo)
+            /* 3 */ .map(utils.convertDataType)
+            /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+            /* 5 */ .map(utils.setHiddenFields)
+            /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+            /* 7 */ .map(utils.fixReferKey)
+            /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+            /* 9 */ .map(utils.fixEnumData)
+            /* 10 */.filter(utils.filterChildSubFileds);
+            dispatch(receiveChildSubjectFieldsSuccess(json, fields));
+          } else {
+            dispatch(receiveChildSubjectFieldsFail(
+              `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+              但是数据校验方法提示说：“${validationMessage}”`,
+              JSON.stringify(json.data, null, '  ')
+            ));
+          }
+
+        } else {
+          dispatch(receiveChildSubjectFieldsFail(
+            '后端返回的success不是true', JSON.stringify(json, null, '  '))
+          );
+        }
+      })
+      .catch(function (err) {
+        console.log("fetch table columns error:", err);
+      });
+  }
+}
+
 
 /**
  * 删除表格中的一行数据
@@ -365,11 +484,11 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       .then(response => {
         return response.json();
       }).then(json => {
-         if( json.success ==  true ) {
-           dispatch(deleteTableDataSuccess(json));
-         }else{
-           dispatch(deleteTableDataFail(json.message));
-         }
+        if( json.success ==  true ) {
+          dispatch(deleteTableDataSuccess(json));
+        }else{
+          dispatch(deleteTableDataFail(json.message));
+        }
       }).catch(function (err) {
         alert('删除时候出现错误');
         console.log("删除时候出现错误：", err);
@@ -480,9 +599,9 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
  */
 export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex) {
   return (dispatch, getState) => {
-    const { arch } = getState();
+    const { accountingSubject } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, accountingSubject.itemsPerPage, accountingSubject.startIndex));
     });
   };
 }
@@ -492,9 +611,9 @@ export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, 
  */
 export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData, startIndex) {
   return (dispatch, getState) => {
-    const { arch } = getState();
+    const { accountingSubject } = getState();
     return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex));
+      return dispatch(fetchTableBodyData(baseDocId, accountingSubject.itemsPerPage, accountingSubject.startIndex));
     });
   };
 }
@@ -565,14 +684,14 @@ export function submitEditForm() {
           bsStyle: 'danger',
           message: result.error.message
         })
-      :
+        :
         dispatch({
           type: types.SUBMIT_EDIT_FORM_SUCCESS,
           bsStyle: 'success',
           message: '提交成功'
         })
     };
-    const { arch: { editFormData } } = getState();
+    const { accountingSubject: { editFormData } } = getState();
     const idField = editFormData.find(field => field.label === 'id');
     const options = {
       method: 'put',
@@ -596,6 +715,107 @@ export function submitEditForm() {
       });
   };
 };
+
+// child dialog
+
+/**
+ * @param {Object} [rowData] -  Table row data, e.g.
+ * {
+ *   id: '123',
+ *   name: '456',
+ *   mobileNumber: '1112223333'
+ * }
+ * When "CreateForm" call this, rowData will not pass, so we will try to get
+ * table column(form field) information from table rows.
+ *
+ * rowIdx表示当前打开的编辑框对应是表格中的哪一行，第一行的rowIdx=0
+ */
+export function showChildDialog(rowIdx, rowData) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: types.SHOW_CHILD_DIALOG,
+      openDialog: true,
+      formData: rowData,
+      rowIdx
+    })
+  };
+}
+
+export function closeChildDialog() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: types.CHILD_DIALOG_CLOSE,
+      openDialog: false,
+      formData: {},
+      rowIdx: null
+    })
+  };
+}
+
+export function updateChildFormFieldValue(index, fieldModel, value) {
+  return (dispatch, getState) => {
+    // TODO(chenyangf@yonyou.com): Dont touch state when value not changed.
+    dispatch({
+      type: types.UPDATE_CHILD_FORM_FIELD_VALUE,
+      id: fieldModel.id,
+      payload: value
+    });
+  };
+};
+
+export function initChildFormData(editFormData) {
+  return dispatch => {
+    dispatch({
+      type: types.ARCH_INIT_CHILD_FORM_DATA,
+      editFormData
+    });
+  };
+};
+
+export function submitChildForm() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: types.SUBMIT_CHILD_FORM
+    });
+    const processResult = result => {
+      result.error ?
+        dispatch({
+          type: types.SUBMIT_CHILD_FORM_FAIL,
+          bsStyle: 'danger',
+          message: result.error.message
+        })
+        :
+        dispatch({
+          type: types.SUBMIT_CHILD_FORM_SUCCESS,
+          bsStyle: 'success',
+          message: '提交成功'
+        })
+    };
+    const { accountingSubject: { editFormData } } = getState();
+    const idField = editFormData.find(field => field.label === 'id');
+    const options = {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(editFormData)
+    };
+    appendCredentials(options);
+    return fetch(`/api/arch/${idField.value}`, options)
+      .then(utils.checkStatus)
+      .then(utils.parseJSON)
+      .then(processResult)
+      .catch(error => {
+        dispatch({
+          type: types.SUBMIT_CHILD_FORM_FAIL,
+          bsStyle: 'danger',
+          message: error.message
+        });
+        throw error;
+      });
+  };
+};
+
 
 // create dialog
 
@@ -642,14 +862,14 @@ export function submitCreateForm() {
           bsStyle: 'danger',
           message: result.error.message
         })
-      :
+        :
         dispatch({
           type: types.SUBMIT_CREATE_FORM_SUCCESS,
           bsStyle: 'success',
           message: '提交成功'
         })
     };
-    const { arch: { createFormData } } = getState();
+    const { accountingSubject: { createFormData } } = getState();
     const options = {
       method: 'post',
       headers: {
@@ -684,7 +904,7 @@ export function initCreateFormData(formData) {
 
 export function updateCreateFormFieldValue(label, value) {
   return (dispatch, getState) => {
-    const { arch: { fields } } = getState();
+    const { accountingSubject: { fields } } = getState();
     const id = _.findIndex(fields, field => field.label === label);
     if (id === -1) {
       console.log('Not found this field:', label, ', in fields:', fields);
@@ -744,11 +964,11 @@ export function hideFormAlert() {
 
 export function updateReferFields(code, fieldIndex) {
   return (dispatch, getState) => {
-	const { arch } = getState();
-	// console.log('xx', arch.fields[4].id);
+    const { accountingSubject } = getState();
+    // console.log('xx', accountingSubject.fields[4].id);
     dispatch({
       type: types.REFER_FIELDS_UPDATE,
-	    fieldIndex,
+      fieldIndex,
       code
     });
   }

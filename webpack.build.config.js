@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const moment = require('moment');
 const childProcess = require('child_process');
 
+const DEFAULT_YBZ_PROD_SERVER = '172.20.4.88:8088';
+const DEFAULT_YZB_PROD_SERVER = '10.3.14.240';
+
 module.exports = {
   devtool: "source-map",
   entry: [
@@ -25,7 +28,11 @@ module.exports = {
      * See description in 'webpack.config.dev' for more info.
      */
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+        'YBZ_PROD_SERVER': JSON.stringify(process.env.YBZ_PROD_SERVER || DEFAULT_YBZ_PROD_SERVER),
+        'YZB_PROD_SERVER': JSON.stringify(process.env.YZB_PROD_SERVER || DEFAULT_YZB_PROD_SERVER)
+      }
     })
   ],
   module: {
