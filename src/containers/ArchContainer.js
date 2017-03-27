@@ -210,6 +210,15 @@ class ArchContainer extends Component {
             })
          })
 
+        // 修复后端数据中的null
+        fields.forEach(field => {
+          if (field.type === 'string') {
+            if (rowObj[field.id] === null) {
+              rowObj[field.id] = '';
+            }
+          }
+        });
+
         // 将rowData保存到store中
         containerThis.props.showEditDialog(rowIdx, rowObj);
         // 从store中取出editFormData填充到表单上
