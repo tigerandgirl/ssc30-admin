@@ -38,6 +38,7 @@ class AccountingSubject extends Component {
     const { itemsPerPage, startIndex } = this.props;
     this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex);
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
+    this.props.fetchChildSubjectTableColumnsModel(this.props.params.baseDocId);
   }
 
   componentDidMount() {

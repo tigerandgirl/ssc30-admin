@@ -427,11 +427,11 @@ export const validation = {
  * @returns {boolean}
  */
 export function filterChildSubFileds({...field}) {
-  if(field.id == 'code' || field.id == 'name' || field.id == 'direction') {
+  if(field.id === 'code' || field.id === 'name' || field.id === 'direction') {
     return true;
   }/*else if(/^vr\d+/g.exec(field.id) !== null) {
    return true;
-   }*/else if(field.id == 'vr1' || field.id == 'vr2' || field.id == 'vr3') {
+   }*/else if(field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3') {
     return true;
   } else {
     return false;

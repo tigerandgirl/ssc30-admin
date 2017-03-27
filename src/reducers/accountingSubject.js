@@ -11,6 +11,9 @@ import {
   TABLEDATA_UPDATE, TABLEDATA_UPDATE_SUCCESS, TABLEDATA_UPDATE_FAIL,
   CHANGE_SELECTED_ROWS,
 
+  LOAD_CHILDSUBJECTFIELDS, LOAD_CHILDSUBJECTFIELDS_SUCCESS,
+  LOAD_CHILDSUBJECTFIELDS_FAIL,
+
   SHOW_EDIT_DIALOG, EDIT_DIALOG_CLOSE,
   ARCH_INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
   SUBMIT_EDIT_FORM, SUBMIT_EDIT_FORM_SUCCESS, SUBMIT_EDIT_FORM_FAIL,
@@ -38,6 +41,7 @@ const initState = {
   loaded: false,
   tableData: [],
   fields: [],
+  childSubjectFields: [],
   totalDataCount: 0,
   selectedRows: {},
   editDialog: {
@@ -158,6 +162,28 @@ export default function accountingSubject(state = initState, action) {
     case LOAD_TABLECOLUMNS_FAIL:
       return {...state,
         fields: [],
+        adminAlert: {...state.adminAlert,
+          show: true,
+          bsStyle: 'danger',
+          message: action.message,
+          resBody: action.details
+        }
+      };
+
+    // 获取会计平台子科目的字段
+    case LOAD_CHILDSUBJECTFIELDS:
+      return {...state,
+        adminAlert: {
+          show: false
+        }
+      };
+    case LOAD_CHILDSUBJECTFIELDS_SUCCESS:
+      return {...state,
+        childSubjectFields: action.data.fields,
+      };
+    case LOAD_CHILDSUBJECTFIELDS_FAIL:
+      return {...state,
+        childSubjectFields: [],
         adminAlert: {...state.adminAlert,
           show: true,
           bsStyle: 'danger',
