@@ -25,7 +25,7 @@ const initState = {
   },
   editFormData: {},
   // 页面上的错误提示
-  adminAlert: {
+  pageAlert: {
     show: false,
     error: {
       code: 0,
@@ -50,18 +50,18 @@ export default handleActions({
 
   // 获取三层数据
 
-  [ActionTypes.TEMPLATE_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.LEFT_TREE_REQUEST]: (state, action) => ({...state,
     loading: true
   }),
-  [ActionTypes.TEMPLATE_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.LEFT_TREE_SUCCESS]: (state, action) => ({...state,
     loading: false,
     loaded: true,
     treeData: [...action.payload.data]
   }),
-  [ActionTypes.TEMPLATE_FAILURE]: (state, action) => ({...state,
+  [ActionTypes.LEFT_TREE_FAILURE]: (state, action) => ({...state,
     loading: false,
     loaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
@@ -91,7 +91,7 @@ export default handleActions({
   [ActionTypes.TEMPLATE_NODE_FAILURE]: (state, action) => ({...state,
     loading: false,
     loaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
@@ -114,7 +114,7 @@ export default handleActions({
   [ActionTypes.ENTITY_FIELDS_MODEL_FAILURE]: (state, action) => ({...state,
     entityFieldsModelloading: false,
     entityFieldsModelloaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
       bsStyle: action.payload.bsStyle,
       message: action.payload.message

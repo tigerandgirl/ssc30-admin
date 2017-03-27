@@ -117,9 +117,9 @@ export function fetchLeftTree(billTypeCode, mappingDefId) {
   return {
     types: [LEFT_TREE_REQUEST, LEFT_TREE_SUCCESS, LEFT_TREE_FAILURE],
     // Check the cache (optional):
-    //shouldCallAPI: (state) => !state.posts[userId],
+    // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
-      var opts = {
+      let opts = {
         method: 'post',
         headers: {
           'Content-type': 'application/json'
@@ -132,18 +132,17 @@ export function fetchLeftTree(billTypeCode, mappingDefId) {
       };
       appendCredentials(opts);
 
-      var url = `${OUTER_ENTITY_TREE_URL}`;
+      let url = `${OUTER_ENTITY_TREE_URL}`;
 
       return fetch(url, opts)
-        .then(response => {
-          return response.json();
-        })
+        .then(utils.checkHTTPStatus)
+        .then(utils.parseJSON)
         .then(resObj => {
           // 处理success: false
           return resObj;
-        })
+        });
     }
-  }
+  };
 }
 
 /**
@@ -461,4 +460,3 @@ export const deleteTreeNodeDataAndFetchTreeNodeData = rowIdx => (dispatch, getSt
   return dispatch(deleteTreeNodeData(rowIdx))
     .then(() => dispatch(fetchTreeNodeData(entityMap.selectedNodeData)));
 };
-
