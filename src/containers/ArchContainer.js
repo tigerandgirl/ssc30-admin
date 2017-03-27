@@ -251,17 +251,19 @@ class ArchContainer extends Component {
       handleEnable(){
         const { rowObj } = this.props;
         const { baseDocId } = containerThis.props.params;
-
         containerThis.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
       },
 
       render() {
         var enable =  this.props.rowObj.enable ;
-
+        var enableDom = "";
+        if( enable && typeof enable == "boolean" ){
+          enableDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
+        }
         return (
           <td>
             <span onClick={this.handleEdit}>修改</span>
-            <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span>
+            {enableDom}
           </td>
         );
       }
