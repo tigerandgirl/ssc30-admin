@@ -426,7 +426,7 @@ export const validation = {
  * @param field
  * @returns {boolean}
  */
-function filterChildSubFileds({...field}) {
+export function filterChildSubFileds({...field}) {
   if(field.id == 'code' || field.id == 'name' || field.id == 'direction') {
     return true;
   }/*else if(/^vr\d+/g.exec(field.id) !== null) {
