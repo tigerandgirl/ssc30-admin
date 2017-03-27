@@ -322,7 +322,7 @@ class AccountingSubject extends Component {
 
   render() {
     const {
-      tableData, fields,
+      tableData, fields, childSubjectFields,
       editDialog, editFormData,
       childDialog, childFormData,
       createDialog,
@@ -336,8 +336,14 @@ class AccountingSubject extends Component {
     // 表单字段模型 / 表格列模型
     const cols = fields || [];
 
+    // 会计平台子科目表单字段模型 / 表格列模型
+    const childSubjectCols = childSubjectFields || [];
+
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
+
+    // 会计平台子科目的初始值设置为空
+    const childFormDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
 
     return (
       <div>
@@ -407,8 +413,8 @@ class AccountingSubject extends Component {
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <SSCForm
-            fieldsModel={cols}
-            defaultData={childFormData}
+            fieldsModel={childSubjectCols}
+            defaultData={childFormDefaultData}
             onBlur={::this.handleChildFormBlur}
             onSubmit={::this.handleChildFormSubmit}
             onReset={::this.handleChildFormReset}
