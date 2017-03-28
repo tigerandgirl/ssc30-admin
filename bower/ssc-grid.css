@@ -12,6 +12,9 @@ body {
 .mr10 {
   margin-right: 10px;
 }
+.mb0 {
+  margin-bottom: 0;
+}
 .clearfix {
   display: inline-block;
 }
@@ -37,9 +40,8 @@ body {
 }
 /*** 通用色变量 ***/
 /**************************** 友报账UI基础设计规范 begin ***************************/
-/* 表格默认行高 待定 */
-/* 表格列最大宽 待定 */
 .ssc-grid .table {
+  margin-bottom: 0;
   color: #333333;
   border: 1px solid #e5e5e5;
 }
@@ -104,4 +106,26 @@ body {
 .pagination li.active > a:focus {
   border-color: #16a5d5;
   background-color: #16a5d5;
+}
+.content {
+  padding: 15px;
+}
+.btn.btn-default {
+  color: #03c0ff;
+  border-color: #03c0ff;
+}
+.btn.btn-default:hover {
+  color: #fff;
+  border-color: #40cbfa;
+  background-color: #40cbfa;
+}
+.btn.btn-default:focus,
+.btn.btn-default:active,
+.btn.btn-default.active {
+  color: #fff;
+  border-color: #16a5d5;
+  background-color: #16a5d5;
+}
+.server-message {
+  color: #fe631f;
 }
