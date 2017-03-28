@@ -27,11 +27,8 @@ const initState = {
   // 页面上的错误提示
   pageAlert: {
     show: false,
-    error: {
-      code: 0,
-      bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
-      message: ''
-    }
+    bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
+    message: ''
   },
   // 当表单提交失败的时候，在对话框中显示错误提示
   formAlert: {

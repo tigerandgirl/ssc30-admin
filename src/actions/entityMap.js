@@ -263,12 +263,9 @@ export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
           } else {
             throw {
               name: 'SUCCESS_FALSE',
-              message: json.message
+              message: resObj.message || '未知错误'
             };
           }
-        })
-        .catch(function (err) {
-          console.log("获取表格列模型失败，错误信息：", err);
         });
     }
   }
