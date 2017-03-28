@@ -1038,7 +1038,7 @@ function filterChildSubFileds({...field}) {
  * @returns {boolean}
  */
 function filterSubjectFileds({...field}) {
-  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'enable'  || field.id === 'description' ) {
+  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'accproperty' || field.id === 'enable'  || field.id === 'description' ) {
     return true;
   } else {
     return false;
