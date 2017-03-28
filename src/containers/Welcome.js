@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import * as WelcomeActions from '../actions/welcome';
 
 import { Link } from 'react-router';
-import { Button, ButtonToolbar } from 'react-bootstrap';
 import NormalWidget from './../components/NormalWidget';
 
 class Welcome extends React.Component {
@@ -54,8 +53,8 @@ class Welcome extends React.Component {
               </Link>
             </li>
             <li>
-              <Link to={`/entity-map-no-sidebar-single-page`}>
-                实体映射 EntityMap (no-sidebar, single-page)
+              <Link to={`/mapping-def-no-sidebar-single-page`}>
+                转换规则定义 MappingDef (no-sidebar, single-page)
               </Link>
             </li>
           </ul>
@@ -72,17 +71,17 @@ class Welcome extends React.Component {
       </div>
     );
   }
-};
+}
 
-//影射Store的State到App的Props, 这里用做数据
+// 影射Store的State到App的Props, 这里用做数据
 function mapStateToProps(state) {
-    return state.welcome;
+  return state.welcome;
 }
 
-//影射Store的dispath到App的Props,这里用做操作(事件)
+// 影射Store的dispath到App的Props,这里用做操作(事件)
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators(WelcomeActions, dispatch);
+  return bindActionCreators(WelcomeActions, dispatch);
 }
 
-//练接是中间组件react-redux功能,用于把React的Props, State, Event和Redux的关联
+// 练接是中间组件react-redux功能,用于把React的Props, State, Event和Redux的关联
 export default connect(mapStateToProps, mapDispatchToProps)(Welcome);

@@ -8,11 +8,12 @@ const initState = {
   loading: false,
   loaded: false,
   treeData: [],
-  // 表头
+  // 右表表头和表体
   entityFieldsModelloading: false,
   entityFieldsModelloaded: false,
   entityFieldsModel: [], // 表单/表格字段模型
   entityTableBodyData: [], // 表体数据
+  selectedNodeData: {}, // 被选中的左侧的节点信息
   // 创建对话框
   createDialog: {
     show: false
@@ -24,13 +25,12 @@ const initState = {
   },
   editFormData: {},
   // 页面上的错误提示
-  adminAlert: {
+  pageAlert: {
     show: false,
     error: {
       code: 0,
       bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
-      message: '',
-      resBody: '' // 需要改成details，因为这里不仅仅会填写response body
+      message: ''
     }
   },
   // 当表单提交失败的时候，在对话框中显示错误提示
@@ -49,20 +49,19 @@ export default handleActions({
 
   // 获取三层数据
 
-  [ActionTypes.TEMPLATE_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.LEFT_TREE_REQUEST]: (state, action) => ({...state,
     loading: true
   }),
-  [ActionTypes.TEMPLATE_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.LEFT_TREE_SUCCESS]: (state, action) => ({...state,
     loading: false,
     loaded: true,
     treeData: [...action.payload.data]
   }),
-  [ActionTypes.TEMPLATE_FAILURE]: (state, action) => ({...state,
+  [ActionTypes.LEFT_TREE_FAILURE]: (state, action) => ({...state,
     loading: false,
     loaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
-      bsStyle: action.payload.bsStyle,
       message: action.payload.message
     }
   }),
@@ -90,9 +89,8 @@ export default handleActions({
   [ActionTypes.TEMPLATE_NODE_FAILURE]: (state, action) => ({...state,
     loading: false,
     loaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
-      bsStyle: action.payload.bsStyle,
       message: action.payload.message
     }
   }),
@@ -100,21 +98,21 @@ export default handleActions({
   /**
    * 右表的字段模型和表体数据
    */
-  [ActionTypes.ENTITY_FIELDS_MODEL_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.ENTITY_TREE_NODE_DATA_REQUEST]: (state, action) => ({...state,
     entityFieldsModelloading: true
   }),
-  [ActionTypes.ENTITY_FIELDS_MODEL_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.ENTITY_TREE_NODE_DATA_SUCCESS]: (state, action) => ({...state,
     entityFieldsModelloading: false,
     entityFieldsModelloaded: true,
     entityFieldsModel: [...action.payload.fieldsModel],
-    entityTableBodyData: [...action.payload.tableBodyData]
+    entityTableBodyData: [...action.payload.tableBodyData],
+    selectedNodeData: {...action.payload.nodeData}
   }),
-  [ActionTypes.ENTITY_FIELDS_MODEL_FAILURE]: (state, action) => ({...state,
+  [ActionTypes.ENTITY_TREE_NODE_DATA_FAILURE]: (state, action) => ({...state,
     entityFieldsModelloading: false,
     entityFieldsModelloaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
-      bsStyle: action.payload.bsStyle,
       message: action.payload.message
     }
   }),
@@ -130,5 +128,69 @@ export default handleActions({
     },
     editFormData: action.editFormData
   }),
+
+  /**
+   * 带表单的创建对话框
+   */
+
+  [ActionTypes.ENTITY_MAP_CREATE_DIALOG_SHOW]: (state, action) => ({...state,
+    editDialog: {
+      show: action.show
+    },
+    createFormData: action.formData
+  }),
+
+  /**
+   * 右侧表格的操作
+   */
+
+  // 添加
+  [ActionTypes.TREE_NODE_DATA_ADD_REQUEST]: (state, action) => ({...state,
+    treeNodeDataLoading: true
+  }),
+  [ActionTypes.TREE_NODE_DATA_ADD_SUCCESS]: (state, action) => ({...state,
+    treeNodeDataLoading: false,
+    treeNodeDataLoaded: true,
+  }),
+  [ActionTypes.TREE_NODE_DATA_ADD_FAILURE]: (state, action) => update(state, {
+    treeNodeDataLoading: {$set: false},
+    treeNodeDataLoaded: {$set: false},
+    pageAlert: {
+      show: {$set: true},
+      message: {$set: action.payload.message}
+    }
+  }),
+  // 修改
+  [ActionTypes.TREE_NODE_DATA_UPDATE_REQUEST]: (state, action) => ({...state,
+    treeNodeDataLoading: true
+  }),
+  [ActionTypes.TREE_NODE_DATA_UPDATE_SUCCESS]: (state, action) => ({...state,
+    treeNodeDataLoading: false,
+    treeNodeDataLoaded: true,
+  }),
+  [ActionTypes.TREE_NODE_DATA_UPDATE_FAILURE]: (state, action) => update(state, {
+    treeNodeDataLoading: {$set: false},
+    treeNodeDataLoaded: {$set: false},
+    pageAlert: {
+      show: {$set: true},
+      message: {$set: action.payload.message}
+    }
+  }),
+  // 删除
+  [ActionTypes.TREE_NODE_DATA_DEL_REQUEST]: (state, action) => ({...state,
+    treeNodeDataLoading: true
+  }),
+  [ActionTypes.TREE_NODE_DATA_DEL_SUCCESS]: (state, action) => ({...state,
+    treeNodeDataLoading: false,
+    treeNodeDataLoaded: true,
+  }),
+  [ActionTypes.TREE_NODE_DATA_DEL_FAILURE]: (state, action) => update(state, {
+    treeNodeDataLoading: {$set: false},
+    treeNodeDataLoaded: {$set: false},
+    pageAlert: {
+      show: {$set: true},
+      message: {$set: action.payload.message}
+    }
+  })
 
 }, initState);
