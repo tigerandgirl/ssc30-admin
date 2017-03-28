@@ -338,7 +338,7 @@ export function fetchTableColumnsModel(baseDocId) {
             // 1. 删除不用的字段，按理说应该后端从response中删除掉的
             // 2. 修复后端json中的错别字，暂时在前端写死
             // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
-            // 4. 有些字段是必填项，暂时在前端写死
+            // 4. 有些字段是必填项，暂时在前端写死,没有使用utils
             // 5. 有些字段需要隐藏，暂时在前端写死
             // 6. 有些字段的类型错误，暂时在前端写死新类型
             // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
@@ -349,7 +349,7 @@ export function fetchTableColumnsModel(baseDocId) {
             /* 1.1*/.filter(filterSubjectFileds)
             /* 2 */ .map(utils.fixFieldTypo)
             /* 3 */ .map(utils.convertDataType)
-            /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+            /* 4 */ .map(setRequiredFields.bind(this, baseDocId))
             /* 5 */ .map(utils.setHiddenFields)
             /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
             /* 7 */ .map(utils.fixReferKey)
@@ -422,7 +422,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
             // 1. 删除不用的字段，按理说应该后端从response中删除掉的
             // 2. 修复后端json中的错别字，暂时在前端写死
             // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
-            // 4. 有些字段是必填项，暂时在前端写死
+            // 4. 有些字段是必填项，暂时在前端写死，没有使用utils
             // 5. 有些字段需要隐藏，暂时在前端写死
             // 6. 有些字段的类型错误，暂时在前端写死新类型
             // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
@@ -433,7 +433,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
             /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
             /* 2 */ .map(utils.fixFieldTypo)
             /* 3 */ .map(utils.convertDataType)
-            /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+            /* 4 */ .map(setRequiredFields.bind(this, baseDocId))
             /* 5 */ .map(utils.setHiddenFields)
             /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
             /* 7 */ .map(utils.fixReferKey)
@@ -1043,6 +1043,29 @@ function filterSubjectFileds({...field}) {
   } else {
     return false;
   }
+}
+
+/**
+ * 指定必须输入的字段
+ */
+function setRequiredFields(baseDocId, {...field}) {
+  const data = {
+    accsubject: {
+      code: true, // dept的code字段是必输字段
+      name: true,
+      direction: true,
+      accproperty: true
+    }
+  };
+  if (data[baseDocId] && data[baseDocId][field.id] === true) {
+    if (!field.validators) {
+      field.validators = [];
+    }
+    field.validators.push({
+      type: 'required'
+    });
+  }
+  return field;
 }
 
 export function showAdminAlert() {
