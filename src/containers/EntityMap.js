@@ -107,7 +107,7 @@ class EntityMap extends Component {
     const { title, key } = e.node.props;
     this.props.fetchTreeNodeData({
       title,
-      key
+      key: e.node.props.eventKey
     });
   }
 
