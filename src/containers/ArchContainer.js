@@ -332,6 +332,16 @@ class ArchContainer extends Component {
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(cols, baseDocId);
 
+    let enable = "";
+    if(baseDocId == "dept" ||baseDocId == "project"
+        || baseDocId == "bankaccount" ||baseDocId == "feeitem"  ){
+      enable =(
+          <div style={{ display: 'inline-block', float: 'left' }}>
+            <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
+          </div>
+      )
+    }
+
     return (
       <div>
         <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
@@ -346,9 +356,7 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <h3>{}</h3>
-              <div style={{ display: 'inline-block', float: 'left' }}>
-                <Checkbox onChange={::this.handleEnableCheck}>启用/停用</Checkbox>
-              </div>
+              {enable}
               <div style={{ display: 'inline-block', float: 'right' }}>
                 <Button onClick={::this.handleCreate}>新增</Button>
               </div>
