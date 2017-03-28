@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
  */
 //import './styles/main.scss';
 import './styles/ssc-grid.css';
-import './styles/ssc-grid2.css';
+import './styles/ssc-grid2.less';
 // 参照组件样式
 import './styles/refer/referStyle.css';
 

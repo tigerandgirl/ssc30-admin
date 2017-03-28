@@ -55,6 +55,7 @@ function getDefaultExpandedKeys([...treeData]) {
  */
 
 class EntityMap extends Component {
+  static displayName = 'EntityMap'
   static propTypes = {
     /**
      * [store] 左侧树的数据
@@ -95,6 +96,14 @@ class EntityMap extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+  }
+
+  // 点击“创建”按钮
+  handleCreate(event) {
+    const { entityTableBodyData } = this.props;
+    const rowData = entityTableBodyData[0];
+    this.props.showCreateDialog(true, rowData);
+    // event.preventDefault();
   }
 
   /**
@@ -167,7 +176,14 @@ class EntityMap extends Component {
       <div className="entity-map-container">
         <Grid>
           <Row>
-            <Col md={4}>
+            <Col>
+              <div style={{ display: 'inline-block', float: 'right' }}>
+                <Button onClick={::this.handleCreate}>新增</Button>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="col-fixed-230">
               {this.props.treeData.length !== 0
                 ? <Tree
                     onSelect={::this.onSelect}
@@ -182,8 +198,7 @@ class EntityMap extends Component {
                 : null
               }
             </Col>
-            <Col md={8}>
-              <h3>属性编辑器</h3>
+            <Col className="col-offset-250">
               <EntityMapTable />
             </Col>
           </Row>

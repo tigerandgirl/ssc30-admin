@@ -13,6 +13,7 @@ import AdminAlert from '../components/AdminAlert';
 import * as Actions from '../actions/entityMap';
 
 class EntityMapTable extends Component {
+  static displayName = 'EntityMapTable'
   static propTypes = {
     entityTableBodyData: PropTypes.array.isRequired,
     entityFieldsModel: PropTypes.array.isRequired,
@@ -33,14 +34,6 @@ class EntityMapTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-  }
-
-  // 点击“创建”按钮
-  handleCreate(event) {
-    const { entityTableBodyData } = this.props;
-    const rowData = entityTableBodyData[0];
-    this.props.showCreateDialog(true, rowData);
-    // event.preventDefault();
   }
 
   closeEditDialog() {
@@ -211,9 +204,6 @@ class EntityMapTable extends Component {
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <div style={{ display: 'inline-block', float: 'right' }}>
-          <Button onClick={::this.handleCreate}>新增</Button>
-        </div>
         <SSCGrid tableData={entityTableBodyData} columnsModel={cols}
           striped bordered condensed hover
           paging
