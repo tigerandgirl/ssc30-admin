@@ -204,7 +204,7 @@ export const ENTITY_TREE_NODE_DATA_FAILURE = 'ENTITY_TREE_NODE_DATA_FAILURE';
 /**
  * 根据一个节点提供的信息，包括title和key，发送请求获取该节点的数据，用于显示
  * 右侧的表单
- * @param {Object} nodeData 节点数据，比如
+ * @param {Object} treeNodeData 节点数据，比如
  * ```json
  * {
  *   "parentKey": null,
@@ -215,7 +215,7 @@ export const ENTITY_TREE_NODE_DATA_FAILURE = 'ENTITY_TREE_NODE_DATA_FAILURE';
  * }
  * ```
  */
-export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
+export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
   // use `callAPIMiddleware`
   return {
     types: [ENTITY_TREE_NODE_DATA_REQUEST, ENTITY_TREE_NODE_DATA_SUCCESS, ENTITY_TREE_NODE_DATA_FAILURE],
@@ -228,7 +228,7 @@ export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
           'Content-type': 'application/json'
         },
         mode: 'cors',
-        body: JSON.stringify(nodeData)
+        body: JSON.stringify(treeNodeData)
       };
       appendCredentials(opts);
       const url = `${OUTER_ENTITY_TREE_NODE_DATA_URL}`;
@@ -258,7 +258,7 @@ export function fetchTreeNodeData(nodeData, baseDocId = 'entity') {
             return {
               fieldsModel,
               tableBodyData: resObj.data.body,
-              nodeData
+              treeNodeData
             };
           } else {
             throw {
@@ -457,7 +457,8 @@ export function delTreeNodeData(rowObj) {
 export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(addTreeNodeData(formData))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedNodeData)));
+    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)))
+    .then(() => dispatch(showCreateDialog(false, {})));
 }
 
 
@@ -467,7 +468,7 @@ export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getSta
 export const updateTreeNodeDataAndFetchTreeNodeData = (formData, rowIdx) => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(updateTreeNodeData(formData, rowIdx))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedNodeData)));
+    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)));
 };
 
 
@@ -477,5 +478,5 @@ export const updateTreeNodeDataAndFetchTreeNodeData = (formData, rowIdx) => (dis
 export const delTreeNodeDataAndFetchTreeNodeData = rowIdx => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(delTreeNodeData(rowIdx))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedNodeData)));
+    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)));
 };
