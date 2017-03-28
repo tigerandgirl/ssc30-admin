@@ -452,6 +452,34 @@ export function delTreeNodeData(rowObj) {
 }
 
 /**
+ * 错误提示
+ */
+
+export const PAGE_ALERT_SHOW = 'PAGE_ALERT_SHOW';
+export const FORM_ALERT_SHOW = 'FORM_ALERT_SHOW';
+
+export function showPageAlert(show, message) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: PAGE_ALERT_SHOW,
+      show,
+      message
+    });
+  };
+}
+
+export function showFormAlert(show, message) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: FORM_ALERT_SHOW,
+      show,
+      message
+    });
+  };
+}
+
+
+/**
  * 复合操作：创建并刷新表格
  */
 export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getState) => {
