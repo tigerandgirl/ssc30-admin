@@ -184,11 +184,12 @@ export default function arch(state = initState, action) {
         editDialog: {
           show: {$set: false}
         },
-        adminAlert: {
-          show: {$set: true},
-          bsStyle: {$set: 'success'},
-          message: {$set: '保存成功'}
-        },
+        // YBZSAAS-316
+        // adminAlert: {
+        //   show: {$set: true},
+        //   bsStyle: {$set: 'success'},
+        //   message: {$set: '保存成功'}
+        // },
         spinner:{
           show:{$set:false }
         }
