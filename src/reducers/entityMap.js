@@ -13,7 +13,9 @@ const initState = {
   entityFieldsModelloaded: false,
   entityFieldsModel: [], // 表单/表格字段模型
   entityTableBodyData: [], // 表体数据
-  selectedNodeData: {}, // 被选中的左侧的节点信息
+  // 被选中的左侧的节点信息，这是一个复杂对象，是将后端的节点数据全部保存在这里
+  // 了以方便向后端发请求时候需要传递这些参照，直接取用即可。
+  selectedTreeNodeData: {},
   // 创建对话框
   createDialog: {
     show: false
@@ -27,11 +29,8 @@ const initState = {
   // 页面上的错误提示
   pageAlert: {
     show: false,
-    error: {
-      code: 0,
-      bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
-      message: ''
-    }
+    bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
+    message: ''
   },
   // 当表单提交失败的时候，在对话框中显示错误提示
   formAlert: {
@@ -106,7 +105,7 @@ export default handleActions({
     entityFieldsModelloaded: true,
     entityFieldsModel: [...action.payload.fieldsModel],
     entityTableBodyData: [...action.payload.tableBodyData],
-    selectedNodeData: {...action.payload.nodeData}
+    selectedTreeNodeData: {...action.payload.treeNodeData}
   }),
   [ActionTypes.ENTITY_TREE_NODE_DATA_FAILURE]: (state, action) => ({...state,
     entityFieldsModelloading: false,

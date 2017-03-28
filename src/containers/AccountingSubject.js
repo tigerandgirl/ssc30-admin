@@ -163,7 +163,7 @@ class AccountingSubject extends Component {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
   handleChildFormSubmit(event, formData) {
-    const { startIndex, fields, editDialog: { rowIdx }, childFormData } = this.props;
+    const { startIndex, fields, childDialog: { rowIdx }, childFormData } = this.props;
     const { baseDocId } = this.props.params;
 
     // childFormData 是rowData

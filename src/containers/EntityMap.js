@@ -98,17 +98,13 @@ class EntityMap extends Component {
   }
 
   /**
-   * @param {Array} selectedKeys
+   * @param {Array} selectedKeys 所有选中的节点的key属性
    * @param {Object} e {selected: bool, selectedNodes, node, event}
    */
   onSelect(selectedKeys, e) {
     // console.log('selected', selectedKeys);
     // console.log(e.node.props.eventKey);
-    const { title, key } = e.node.props;
-    this.props.fetchTreeNodeData({
-      title,
-      key
-    });
+    this.props.fetchTreeNodeData(e.node.props.treeNodeData);
   }
 
   onCheck(checkedKeys) {
@@ -149,13 +145,17 @@ class EntityMap extends Component {
       return data.map((item) => {
         if (item.children) {
           return (
-            <TreeNode title={item.title} key={item.key}>
+            <TreeNode title={item.title} key={item.key}
+              treeNodeData={item}
+            >
               {loop(item.children)}
             </TreeNode>
           );
         }
         return (
-          <TreeNode title={item.title} key={item.key} isLeaf={item.isLeaf}/>
+          <TreeNode title={item.title} key={item.key} isLeaf={item.isLeaf}
+            treeNodeData={item}
+          />
         );
       });
     };
