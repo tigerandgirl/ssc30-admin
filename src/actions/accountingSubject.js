@@ -346,6 +346,7 @@ export function fetchTableColumnsModel(baseDocId) {
             // 9. 枚举的存储结构和前端不一致，需要转化一下
             let fields = json.data
             /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+            /* 1.1*/.filter(filterSubjectFileds)
             /* 2 */ .map(utils.fixFieldTypo)
             /* 3 */ .map(utils.convertDataType)
             /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
@@ -438,7 +439,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
             /* 7 */ .map(utils.fixReferKey)
             /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
             /* 9 */ .map(utils.fixEnumData)
-            /* 10 */.filter(utils.filterChildSubFileds);
+            /* 10 */.filter(filterChildSubFileds);
             dispatch(receiveChildSubjectFieldsSuccess(json, fields));
           } else {
             dispatch(receiveChildSubjectFieldsFail(
@@ -1009,6 +1010,38 @@ function updateErrorMessages(message) {
   return {
     type: types.ERROR_MESSAGES_UPDATE,
     message
+  }
+}
+
+/**
+ * 会计科目平台中添加子科目时 过滤掉不需要的字段
+ * 目前vr段只需要vr1,vr2,vr3
+ * @param field
+ * @returns {boolean}
+ */
+function filterChildSubFileds({...field}) {
+  if(field.id === 'code' || field.id === 'name' || field.id === 'direction') {
+    return true;
+  }/*else if(/^vr\d+/g.exec(field.id) !== null) {
+   return true;
+   }*/else if(field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3') {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * 会计科目平台过滤掉不需要的字段
+ * 目前vr段只需要vr1,vr2,vr3
+ * @param field
+ * @returns {boolean}
+ */
+function filterSubjectFileds({...field}) {
+  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'enable'  || field.id === 'description' ) {
+    return true;
+  } else {
+    return false;
   }
 }
 
