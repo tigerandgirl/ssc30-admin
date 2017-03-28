@@ -40,7 +40,7 @@ class EntityMapTable extends Component {
     const { entityTableBodyData } = this.props;
     const rowData = entityTableBodyData[0];
     this.props.showCreateDialog(true, rowData);
-    event.preventDefault();
+    // event.preventDefault();
   }
 
   closeEditDialog() {
@@ -72,11 +72,11 @@ class EntityMapTable extends Component {
    */
   handleCreateFormSubmit(event, formData) {
     this.props.addTreeNodeDataAndFetchTableBodyData(formData);
-    event.preventDefault();
+    // event.preventDefault();
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
-    event.preventDefault();
+    // event.preventDefault();
   }
 
   // edit form
@@ -86,11 +86,11 @@ class EntityMapTable extends Component {
   handleEditFormSubmit(event, formData) {
     const { editDialog: { rowIdx } } = this.props;
     this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
-    event.preventDefault();
+    // event.preventDefault();
   }
   handleEditFormReset(event) {
     this.props.showEditDialog(false, null, {});
-    event.preventDefault();
+    // event.preventDefault();
   }
 
   handlePageAlertDismiss(){
@@ -128,7 +128,7 @@ class EntityMapTable extends Component {
           return;
         }
         const { rowIdx, rowObj } = this.props;
-        const { startIndex } = containerThis.props;
+        const { startIndex } = container.props;
         container.props.deleteTreeNodeDataAndFetchTreeNodeData(rowObj);
       },
       render() {
