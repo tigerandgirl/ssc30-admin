@@ -362,10 +362,9 @@ class ArchContainer extends Component {
               </div>
             </Col>
           </Row>
-          <Row className="show-grid">
+          <Row className="show-grid ssc-grid">
             <Col md={12}>
               <SSCGrid tableData={tableData} columnsModel={cols}
-                striped bordered condensed hover
                 paging
                 itemsPerPage={itemsPerPage}
                 totalPage={this.props.totalPage}

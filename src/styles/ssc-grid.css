@@ -1,91 +1,107 @@
-/** 通用色变量 */
-/* 通用设置 */
-.btn-default:focus,
-.btn-default:hover {
-  background-color: #f1f1f1;
+html {
+  font-size: 62.5%;
 }
-.btn-default:active:hover {
-  background-color: #f1f1f1;
+body {
+  font-size: 14px;
+  font-size: 1.4rem;
+  font-family: "Helvetica Neue", "Microsoft Yahei", Arial, sans-serif;
 }
-/* form begin */
-.form-horizontal {
-  font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-.form-horizontal .control-label {
-  font-weight: 400;
-  line-height: 34px;
-  padding: 0;
-  margin: 0;
-}
-.form-horizontal #formControl-danjuriqi {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-}
-.form-horizontal .form-group button {
-  width: 80px;
-  height: 34px;
-  margin-right: 20px;
-  background-image: none;
-}
-.form-horizontal .form-group button[type="submit"] {
-  color: #ffffff;
-  background-color: #1baede;
-}
-.form-horizontal .form-group button[type="submit"]:hover {
-  background-color: #189cc7;
-}
-/** form over **/
-/** table begin **/
-.table-striped {
-  font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  border: 1px solid #cecece;
-}
-.table-striped > thead > tr > th,
-.table-striped > tbody > tr > td {
+.b0 {
   border: 0;
-  border-top: 1px solid #cecece;
 }
-.table-striped > thead > tr {
-  background-color: #eeeff1;
+.mr10 {
+  margin-right: 10px;
 }
-.table-striped > thead > tr > th {
-  padding: 10px;
-  font-weight: 400;
+.clearfix {
+  display: inline-block;
 }
-.table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: #ffffff;
+.pointer {
+  cursor: pointer;
 }
-.table-striped > tbody > tr:hover {
-  background-color: #e9f7fc;
+.fl {
+  float: left;
 }
-.table-striped > tbody > tr:focus,
-.table-striped > tbody > tr:active {
-  background-color: #c4eaf6;
+.fr {
+  float: right;
 }
-.table-striped > tbody > tr > td {
-  font-size: 12px;
-  padding: 10px;
-  height: 45px;
-  vertical-align: middle;
+.oh {
+  overflow: hidden;
 }
-.table-striped > tbody > tr > td .glyphicon {
+.ws {
+  white-space: nowrap;
+}
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/*** 通用色变量 ***/
+/**************************** 友报账UI基础设计规范 begin ***************************/
+/* 表格默认行高 待定 */
+/* 表格列最大宽 待定 */
+.ssc-grid .table {
+  color: #333333;
+  border: 1px solid #e5e5e5;
+}
+.ssc-grid .table thead tr {
+  border-width: 1px;
+  color: #666666;
+  background-color: #f0f9fb;
+}
+.ssc-grid .table thead tr th {
+  border: 0;
+  white-space: nowrap;
+  font-weight: normal;
+}
+.ssc-grid .table thead tr th:hover {
+  background-color: #f7f7f7;
+}
+.ssc-grid .table tbody tr {
+  border-top: 1px solid #e5e5e5;
+}
+.ssc-grid .table tbody tr td {
+  border: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ssc-grid .table tbody tr td:not(:last-child) {
+  max-width: 150px;
+}
+.ssc-grid .table tbody tr td:last-child > a,
+.ssc-grid .table tbody tr td:last-child span {
   color: transparent;
-  width: 20px;
+  margin-right: 10px;
 }
-.table-striped > tbody > tr:hover > td .glyphicon {
+.ssc-grid .table tbody tr:hover {
+  border: 1px solid #d3d3d3;
+  background-color: #f7f7f7;
+}
+.ssc-grid .table tbody tr:hover td {
+  border: 0;
+}
+.ssc-grid .table tbody tr:hover td:last-child > a,
+.ssc-grid .table tbody tr:hover td:last-child > span {
+  color: #03c0ff;
   display: inline-block;
-  color: #1baede;
-}
-.table-striped > tbody > tr:focus > td .glyphicon {
-  display: inline-block;
-  color: #1baede;
-}
-.table-striped > tbody > tr:hover > td .glyphicon:hover {
-  color: #13799b;
   cursor: pointer;
 }
-.table-striped > tbody > tr:focus > td .glyphicon:hover {
-  color: #13799b;
-  cursor: pointer;
+.ssc-grid .table tbody tr:hover td:last-child > a:hover,
+.ssc-grid .table tbody tr:hover td:last-child > span:hover {
+  color: #16a5d5;
 }
-/** table over **/
+.pagination {
+  float: right;
+}
+.pagination li.active > a {
+  border-color: #03c0ff;
+  background-color: #03c0ff;
+}
+.pagination li.active > a:hover {
+  border-color: #40cbfa;
+  background-color: #40cbfa;
+}
+.pagination li.active > a:focus {
+  border-color: #16a5d5;
+  background-color: #16a5d5;
+}
