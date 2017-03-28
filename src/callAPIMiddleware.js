@@ -48,14 +48,14 @@ export default function callAPIMiddleware({ dispatch, getState }) {
         }
       })
     ).catch(
-      error => dispatch({
+      error => {debugger;dispatch({
         type: failureType,
         error,
         payload: {
           bsStyle: 'danger',
           message: error.message
         }
-      })
+      })}
     );
   }
 }
