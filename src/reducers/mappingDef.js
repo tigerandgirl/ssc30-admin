@@ -18,7 +18,7 @@ const initState = {
   startIndex: 0,
   activePage: 1,
   // 错误提示
-  adminAlert: {
+  pageAlert: {
     show: false,
     error: {
       code: 0,
@@ -35,7 +35,7 @@ export default handleActions({
 
   // 获得表体数据
 
-  [ActionTypes.CONVERSION_RULE_DEFINITION_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.CONVERSION_RULE_DEFINITION_REQUEST]: (state) => ({...state,
     loading: true
   }),
   [ActionTypes.CONVERSION_RULE_DEFINITION_SUCCESS]: (state, action) => ({...state,
@@ -46,14 +46,14 @@ export default handleActions({
   [ActionTypes.CONVERSION_RULE_DEFINITION_FAILURE]: (state, action) => ({...state,
     loading: false,
     loaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
     }
   }),
 
-  [ActionTypes.TABLE_COLUMNS_MODEL_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.TABLE_COLUMNS_MODEL_REQUEST]: (state) => ({...state,
     tableColumnsModelloading: true
   }),
   [ActionTypes.TABLE_COLUMNS_MODEL_SUCCESS]: (state, action) => ({...state,
@@ -64,10 +64,20 @@ export default handleActions({
   [ActionTypes.TABLE_COLUMNS_MODEL_FAILURE]: (state, action) => ({...state,
     tableColumnsModelloading: false,
     tableColumnsModelloaded: false,
-    adminAlert: {...state.adminAlert,
+    pageAlert: {...state.pageAlert,
       show: true,
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
+    }
+  }),
+
+  /**
+   * 用于显示错误的tooltip
+   */
+
+  [ActionTypes.SHOW_PAGE_ALERT]: (state, action) => update(state, {
+    pageAlert: {
+      show: {$set: action.show}
     }
   })
 

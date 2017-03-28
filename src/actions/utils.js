@@ -6,11 +6,36 @@
 export function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
-  } else {
-    var error = new Error(response.statusText);
-    error.response = response;
-    throw error;
   }
+
+  let error = new Error(response.statusText);
+  error.response = response;
+  throw error;
+}
+
+/**
+ * Check HTTP response status code
+ * @param {Object} response
+ * @return {Object}
+ * @throws {InvalidArgumentException}
+ * ## How to get response body
+ * response.text() returns a Promise
+ * ```
+ * response
+ *   .text()
+ *   .then(text => console.log(text));
+ * ```
+ */
+export function checkHTTPStatus(response) {
+  // response.ok = true/false
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  }
+
+  let error = new Error(response.status + ' ' + response.statusText);
+  error.response = response;
+
+  throw error;
 }
 
 export function parseJSON(response) {

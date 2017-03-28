@@ -56,11 +56,12 @@ function getReferURL(path) {
 /**
  * 会计平台 组装后端接口
  */
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
-const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
-const getSaveURL = type => getBaseDocURL(`/${type}/save`);
-const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
-const getQueryURL = type => getBaseDocURL(`/${type}/query`);
+const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
+const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud/querydoctype');
+const getSaveURL = type => getBaseDocURL(`/ficloud/${type}/save`);
+const getAddURL = type => getBaseDocURL(`/ficloud/${type}/add`);
+const getDeleteURL = type => getBaseDocURL(`/ficloud/${type}/delete`);
+const getQueryURL = type => getBaseDocURL(`/ficloud/${type}/query`);
 /**
  * 参照 组装后端接口
  */
@@ -235,7 +236,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
       },
       mode: "cors",
       body: JSON.stringify({
-        condition: '',
+        conditions: [],
         begin: startIndex,
         groupnum: itemsPerPage
       })
@@ -497,6 +498,73 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
 }
 
 /**
+ * 创建会计平台子科目数据会调用到这里
+ * rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
+ * 的时候才会传这个参数
+ * @param {String} baseDocId 基础档案类型名称，比如dept
+ * @param {Array} fields 字段定义
+ * @param {Object} formData 表单提交的数据
+ * @param {Number} rowIndex 只有是修改了某一个行，才会传数字，否则传null
+ */
+export function addChildSubjectData(baseDocId, fields, formData, rowData, rowIdx) {
+  return (dispatch, getState) => {
+    var requestBodyObj = {};
+    var requestNewVO = { ...formData };
+    var requestUpVO = { ...rowData};
+
+    // 注意：处理是有顺序的，不要乱调整
+    // 2. 删除key:value中，当value为undefined/null
+    requestNewVO = utils.removeEmpty(requestNewVO);
+    requestUpVO = utils.removeEmpty(requestUpVO);
+
+    requestBodyObj.newvo = requestNewVO;
+    requestBodyObj.upvo = requestUpVO;
+
+    function checkHTTPStatus(response) {
+      // TODO: HTTP状态检查，需要独立成helper function
+      if (response.status >= 200 && response.status < 300) {
+        return response;
+      } else {
+        var error = new Error(response.statusText);
+        error.response = response;
+        response.text().then(text => {
+          dispatch(updateTableDataFail(('后端返回的HTTP status code不是200', text)));
+        });
+        throw error;
+      }
+    }
+
+    function processJSONResult(json) {
+      if (json.success === true) {
+        dispatch(updateTableDataSuccess(json, rowIdx));
+      } else {
+        dispatch(updateTableDataFail('获取表格数据失败，后端返回的success是false',
+          json.message));
+      }
+    }
+
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: "cors",
+      body: JSON.stringify(requestBodyObj)
+    };
+    appendCredentials(opts);
+
+    var url = getAddURL(baseDocId);
+    return fetch(url, opts)
+      .then(checkHTTPStatus)
+      .then(utils.parseJSON)
+      .then(processJSONResult)
+      .catch(function (err) {
+        console.log("保存会计平台科目时候出现错误：", err);
+      });
+  }
+}
+
+/**
  * 创建和修改表格数据都会调用到这里
  * rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
  * 的时候才会传这个参数
@@ -507,13 +575,16 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
  */
 export function saveTableData(baseDocId, fields, formData, rowIdx) {
   return (dispatch, getState) => {
-    var requestBodyObj = { ...formData };
+    var requestBodyObj = {};
+    var requestNewVO = { ...formData };
 
     // 注意：处理是有顺序的，不要乱调整
     // 1. 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
-    requestBodyObj = processRefer(requestBodyObj, fields);
+    requestNewVO = processRefer(requestNewVO, fields);
     // 2. 删除key:value中，当value为undefined/null
-    requestBodyObj = utils.removeEmpty(requestBodyObj);
+    requestNewVO = utils.removeEmpty(requestNewVO);
+
+    requestBodyObj.newvo = requestNewVO;
 
     /**
      * 将formData中参照存储的复杂类型（包含id,code,name）转换成单值类型
@@ -594,6 +665,19 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
   }
 }
 
+
+/**
+ * 复合操作：添加子科目并刷新表格
+ */
+export function addTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowData, rowIdx, startIndex) {
+  return (dispatch, getState) => {
+    const { accountingSubject } = getState();
+    return dispatch(addChildSubjectData(baseDocId, fields, formData, rowData, rowIdx)).then(() => {
+      return dispatch(fetchTableBodyData(baseDocId, accountingSubject.itemsPerPage, accountingSubject.startIndex));
+    });
+  };
+}
+
 /**
  * 复合操作：创建/保存并刷新表格
  */
@@ -607,7 +691,7 @@ export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, 
 }
 
 /**
- * 复合操作：创建/保存并刷新表格
+ * 复合操作：删除并刷新表格
  */
 export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData, startIndex) {
   return (dispatch, getState) => {

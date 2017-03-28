@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Button } from 'react-bootstrap';
+import { Grid, Row, Col, Button , Checkbox } from 'react-bootstrap';
 
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
@@ -42,7 +42,7 @@ class ArchContainer extends Component {
 
   componentWillMount() {
     const { itemsPerPage, startIndex } = this.props;
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex);
+    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex,null,[]);
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
@@ -55,7 +55,7 @@ class ArchContainer extends Component {
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex);
+      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex,null,[]);
       this.props.fetchTableColumnsModel(nextType);
     }
   }
@@ -178,6 +178,18 @@ class ArchContainer extends Component {
     this.props.hideAdminAlert();
   }
 
+  handleEnableCheck(event) {
+    var e = event.target;
+    const { params: {baseDocId}, itemsPerPage, startIndex } = this.props;
+    var conditions = [];
+    if(e.checked){
+      conditions = [
+         {"field":"enable","datatype":"boolean","value":"true"}
+      ];
+    }
+    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
+  }
+
   /**
    * 用户点击下一页的时候，组件先向后端请求数据，等数据回来之后，再把分页组件
    * 跳转到下一页。这样就能避免用户快速点击的问题了。
@@ -235,13 +247,23 @@ class ArchContainer extends Component {
         // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
         containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
+
+      handleEnable(){
+        const { rowObj } = this.props;
+        const { baseDocId } = containerThis.props.params;
+        containerThis.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
+      },
+
       render() {
+        var enable =  this.props.rowObj.enable ;
+        var enableDom = "";
+        if( enable && typeof enable == "boolean" ){
+          enableDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
+        }
         return (
           <td>
-            <span onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil" title="编辑"></span>
-            <span onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash" title="删除"></span>
+            <span onClick={this.handleEdit}>修改</span>
+            {enableDom}
           </td>
         );
       }
@@ -324,6 +346,9 @@ class ArchContainer extends Component {
           <Row className="show-grid">
             <Col md={12}>
               <h3>{}</h3>
+              <div style={{ display: 'inline-block', float: 'left' }}>
+                <Checkbox onChange={::this.handleEnableCheck}>启用/停用</Checkbox>
+              </div>
               <div style={{ display: 'inline-block', float: 'right' }}>
                 <Button onClick={::this.handleCreate}>新增</Button>
               </div>
