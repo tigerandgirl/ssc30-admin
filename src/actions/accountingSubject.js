@@ -1053,7 +1053,6 @@ function setRequiredFields(baseDocId, {...field}) {
     accsubject: {
       code: true, // dept的code字段是必输字段
       name: true,
-      direction: true,
       accproperty: true
     }
   };
