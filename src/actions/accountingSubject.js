@@ -65,7 +65,7 @@ const getQueryURL = type => getBaseDocURL(`/ficloud/${type}/query`);
 /**
  * 参照 组装后端接口
  */
-const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
+const ReferDataURL = getReferURL('/ficloud/refbase_ctr/queryRefJSON');
 const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /** 配置Fetch API的credentials参数 */
