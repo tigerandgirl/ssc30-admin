@@ -470,14 +470,14 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
  */
 export function deleteTableData(baseDocId, rowIdx, rowData) {
   return (dispatch, getState) => {
-    var { id } = rowData; // 40位主键 primary key
+    var { id, code } = rowData; // 40位主键 primary key
     var opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: "cors",
-      body: JSON.stringify({ id })
+      body: JSON.stringify({ id, code })
     };
     appendCredentials(opts);
 
