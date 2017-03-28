@@ -776,7 +776,7 @@ export function showAdminAlert() {
       type: types.SHOW_ADMIN_ALERT
     });
   };
-};
+}
 
 export function hideAdminAlert() {
   return dispatch => {
@@ -784,7 +784,7 @@ export function hideAdminAlert() {
       type: types.HIDE_ADMIN_ALERT
     });
   };
-};
+}
 
 // 对话框中的消息框
 

@@ -13,9 +13,10 @@ import AdminAlert from '../components/AdminAlert';
 import * as Actions from '../actions/entityMap';
 
 class EntityMapTable extends Component {
-  static PropTypes = {
+  static propTypes = {
     entityTableBodyData: PropTypes.array.isRequired,
-    entityFieldsModel: PropTypes.array.isRequired
+    entityFieldsModel: PropTypes.array.isRequired,
+    pageAlert: PropTypes.object.isRequired
   }
 
   state = {
