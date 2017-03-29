@@ -6,7 +6,7 @@ import {
   LOAD_TABLECOLUMNS, LOAD_TABLECOLUMNS_SUCCESS, LOAD_TABLECOLUMNS_FAIL,
   DELETE_TABLEDATA, DELETE_TABLEDATA_SUCCESS, DELETE_TABLEDATA_FAIL,
   TABLEDATA_UPDATE, TABLEDATA_UPDATE_SUCCESS, TABLEDATA_UPDATE_FAIL,
-  CHANGE_SELECTED_ROWS,
+  CHANGE_SELECTED_ROWS,ENABLE_TABLEDATA_FAIL,ENABLE_TABLEDATA_SUCCESS,
 
   SHOW_EDIT_DIALOG, EDIT_DIALOG_CLOSE,
   ARCH_INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
@@ -171,6 +171,23 @@ export default function arch(state = initState, action) {
         }
       };
 
+    case ENABLE_TABLEDATA_FAIL:
+          return {...state,
+            adminAlert: {...state.adminAlert,
+              show: true,
+              bsStyle: 'danger',
+              message: action.message
+            }
+      };
+
+    case ENABLE_TABLEDATA_SUCCESS:
+      return {...state,
+        adminAlert: {...state.adminAlert,
+          show: true,
+          bsStyle: 'success',
+          message: "操作成功！"
+        }
+      };
 
     // 通过表单修改表格中的一行
     case TABLEDATA_UPDATE_SUCCESS:
