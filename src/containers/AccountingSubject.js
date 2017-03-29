@@ -93,7 +93,7 @@ class AccountingSubject extends Component {
    * }
    * ```
    */
-  handleCreateFormSubmit(event, formData) {
+  handleCreateFormSubmit(formData) {
     const { itemsPerPage, startIndex, fields, params: { baseDocId } } = this.props;
     // this.props.submitCreateForm();
     // this.props.saveTableData(baseDocId, fields, formData);
@@ -119,7 +119,6 @@ class AccountingSubject extends Component {
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
-    event.preventDefault();
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
@@ -130,7 +129,7 @@ class AccountingSubject extends Component {
   handleEditFormBlur(index, fieldModel, value) {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
-  handleEditFormSubmit(event, formData) {
+  handleEditFormSubmit(formData) {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
     // this.props.submitEditForm();
@@ -151,7 +150,6 @@ class AccountingSubject extends Component {
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
-    event.preventDefault();
   }
   handleEditFormReset(event) {
     this.props.closeEditDialog();
@@ -162,14 +160,13 @@ class AccountingSubject extends Component {
   handleChildFormBlur(index, fieldModel, value) {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
-  handleChildFormSubmit(event, formData) {
+  handleChildFormSubmit(formData) {
     const { startIndex, fields, childDialog: { rowIdx }, childFormData } = this.props;
     const { baseDocId } = this.props.params;
 
     // childFormData 是rowData
     let rowData = childFormData;
     this.props.addTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowData, rowIdx, startIndex);
-    event.preventDefault();
   }
   handleChildFormReset(event) {
     this.props.closeChildDialog();

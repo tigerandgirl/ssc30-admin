@@ -234,11 +234,10 @@ class ExternalDataModelling extends Component {
     this.setState(newState);
   }
 
-  handleSubmit(event, formData) {
+  handleSubmit(formData) {
     alert('提交的数据: Form.state.formData: \n' + JSON.stringify(
       formData,
       null, '  '));
-    event.preventDefault();
   }
 
 
