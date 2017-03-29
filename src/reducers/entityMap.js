@@ -133,7 +133,7 @@ export default handleActions({
    */
 
   [ActionTypes.ENTITY_MAP_CREATE_DIALOG_SHOW]: (state, action) => ({...state,
-    editDialog: {
+    createDialog: {
       show: action.show
     },
     createFormData: action.formData
@@ -189,6 +189,23 @@ export default handleActions({
     pageAlert: {
       show: {$set: true},
       message: {$set: action.payload.message}
+    }
+  }),
+
+  /**
+   * 对话框
+   */
+
+  [ActionTypes.PAGE_ALERT_SHOW]: (state, action) => update(state, {
+    pageAlert: {
+      show: {$set: action.show},
+      message: {$set: action.message}
+    }
+  }),
+  [ActionTypes.FORM_ALERT_SHOW]: (state, action) => update(state, {
+    formAlert: {
+      show: {$set: action.show},
+      message: {$set: action.message}
     }
   })
 

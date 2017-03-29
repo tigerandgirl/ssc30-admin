@@ -13,6 +13,7 @@ import AdminAlert from '../components/AdminAlert';
 import * as Actions from '../actions/entityMap';
 
 class EntityMapTable extends Component {
+  static displayName = 'EntityMapTable'
   static propTypes = {
     entityTableBodyData: PropTypes.array.isRequired,
     entityFieldsModel: PropTypes.array.isRequired,
@@ -35,20 +36,12 @@ class EntityMapTable extends Component {
   componentWillReceiveProps(nextProps) {
   }
 
-  // 点击“创建”按钮
-  handleCreate(event) {
-    const { entityTableBodyData } = this.props;
-    const rowData = entityTableBodyData[0];
-    this.props.showCreateDialog(true, rowData);
-    // event.preventDefault();
-  }
-
   closeEditDialog() {
     this.props.showEditDialog(false, null, {});
   }
 
   closeCreateDialog() {
-    this.props.hideCreateDialog();
+    this.props.showCreateDialog(false, {});
   }
 
   // create form
@@ -71,11 +64,11 @@ class EntityMapTable extends Component {
    * ```
    */
   handleCreateFormSubmit(event, formData) {
-    this.props.addTreeNodeDataAndFetchTableBodyData(formData);
+    this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
     // event.preventDefault();
   }
   handleCreateFormReset(event) {
-    this.props.hideCreateDialog();
+    this.props.showCreateDialog(false, {});
     // event.preventDefault();
   }
 
@@ -85,7 +78,7 @@ class EntityMapTable extends Component {
   }
   handleEditFormSubmit(event, formData) {
     const { editDialog: { rowIdx } } = this.props;
-    this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
+    this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
     // event.preventDefault();
   }
   handleEditFormReset(event) {
@@ -94,11 +87,11 @@ class EntityMapTable extends Component {
   }
 
   handlePageAlertDismiss(){
-    this.props.hideAdminAlert();
+    this.props.showPageAlert(false, '');
   }
 
   handleFormAlertDismiss(){
-    this.props.hideAdminAlert();
+    this.props.showFormAlert(false, '');
   }
 
   /**
@@ -129,7 +122,7 @@ class EntityMapTable extends Component {
         }
         const { rowIdx, rowObj } = this.props;
         const { startIndex } = container.props;
-        container.props.deleteTreeNodeDataAndFetchTreeNodeData(rowObj);
+        container.props.delTreeNodeDataAndFetchTreeNodeData(rowObj);
       },
       render() {
         return (
@@ -211,9 +204,6 @@ class EntityMapTable extends Component {
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <div style={{ display: 'inline-block', float: 'right' }}>
-          <Button onClick={::this.handleCreate}>新增</Button>
-        </div>
         <SSCGrid tableData={entityTableBodyData} columnsModel={cols}
           striped bordered condensed hover
           paging
