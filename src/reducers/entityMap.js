@@ -142,7 +142,7 @@ export default handleActions({
   }),
   [ActionTypes.TREE_NODE_DATA_ADD_SUCCESS]: (state) => ({...state,
     treeNodeDataLoading: false,
-    treeNodeDataLoaded: true,
+    treeNodeDataLoaded: true
   }),
   [ActionTypes.TREE_NODE_DATA_ADD_FAILURE]: (state, action) => update(state, {
     treeNodeDataLoading: {$set: false},

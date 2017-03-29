@@ -332,42 +332,37 @@ export const TREE_NODE_DATA_ADD_FAILURE = 'TREE_NODE_DATA_ADD_FAILURE';
 /**
  * @param {Object} formData 表单提交的数据
  */
-export const addTreeNodeData = (formData) => {
-  // use `callAPIMiddleware`
-  return {
-    types: [
-      TREE_NODE_DATA_ADD_REQUEST,
-      TREE_NODE_DATA_ADD_SUCCESS,
-      TREE_NODE_DATA_ADD_FAILURE
-    ],
-    callAPI: (state) => {
-      var requestBodyObj = { ...formData };
-      var opts = {
-        method: 'post',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        mode: "cors",
-        body: JSON.stringify(requestBodyObj)
-      };
-      appendCredentials(opts);
+export const addTreeNodeData = formData => ({
+  types: [
+    TREE_NODE_DATA_ADD_REQUEST,
+    TREE_NODE_DATA_ADD_SUCCESS,
+    TREE_NODE_DATA_ADD_FAILURE
+  ],
+  callAPI: () => {
+    let opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: 'cors',
+      body: JSON.stringify({...formData})
+    };
+    appendCredentials(opts);
 
-      const url = OUTER_ENTITY_TREE_ADD_NODE_DATA_URL;
-      return fetch(url, opts)
-        .then(utils.checkHTTPStatus)
-        .then(utils.parseJSON)
-        .then(resObj => {
-          if (resObj.success === true) {
-          } else {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message
-            };
-          }
-        })
-    }
+    const url = OUTER_ENTITY_TREE_ADD_NODE_DATA_URL;
+    return fetch(url, opts)
+      .then(utils.checkHTTPStatus)
+      .then(utils.parseJSON)
+      .then(resObj => {
+        if (resObj.success !== true) {
+          throw {
+            name: 'SUCCESS_FALSE',
+            message: resObj.message
+          };
+        }
+      });
   }
-}
+});
 
 /**
  * 右侧表格，删除操作
@@ -388,14 +383,14 @@ export function delTreeNodeData(rowObj) {
       TREE_NODE_DATA_DEL_SUCCESS,
       TREE_NODE_DATA_DEL_FAILURE
     ],
-    callAPI: (state) => {
+    callAPI: () => {
       const { id } = rowObj;
-      var opts = {
+      let opts = {
         method: 'post',
         headers: {
           'Content-type': 'application/json'
         },
-        mode: "cors",
+        mode: 'cors',
         body: JSON.stringify({ id })
       };
       appendCredentials(opts);
@@ -405,8 +400,7 @@ export function delTreeNodeData(rowObj) {
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
         .then(resObj => {
-          if (resObj.success === true) {
-          } else {
+          if (resObj.success !== true) {
             throw {
               name: 'SUCCESS_FALSE',
               message: resObj.message
@@ -425,7 +419,7 @@ export const PAGE_ALERT_SHOW = 'PAGE_ALERT_SHOW';
 export const FORM_ALERT_SHOW = 'FORM_ALERT_SHOW';
 
 export function showPageAlert(show, message) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: PAGE_ALERT_SHOW,
       show,
@@ -434,16 +428,11 @@ export function showPageAlert(show, message) {
   };
 }
 
-export function showFormAlert(show, message) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: FORM_ALERT_SHOW,
-      show,
-      message
-    });
-  };
-}
-
+export const showFormAlert = (show, message) => dispatch => dispatch({
+  type: FORM_ALERT_SHOW,
+  show,
+  message
+});
 
 /**
  * 复合操作：创建并刷新表格
