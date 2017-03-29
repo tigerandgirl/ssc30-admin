@@ -355,23 +355,21 @@ class ArchContainer extends Component {
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <div>
-          <div style={{ height:'64px', padding:'15px 0' }}>
-              {enable}
-              <div style={{ display: 'inline-block', float: 'right' }}>
-                <Button onClick={::this.handleCreate}>新增</Button>
-              </div>
+          <div className="btn-bar">
+            {enable}
+            <div className="fr">
+              <Button onClick={::this.handleCreate}>新增</Button>
+            </div>
           </div>
-          <div className="ssc-grid">
-              <SSCGrid tableData={tableData} columnsModel={cols}
-                paging
-                itemsPerPage={itemsPerPage}
-                totalPage={this.props.totalPage}
-                activePage={this.props.activePage}
-                onPagination={::this.handlePagination}
-                operationColumn={{}}
-                operationColumnClass={this.getCustomComponent()}
-              />
-          </div>
+          <SSCGrid tableData={tableData} columnsModel={cols} className="ssc-grid"
+            paging
+            itemsPerPage={itemsPerPage}
+            totalPage={this.props.totalPage}
+            activePage={this.props.activePage}
+            onPagination={::this.handlePagination}
+            operationColumn={{}}
+            operationColumnClass={this.getCustomComponent()}
+          />
         </div>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
           <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}

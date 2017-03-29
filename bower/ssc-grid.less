@@ -15,6 +15,7 @@ body{
 .oh{overflow:hidden;}
 .ws{white-space:nowrap;}
 .ellipsis{.ws;.oh;text-overflow:ellipsis;}
+.clearfix{display:inline-block;}
 
 /*** 通用色变量 ***/
 //@mainColor: #1baede;      // 主色调（icon、提交按钮等）
@@ -45,6 +46,14 @@ body{
 @errorColor: #fe631f;           // 错误信息提示色、警告框颜色
 @labelColor: #8d8d8d;           // 标签字体颜色
 
+// grid表格顶部的按钮条
+.btn-bar {
+  height: 64px;
+  padding: 15px 0;
+  >div {
+    .clearfix;
+  }
+}
 
 // ssc-grid 组件 表格默认样式
 .ssc-grid {

@@ -38,8 +38,18 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.clearfix {
+  display: inline-block;
+}
 /*** 通用色变量 ***/
 /**************************** 友报账UI基础设计规范 begin ***************************/
+.btn-bar {
+  height: 64px;
+  padding: 15px 0;
+}
+.btn-bar > div {
+  display: inline-block;
+}
 .ssc-grid .table {
   margin-bottom: 0;
   color: #333333;
