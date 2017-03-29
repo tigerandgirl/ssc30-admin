@@ -13,6 +13,9 @@ class EntityMapTable extends Component {
   static displayName = 'EntityMapTable'
   static propTypes = {
     addTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired,
+    createDialog: PropTypes.object.isRequired,
+    editDialog: PropTypes.object.isRequired,
+    editFormData: PropTypes.object.isRequired,
     entityTableBodyData: PropTypes.array.isRequired,
     entityFieldsModel: PropTypes.array.isRequired,
     pageAlert: PropTypes.object.isRequired,
@@ -92,22 +95,8 @@ class EntityMapTable extends Component {
     this.props.showFormAlert(false, '');
   }
 
-  /**
-   * 用户点击下一页的时候，组件先向后端请求数据，等数据回来之后，再把分页组件
-   * 跳转到下一页。这样就能避免用户快速点击的问题了。
-   */
-  // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
-  // handlePagination(event, selectedEvent) {
-  handlePagination(eventKey) {
-    const { itemsPerPage, entityTableBodyData } = this.props;
-    let nextPage = eventKey;
-    let startIndex = (nextPage-1) * itemsPerPage;
-
-    this.props.fetchTableBodyDataAndGotoPage('entity', itemsPerPage, startIndex, nextPage);
-  }
-
   getCustomComponent() {
-    var container = this;
+    let container = this;
     return React.createClass({
       handleEdit(event) {
         const { rowIdx, rowObj } = this.props;
@@ -143,7 +132,7 @@ class EntityMapTable extends Component {
    * { id: '', code: '', name: '' }
    * ```
    */
-  getFormDefaultData(columnsModel, tableData) {
+  getFormDefaultData(columnsModel) {
     let formData = {};
     columnsModel.forEach(fieldModel => {
       // 隐藏字段，比如id字段，不用初始化值
@@ -151,7 +140,7 @@ class EntityMapTable extends Component {
         return;
       }
       const fieldId = fieldModel.id;
-      switch(fieldModel.type) {
+      switch (fieldModel.type) {
         case 'ref':
           formData[fieldId] = {
             id: '',
@@ -182,16 +171,14 @@ class EntityMapTable extends Component {
       editDialog,
       editFormData,
       createDialog,
-      pageAlert,
-      formAlert,
-      itemsPerPage
+      pageAlert
     } = this.props;
 
     // 表单字段模型 / 表格列模型
     const cols = entityFieldsModel || [];
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData(cols, entityTableBodyData);
+    const formDefaultData = this.getFormDefaultData(cols);
 
     return (
       <div>
@@ -204,11 +191,6 @@ class EntityMapTable extends Component {
         </AdminAlert>
         <SSCGrid tableData={entityTableBodyData} columnsModel={cols}
           striped bordered condensed hover
-          paging
-          itemsPerPage={itemsPerPage}
-          totalPage={this.props.totalPage}
-          activePage={this.props.activePage}
-          onPagination={::this.handlePagination}
           operationColumn={{}}
           operationColumnClass={this.getCustomComponent()}
         />
@@ -247,15 +229,19 @@ class EntityMapTable extends Component {
       </div>
     );
   }
-};
-
-const mapStateToProps = (state, ownProps) => {
-  return {...state.entityMap}
 }
+
+/**
+ * @param {Object} state
+ * @param {Object} ownProps
+ */
+const mapStateToProps = (state) => {
+  return {...state.entityMap};
+};
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(Actions, dispatch);
-}
+};
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(EntityMapTable);
