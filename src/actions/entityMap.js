@@ -3,8 +3,6 @@
  */
 
 import fetch from 'isomorphic-fetch';
-import _ from 'lodash';
-import { createAction } from 'redux-actions';
 
 // help functions
 import * as utils from './utils';
@@ -22,74 +20,42 @@ const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
 /**
  * 是否启用后端的开发用服务器
- * - 0 使用本地的expressjs服务器伪造数据
- * - 1 使用后端提供的测试服务器
+ * * -1 使用本地的expressjs服务器伪造数据
+ * *  0 使用后端开发人员提供的开发机上跑的服务
+ * *  1 使用后端提供的测试服务器
  */
-const ENABLE_DEV_BACKEND = 0;
-
-/**
- * 根据配置获取到基础档案的绝对路径
- * 比如：http://127.0.0.1:3009/dept/query
- */
-function getBaseDocURL(path) {
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.YZB_PROD_SERVER + path;
-  }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.BASEDOC_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
-}
-
-/**
- * 根据配置获取到参照的绝对路径
- * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
- */
-function getReferURL(path) {
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.YZB_PROD_SERVER + path;
-  }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.REFER_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
-}
+const DEV_BACKEND_INDEX = 1;
 
 /**
  * 根据配置获取到实体映射的绝对路径
  * 比如：http://59.110.123.20/ficloud/outerentitytree/querymdtree
  */
 function getURL(path) {
+  const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.YZB_PROD_SERVER + path;
+    return url(process.env.YZB_PROD_SERVER);
   }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.ENTITYMAP_DEV_SERVER}/ficloud_web`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+  if (DEV_BACKEND_INDEX === -1) {
+    return url(URL.LOCAL_EXPRESS_SERVER);
+  }
+  return url(URL.ENTITYMAP_DEV_SERVERS[DEV_BACKEND_INDEX]);
 }
-
-// 基础档案 组装后端接口
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
 
 /**
  * 实体映射模型 exchanger/entitymap.md
  */
 
 // 左树查询服务
-//const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
+// const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
 const OUTER_ENTITY_TREE_URL = getURL('/ficloud/outerentitytree/querymdtree');
 // 左树节点查询服务
-//const OUTER_ENTITY_TREE_NODE_CHILDREN_URL = getURL('/ficloud_web/template/node');
+// const OUTER_ENTITY_TREE_NODE_CHILDREN_URL = getURL('/ficloud_web/template/node');
 // 右表查询服务
 const OUTER_ENTITY_TREE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/querynodedata');
 const OUTER_ENTITY_TREE_ADD_NODE_DATA_URL = getURL('/ficloud/outerentitytree/addnodedata');
 const OUTER_ENTITY_TREE_UPDATE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/updatenodedata');
 const OUTER_ENTITY_TREE_DEL_NODE_DATA_URL = getURL('/ficloud/outerentitytree/delnodedata');
-
-// 参照 组装后端接口
-const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
@@ -487,7 +453,7 @@ export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getSta
   return dispatch(addTreeNodeData(formData))
     .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)))
     .then(() => dispatch(showCreateDialog(false, {})));
-}
+};
 
 
 /**

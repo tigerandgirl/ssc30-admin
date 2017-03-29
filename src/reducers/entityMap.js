@@ -33,14 +33,7 @@ const initState = {
     message: ''
   },
   // 当表单提交失败的时候，在对话框中显示错误提示
-  formAlert: {
-    show: false,
-    error: {
-      code: 0,
-      bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
-      message: ''
-    }
-  }
+  serverMessage: ''
 };
 
 // Show case for redux-actions
@@ -144,42 +137,36 @@ export default handleActions({
    */
 
   // 添加
-  [ActionTypes.TREE_NODE_DATA_ADD_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.TREE_NODE_DATA_ADD_REQUEST]: (state) => ({...state,
     treeNodeDataLoading: true
   }),
-  [ActionTypes.TREE_NODE_DATA_ADD_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.TREE_NODE_DATA_ADD_SUCCESS]: (state) => ({...state,
     treeNodeDataLoading: false,
     treeNodeDataLoaded: true,
   }),
   [ActionTypes.TREE_NODE_DATA_ADD_FAILURE]: (state, action) => update(state, {
     treeNodeDataLoading: {$set: false},
     treeNodeDataLoaded: {$set: false},
-    pageAlert: {
-      show: {$set: true},
-      message: {$set: action.payload.message}
-    }
+    serverMessage: {$set: action.payload.message}
   }),
   // 修改
-  [ActionTypes.TREE_NODE_DATA_UPDATE_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.TREE_NODE_DATA_UPDATE_REQUEST]: (state) => ({...state,
     treeNodeDataLoading: true
   }),
-  [ActionTypes.TREE_NODE_DATA_UPDATE_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.TREE_NODE_DATA_UPDATE_SUCCESS]: (state) => ({...state,
     treeNodeDataLoading: false,
     treeNodeDataLoaded: true,
   }),
   [ActionTypes.TREE_NODE_DATA_UPDATE_FAILURE]: (state, action) => update(state, {
     treeNodeDataLoading: {$set: false},
     treeNodeDataLoaded: {$set: false},
-    pageAlert: {
-      show: {$set: true},
-      message: {$set: action.payload.message}
-    }
+    serverMessage: {$set: action.payload.message}
   }),
   // 删除
-  [ActionTypes.TREE_NODE_DATA_DEL_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.TREE_NODE_DATA_DEL_REQUEST]: (state) => ({...state,
     treeNodeDataLoading: true
   }),
-  [ActionTypes.TREE_NODE_DATA_DEL_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.TREE_NODE_DATA_DEL_SUCCESS]: (state) => ({...state,
     treeNodeDataLoading: false,
     treeNodeDataLoaded: true,
   }),
@@ -203,10 +190,7 @@ export default handleActions({
     }
   }),
   [ActionTypes.FORM_ALERT_SHOW]: (state, action) => update(state, {
-    formAlert: {
-      show: {$set: action.show},
-      message: {$set: action.message}
-    }
+    serverMessage: {$set: action.message}
   })
 
 }, initState);
