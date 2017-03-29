@@ -94,7 +94,7 @@ class ArchContainer extends Component {
    * }
    * ```
    */
-  handleCreateFormSubmit(event, formData) {
+  handleCreateFormSubmit(formData) {
     const { startIndex, fields, params: { baseDocId } } = this.props;
     // this.props.submitCreateForm();
     // this.props.saveTableData(baseDocId, fields, formData);
@@ -124,7 +124,6 @@ class ArchContainer extends Component {
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
-    event.preventDefault();
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
@@ -135,7 +134,7 @@ class ArchContainer extends Component {
   handleEditFormBlur(index, fieldModel, value) {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
-  handleEditFormSubmit(event, formData) {
+  handleEditFormSubmit(formData) {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
 
@@ -163,7 +162,6 @@ class ArchContainer extends Component {
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
-    event.preventDefault();
   }
   handleEditFormReset(event) {
     this.props.closeEditDialog();

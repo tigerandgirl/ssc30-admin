@@ -66,9 +66,8 @@ class EntityMapTable extends Component {
    * }
    * ```
    */
-  handleCreateFormSubmit(event, formData) {
+  handleCreateFormSubmit(formData) {
     this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
-    event.preventDefault();
   }
   handleCreateFormReset(event) {
     this.props.showCreateDialog(false, {});
@@ -76,10 +75,9 @@ class EntityMapTable extends Component {
   }
 
   // edit form
-  handleEditFormSubmit(event, formData) {
+  handleEditFormSubmit(formData) {
     const { editDialog: { rowIdx } } = this.props;
     this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
-    event.preventDefault();
   }
   handleEditFormReset(event) {
     this.props.showEditDialog(false, null, {});
