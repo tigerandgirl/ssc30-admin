@@ -41,7 +41,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: [/node_modules/, /styles/],
-        loaders: ['babel'],
+        loader: 'react-hot!babel',
         include: path.join(__dirname, 'src')
       },
       {
