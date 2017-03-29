@@ -182,7 +182,7 @@ class ArchContainer extends Component {
     var conditions = [];
     if(e.checked){
       conditions = [
-         {"field":"enable","datatype":"boolean","value":"true"}
+         {"field":"enable","datatype":"boolean","value":"false"}
       ];
     }
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
@@ -254,8 +254,12 @@ class ArchContainer extends Component {
 
       render() {
         var enable =  this.props.rowObj.enable ;
+        const { params: {
+            baseDocId
+            } }= containerThis.props;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
-        if( typeof enable == "boolean" ){
+        if( typeof enable == "boolean" &&　baseDocId == "dept" ||baseDocId == "project"
+            || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
           resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
         return (
@@ -331,7 +335,7 @@ class ArchContainer extends Component {
     const formDefaultData = this.getFormDefaultData(cols, baseDocId);
 
     let enable = "";
-    if(baseDocId == "dept" ||baseDocId == "project"
+    if(typeof enable == "boolean" && baseDocId == "dept" ||baseDocId == "project"
         || baseDocId == "bankaccount" ||baseDocId == "feeitem"  ){
       enable =(
           <div style={{ display: 'inline-block', float: 'left' }}>
