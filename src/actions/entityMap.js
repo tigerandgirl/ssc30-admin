@@ -453,7 +453,7 @@ export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getSta
   return dispatch(addTreeNodeData(formData))
     .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)))
     .then(() => dispatch(showCreateDialog(false, {})));
-}
+};
 
 
 /**
