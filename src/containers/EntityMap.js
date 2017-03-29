@@ -55,6 +55,7 @@ function getDefaultExpandedKeys([...treeData]) {
  */
 
 class EntityMap extends Component {
+  static displayName = 'EntityMap'
   static propTypes = {
     /**
      * [store] 左侧树的数据
@@ -97,18 +98,22 @@ class EntityMap extends Component {
   componentWillReceiveProps(nextProps) {
   }
 
+  // 点击“创建”按钮
+  handleCreate(event) {
+    const { entityTableBodyData } = this.props;
+    const rowData = entityTableBodyData[0];
+    this.props.showCreateDialog(true, rowData);
+    // event.preventDefault();
+  }
+
   /**
-   * @param {Array} selectedKeys
+   * @param {Array} selectedKeys 所有选中的节点的key属性
    * @param {Object} e {selected: bool, selectedNodes, node, event}
    */
   onSelect(selectedKeys, e) {
     // console.log('selected', selectedKeys);
     // console.log(e.node.props.eventKey);
-    const { title, key } = e.node.props;
-    this.props.fetchTreeNodeData({
-      title,
-      key: e.node.props.eventKey
-    });
+    this.props.fetchTreeNodeData(e.node.props.treeNodeData);
   }
 
   onCheck(checkedKeys) {
@@ -149,13 +154,17 @@ class EntityMap extends Component {
       return data.map((item) => {
         if (item.children) {
           return (
-            <TreeNode title={item.title} key={item.key}>
+            <TreeNode title={item.title} key={item.key}
+              treeNodeData={item}
+            >
               {loop(item.children)}
             </TreeNode>
           );
         }
         return (
-          <TreeNode title={item.title} key={item.key} isLeaf={item.isLeaf}/>
+          <TreeNode title={item.title} key={item.key} isLeaf={item.isLeaf}
+            treeNodeData={item}
+          />
         );
       });
     };
@@ -167,7 +176,14 @@ class EntityMap extends Component {
       <div className="entity-map-container">
         <Grid>
           <Row>
-            <Col md={4}>
+            <Col>
+              <div style={{ display: 'inline-block', float: 'right' }}>
+                <Button onClick={::this.handleCreate}>新增</Button>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="col-fixed-230">
               {this.props.treeData.length !== 0
                 ? <Tree
                     onSelect={::this.onSelect}
@@ -182,8 +198,7 @@ class EntityMap extends Component {
                 : null
               }
             </Col>
-            <Col md={8}>
-              <h3>属性编辑器</h3>
+            <Col className="col-offset-250">
               <EntityMapTable />
             </Col>
           </Row>

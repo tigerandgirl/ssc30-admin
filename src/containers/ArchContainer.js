@@ -343,7 +343,7 @@ class ArchContainer extends Component {
     }
 
     return (
-      <div>
+      <div className="content">
         <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
@@ -352,20 +352,15 @@ class ArchContainer extends Component {
           { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
-        <Grid>
-          <Row className="show-grid">
-            <Col md={12}>
-              <h3>{}</h3>
+        <div>
+          <div style={{ height:'64px', padding:'15px 0' }}>
               {enable}
               <div style={{ display: 'inline-block', float: 'right' }}>
                 <Button onClick={::this.handleCreate}>新增</Button>
               </div>
-            </Col>
-          </Row>
-          <Row className="show-grid">
-            <Col md={12}>
+          </div>
+          <div className="ssc-grid">
               <SSCGrid tableData={tableData} columnsModel={cols}
-                striped bordered condensed hover
                 paging
                 itemsPerPage={itemsPerPage}
                 totalPage={this.props.totalPage}
@@ -374,9 +369,8 @@ class ArchContainer extends Component {
                 operationColumn={{}}
                 operationColumnClass={this.getCustomComponent()}
               />
-            </Col>
-          </Row>
-        </Grid>
+          </div>
+        </div>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
           <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
             onDismiss={::this.handleFormAlertDismiss}
@@ -394,7 +388,7 @@ class ArchContainer extends Component {
           />
         </AdminEditDialog>
         <AdminEditDialog className='create-form' title='新增' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
-          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
+          <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
             defaultData={formDefaultData}

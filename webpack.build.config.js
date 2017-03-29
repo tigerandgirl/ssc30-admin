@@ -1,14 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const moment = require('moment');
-const childProcess = require('child_process');
 
 const DEFAULT_YBZ_PROD_SERVER = '172.20.4.88:8088';
 const DEFAULT_YZB_PROD_SERVER = '10.3.14.240';
 
 module.exports = {
-  devtool: "source-map",
+  devtool: 'source-map',
   entry: [
     './src/index'
   ],
