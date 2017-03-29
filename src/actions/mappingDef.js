@@ -84,56 +84,32 @@ export const TABLE_COLUMNS_MODEL_REQUEST = 'TABLE_COLUMNS_MODEL_REQUEST';
 export const TABLE_COLUMNS_MODEL_SUCCESS = 'TABLE_COLUMNS_MODEL_SUCCESS';
 export const TABLE_COLUMNS_MODEL_FAILURE = 'TABLE_COLUMNS_MODEL_FAILURE';
 
-// 获取表格列模型失败
-// message: 错误信息
-// details: 比如HTTP response body，或者其他为了踢皮球而写的比较啰嗦的文字
-function receiveTableColumnsModelFail(message, details) {
-  return {
-    type: types.LOAD_TABLECOLUMNS_FAIL,
-    message, details
-  }
-}
-
 export function fetchTableColumnsModel(baseDocId) {
   // use `callAPIMiddleware`
   return {
     types: [TABLE_COLUMNS_MODEL_REQUEST, TABLE_COLUMNS_MODEL_SUCCESS, TABLE_COLUMNS_MODEL_FAILURE],
     // Check the cache (optional):
-    //shouldCallAPI: (state) => !state.posts[userId],
+    // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
       const opts = {
         method: 'post',
         headers: {
           'Content-type': 'application/x-www-form-urlencoded'
         },
-        mode: "cors",
+        mode: 'cors',
         body: `doctype=${baseDocId}`
       };
       appendCredentials(opts);
       const url = `${FICLOUDPUB_INITGRID_URL}`;
 
       return fetch(url, opts)
-        .then(response => {
-          // TODO: HTTP状态检查，需要独立成helper function
-          if (response.status >= 200 && response.status < 300) {
-            return response;
-          } else {
-            var error = new Error(response.statusText);
-            error.response = response;
-            response.text().then(text => {
-              return receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text);
-            });
-            throw error;
-          }
-        })
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          if (json.success === true) {
+        .then(utils.checkHTTPStatus)
+        .then(utils.parseJSON)
+        .then(resObj => {
+          if (resObj.success === true) {
 
             // 进行业务层的数据校验
-            const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
+            const [isValid, validationMessage] = utils.validation.tableColumnsModelData(resObj);
             if (isValid) {
               // 1. 删除不用的字段，按理说应该后端从response中删除掉的
               // 2. 修复后端json中的错别字，暂时在前端写死
@@ -143,7 +119,7 @@ export function fetchTableColumnsModel(baseDocId) {
               // 6. 有些字段的类型错误，暂时在前端写死新类型
               // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
               // 8. 添加参照的配置
-              let fields = json.data
+              let fields = resObj.data
                 /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
                 /* 2 */ .map(utils.fixFieldTypo)
                 /* 3 */ .map(utils.convertDataType)
@@ -155,25 +131,22 @@ export function fetchTableColumnsModel(baseDocId) {
               return {
                 data: fields
               };
-            } else {
-              return receiveTableColumnsModelFail(
-                `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
-                但是数据校验方法提示说：“${validationMessage}”`,
-                JSON.stringify(json.data, null, '  ')
-              );
             }
 
+            throw {
+              name: 'INVALID_JSON',
+              message: `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+              但是数据校验方法提示说：“${validationMessage}”`
+            };
           } else {
-            return receiveTableColumnsModelFail(
-              '后端返回的success不是true', JSON.stringify(json, null, '  ')
-            );
+            throw {
+              name: 'SUCCESS_FALSE',
+              message: resObj.message || '未知错误'
+            };
           }
-        })
-        .catch(function (err) {
-          console.log("获取表格列模型失败，错误信息：", err);
         });
     }
-  }
+  };
 }
 
 /**
