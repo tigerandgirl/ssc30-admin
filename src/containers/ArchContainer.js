@@ -256,14 +256,14 @@ class ArchContainer extends Component {
 
       render() {
         var enable =  this.props.rowObj.enable ;
-        var enableDom = "";
+        var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
         if( enable && typeof enable == "boolean" ){
-          enableDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
+          resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
         return (
           <td>
             <span onClick={this.handleEdit}>修改</span>
-            {enableDom}
+            {resultDom}
           </td>
         );
       }

@@ -1,9 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
-
-import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 
 import { Grid as SSCGrid, Form } from 'ssc-grid';
 
@@ -15,9 +12,16 @@ import * as Actions from '../actions/entityMap';
 class EntityMapTable extends Component {
   static displayName = 'EntityMapTable'
   static propTypes = {
+    addTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired,
     entityTableBodyData: PropTypes.array.isRequired,
     entityFieldsModel: PropTypes.array.isRequired,
-    pageAlert: PropTypes.object.isRequired
+    pageAlert: PropTypes.object.isRequired,
+    serverMessage: PropTypes.string.isRequired,
+    showCreateDialog: PropTypes.func.isRequired,
+    showEditDialog: PropTypes.func.isRequired,
+    showFormAlert: PropTypes.func.isRequired,
+    showPageAlert: PropTypes.func.isRequired,
+    updateTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired
   }
 
   state = {
@@ -33,7 +37,10 @@ class EntityMapTable extends Component {
   componentDidMount() {
   }
 
-  componentWillReceiveProps(nextProps) {
+  /**
+   * @param {Object} nextProps
+   */
+  componentWillReceiveProps() {
   }
 
   closeEditDialog() {
@@ -44,10 +51,6 @@ class EntityMapTable extends Component {
     this.props.showCreateDialog(false, {});
   }
 
-  // create form
-  handleCreateFormBlur(label, value) {
-    //this.props.updateCreateFormFieldValue(label, value);
-  }
   /**
    * formData
    * 如果是refer
@@ -65,7 +68,7 @@ class EntityMapTable extends Component {
    */
   handleCreateFormSubmit(event, formData) {
     this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
-    // event.preventDefault();
+    event.preventDefault();
   }
   handleCreateFormReset(event) {
     this.props.showCreateDialog(false, {});
@@ -73,13 +76,10 @@ class EntityMapTable extends Component {
   }
 
   // edit form
-  handleEditFormBlur(index, fieldModel, value) {
-    //this.props.updateEditFormFieldValue(index, fieldModel, value);
-  }
   handleEditFormSubmit(event, formData) {
     const { editDialog: { rowIdx } } = this.props;
     this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
-    // event.preventDefault();
+    event.preventDefault();
   }
   handleEditFormReset(event) {
     this.props.showEditDialog(false, null, {});
@@ -99,7 +99,7 @@ class EntityMapTable extends Component {
    * 跳转到下一页。这样就能避免用户快速点击的问题了。
    */
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
-  //handlePagination(event, selectedEvent) {
+  // handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
     const { itemsPerPage, entityTableBodyData } = this.props;
     let nextPage = eventKey;
@@ -215,37 +215,33 @@ class EntityMapTable extends Component {
           operationColumnClass={this.getCustomComponent()}
         />
         <AdminEditDialog
-          className='edit-form'
-          title='编辑'
+          className="edit-form"
+          title="编辑"
           show={editDialog.show}
           onHide={::this.closeEditDialog}
         >
-          <AdminAlert
-            show={formAlert.show}
-            bsStyle={formAlert.bsStyle}
-            onDismiss={::this.handleFormAlertDismiss}
-          >
-            <p>{formAlert.message}</p>
-          </AdminAlert>
+          <p className="server-message" style={{color: 'red'}}>
+            {this.props.serverMessage}
+          </p>
           <Form
             fieldsModel={cols}
             defaultData={editFormData}
-            onBlur={::this.handleEditFormBlur}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.handleEditFormReset}
           />
         </AdminEditDialog>
         <AdminEditDialog
-          className='create-form'
-          title='新增'
+          className="create-form"
+          title="新增"
           show={createDialog.show}
           onHide={::this.closeCreateDialog}
         >
-          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
+          <p className="server-message" style={{color: 'red'}}>
+            {this.props.serverMessage}
+          </p>
           <Form
             fieldsModel={cols}
             defaultData={formDefaultData}
-            onBlur={::this.handleCreateFormBlur}
             onSubmit={::this.handleCreateFormSubmit}
             onReset={::this.handleCreateFormReset}
           />

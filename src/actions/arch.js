@@ -58,7 +58,7 @@ const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
 const getSaveURL = type => getBaseDocURL(`/${type}/save`);
 const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
 const getQueryURL = type => getBaseDocURL(`/${type}/query`);
-const getEnableURL = type => getBaseDocURL(`/${type}/trunenable`);
+const getEnableURL = type => getBaseDocURL(`/${type}/turnenable`);
 /**
  * 参照 组装后端接口
  */
