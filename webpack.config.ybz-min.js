@@ -15,10 +15,10 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle-ybz.min.js' // Template based on keys in entry above
+    filename: 'bundle.min.js' // Template based on keys in entry above
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common-ybz.min.js'),
+    new webpack.optimize.CommonsChunkPlugin('common.min.js'),
     /**
      * This plugin assigns the module and chunk ids by occurence count. What this
      * means is that frequently used IDs will get lower/shorter IDs - so they become

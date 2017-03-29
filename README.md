@@ -3,13 +3,9 @@
 本项目覆盖的功能包括并不限于：
 
 - SSC 3.0 后台管理
-- 友报账 - 基础档案（基本档案）
-- 友账表 - 基础档案（基本档案）
+- 友报账 - 基础档案
+- 友账表 - 基础档案
 - 友账表 - 会计平台（部分页面）
-
-## 在线演示
-
-[http://10.3.14.237:3000/](http://10.3.14.237:3000/)
 
 ## 进行开发
 
@@ -67,6 +63,18 @@ git push --follow-tags
 ```
 npm run release
 YBZ_PROD_SERVER=10.3.14.240 npm run release # 重新指定后端服务器地址
+```
+
+## 发布友报账
+
+```
+npm run release:ybz
+```
+
+## 发布友账表
+
+```
+npm run release:yzb
 ```
 
 ## React components tree

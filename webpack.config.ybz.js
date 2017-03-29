@@ -24,10 +24,10 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle-ybz.js' // Template based on keys in entry above
+    filename: 'bundle.js' // Template based on keys in entry above
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common-ybz.js'),
+    new webpack.optimize.CommonsChunkPlugin('common.js'),
     /**
      * This plugin assigns the module and chunk ids by occurence count. What this
      * means is that frequently used IDs will get lower/shorter IDs - so they become
@@ -52,7 +52,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: `友报账 v${packageJSON.version}`,
-      filename: 'index-ybz.html',
+      filename: 'index.html',
       template: 'client/index.hbs',
       hash: true,
       // User defined options
