@@ -398,14 +398,20 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
 export function enableTableData(baseDocId, rowObj){
   debugger;
   return (dispatch, getState) => {
-     var { id,enable } = rowObj; // 40位主键 primary key
+    var { id,enable } = rowObj; // 40位主键 primary key
+    var turnEnable = false ;
+    if( !enable ){
+       turnEnable = true  ;
+    }
     var opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: "cors",
-      body: JSON.stringify({ id,enable })
+      body: JSON.stringify({ id,
+        enable:turnEnable
+      })
     };
     appendCredentials(opts);
 

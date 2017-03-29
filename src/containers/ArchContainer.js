@@ -257,7 +257,7 @@ class ArchContainer extends Component {
       render() {
         var enable =  this.props.rowObj.enable ;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
-        if( enable && typeof enable == "boolean" ){
+        if( typeof enable == "boolean" ){
           resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
         return (
