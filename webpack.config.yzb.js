@@ -1,8 +1,21 @@
+/**
+ * 友账表
+ * - 编译生成带有source map的js，用于在生产环境下调试
+ * - 编译生成index.html首页
+ */
+
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const moment = require('moment');
+const childProcess = require('child_process');
 
 const DEFAULT_YBZ_PROD_SERVER = '172.20.4.88:8088';
 const DEFAULT_YZB_PROD_SERVER = '10.3.14.240';
+
+// 获取版本
+const packageJSON = require('./package.json');
+const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
   devtool: 'source-map',
@@ -11,10 +24,10 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js' // Template based on keys in entry above
+    filename: 'bundle-yzb.js' // Template based on keys in entry above
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common.js'),
+    new webpack.optimize.CommonsChunkPlugin('common-yzb.js'),
     /**
      * This plugin assigns the module and chunk ids by occurence count. What this
      * means is that frequently used IDs will get lower/shorter IDs - so they become
@@ -30,6 +43,22 @@ module.exports = {
         'YBZ_PROD_SERVER': JSON.stringify(process.env.YBZ_PROD_SERVER || DEFAULT_YBZ_PROD_SERVER),
         'YZB_PROD_SERVER': JSON.stringify(process.env.YZB_PROD_SERVER || DEFAULT_YZB_PROD_SERVER)
       }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      compress: {
+        warnings: false
+      }
+    }),
+    new HtmlWebpackPlugin({
+      title: `友账表 v${packageJSON.version}`,
+      filename: 'index-yzb.html',
+      template: 'client/index.hbs',
+      hash: true,
+      // User defined options
+      version: packageJSON.version,
+      revision: GIT_REVISION,
+      buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
     })
   ],
   module: {
