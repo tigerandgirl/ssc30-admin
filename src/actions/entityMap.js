@@ -186,7 +186,7 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
   return {
     types: [ENTITY_TREE_NODE_DATA_REQUEST, ENTITY_TREE_NODE_DATA_SUCCESS, ENTITY_TREE_NODE_DATA_FAILURE],
     // Check the cache (optional):
-    //shouldCallAPI: (state) => !state.posts[userId],
+    // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
       const opts = {
         method: 'post',
@@ -203,39 +203,48 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
         .then(resObj => {
-          if (resObj.success === true) {
-            // 1. 删除不用的字段，按理说应该后端从response中删除掉的
-            // 2. 修复后端json中的错别字，暂时在前端写死
-            // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
-            // 4. 有些字段是必填项，暂时在前端写死
-            // 5. 有些字段需要隐藏，暂时在前端写死
-            // 6. 有些字段的类型错误，暂时在前端写死新类型
-            // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
-            // 8. 添加参照的配置
-            let fieldsModel = resObj.data.head
-              /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
-              /* 2 */ .map(utils.fixFieldTypo)
-              /* 3 */ .map(utils.convertDataType)
-              /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
-              /* 5 */ .map(utils.setHiddenFields)
-              /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
-              /* 7 */ .map(utils.fixReferKey)
-              /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
-            return {
-              fieldsModel,
-              tableBodyData: resObj.data.body,
-              treeNodeData
-            };
-          } else {
+          if (resObj.success !== true) {
             throw {
               name: 'SUCCESS_FALSE',
               message: resObj.message || '未知错误'
             };
           }
+
+          // 1. 删除不用的字段，按理说应该后端从response中删除掉的
+          // 2. 修复后端json中的错别字，暂时在前端写死
+          // 3. 后端数据类型使用int，前端使用string，暂时在前端写死
+          // 4. 有些字段是必填项，暂时在前端写死
+          // 5. 有些字段需要隐藏，暂时在前端写死
+          // 6. 有些字段的类型错误，暂时在前端写死新类型
+          // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
+          // 8. 添加参照的配置
+          let fieldsModel = resObj.data.head
+            /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+            /* 2 */ .map(utils.fixFieldTypo)
+            /* 3 */ .map(utils.convertDataType)
+            /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+            /* 5 */ .map(utils.setHiddenFields)
+            /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+            /* 7 */ .map(utils.fixReferKey)
+            /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
+
+          return {
+            fieldsModel,
+            tableBodyData: resObj.data.body
+          };
         });
     }
-  }
+  };
 }
+
+/**
+ * 记录哪个节点被点击了
+ */
+export const ENTITYMAP_CLICKED_NODE_DATA_UPDATE = 'ENTITYMAP_CLICKED_NODE_DATA_UPDATE';
+export const saveClickedNodeData = treeNodeData => dispatch => dispatch({
+  type: ENTITYMAP_CLICKED_NODE_DATA_UPDATE,
+  treeNodeData
+});
 
 export const ENTITY_MAP_EDIT_DIALOG_SHOW = 'ENTITY_MAP_EDIT_DIALOG_SHOW';
 
@@ -435,15 +444,22 @@ export const showFormAlert = (show, message) => dispatch => dispatch({
 });
 
 /**
+ * 复合操作：获取节点数据（用于填充右侧表格）并记录选中的节点
+ */
+export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch => {
+  return dispatch(fetchTreeNodeData(treeNodeData))
+    .then(() => dispatch(saveClickedNodeData(treeNodeData)));
+};
+
+/**
  * 复合操作：创建并刷新表格
  */
 export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(addTreeNodeData(formData))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)))
+    .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)))
     .then(() => dispatch(showCreateDialog(false, {})));
 };
-
 
 /**
  * 复合操作：更新并刷新表格
@@ -451,9 +467,8 @@ export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getSta
 export const updateTreeNodeDataAndFetchTreeNodeData = (formData, rowIdx) => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(updateTreeNodeData(formData, rowIdx))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)));
+    .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)));
 };
-
 
 /**
  * 复合操作：删除并刷新表格
@@ -461,5 +476,5 @@ export const updateTreeNodeDataAndFetchTreeNodeData = (formData, rowIdx) => (dis
 export const delTreeNodeDataAndFetchTreeNodeData = rowIdx => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(delTreeNodeData(rowIdx))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.selectedTreeNodeData)));
+    .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)));
 };

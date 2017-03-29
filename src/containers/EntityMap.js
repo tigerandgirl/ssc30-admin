@@ -52,7 +52,7 @@ class EntityMap extends Component {
     entityTableBodyData: PropTypes.array.isRequired,
     fetchLeftTree: PropTypes.func.isRequired,
     fetchLeftTreeNodeChildren: PropTypes.func.isRequired,
-    fetchTreeNodeData: PropTypes.func.isRequired,
+    fetchTreeNodeDataAndSaveClickedNodeData: PropTypes.func.isRequired,
     /**
      * URL传参
      * ```js
@@ -63,6 +63,8 @@ class EntityMap extends Component {
      * ```
      */
     params: PropTypes.object.isRequired,
+    clickedTreeNodeData: PropTypes.object.isRequired,
+    saveClickedNodeData: PropTypes.func.isRequired,
     showCreateDialog: PropTypes.func.isRequired,
     /**
      * [store] 左侧树的数据
@@ -107,9 +109,13 @@ class EntityMap extends Component {
    * @param {Object} e {selected: bool, selectedNodes, node, event}
    */
   onSelect(selectedKeys, e) {
-    // console.log('selected', selectedKeys);
-    // console.log(e.node.props.eventKey);
-    this.props.fetchTreeNodeData(e.node.props.treeNodeData);
+    let currentNodeKey = e.node.props.treeNodeData.key;
+    let lastNodeKey = this.props.clickedTreeNodeData.key;
+    if (currentNodeKey !== lastNodeKey) {
+      this.props.fetchTreeNodeDataAndSaveClickedNodeData(e.node.props.treeNodeData);
+    } else {
+      this.props.saveClickedNodeData(e.node.props.treeNodeData);
+    }
   }
 
   onCheck(checkedKeys) {

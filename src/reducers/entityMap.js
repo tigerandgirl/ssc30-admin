@@ -1,5 +1,4 @@
 import update from 'react-addons-update';
-import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
 import * as ActionTypes from '../actions/entityMap';
@@ -15,7 +14,7 @@ const initState = {
   entityTableBodyData: [], // 表体数据
   // 被选中的左侧的节点信息，这是一个复杂对象，是将后端的节点数据全部保存在这里
   // 了以方便向后端发请求时候需要传递这些参照，直接取用即可。
-  selectedTreeNodeData: {},
+  clickedTreeNodeData: {},
   // 创建对话框
   createDialog: {
     show: false
@@ -41,7 +40,7 @@ export default handleActions({
 
   // 获取三层数据
 
-  [ActionTypes.LEFT_TREE_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.LEFT_TREE_REQUEST]: (state) => ({...state,
     loading: true
   }),
   [ActionTypes.LEFT_TREE_SUCCESS]: (state, action) => ({...state,
@@ -70,7 +69,7 @@ export default handleActions({
    * 更新指定节点下的子节点
    */
 
-  [ActionTypes.TEMPLATE_NODE_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.TEMPLATE_NODE_REQUEST]: (state) => ({...state,
     loading: true
   }),
   [ActionTypes.TEMPLATE_NODE_SUCCESS]: (state, action) => ({...state,
@@ -88,17 +87,23 @@ export default handleActions({
   }),
 
   /**
+   * 记住哪个节点被点中（而不是被选择）
+   */
+  [ActionTypes.ENTITYMAP_CLICKED_NODE_DATA_UPDATE]: (state, action) => ({...state,
+    clickedTreeNodeData: {...action.treeNodeData}
+  }),
+
+  /**
    * 右表的字段模型和表体数据
    */
-  [ActionTypes.ENTITY_TREE_NODE_DATA_REQUEST]: (state, action) => ({...state,
+  [ActionTypes.ENTITY_TREE_NODE_DATA_REQUEST]: (state) => ({...state,
     entityFieldsModelloading: true
   }),
   [ActionTypes.ENTITY_TREE_NODE_DATA_SUCCESS]: (state, action) => ({...state,
     entityFieldsModelloading: false,
     entityFieldsModelloaded: true,
     entityFieldsModel: [...action.payload.fieldsModel],
-    entityTableBodyData: [...action.payload.tableBodyData],
-    selectedTreeNodeData: {...action.payload.treeNodeData}
+    entityTableBodyData: [...action.payload.tableBodyData]
   }),
   [ActionTypes.ENTITY_TREE_NODE_DATA_FAILURE]: (state, action) => ({...state,
     entityFieldsModelloading: false,
