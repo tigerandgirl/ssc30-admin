@@ -3,19 +3,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
-import { Table } from 'react-bootstrap';
+import { Grid, Row, Col } from 'react-bootstrap';
+import { Grid as SSCGrid } from 'ssc-grid';
 
-import { Grid as SSCGrid, Form, Tree as SSCTree } from 'ssc-grid';
-
-import NormalWidget from '../components/NormalWidget';
-import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
 import * as Actions from '../actions/mappingDef';
-
-// Consants for table and form
-const ItemsPerPage = 15;
 
 const BASE_DOC_ID = 'mappingdef';
 
@@ -26,6 +19,12 @@ const BASE_DOC_ID = 'mappingdef';
 
 class MappingDef extends Component {
   static propTypes = {
+    fetchTableBodyData: PropTypes.func.isRequired,
+    fetchTableColumnsModel: PropTypes.func.isRequired,
+    itemsPerPage: PropTypes.number,
+    pageAlert: PropTypes.object.isRequired,
+    showPageAlert: PropTypes.func.isRequired,
+    startIndex: PropTypes.number.isRequired,
     /**
      * store中存储的表体数据
      */
@@ -34,10 +33,7 @@ class MappingDef extends Component {
      * store中存储的表头数据
      */
     tableColumnsModel: PropTypes.array.isRequired,
-    totalPage: PropTypes.number,
-    itemsPerPage: PropTypes.number,
-    pageAlert: PropTypes.object.isRequired,
-    showPageAlert: PropTypes.func.isRequired
+    totalPage: PropTypes.number
   }
 
   state = {
@@ -55,33 +51,25 @@ class MappingDef extends Component {
     this.props.fetchTableBodyData(itemsPerPage, startIndex);
   }
 
+  componentDidMount() {
+    document.title = '转换规则定义';
+  }
+
   componentWillReceiveProps(/* nextProps */) {
-  }
-
-  closeEditDialog() {
-    this.props.closeEditDialog();
-  }
-
-  closeCreateDialog() {
-    this.props.hideCreateDialog();
   }
 
   handlePageAlertDismiss() {
     this.props.showPageAlert(false);
   }
 
-  handleFormAlertDismiss(){
-    this.props.hideAdminAlert();
-  }
-
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
-  //handlePagination(event, selectedEvent) {
+  // handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
-    const { itemsPerPage, tableBodyData } = this.props;
+    const { itemsPerPage } = this.props;
     let nextPage = eventKey;
-    let startIndex = (nextPage-1) * itemsPerPage;
+    let startIndex = (nextPage - 1) * itemsPerPage;
 
-    this.props.fetchTableData(itemsPerPage, startIndex);
+    this.props.fetchTableBodyData(itemsPerPage, startIndex);
 
     this.setState({
       activePage: nextPage,
@@ -90,14 +78,14 @@ class MappingDef extends Component {
   }
 
   getCustomComponent() {
-    var containerThis = this;
+    const container = this;
     return React.createClass({
-      handleEdit(event) {
+      handleEdit(/* event */) {
         const { rowIdx, rowObj } = this.props;
         // 将rowData保存到store中
-        containerThis.props.showEditDialog(rowIdx, rowObj);
+        container.props.showEditDialog(rowIdx, rowObj);
         // 从store中取出editFormData填充到表单上
-        containerThis.props.initEditFormData(rowObj);
+        container.props.initEditFormData(rowObj);
       },
       render() {
         const {rowObj: {

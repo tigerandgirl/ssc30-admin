@@ -14,10 +14,10 @@ cd $root_dir
 
 # Bundle and upload
 echo "同步本地编译后的数据到集群中的一个节点 10.3.14.237"
-rsync -arvzh -e "ssh -p $port" --progress --chmod=777 dist/ $user@$CLUSTER_NODE237:/data/ficloud/uiresources/manaaccount/
+rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx dist/ $user@$CLUSTER_NODE237:/data/ficloud/uiresources/manaaccount/
 echo "同步本地编译后的数据到友报账联调服务器 172.20.4.88"
-rsync -arvzh -e "ssh -p $port" --progress --chmod=777 dist/ $user@$TESTING_SERVER:/ssc/tomcat_dc_integration/webapps/manaaccount/
+rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx dist/ $user@$TESTING_SERVER:/ssc/tomcat_dc_integration/webapps/manaaccount/
 #echo "同步本地编译后的数据到友报账联调服务器 172.20.4.88"
-#rsync -arvzh -e "ssh -p $port" --progress --chmod=777 dist/ $user@$TESTING_SERVER:/ssc/tomcat_dc_integration_2/webapps/manaaccount/
+#rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx dist/ $user@$TESTING_SERVER:/ssc/tomcat_dc_integration_2/webapps/manaaccount/
 
 date
