@@ -108,19 +108,9 @@ class AccSubIndex extends Component {
     const cols = tableData[0] ? tableData[0].cols : [];
 
     return (
-      <div>
-        <h1>会计平台所有类型</h1>
-        <ul>
-          {getBaseDocTypes().map(basedoc => <span style={{marginRight: '10px'}} key={basedoc.id}>
-              <Link to={`/accsubs-no-sidebar/accsub/${basedoc.id}`}
-                activeStyle={{ color: 'red' }}
-              >{basedoc.name}</Link></span>)}
-        </ul>
-        <h2>详情</h2>
         <div>
           {this.props.children}
         </div>
-      </div>
     );
   }
 };
