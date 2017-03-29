@@ -1,17 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 
-import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
-import { Table } from 'react-bootstrap';
+import { Grid, Row, Col, Button } from 'react-bootstrap';
 import Tree, { TreeNode } from 'rc-tree';
-
-import { Grid as SSCGrid, Form as SSCForm, Tree as SSCTree } from 'ssc-grid';
-
-import NormalWidget from '../components/NormalWidget';
-import AdminEditDialog from '../components/AdminEditDialog';
-import AdminAlert from '../components/AdminAlert';
 
 import EntityMapTable from './EntityMapTable';
 
@@ -26,22 +18,22 @@ const DEFAULT_EXPANDED_LEVEL = 2;
  * @return {Array} 需要展开的node的key
  */
 function getDefaultExpandedKeys([...treeData]) {
-  var expandedKeys = [];
-  var level = 1;
+  let expandedKeys = [];
+  let level = 1;
   const loop = nodes => {
     nodes.forEach(node => {
       if (level === DEFAULT_EXPANDED_LEVEL) {
         return;
-      } else {
-        expandedKeys.push(node.key);
-        if (node.children) {
-          level++;
-          loop(node.children);
-          level--;
-        }
+      }
+
+      expandedKeys.push(node.key);
+      if (node.children) {
+        level++;
+        loop(node.children);
+        level--;
       }
     });
-  }
+  };
   loop(treeData);
   return expandedKeys;
 }
@@ -57,22 +49,25 @@ function getDefaultExpandedKeys([...treeData]) {
 class EntityMap extends Component {
   static displayName = 'EntityMap'
   static propTypes = {
+    entityTableBodyData: PropTypes.array.isRequired,
+    fetchLeftTree: PropTypes.func.isRequired,
+    fetchLeftTreeNodeChildren: PropTypes.func.isRequired,
+    fetchTreeNodeData: PropTypes.func.isRequired,
+    /**
+     * URL传参
+     * ```js
+     * {
+     *   billTypeCode,
+     *   mappingDefId
+     * }
+     * ```
+     */
+    params: PropTypes.object.isRequired,
+    showCreateDialog: PropTypes.func.isRequired,
     /**
      * [store] 左侧树的数据
      */
-    treeData: PropTypes.array.isRequired,
-    /**
-     * URL传参
-     */
-    params: PropTypes.object.isRequired
-    /**
-     * [URL传参] billtypecode
-     */
-    // params.billTypeCode: PropTypes.string.isRequired,
-    /**
-     * [URL传参] mappingdefid
-     */
-    // params.mappingDefId: PropTypes.string.isRequired
+    treeData: PropTypes.array.isRequired
   }
 
   constructor(props) {
@@ -93,13 +88,14 @@ class EntityMap extends Component {
     const { billTypeCode, mappingDefId } = this.state;
     // this.props.fetchEntityFieldsModel();
     this.props.fetchLeftTree(billTypeCode, mappingDefId);
+    document.title = '实体映射';
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(/* nextProps */) {
   }
 
   // 点击“创建”按钮
-  handleCreate(event) {
+  handleCreate(/* event */) {
     const { entityTableBodyData } = this.props;
     const rowData = entityTableBodyData[0];
     this.props.showCreateDialog(true, rowData);
@@ -127,7 +123,7 @@ class EntityMap extends Component {
    * 用户点击节点左侧加号打开节点的时候
    */
   onLoadData(treeNode) {
-    const emptyPromise = new Promise((resolve, reject) => {
+    const emptyPromise = new Promise((resolve/* , reject */) => {
       return resolve();
     });
 
@@ -141,15 +137,11 @@ class EntityMap extends Component {
     const promise = this.props.fetchLeftTreeNodeChildren(treeNode.props.eventKey);
     if (promise) {
       return promise;
-    } else {
-      return emptyPromise;
     }
+    return emptyPromise;
   }
 
   render() {
-    const { columnsModel } = this.props;
-
-    let level = 0;
     const loop = (data) => {
       return data.map((item) => {
         if (item.children) {
@@ -206,15 +198,19 @@ class EntityMap extends Component {
       </div>
     );
   }
-};
-
-const mapStateToProps = (state, ownProps) => {
-  return {...state.entityMap};
 }
+
+/**
+ * @param {Object} state
+ * @param {Object} ownProps
+ */
+const mapStateToProps = (state) => {
+  return {...state.entityMap};
+};
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(Actions, dispatch);
-}
+};
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(EntityMap);
