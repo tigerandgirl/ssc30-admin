@@ -338,7 +338,7 @@ export function fetchTableColumnsModel(baseDocId) {
               /*  7 */ .map(utils.fixReferKey)
               /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
               /*  9 */ .map(utils.fixEnumData)
-              /* 10 */ .map(utils.setLengthValidation)
+              /* 10 */ .map(utils.setLengthValidation);
               /* 11 */
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
