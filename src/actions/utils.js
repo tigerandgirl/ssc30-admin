@@ -225,7 +225,8 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
       accounttype:true
     },
     "bankclass": {
-      "pk_org": true
+      "pk_org": true,
+      "enable":true
     },
     "currency": {
       "pk_org": true,
