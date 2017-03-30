@@ -251,11 +251,11 @@ export const ENTITY_MAP_EDIT_DIALOG_SHOW = 'ENTITY_MAP_EDIT_DIALOG_SHOW';
 /**
  * 显示/隐藏编辑/创建窗口
  * @param {boolean} show 是否显示
- * @param {Number} rowIdx 编辑行的index
- * @param {Object} editFormData 编辑行的数据，用于填充表单
+ * @param {Number} [rowIdx=null] 编辑行的index
+ * @param {Object} [editFormData={}] 编辑行的数据，用于填充表单
  */
-export function showEditDialog(show, rowIdx, editFormData) {
-  return (dispatch, getState) => {
+export function showEditDialog(show, rowIdx = null, editFormData = {}) {
+  return (dispatch) => {
     dispatch({
       type: ENTITY_MAP_EDIT_DIALOG_SHOW,
       show,
@@ -269,20 +269,16 @@ export const ENTITY_MAP_CREATE_DIALOG_SHOW = 'ENTITY_MAP_CREATE_DIALOG_SHOW';
 
 /**
  * @param {Boolean} show 显示/隐藏对话框
- * @param {Object} formData 需要填充到表单中的数据
+ * @param {Object} [formData={}] 需要填充到表单中的数据
  */
-export function showCreateDialog(show, formData) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ENTITY_MAP_CREATE_DIALOG_SHOW,
-      show,
-      formData
-    });
-  };
-}
+export const showCreateDialog = (show, formData = {}) => dispatch => dispatch({
+  type: ENTITY_MAP_CREATE_DIALOG_SHOW,
+  show,
+  formData
+});
 
 /**
- * 右侧表格，保存操作
+ * 右侧表格，保存操作，然后关闭对话框
  */
 
 export const TREE_NODE_DATA_UPDATE_REQUEST = 'TREE_NODE_DATA_UPDATE_REQUEST';
@@ -291,9 +287,8 @@ export const TREE_NODE_DATA_UPDATE_FAILURE = 'TREE_NODE_DATA_UPDATE_FAILURE';
 
 /**
  * @param {Object} formData 表单提交的数据
- * @param {Number} rowIndex 只有是修改了某一个行，才会传数字，否则传null
  */
-export function updateTreeNodeData(formData, rowIdx) {
+export function updateTreeNodeData(formData) {
   // use `callAPIMiddleware`
   return {
     types: [
@@ -301,14 +296,14 @@ export function updateTreeNodeData(formData, rowIdx) {
       TREE_NODE_DATA_UPDATE_SUCCESS,
       TREE_NODE_DATA_UPDATE_FAILURE
     ],
-    callAPI: (state) => {
-      var requestBodyObj = { ...formData };
-      var opts = {
+    callAPI: () => {
+      let requestBodyObj = { ...formData };
+      let opts = {
         method: 'post',
         headers: {
           'Content-type': 'application/json'
         },
-        mode: "cors",
+        mode: 'cors',
         body: JSON.stringify(requestBodyObj)
       };
       appendCredentials(opts);
@@ -318,16 +313,15 @@ export function updateTreeNodeData(formData, rowIdx) {
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
         .then(resObj => {
-          if (resObj.success === true) {
-          } else {
+          if (resObj.success !== true) {
             throw {
               name: 'SUCCESS_FALSE',
               message: resObj.message
             };
           }
-        })
+        });
     }
-  }
+  };
 }
 
 /**
@@ -458,16 +452,17 @@ export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getSta
   const { entityMap } = getState();
   return dispatch(addTreeNodeData(formData))
     .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)))
-    .then(() => dispatch(showCreateDialog(false, {})));
+    .then(() => dispatch(showCreateDialog(false)));
 };
 
 /**
  * 复合操作：更新并刷新表格
  */
-export const updateTreeNodeDataAndFetchTreeNodeData = (formData, rowIdx) => (dispatch, getState) => {
+export const updateTreeNodeDataAndFetchTreeNodeData = (formData) => (dispatch, getState) => {
   const { entityMap } = getState();
-  return dispatch(updateTreeNodeData(formData, rowIdx))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)));
+  return dispatch(updateTreeNodeData(formData))
+    .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)))
+    .then(() => dispatch(showEditDialog(false)));
 };
 
 /**

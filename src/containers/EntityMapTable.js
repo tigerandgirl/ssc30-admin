@@ -79,7 +79,6 @@ class EntityMapTable extends Component {
 
   // edit form
   handleEditFormSubmit(formData) {
-    const { editDialog: { rowIdx } } = this.props;
     this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
   }
   handleEditFormReset(event) {
