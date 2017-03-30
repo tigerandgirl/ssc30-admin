@@ -349,7 +349,6 @@ class ArchContainer extends Component {
       // 是否启用 转boolean值 为  string 类型
       if(tableData.length >0 ){
         _.map(tableData,function (obj){
-          debugger;
             obj.enable = booleanToString(obj.enable);
             obj.defaultaccount = booleanToString(obj.defaultaccount);
 
