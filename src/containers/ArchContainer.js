@@ -330,10 +330,10 @@ class ArchContainer extends Component {
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(cols);
 
-    let enable = "";
-    if(typeof enable == "boolean" && baseDocId == "dept" ||baseDocId == "project"
+    let checkBoxContent = "";
+    if( baseDocId == "dept" ||baseDocId == "project"
         || baseDocId == "bankaccount" ||baseDocId == "feeitem"  ){
-      enable =(
+      checkBoxContent  =(
           <div style={{ display: 'inline-block', float: 'left' }}>
             <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
           </div>
@@ -352,7 +352,7 @@ class ArchContainer extends Component {
         </AdminAlert>
         <div>
           <div className="btn-bar">
-            {enable}
+            {checkBoxContent}
             <div className="fr">
               <Button onClick={::this.handleCreate}>新增</Button>
             </div>
