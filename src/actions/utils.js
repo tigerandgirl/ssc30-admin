@@ -105,26 +105,6 @@ export function convertDataType({...field}) {
  */
 export function setRequiredFields(baseDocId, {...field}) {
   const data = {
-    dept: {
-      code: true, // dept的code字段是必输字段
-      name: true,
-      pk_org: true
-    },
-    project: {
-      code: true,
-      name: true,
-      classifyid: true
-    },
-    projectclass: {
-      code: true,
-      name: true
-    },
-    user: {
-      name: true,
-      sex: true,
-      email: true,
-      positionstate: true
-    },
     accperiod: { // 会计期间
       pk_org: true,
       description: true,
@@ -135,17 +115,6 @@ export function setRequiredFields(baseDocId, {...field}) {
       enddate: true,
       num: true,
       enable: true
-    },
-    currency: { // 币种
-      pk_org: true,
-      description: true,
-      code: true,
-      name: true,
-      moneydigit: true,
-      moneyrount: true,
-      pricedigit: true,
-      pricerount: true,
-      sign: true
     },
     bank: { // 银行
       pk_org: true,
@@ -164,9 +133,44 @@ export function setRequiredFields(baseDocId, {...field}) {
       defaultaccount: false,
       accountproperty: true
     },
-    feeitemclass:{
-      code:true ,
-      name :true
+    bankclass: {
+      code: true,
+      name: true
+    },
+    currency: { // 币种
+      pk_org: true,
+      description: true,
+      code: true,
+      name: true,
+      moneydigit: true,
+      moneyrount: true,
+      pricedigit: true,
+      pricerount: true,
+      sign: true
+    },
+    dept: {
+      code: true, // dept的code字段是必输字段
+      name: true,
+      pk_org: true
+    },
+    feeitemclass: {
+      code: true,
+      name: true
+    },
+    project: {
+      code: true,
+      name: true,
+      classifyid: true
+    },
+    projectclass: {
+      code: true,
+      name: true
+    },
+    user: {
+      name: true,
+      sex: true,
+      email: true,
+      positionstate: true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
