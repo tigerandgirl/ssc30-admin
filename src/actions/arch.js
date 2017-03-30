@@ -21,7 +21,7 @@ const FETCH_CREDENTIALS_OPTION = 'same-origin';
  * *  0 使用后端开发人员提供的开发机上跑的服务
  * *  1 使用后端提供的测试服务器
  */
-const DEV_BACKEND_INDEX = 1;
+const DEV_BACKEND_INDEX = -1;
 
 /**
  * 根据配置获取到基础档案的绝对路径
@@ -174,7 +174,6 @@ function enableTableDataFail(message){
     message
   }
 }
-
 // rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
 function updateTableDataSuccess(json, rowIdx) {
   // 后端返回的response总包含了修改之后的值，填写到表格中
@@ -404,7 +403,6 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
  * 启用 / 停用
  * */
 export function enableTableData(baseDocId, rowObj){
-  debugger;
   return (dispatch, getState) => {
     var { id,enable } = rowObj; // 40位主键 primary key
     var turnEnable = false ;
@@ -439,7 +437,6 @@ export function enableTableData(baseDocId, rowObj){
   }
 
 }
-
 
 /**
  * 创建和修改表格数据都会调用到这里
@@ -570,6 +567,9 @@ export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj ) {
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(enableTableData(baseDocId, rowObj )).then(() => {
+      setTimeout(function () {
+        dispatch(handleMessage());
+      },3000);
       return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
     });
   };
@@ -798,6 +798,14 @@ export function hideAdminAlert() {
       type: types.HIDE_ADMIN_ALERT
     });
   };
+}
+
+export function handleMessage(){
+  return dispatch =>{
+    dispatch({
+      type:types.HIDE_MESSAGE_TIPS
+    })
+  }
 }
 
 // 对话框中的消息框

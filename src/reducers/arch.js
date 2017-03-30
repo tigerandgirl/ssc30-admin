@@ -16,7 +16,7 @@ import {
   INIT_CREATE_FORM_DATA, UPDATE_CREATE_FORM_FIELD_VALUE,
   SUBMIT_CREATE_FORM, SUBMIT_CREATE_FORM_SUCCESS, SUBMIT_CREATE_FORM_FAIL,
 
-  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,
+  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,HIDE_MESSAGE_TIPS,
   FORM_ALERT_OPEN, FORM_ALERT_CLOSE,
 
   ERROR_MESSAGES_UPDATE,
@@ -54,6 +54,10 @@ const initState = {
   },
   spinner:{
     show:true 
+  },
+  messageTips:{
+    isShow:false,
+    txt:""
   },
   // 当前页面所有的错误信息都扔进来
   errorMessages: [],
@@ -182,10 +186,9 @@ export default function arch(state = initState, action) {
 
     case ENABLE_TABLEDATA_SUCCESS:
       return {...state,
-        adminAlert: {...state.adminAlert,
-          show: true,
-          bsStyle: 'success',
-          message: "操作成功！"
+        messageTips:{...state.messageTips,
+           isShow:true,
+           txt:"操作成功！"
         }
       };
 
@@ -365,6 +368,15 @@ export default function arch(state = initState, action) {
 			}
 		  }
 		}
+      });
+
+    //提示消息
+    case HIDE_MESSAGE_TIPS:
+      return update(state, {
+        messageTips: {
+          isShow: {$set: false},
+          txt:{$set:" "}
+        }
       });
 
     default:
