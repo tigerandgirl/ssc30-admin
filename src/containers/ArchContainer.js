@@ -2,8 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Button , Checkbox } from 'react-bootstrap';
-
+import { Button } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
@@ -19,9 +18,9 @@ class ArchContainer extends Component {
      * [store] 字段模型
      */
     fields: PropTypes.array.isRequired,
-      /**
-       * [store] 表体数据
-       */
+    /**
+     * [store] 表体数据
+     */
     tableData: PropTypes.array.isRequired,
     itemsPerPage: PropTypes.number.isRequired,
     startIndex: PropTypes.number.isRequired,
@@ -42,7 +41,7 @@ class ArchContainer extends Component {
 
   componentWillMount() {
     const { itemsPerPage, startIndex } = this.props;
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex,null,[]);
+    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex, null, []);
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
@@ -55,7 +54,7 @@ class ArchContainer extends Component {
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex,null,[]);
+      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, []);
       this.props.fetchTableColumnsModel(nextType);
     }
   }
@@ -103,7 +102,7 @@ class ArchContainer extends Component {
     // ref is " user " add param : personmobile
     // bug des: 传入手机号为空
 
-    let phoneList =  ["project" , "dept" , "feeitem"];
+    let phoneList =  ["project", "dept", "feeitem"];
       _.map(phoneList,function( obj ,ind ){
           if( baseDocId == obj ){
             if(formData.person){
@@ -131,9 +130,6 @@ class ArchContainer extends Component {
   }
 
   // edit form
-  handleEditFormBlur(index, fieldModel, value) {
-    //this.props.updateEditFormFieldValue(index, fieldModel, value);
-  }
   handleEditFormSubmit(formData) {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
@@ -193,7 +189,7 @@ class ArchContainer extends Component {
    * 跳转到下一页。这样就能避免用户快速点击的问题了。
    */
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
-  //handlePagination(event, selectedEvent) {
+  // handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
     const { itemsPerPage, tableData } = this.props;
     let nextPage = eventKey;
@@ -203,7 +199,7 @@ class ArchContainer extends Component {
   }
 
   getCustomComponent() {
-    var containerThis = this;
+    let containerThis = this;
     return React.createClass({
       handleEdit(event) {
 
@@ -280,7 +276,7 @@ class ArchContainer extends Component {
    * { id: '', code: '', name: '' }
    * ```
    */
-  getFormDefaultData(columnsModel, baseDocId) {
+  getFormDefaultData(columnsModel) {
     let formData = {};
     columnsModel.forEach(fieldModel => {
       // 隐藏字段，比如id字段，不用初始化值
@@ -288,7 +284,7 @@ class ArchContainer extends Component {
         return;
       }
       const fieldId = fieldModel.id;
-      switch(fieldModel.type) {
+      switch (fieldModel.type) {
         case 'ref':
           formData[fieldId] = {
             id: '',
@@ -321,7 +317,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert,spinner,
+      adminAlert, formAlert, spinner,
       params: {
         baseDocId
       },
@@ -332,7 +328,7 @@ class ArchContainer extends Component {
     const cols = fields || [];
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData(cols, baseDocId);
+    const formDefaultData = this.getFormDefaultData(cols);
 
     let enable = "";
     if(typeof enable == "boolean" && baseDocId == "dept" ||baseDocId == "project"
@@ -371,7 +367,7 @@ class ArchContainer extends Component {
             operationColumnClass={this.getCustomComponent()}
           />
         </div>
-        <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
+        <AdminEditDialog className="edit-form" title="编辑" {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
           <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
             onDismiss={::this.handleFormAlertDismiss}
           >
@@ -382,12 +378,11 @@ class ArchContainer extends Component {
           <SSCForm
             fieldsModel={cols}
             defaultData={editFormData}
-            onBlur={::this.handleEditFormBlur}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.handleEditFormReset}
           />
         </AdminEditDialog>
-        <AdminEditDialog className='create-form' title='新增' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
+        <AdminEditDialog className="create-form" title="新增" {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
           <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
@@ -400,20 +395,20 @@ class ArchContainer extends Component {
       </div>
     );
   }
-};
-
-const mapStateToProps = (state, ownProps) => {
-  return {...state.arch,
-    arch: state.arch,
-    tableData: state.arch.tableData,
-    fields: state.arch.fields,
-    totalPage: state.arch.totalPage
-  }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(Actions, dispatch);
-}
+/**
+ * @param {Object} state
+ * @param {Object} ownProps
+ */
+const mapStateToProps = state => ({...state.arch,
+  arch: state.arch,
+  tableData: state.arch.tableData,
+  fields: state.arch.fields,
+  totalPage: state.arch.totalPage
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(ArchContainer);
