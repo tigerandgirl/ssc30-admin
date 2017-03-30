@@ -29,7 +29,7 @@ const ENABLE_DEV_BACKEND = 0;
 function getEntityAPI(path) {
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.YZB_PROD_SERVER + path;
+    return 'http://' + process.env.PROD_SERVER + path;
   }
   return (ENABLE_DEV_BACKEND
     ? `http://${URL.ENTITY_DEV_SERVER}`

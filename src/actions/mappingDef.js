@@ -34,7 +34,7 @@ function getBaseDocURL(path) {
   const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return url(process.env.YZB_PROD_SERVER);
+    return url(process.env.PROD_SERVER);
   }
   if (DEV_BACKEND_INDEX === -1) {
     return url(URL.LOCAL_EXPRESS_SERVER);
@@ -50,7 +50,7 @@ function getMappingDefAPI(path) {
   const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return url(process.env.YZB_PROD_SERVER);
+    return url(process.env.PROD_SERVER);
   }
   if (DEV_BACKEND_INDEX === -1) {
     return url(URL.LOCAL_EXPRESS_SERVER);

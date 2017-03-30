@@ -20,9 +20,8 @@ export const REFER_DEV_SERVER = '172.20.13.230:8090';
 
 /**
  * 【废弃】
- * 请直接使用process.env.YBZ_PROD_SERVER来获取“友报账”服务器IP，
- * 请直接使用process.env.YZB_PROD_SERVER来获取“友账表”服务器IP，
- * 已经在webpack中配置好
+ * 请直接使用`process.env.PROD_SERVER`来获取“友报账/友账表”服务器IP，由编译期来决定代码
+ * 属于哪个项目，已经在webpack中配置好。
  * --------------------------------------------------------------------------
  * 实际联调环境
  * 测试不是直接在这些服务器上使用
