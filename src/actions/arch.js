@@ -17,23 +17,26 @@ const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
 /**
  * 是否启用后端的开发用服务器
- * - 0 使用本地的expressjs服务器伪造数据
- * - 1 使用后端提供的测试服务器
+ * * -1 使用本地的expressjs服务器伪造数据
+ * *  0 使用后端开发人员提供的开发机上跑的服务
+ * *  1 使用后端提供的测试服务器
  */
-const ENABLE_DEV_BACKEND = 0;
+const DEV_BACKEND_INDEX = 1;
 
 /**
  * 根据配置获取到基础档案的绝对路径
  * 比如：http://127.0.0.1:3009/dept/query
  */
 function getBaseDocURL(path) {
+  const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.PROD_SERVER + path;
+    return url(process.env.PROD_SERVER);
   }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.BASEDOC_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+  if (DEV_BACKEND_INDEX === -1) {
+    return url(URL.LOCAL_EXPRESS_SERVER);
+  }
+  return url(URL.BASEDOC_DEV_SERVERS[DEV_BACKEND_INDEX]);
 }
 
 /**
@@ -41,13 +44,15 @@ function getBaseDocURL(path) {
  * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
  */
 function getReferURL(path) {
+  const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.PROD_SERVER + path;
+    return url(process.env.PROD_SERVER);
   }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.REFER_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+  if (DEV_BACKEND_INDEX === -1) {
+    return url(URL.LOCAL_EXPRESS_SERVER);
+  }
+  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
 }
 
 /**
