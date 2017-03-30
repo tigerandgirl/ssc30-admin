@@ -222,8 +222,7 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
       "pk_org": true,
       bank: true,
       description: true,
-      accounttype:true,
-      "enable":true
+      accounttype:true
     },
     "bankclass": {
       "pk_org": true,
@@ -236,12 +235,10 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
       moneyrount: true
     },
     "dept": {
-      "pk_org": true,
-      "enable":true
+      "pk_org": true
     },
     "feeitem": {
-      "pk_org": true,
-      "enable":true
+      "pk_org": true
     },
     "feeitemclass": {
       "pk_org": true
@@ -253,8 +250,7 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
       "pk_org": true
     },
     "project": {
-      "pk_org": true,
-      "enable":true
+      "pk_org": true
     },
     "projectclass": {
       "pk_org": true,
