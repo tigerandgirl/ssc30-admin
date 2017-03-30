@@ -115,7 +115,7 @@ class MappingDef extends Component {
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <div>
+        <div>1
           <SSCGrid className="ssc-grid"
                 columnsModel={tableColumnsModel}
                 tableData={tableBodyData}
