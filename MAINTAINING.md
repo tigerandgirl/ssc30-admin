@@ -28,7 +28,7 @@ git push --follow-tags
 
 ```
 npm run release
-YBZ_PROD_SERVER=10.3.14.240 npm run release # 重新指定后端服务器地址
+PROD_SERVER=10.3.14.240 npm run release # 重新指定后端服务器地址
 ```
 
 ## 发布友报账

@@ -14,7 +14,8 @@ import * as URL from '../constants/URLs';
 /**
  * Fetch API credentials 选项
  * - false 不往Fetch API中添加credentials选项
- * - same-origin 在请求中添加Cookie
+ * - same-origin 在请求中添加Cookie（由于浏览器的same origin policy所以不会在跨域请求
+ *   中添加Cookie）
  */
 const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
@@ -34,7 +35,7 @@ function getBaseDocURL(path) {
   const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return url(process.env.YZB_PROD_SERVER);
+    return url(process.env.PROD_SERVER);
   }
   if (DEV_BACKEND_INDEX === -1) {
     return url(URL.LOCAL_EXPRESS_SERVER);
@@ -50,7 +51,7 @@ function getMappingDefAPI(path) {
   const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return url(process.env.YZB_PROD_SERVER);
+    return url(process.env.PROD_SERVER);
   }
   if (DEV_BACKEND_INDEX === -1) {
     return url(URL.LOCAL_EXPRESS_SERVER);

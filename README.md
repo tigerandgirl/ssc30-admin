@@ -1,4 +1,4 @@
-# ssc30-admin
+# ssc30-admin [![Travis][build-badge]][build] [![AppVeyor][appveyor-badge]][appveyor] [![npm][npm-badge]][npm] [![Codecov][codecov-badge]][codecov]
 
 本项目覆盖的功能包括并不限于：
 
@@ -239,3 +239,15 @@ https://medium.com/lexical-labs-engineering/redux-best-practices-64d59775802e#7f
 
 - https://github.com/marmelab/admin-on-rest 可以借鉴UI
 - https://google.github.io/styleguide/jsoncstyleguide.xml 可以借鉴JSON API Design
+
+[build-badge]: https://travis-ci.org/yyssc/ssc30-admin.svg?branch=master
+[build]: https://travis-ci.org/yyssc/ssc30-admin
+
+[npm-badge]: https://badge.fury.io/js/ssc30-admin.svg
+[npm]: http://badge.fury.io/js/ssc30-admin
+
+[codecov-badge]: https://img.shields.io/codecov/c/github/yyssc/ssc30-admin/master.svg
+[codecov]: https://codecov.io/gh/yyssc/ssc30-admin
+
+[appveyor-badge]: https://img.shields.io/appveyor/ci/yyssc/ssc30-admin/master.svg
+[appveyor]: https://ci.appveyor.com/project/yyssc/ssc30-admin
