@@ -14,7 +14,8 @@ import * as URL from '../constants/URLs';
 /**
  * Fetch API credentials 选项
  * - false 不往Fetch API中添加credentials选项
- * - same-origin 在请求中添加Cookie
+ * - same-origin 在请求中添加Cookie（由于浏览器的same origin policy所以不会在跨域请求
+ *   中添加Cookie）
  */
 const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
