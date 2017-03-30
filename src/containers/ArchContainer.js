@@ -349,8 +349,9 @@ class ArchContainer extends Component {
       // 是否启用 转boolean值 为  string 类型
       if(tableData.length >0 ){
         _.map(tableData,function (obj){
-          obj.enable = booleanToString(obj.enable);
-          obj.defaultaccount = booleanToString(obj.defaultaccount);
+            obj.enable = booleanToString(obj.enable);
+            obj.defaultaccount = booleanToString(obj.defaultaccount);
+
         })
       }
 
@@ -361,10 +362,9 @@ class ArchContainer extends Component {
           }else{
             param="否";
           }
-          return param ;
         }
+        return param ;
       }
-
     }
 
     return (
