@@ -11,7 +11,7 @@ const DEFAULT_YZB_PROD_SERVER = '10.3.14.240';
 
 module.exports = {
   entry: [
-    './src/index'
+    './src/index-ybz'
   ],
   output: {
     path: path.join(__dirname, 'dist'),

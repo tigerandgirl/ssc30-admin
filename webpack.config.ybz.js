@@ -20,7 +20,7 @@ const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim
 module.exports = {
   devtool: 'source-map',
   entry: [
-    './src/index'
+    './src/index-ybz'
   ],
   output: {
     path: path.join(__dirname, 'dist'),

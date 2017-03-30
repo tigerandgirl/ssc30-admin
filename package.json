@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "npm run dev",
-    "dev": "cross-env NODE_ENV=development nodemon --watch devServer.js --ignore db_data ./devServer.js",
+    "dev": "cross-env NODE_ENV=development nodemon --watch devServer-ybz.js ./devServer-ybz.js",
+    "dev:ybz": "cross-env NODE_ENV=development nodemon --watch devServer-ybz.js ./devServer-ybz.js",
+    "dev:yzb": "cross-env NODE_ENV=development nodemon --watch devServer-yzb.js ./devServer-yzb.js",
     "demo": "cross-env NODE_ENV=production node ./demoServer.js",
     "lint": "eslint docs src test tools webpack *.js",
     "tdd": "karma start",
