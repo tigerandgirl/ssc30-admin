@@ -254,7 +254,7 @@ class ArchContainer extends Component {
             baseDocId
             } }= containerThis.props;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
-        if( typeof enable == "boolean" &&　baseDocId == "dept" ||baseDocId == "project"
+        if( baseDocId == "dept" ||baseDocId == "project"
             || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
           resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
