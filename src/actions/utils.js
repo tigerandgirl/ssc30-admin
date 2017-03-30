@@ -153,6 +153,10 @@ export function setRequiredFields(baseDocId, {...field}) {
       name: true,
       pk_org: true
     },
+    feeitem:{
+      code: true,
+      name: true
+    },
     feeitemclass: {
       code: true,
       name: true
@@ -253,7 +257,8 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
       "pk_org": true
     },
     "projectclass": {
-      "pk_org": true
+      "pk_org": true,
+      "enable":true
     },
     "subjectchart": {
       "pk_org": true

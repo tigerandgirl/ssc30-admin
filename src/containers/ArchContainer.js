@@ -254,7 +254,7 @@ class ArchContainer extends Component {
             baseDocId
             } }= containerThis.props;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
-        if( typeof enable == "boolean" &&　baseDocId == "dept" ||baseDocId == "project"
+        if( baseDocId == "dept" ||baseDocId == "project"
             || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
           resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
@@ -330,14 +330,35 @@ class ArchContainer extends Component {
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(cols);
 
-    let enable = "";
-    if(typeof enable == "boolean" && baseDocId == "dept" ||baseDocId == "project"
+    let checkBoxContent = "";
+    if( baseDocId == "dept" ||baseDocId == "project"
         || baseDocId == "bankaccount" ||baseDocId == "feeitem"  ){
-      enable =(
+
+      checkBoxContent  =(
           <div style={{ display: 'inline-block', float: 'left' }}>
             <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
           </div>
       )
+
+      // 是否启用 转boolean值 为  string 类型
+      if(tableData.length >0 ){
+        _.map(tableData,function (obj){
+          obj.enable = booleanToString(obj.enable);
+          obj.defaultaccount = booleanToString(obj.defaultaccount);
+        })
+      }
+
+      function booleanToString( param ){
+        if( typeof param == "boolean"){
+          if(param){
+            param="是";
+          }else{
+            param="否";
+          }
+          return param ;
+        }
+      }
+
     }
 
     return (
@@ -352,7 +373,7 @@ class ArchContainer extends Component {
         </AdminAlert>
         <div>
           <div className="btn-bar">
-            {enable}
+            {checkBoxContent}
             <div className="fr">
               <Button onClick={::this.handleCreate}>新增</Button>
             </div>
