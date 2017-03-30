@@ -28,7 +28,10 @@ const DEV_BACKEND_INDEX = 1;
  * 比如：http://127.0.0.1:3009/dept/query
  */
 function getBaseDocURL(path) {
-  const url = server => `http://${server}${path}`;
+  const prefix = process.env.NODE_ENV === 'production'
+    ? '/ficloud'
+    : '';
+  const url = server => `http://${server}${prefix}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
