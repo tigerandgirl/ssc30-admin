@@ -333,11 +333,32 @@ class ArchContainer extends Component {
     let checkBoxContent = "";
     if( baseDocId == "dept" ||baseDocId == "project"
         || baseDocId == "bankaccount" ||baseDocId == "feeitem"  ){
+
       checkBoxContent  =(
           <div style={{ display: 'inline-block', float: 'left' }}>
             <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
           </div>
       )
+
+      // 是否启用 转boolean值 为  string 类型
+      if(tableData.length >0 ){
+        _.map(tableData,function (obj){
+          obj.enable = booleanToString(obj.enable);
+          obj.defaultaccount = booleanToString(obj.defaultaccount);
+        })
+      }
+
+      function booleanToString( param ){
+        if( typeof param == "boolean"){
+          if(param){
+            param="是";
+          }else{
+            param="否";
+          }
+          return param ;
+        }
+      }
+
     }
 
     return (
