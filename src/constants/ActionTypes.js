@@ -86,3 +86,6 @@ export const GOTO_PAGE = 'GOTO_PAGE';
 // 修复refer fields
 
 export const REFER_FIELDS_UPDATE = 'REFER_FIELDS_UPDATE';
+
+// 提示框信息
+export const HIDE_MESSAGE_TIPS = "HIDE_MESSAGE_TIPS";
