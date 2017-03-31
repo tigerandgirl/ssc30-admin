@@ -189,7 +189,7 @@ class EntityMapTable extends Component {
           <p>{pageAlert.message}</p>
         </AdminAlert>
         <SSCGrid tableData={entityTableBodyData} columnsModel={cols}
-          striped bordered condensed hover
+          className="ssc-grid"
           operationColumn={{}}
           operationColumnClass={this.getCustomComponent()}
         />
