@@ -315,7 +315,14 @@ class AccountingSubject extends Component {
 
     // 表单字段模型 / 表格列模型
     const cols = fields || [];
-
+    const tableCols = cols.filter(function (field) {
+      if(field.id ==='enable' || field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3') {
+        return false;
+      }else {
+        return true;
+      }
+    });
+    
     // 会计平台子科目表单字段模型 / 表格列模型
     const childSubjectCols = childSubjectFields || [];
 
@@ -340,7 +347,7 @@ class AccountingSubject extends Component {
               <Button onClick={::this.handleCreate}>新增</Button>
             </div>
           </div>
-          <SSCGrid tableData={tableData} columnsModel={cols} className="ssc-grid"
+          <SSCGrid tableData={tableData} columnsModel={tableCols} className="ssc-grid"
                    paging
                    itemsPerPage={itemsPerPage}
                    totalPage={this.props.totalPage}

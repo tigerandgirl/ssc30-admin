@@ -58,7 +58,7 @@ function getReferURL(path) {
  */
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud/querydoctype');
-const getSaveURL = type => getBaseDocURL(`/ficloud/${type}/save`);
+const getSaveURL = type => getBaseDocURL(`/ficloud/${type}/update`);
 const getAddURL = type => getBaseDocURL(`/ficloud/${type}/add`);
 const getDeleteURL = type => getBaseDocURL(`/ficloud/${type}/delete`);
 const getQueryURL = type => getBaseDocURL(`/ficloud/${type}/query`);
@@ -439,7 +439,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
             /* 7 */ .map(utils.fixReferKey)
             /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
             /* 9 */ .map(utils.fixEnumData)
-            /* 10 */.filter(filterChildSubFileds);
+            /* 10 */.filter(filterSubjectFileds);
             dispatch(receiveChildSubjectFieldsSuccess(json, fields));
           } else {
             dispatch(receiveChildSubjectFieldsFail(
@@ -1038,11 +1038,37 @@ function filterChildSubFileds({...field}) {
  * @returns {boolean}
  */
 function filterSubjectFileds({...field}) {
-  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'accproperty' || field.id === 'enable'  || field.id === 'description' ) {
+  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'accproperty' || field.id === 'enable'  || field.id === 'description'  || field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3' ) {
     return true;
   } else {
     return false;
   }
+}
+
+
+/**
+ * 根据参照的类型来添加参照的config object
+ * TODO 需要转移到utils.js中
+ */
+function setReferFields(ReferDataURL, ReferUserDataURL, field) {
+  const getReferConfig = fieldDocType => {
+    const config = {
+      referConditions: {
+        refCode: fieldDocType,
+        refType: 'table',
+      }
+    };
+    if (fieldDocType === 'user') {
+      config.referDataUrl = ReferUserDataURL;
+    } else {
+      config.referDataUrl = ReferDataURL;
+    }
+    return config;
+  };
+  if (field.type === 'ref') {
+    field.referConfig = getReferConfig(field.refCode);
+  }
+  return field;
 }
 
 /**
