@@ -9,6 +9,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const moment = require('moment');
 const childProcess = require('child_process');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // 友报账生产环境服务器
 const DEFAULT_PROD_SERVER = '172.20.4.88:8088';
@@ -60,7 +61,13 @@ module.exports = {
       version: packageJSON.version,
       revision: GIT_REVISION,
       buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
-    })
+    }),
+    new CopyWebpackPlugin([
+      // {from: 'src/www/css', to: 'css'},
+      {from: 'src/images', to: 'images'},
+      // {from: 'src/www/index.html'},
+      // {from: 'src/www/versions.json'},
+    ]),
   ],
   module: {
     loaders: [
