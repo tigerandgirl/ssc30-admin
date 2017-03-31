@@ -35,10 +35,6 @@ class MessageTips extends React.Component{
                 <Modal.Body>
                     { txt }
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={::this.onHideEvent }>关闭</Button>
-                </Modal.Footer>
-
             </Modal>
         )
 
