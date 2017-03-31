@@ -58,7 +58,7 @@ function getReferURL(path) {
  */
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud/querydoctype');
-const getSaveURL = type => getBaseDocURL(`/ficloud/${type}/update`);
+const getUpdateURL = type => getBaseDocURL(`/ficloud/${type}/update`);
 const getAddURL = type => getBaseDocURL(`/ficloud/${type}/add`);
 const getDeleteURL = type => getBaseDocURL(`/ficloud/${type}/delete`);
 const getQueryURL = type => getBaseDocURL(`/ficloud/${type}/query`);
@@ -655,7 +655,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
     };
     appendCredentials(opts);
 
-    var url = getSaveURL(baseDocId);
+    var url = getAddURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)
@@ -755,7 +755,7 @@ export function updateTableData(baseDocId, fields, formData, rowIdx) {
     };
     appendCredentials(opts);
 
-    var url = getSaveURL(baseDocId);
+    var url = getUpdateURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)
