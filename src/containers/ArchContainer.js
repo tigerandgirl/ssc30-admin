@@ -42,7 +42,12 @@ class ArchContainer extends Component {
 
   componentWillMount() {
     const { itemsPerPage, startIndex } = this.props;
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex, null, []);
+    // TODO 此处缺少判断
+    const conditions =  [
+      {"field":"enable","datatype":"boolean","value":"true"}
+    ];
+
+    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex, null, conditions );
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
@@ -176,11 +181,11 @@ class ArchContainer extends Component {
   handleEnableCheck(event) {
     var e = event.target;
     const { params: {baseDocId}, itemsPerPage, startIndex } = this.props;
-    var conditions = [];
+    var conditions = [
+      {"field":"enable","datatype":"boolean","value":"true"}
+    ];
     if(e.checked){
-      conditions = [
-         {"field":"enable","datatype":"boolean","value":"false"}
-      ];
+      conditions = [];
     }
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
