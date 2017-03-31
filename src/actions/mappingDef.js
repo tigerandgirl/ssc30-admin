@@ -68,6 +68,8 @@ const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
  * 转换规则模型 组装后端接口
  */
 const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud/mappingdef/query');
+const MAPPING_DEF_SAVE_URL = getMappingDefAPI('/ficloud/mappingdef/save');
+const MAPPING_DEF_DELETE_URL = getMappingDefAPI('/ficloud/mappingdef/delete');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
@@ -195,6 +197,53 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
 }
 
 /**
+ * 表格，保存操作，然后关闭对话框
+ */
+
+export const MAPPING_DEF_TABLE_BODY_DATA_UPDATE_REQUEST = 'MAPPING_DEF_TABLE_BODY_DATA_UPDATE_REQUEST';
+export const MAPPING_DEF_TABLE_BODY_DATA_UPDATE_SUCCESS = 'MAPPING_DEF_TABLE_BODY_DATA_UPDATE_SUCCESS';
+export const MAPPING_DEF_TABLE_BODY_DATA_UPDATE_FAILURE = 'MAPPING_DEF_TABLE_BODY_DATA_UPDATE_FAILURE';
+
+/**
+ * @param {Object} formData 表单提交的数据
+ */
+export function updateTableBodyData(formData) {
+  // use `callAPIMiddleware`
+  return {
+    types: [
+      MAPPING_DEF_TABLE_BODY_DATA_UPDATE_REQUEST,
+      MAPPING_DEF_TABLE_BODY_DATA_UPDATE_SUCCESS,
+      MAPPING_DEF_TABLE_BODY_DATA_UPDATE_FAILURE
+    ],
+    callAPI: () => {
+      let requestBodyObj = { ...formData };
+      let opts = {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        mode: 'cors',
+        body: JSON.stringify(requestBodyObj)
+      };
+      appendCredentials(opts);
+
+      const url = MAPPING_DEF_SAVE_URL;
+      return fetch(url, opts)
+        .then(utils.checkHTTPStatus)
+        .then(utils.parseJSON)
+        .then(resObj => {
+          if (resObj.success !== true) {
+            throw {
+              name: 'SUCCESS_FALSE',
+              message: resObj.message
+            };
+          }
+        });
+    }
+  };
+}
+
+/**
  * 用于显示错误的tooltip
  */
 
@@ -211,3 +260,36 @@ export function showPageAlert(show) {
     });
   };
 }
+
+/**
+ * 编辑对话框
+ */
+
+export const MAPPING_DEF_EDIT_DIALOG_SHOW = 'MAPPING_DEF_EDIT_DIALOG_SHOW';
+
+/**
+ * 显示/隐藏编辑/创建窗口
+ * @param {boolean} show 是否显示
+ * @param {Number} [rowIdx=null] 编辑行的index
+ * @param {Object} [editFormData={}] 编辑行的数据，用于填充表单
+ */
+export function showEditDialog(show, rowIdx = null, editFormData = {}) {
+  return (dispatch) => {
+    dispatch({
+      type: MAPPING_DEF_EDIT_DIALOG_SHOW,
+      show,
+      rowIdx,
+      editFormData
+    });
+  };
+}
+
+/**
+ * 复合操作：更新并刷新表格
+ */
+export const updateTreeNodeDataAndFetchTreeNodeData = (formData) => (dispatch, getState) => {
+  const { mappingDef } = getState();
+  return dispatch(updateTableBodyData(formData))
+    .then(() => dispatch(fetchTableBodyData(mappingDef.itemsPerPage, mappingDef.startIndex)))
+    .then(() => dispatch(showEditDialog(false)));
+};

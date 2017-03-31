@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Grid as SSCGrid } from 'ssc-grid';
+import { Grid as SSCGrid, Form as SSCForm} from 'ssc-grid';
 
+import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 
 import * as Actions from '../actions/mappingDef';
@@ -19,10 +20,14 @@ const BASE_DOC_ID = 'mappingdef';
 
 class MappingDef extends Component {
   static propTypes = {
+    editDialog: PropTypes.object.isRequired,
+    editFormData: PropTypes.object.isRequired,
     fetchTableBodyData: PropTypes.func.isRequired,
     fetchTableColumnsModel: PropTypes.func.isRequired,
     itemsPerPage: PropTypes.number,
     pageAlert: PropTypes.object.isRequired,
+    serverMessage: PropTypes.string.isRequired,
+    showEditDialog: PropTypes.func.isRequired,
     showPageAlert: PropTypes.func.isRequired,
     startIndex: PropTypes.number.isRequired,
     /**
@@ -33,7 +38,8 @@ class MappingDef extends Component {
      * store中存储的表头数据
      */
     tableColumnsModel: PropTypes.array.isRequired,
-    totalPage: PropTypes.number
+    totalPage: PropTypes.number,
+    updateTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired
   }
 
   state = {
@@ -84,8 +90,15 @@ class MappingDef extends Component {
         const { rowIdx, rowObj } = this.props;
         // 将rowData保存到store中
         container.props.showEditDialog(rowIdx, rowObj);
-        // 从store中取出editFormData填充到表单上
-        container.props.initEditFormData(rowObj);
+      },
+      handleRemove(event) {
+        if (!confirm('是否删除？')) {
+          return;
+        }
+        const { rowIdx, rowObj } = this.props;
+        const { startIndex } = container.props;
+        container.props.deleteTableDataAndFetchTableBodyData(BASE_DOC_ID,
+          rowIdx, rowObj, startIndex);
       },
       render() {
         const {rowObj: {
@@ -94,8 +107,10 @@ class MappingDef extends Component {
         }} = this.props;
         return (
           <td>
+            <span onClick={this.handleRemove}>删除</span>
+            <span onClick={this.handleEdit}>修改</span>
             <Link to={`/entity-map-no-sidebar-single-page/${des_billtype}/${id}`}>
-              编辑
+              子表
             </Link>
           </td>
         );
@@ -103,8 +118,24 @@ class MappingDef extends Component {
     });
   }
 
+  /**
+   * 编辑对话框
+   */
+  // 点击dialog的关闭按钮
+  closeEditDialog() {
+    this.props.showEditDialog(false);
+  }
+  handleEditFormSubmit(formData) {
+    this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
+  }
+  handleEditFormReset() {
+    this.props.showEditDialog(false);
+  }
+
   render() {
-    const { itemsPerPage, tableColumnsModel, tableBodyData, pageAlert } = this.props;
+    const {
+      itemsPerPage, tableColumnsModel, tableBodyData, pageAlert
+    } = this.props;
 
     return (
       <div className="mapping-def-container content">
@@ -117,30 +148,46 @@ class MappingDef extends Component {
         </AdminAlert>
         <div>
           <SSCGrid className="ssc-grid"
-                columnsModel={tableColumnsModel}
-                tableData={tableBodyData}
-                // 分页
-                paging
-                itemsPerPage={itemsPerPage}
-                totalPage={this.props.totalPage}
-                activePage={this.state.activePage}
-                onPagination={::this.handlePagination}
-                operationColumn={{}}
-                operationColumnClass={this.getCustomComponent()}
+            columnsModel={tableColumnsModel}
+            tableData={tableBodyData}
+            // 分页
+            paging
+            itemsPerPage={itemsPerPage}
+            totalPage={this.props.totalPage}
+            activePage={this.state.activePage}
+            onPagination={::this.handlePagination}
+            operationColumn={{}}
+            operationColumnClass={this.getCustomComponent()}
           />
         </div>
+        <AdminEditDialog
+          className="edit-form"
+          title="编辑"
+          show={this.props.editDialog.show}
+          onHide={::this.closeEditDialog}
+        >
+          <p className="server-message" style={{color: 'red'}}>
+            {this.props.serverMessage}
+          </p>
+          <SSCForm
+            fieldsModel={tableColumnsModel}
+            defaultData={this.props.editFormData}
+            onSubmit={::this.handleEditFormSubmit}
+            onReset={::this.handleEditFormReset}
+          />
+        </AdminEditDialog>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state/* , ownProps */) => {
   return {...state.mappingDef};
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(Actions, dispatch);
-}
+};
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(MappingDef);

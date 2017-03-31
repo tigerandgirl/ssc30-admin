@@ -27,7 +27,13 @@ const initState = {
       resBody: '' // 需要改成details，因为这里不仅仅会填写response body
     }
   },
-  serverMessage: ''
+  serverMessage: '',
+  // 编辑对话框
+  editDialog: {
+    show: false,
+    rowIdx: null // 当前编辑框对应表格的行index
+  },
+  editFormData: {}
 };
 
 // Show case for redux-actions
@@ -79,6 +85,18 @@ export default handleActions({
     pageAlert: {
       show: {$set: action.show}
     }
+  }),
+
+  /**
+   * 带表单的编辑对话框
+   */
+
+  [ActionTypes.MAPPING_DEF_EDIT_DIALOG_SHOW]: (state, action) => ({...state,
+    editDialog: {
+      show: action.show,
+      rowIdx: action.rowIdx
+    },
+    editFormData: action.editFormData
   })
 
 }, initState);
