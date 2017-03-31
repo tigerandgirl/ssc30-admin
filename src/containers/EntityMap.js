@@ -171,37 +171,33 @@ class EntityMap extends Component {
     const defaultExpandedKeys = getDefaultExpandedKeys(this.props.treeData);
 
     return (
-      <div className="entity-map-container">
-        <Grid>
-          <Row>
-            <Col>
-              <div style={{ display: 'inline-block', float: 'right' }}>
-                <Button onClick={::this.handleCreate}>新增</Button>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col className="col-fixed-230">
-              {this.props.treeData.length !== 0
-                ? <Tree
-                    onSelect={::this.onSelect}
-                    checkable
-                    onCheck={::this.onCheck}
-                    checkedKeys={this.state.checkedKeys}
-                    defaultExpandedKeys={defaultExpandedKeys}
-                    loadData={::this.onLoadData}
-                  >
-                    {treeNodes}
-                  </Tree>
-                : null
-              }
-            </Col>
-            <Col className="col-offset-250">
-              <EntityMapTable />
-            </Col>
-          </Row>
-        </Grid>
-      </div>
+        
+        <div>
+            <div className="head">
+                <button className="btn btn-default" onClick={::this.handleCreate}>新增</button>
+            </div>
+            <div className="ledger-content clearfix">
+                <div className="ledger-content-left">
+                    {this.props.treeData.length !== 0
+                        ? <Tree
+                        onSelect={::this.onSelect}
+                        checkable
+                        onCheck={::this.onCheck}
+                        checkedKeys={this.state.checkedKeys}
+                        defaultExpandedKeys={defaultExpandedKeys}
+                        loadData={::this.onLoadData}
+                    >
+                        {treeNodes}
+                    </Tree>
+                        : null
+                    }
+                </div>
+                <div className="ledger-content-right">
+                    <EntityMapTable />
+                </div>
+            </div>
+        </div>
+
     );
   }
 }

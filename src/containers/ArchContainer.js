@@ -369,6 +369,7 @@ class ArchContainer extends Component {
 
     return (
       <div className="content">
+        <div className="blank" />
         <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
         <MessageTips isShow={ messageTips.isShow}  onHideEvent = {::this.handleCloseMessage}
                      txt={messageTips.txt} autoHide={ true }  refs="messageTip"> </MessageTips>
