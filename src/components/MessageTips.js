@@ -26,12 +26,9 @@ class MessageTips extends React.Component{
 
     render(){
         // bsStyle={ bsStyle }
-        const { isShow ,txt , autoHide  } = this.props ;
+        const { isShow ,txt } = this.props ;
         return(
-            <Modal show ={ isShow }  onHide={::this.onHideEvent }  autoHide = { autoHide } bsSize="sm">
-                <Modal.Header closeButton>
-                    <Modal.Title>提示</Modal.Title>
-                </Modal.Header>
+            <Modal show ={ isShow }  onHide={::this.onHideEvent }   bsSize="sm">
                 <Modal.Body>
                     { txt }
                 </Modal.Body>
