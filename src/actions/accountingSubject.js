@@ -1038,11 +1038,37 @@ function filterChildSubFileds({...field}) {
  * @returns {boolean}
  */
 function filterSubjectFileds({...field}) {
-  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'accproperty' || field.id === 'enable'  || field.id === 'description' ) {
+  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'accproperty' || field.id === 'enable'  || field.id === 'description'  || field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3' ) {
     return true;
   } else {
     return false;
   }
+}
+
+
+/**
+ * 根据参照的类型来添加参照的config object
+ * TODO 需要转移到utils.js中
+ */
+function setReferFields(ReferDataURL, ReferUserDataURL, field) {
+  const getReferConfig = fieldDocType => {
+    const config = {
+      referConditions: {
+        refCode: fieldDocType,
+        refType: 'table',
+      }
+    };
+    if (fieldDocType === 'user') {
+      config.referDataUrl = ReferUserDataURL;
+    } else {
+      config.referDataUrl = ReferDataURL;
+    }
+    return config;
+  };
+  if (field.type === 'ref') {
+    field.referConfig = getReferConfig(field.refCode);
+  }
+  return field;
 }
 
 /**
