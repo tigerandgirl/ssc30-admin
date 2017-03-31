@@ -8,6 +8,7 @@ const webpack = require('webpack');
 
 // 友账表生产环境服务器
 const DEFAULT_PROD_SERVER = '59.110.123.20';
+const DEFAULT_PATH_PREFIX = '/ficloud';
 
 module.exports = {
   entry: [
@@ -31,7 +32,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production'),
-        'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER)
+        'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
+        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX)
       }
     })
   ],

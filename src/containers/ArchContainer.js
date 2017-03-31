@@ -8,6 +8,7 @@ import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
+import MessageTips from '../components/MessageTips';
 
 import * as Actions from '../actions/arch';
 
@@ -184,6 +185,11 @@ class ArchContainer extends Component {
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
 
+  // 关闭弹窗口
+  handleCloseMessage(){
+    this.props.handleMessage();
+  }
+
   /**
    * 用户点击下一页的时候，组件先向后端请求数据，等数据回来之后，再把分页组件
    * 跳转到下一页。这样就能避免用户快速点击的问题了。
@@ -254,7 +260,7 @@ class ArchContainer extends Component {
             baseDocId
             } }= containerThis.props;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
-        if( typeof enable == "boolean" &&　baseDocId == "dept" ||baseDocId == "project"
+        if( baseDocId == "dept" ||baseDocId == "project"
             || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
           resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
@@ -317,7 +323,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert, spinner,
+      adminAlert, formAlert, spinner,messageTips,
       params: {
         baseDocId
       },
@@ -325,7 +331,7 @@ class ArchContainer extends Component {
     } = this.props;
 
     // 表单字段模型 / 表格列模型
-    const cols = fields || [];
+    let cols = fields || [];
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(cols);
@@ -339,31 +345,30 @@ class ArchContainer extends Component {
             <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
           </div>
       )
-
-      // 是否启用 转boolean值 为  string 类型
-      if(tableData.length >0 ){
-        _.map(tableData,function (obj){
-          obj.enable = booleanToString(obj.enable);
-          obj.defaultaccount = booleanToString(obj.defaultaccount);
-        })
-      }
-
-      function booleanToString( param ){
-        if( typeof param == "boolean"){
-          if(param){
-            param="是";
-          }else{
-            param="否";
-          }
-          return param ;
-        }
-      }
-
     }
+      function setFormatterBoolean(field) {
+          switch (field.type) {
+              case 'boolean':
+                  field.formatter = {
+                      type: 'custom',
+                      callback: function (value) {
+                          return value ? '是' : '否';
+                      }
+                  };
+                  break;
+              default:
+                  break;
+          }
+          return field;
+      }
+      cols = cols.map(setFormatterBoolean);
 
     return (
       <div className="content">
+        <div className="blank" />
         <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
+        <MessageTips isShow={ messageTips.isShow}  onHideEvent = {::this.handleCloseMessage}
+                     txt={messageTips.txt} autoHide={ true }  refs="messageTip"> </MessageTips>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >

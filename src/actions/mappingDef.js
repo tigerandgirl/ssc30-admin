@@ -25,7 +25,7 @@ const FETCH_CREDENTIALS_OPTION = 'same-origin';
  * *  0 使用后端开发人员提供的开发机上跑的服务
  * *  1 使用后端提供的测试服务器
  */
-const DEV_BACKEND_INDEX = 1;
+const DEV_BACKEND_INDEX = -1;
 
 /**
  * 根据配置获取到基础档案的绝对路径

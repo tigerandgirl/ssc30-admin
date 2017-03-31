@@ -153,6 +153,11 @@ export function setRequiredFields(baseDocId, {...field}) {
       name: true,
       pk_org: true
     },
+    feeitem:{
+      code: true,
+      name: true,
+      classifyid:true
+    },
     feeitemclass: {
       code: true,
       name: true

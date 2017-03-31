@@ -43,6 +43,22 @@ function getURL(path) {
 }
 
 /**
+ * 根据配置获取到参照的绝对路径
+ * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
+ */
+function getReferURL(path) {
+  const url = server => `http://${server}${path}`;
+  // 生产环境下直接使用生产服务器IP
+  if (process.env.NODE_ENV === 'production') {
+    return url(process.env.PROD_SERVER);
+  }
+  if (DEV_BACKEND_INDEX === -1) {
+    return url(URL.LOCAL_EXPRESS_SERVER);
+  }
+  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
+}
+
+/**
  * 实体映射模型 exchanger/entitymap.md
  */
 
@@ -56,6 +72,11 @@ const OUTER_ENTITY_TREE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/queryno
 const OUTER_ENTITY_TREE_ADD_NODE_DATA_URL = getURL('/ficloud/outerentitytree/addnodedata');
 const OUTER_ENTITY_TREE_UPDATE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/updatenodedata');
 const OUTER_ENTITY_TREE_DEL_NODE_DATA_URL = getURL('/ficloud/outerentitytree/delnodedata');
+/**
+ * 参照 组装后端接口
+ */
+const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
+const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
@@ -218,15 +239,19 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
           // 6. 有些字段的类型错误，暂时在前端写死新类型
           // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
           // 8. 添加参照的配置
+          // 9. 枚举的存储结构和前端不一致，需要转化一下
+          // 10. 在字段上设置长度校验
           let fieldsModel = resObj.data.head
-            /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
-            /* 2 */ .map(utils.fixFieldTypo)
-            /* 3 */ .map(utils.convertDataType)
-            /* 4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
-            /* 5 */ .map(utils.setHiddenFields)
-            /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
-            /* 7 */ .map(utils.fixReferKey)
-            /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
+            /*  1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
+            /*  2 */ .map(utils.fixFieldTypo)
+            /*  3 */ .map(utils.convertDataType)
+            /*  4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
+            /*  5 */ .map(utils.setHiddenFields)
+            /*  6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
+            /*  7 */ .map(utils.fixReferKey)
+            /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+            /*  9 */ .map(utils.fixEnumData)
+            /* 10 */ .map(utils.setLengthValidation);
 
           return {
             fieldsModel,

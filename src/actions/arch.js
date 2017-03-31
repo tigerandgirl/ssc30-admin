@@ -17,23 +17,26 @@ const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
 /**
  * 是否启用后端的开发用服务器
- * - 0 使用本地的expressjs服务器伪造数据
- * - 1 使用后端提供的测试服务器
+ * * -1 使用本地的expressjs服务器伪造数据
+ * *  0 使用后端开发人员提供的开发机上跑的服务
+ * *  1 使用后端提供的测试服务器
  */
-const ENABLE_DEV_BACKEND = 0;
+const DEV_BACKEND_INDEX = -1;
 
 /**
  * 根据配置获取到基础档案的绝对路径
  * 比如：http://127.0.0.1:3009/dept/query
  */
 function getBaseDocURL(path) {
+  const url = server => `http://${server}${process.env.PATH_PREFIX}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.PROD_SERVER + path;
+    return url(process.env.PROD_SERVER);
   }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.BASEDOC_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+  if (DEV_BACKEND_INDEX === -1) {
+    return url(URL.LOCAL_EXPRESS_SERVER);
+  }
+  return url(URL.BASEDOC_DEV_SERVERS[DEV_BACKEND_INDEX]);
 }
 
 /**
@@ -41,13 +44,15 @@ function getBaseDocURL(path) {
  * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
  */
 function getReferURL(path) {
+  const url = server => `http://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
-    return 'http://' + process.env.PROD_SERVER + path;
+    return url(process.env.PROD_SERVER);
   }
-  return (ENABLE_DEV_BACKEND
-    ? `http://${URL.REFER_DEV_SERVER}`
-    : `http://${URL.LOCAL_EXPRESS_SERVER}`) + path;
+  if (DEV_BACKEND_INDEX === -1) {
+    return url(URL.LOCAL_EXPRESS_SERVER);
+  }
+  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
 }
 
 /**
@@ -143,30 +148,29 @@ function deleteTableDataSuccess(json) {
   return {
     type: types.DELETE_TABLEDATA_SUCCESS,
     data: json.data
-  }
+  };
 }
 
 function deleteTableDataFail(message) {
   return {
     type: types.DELETE_TABLEDATA_FAIL,
     message
-  }
+  };
 }
 
-function enableTableDataSuccess(json){
+function enableTableDataSuccess(json) {
   return {
     type: types.ENABLE_TABLEDATA_SUCCESS,
     data: json.data
-  }
+  };
 }
 
-function enableTableDataFail(message){
+function enableTableDataFail(message) {
   return {
     type: types.ENABLE_TABLEDATA_FAIL,
     message
-  }
+  };
 }
-
 // rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
 function updateTableDataSuccess(json, rowIdx) {
   // 后端返回的response总包含了修改之后的值，填写到表格中
@@ -178,7 +182,7 @@ function updateTableDataSuccess(json, rowIdx) {
       rowIdx,
       rowData: json.data // json.data中保存了后端返回的改行修改后的新数据
     }
-  }
+  };
 }
 
 function updateTableDataFail(message, resBody) {
@@ -186,34 +190,32 @@ function updateTableDataFail(message, resBody) {
     type: types.TABLEDATA_UPDATE_FAIL,
     message,
     resBody
-  }
+  };
 }
 
 /**
  * 跳转到页
  */
 export function gotoPage(startIndex, nextPage) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: types.GOTO_PAGE,
       startIndex,
       nextPage
     });
-  }
+  };
 }
 
 // 这个接口只获取表格体的数据
 export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage, conditions) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch(requestTableData());
-    const { arch } = getState();
-
-    var opts = {
+    let opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
-      mode: "cors",
+      mode: 'cors',
       body: JSON.stringify({
         begin: startIndex,
         groupnum: itemsPerPage,
@@ -222,20 +224,19 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
     };
     appendCredentials(opts);
 
-    var url = getQueryURL(baseDocId);
+    let url = getQueryURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         // TODO: HTTP状态检查，需要独立成helper function
         if (response.status >= 200 && response.status < 300) {
           return response;
-        } else {
-          var error = new Error(response.statusText);
-          error.response = response;
-          response.text().then(text => {
-            dispatch(receiveTableBodyDataFail('后端返回的HTTP status code不是200', text));
-          });
-          throw error;
         }
+        let error = new Error(response.statusText);
+        error.response = response;
+        response.text().then(text => {
+          dispatch(receiveTableBodyDataFail('后端返回的HTTP status code不是200', text));
+        });
+        throw error;
       })
       .then(utils.parseJSON)
       .then(json => {
@@ -255,18 +256,18 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
           dispatch(receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
             json.message));
         }
-      }).catch(function (err) {
-        console.log("fetch table body error:", err);
+      }).catch(err => {
+        console.log('fetch table body error:', err);
       });
-  }
+  };
 }
 
 /**
  * 复合操作：获取表格数据并将页码设定为下一页
  */
 export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage) {
-  return (dispatch, getState) => {
-    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex,null,[]))
+  return (dispatch) => {
+    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, []))
       .then(() => {
         return dispatch(gotoPage(startIndex, nextPage));
       });
@@ -280,31 +281,29 @@ export function fetchTableColumnsModel(baseDocId) {
   return (dispatch) => {
     dispatch(requestTableColumnsModel());
 
-    var opts = {
+    let opts = {
       method: 'post',
       headers: {
-        'Content-type': 'application/x-www-form-urlencoded'//,
-        //'Cookie': 'JSESSIONID=F0F88957BD3C1D6A07DFD36342DDA85F; JSESSIONID=D4D2196BE3223A695DA71EAED9AD93BD; _ga=GA1.1.359480174.1488286701; tenant_username=ST-36826-ojRQCYPdYRcN9IzSQa3H-cas01.example.org__635c1227-8bcb-4f65-b64d-4d07224101f5; tenant_token=YEI2AhHB42hgnqSuvuF8giN%2Bwjgm5LmzcXb0qRBee5sC8el7vf0Zi%2Bh%2B%2Bjn5HzH%2FKMhsx4DpzJsZNFZOvRffUg%3D%3D; SERVERID=aa7d5a15ad52d23df4ab9aa3ef3a436c|1488335283|1488335175'
+        'Content-type': 'application/x-www-form-urlencoded'
       },
-      mode: "cors",
+      mode: 'cors',
       body: `doctype=${baseDocId}`
     };
     appendCredentials(opts);
 
-    var url = `${FICLOUDPUB_INITGRID_URL}`;
+    let url = `${FICLOUDPUB_INITGRID_URL}`;
     return fetch(url, opts)
       .then(response => {
         // TODO: HTTP状态检查，需要独立成helper function
         if (response.status >= 200 && response.status < 300) {
           return response;
-        } else {
-          var error = new Error(response.statusText);
-          error.response = response;
-          response.text().then(text => {
-            dispatch(receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text));
-          });
-          throw error;
         }
+        let error = new Error(response.statusText);
+        error.response = response;
+        response.text().then(text => {
+          dispatch(receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text));
+        });
+        throw error;
       })
       .then(response => {
         return response.json();
@@ -334,7 +333,7 @@ export function fetchTableColumnsModel(baseDocId) {
               /*  7 */ .map(utils.fixReferKey)
               /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
               /*  9 */ .map(utils.fixEnumData)
-              /* 10 */ .map(utils.setLengthValidation)
+              /* 10 */ .map(utils.setLengthValidation);
               /* 11 */
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
@@ -344,17 +343,16 @@ export function fetchTableColumnsModel(baseDocId) {
               JSON.stringify(json.data, null, '  ')
             ));
           }
-
         } else {
           dispatch(receiveTableColumnsModelFail(
             '后端返回的success不是true', JSON.stringify(json, null, '  '))
           );
         }
       })
-      .catch(function (err) {
-        console.log("fetch table columns error:", err);
+      .catch(err => {
+        console.log('fetch table columns error:', err);
       });
-  }
+  };
 }
 
 /**
@@ -364,39 +362,38 @@ export function fetchTableColumnsModel(baseDocId) {
  * @param {Object} rowData 被删除的行的数据对象
  */
 export function deleteTableData(baseDocId, rowIdx, rowData) {
-  return (dispatch, getState) => {
-    var { id } = rowData; // 40位主键 primary key
-    var opts = {
+  return (dispatch) => {
+    const { id } = rowData; // 40位主键 primary key
+    let opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
-      mode: "cors",
+      mode: 'cors',
       body: JSON.stringify({ id })
     };
     appendCredentials(opts);
 
-    var url = getDeleteURL(baseDocId);
+    let url = getDeleteURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         return response.json();
       }).then(json => {
-         if( json.success ==  true ) {
-           dispatch(deleteTableDataSuccess(json));
-         }else{
-           dispatch(deleteTableDataFail(json.message));
-         }
-      }).catch(function (err) {
+        if (json.success === true) {
+          dispatch(deleteTableDataSuccess(json));
+        } else {
+          dispatch(deleteTableDataFail(json.message));
+        }
+      }).catch(err => {
         alert('删除时候出现错误');
-        console.log("删除时候出现错误：", err);
+        console.log('删除时候出现错误：', err);
       });
-  }
+  };
 }
 /**
  * 启用 / 停用
  * */
 export function enableTableData(baseDocId, rowObj){
-  debugger;
   return (dispatch, getState) => {
     var { id,enable } = rowObj; // 40位主键 primary key
     var turnEnable = false ;
@@ -408,7 +405,7 @@ export function enableTableData(baseDocId, rowObj){
       headers: {
         'Content-type': 'application/json'
       },
-      mode: "cors",
+      mode: 'cors',
       body: JSON.stringify({ id,
         enable:turnEnable
       })
@@ -432,7 +429,6 @@ export function enableTableData(baseDocId, rowObj){
 
 }
 
-
 /**
  * 创建和修改表格数据都会调用到这里
  * rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
@@ -443,8 +439,8 @@ export function enableTableData(baseDocId, rowObj){
  * @param {Number} rowIndex 只有是修改了某一个行，才会传数字，否则传null
  */
 export function saveTableData(baseDocId, fields, formData, rowIdx) {
-  return (dispatch, getState) => {
-    var requestBodyObj = { ...formData };
+  return (dispatch) => {
+    let requestBodyObj = { ...formData };
 
     // 注意：处理是有顺序的，不要乱调整
     // 1. 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
@@ -474,8 +470,8 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       const newObj = { ...obj };
       fields.forEach(field => {
         if (field.type === 'ref') {
-          var fieldId = field.id;
-          var fieldObj = obj[fieldId];
+          let fieldId = field.id;
+          let fieldObj = obj[fieldId];
           // 用户是否选择过参照
           if (fieldObj && fieldObj.id) {
             newObj[fieldId] = fieldObj.id;
@@ -492,7 +488,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       if (response.status >= 200 && response.status < 300) {
         return response;
       } else {
-        var error = new Error(response.statusText);
+        let error = new Error(response.statusText);
         error.response = response;
         response.text().then(text => {
           dispatch(updateTableDataFail(('后端返回的HTTP status code不是200', text)));
@@ -510,25 +506,25 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       }
     }
 
-    var opts = {
+    let opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
-      mode: "cors",
+      mode: 'cors',
       body: JSON.stringify(requestBodyObj)
     };
     appendCredentials(opts);
 
-    var url = getSaveURL(baseDocId);
+    let url = getSaveURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)
       .then(processJSONResult)
-      .catch(function (err) {
-        console.log("保存基础档案时候出现错误：", err);
+      .catch(err => {
+        console.log('保存基础档案时候出现错误：', err);
       });
-  }
+  };
 }
 
 /**
@@ -562,6 +558,9 @@ export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj ) {
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(enableTableData(baseDocId, rowObj )).then(() => {
+      setTimeout(function () {
+        dispatch(handleMessage());
+      },3000);
       return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
     });
   };
@@ -580,29 +579,29 @@ export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj ) {
  * rowIdx表示当前打开的编辑框对应是表格中的哪一行，第一行的rowIdx=0
  */
 export function showEditDialog(rowIdx, rowData) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: types.SHOW_EDIT_DIALOG,
       openDialog: true,
       formData: rowData,
       rowIdx
-    })
+    });
   };
 }
 
 export function closeEditDialog() {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: types.EDIT_DIALOG_CLOSE,
       openDialog: false,
       formData: {},
       rowIdx: null
-    })
+    });
   };
 }
 
 export function updateEditFormFieldValue(index, fieldModel, value) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     // TODO(chenyangf@yonyou.com): Dont touch state when value not changed.
     dispatch({
       type: types.UPDATE_EDIT_FORM_FIELD_VALUE,
@@ -610,7 +609,7 @@ export function updateEditFormFieldValue(index, fieldModel, value) {
       payload: value
     });
   };
-};
+}
 
 export function initEditFormData(editFormData) {
   return dispatch => {
@@ -619,7 +618,7 @@ export function initEditFormData(editFormData) {
       editFormData
     });
   };
-};
+}
 
 export function submitEditForm() {
   return (dispatch, getState) => {
@@ -790,6 +789,14 @@ export function hideAdminAlert() {
       type: types.HIDE_ADMIN_ALERT
     });
   };
+}
+
+export function handleMessage(){
+  return dispatch =>{
+    dispatch({
+      type:types.HIDE_MESSAGE_TIPS
+    })
+  }
 }
 
 // 对话框中的消息框
