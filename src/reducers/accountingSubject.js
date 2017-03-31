@@ -214,11 +214,12 @@ export default function accountingSubject(state = initState, action) {
         editDialog: {
           show: {$set: false}
         },
-        adminAlert: {
-          show: {$set: true},
-          bsStyle: {$set: 'success'},
-          message: {$set: '保存成功'}
-        }
+        // FICLOUD-200
+        // adminAlert: {
+        //   show: {$set: true},
+        //   bsStyle: {$set: 'success'},
+        //   message: {$set: '保存成功'}
+        // }
       });
     case TABLEDATA_UPDATE_FAIL:
       return update(state, {

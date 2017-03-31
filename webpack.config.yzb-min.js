@@ -1,18 +1,25 @@
+/**
+ * 友账表
+ * - 编译生成混淆压缩后的js
+ */
+
 const path = require('path');
 const webpack = require('webpack');
 
+// 友账表生产环境服务器
+const DEFAULT_PROD_SERVER = '59.110.123.20';
+const DEFAULT_PATH_PREFIX = '/ficloud';
+
 module.exports = {
-  devtool: 'source-map',
   entry: [
-    './src/index'
+    './src/index-yzb'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
-    publicPath: '/static/'
+    filename: 'bundle.min.js' // Template based on keys in entry above
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common.js'),
+    new webpack.optimize.CommonsChunkPlugin('common.min.js'),
     /**
      * This plugin assigns the module and chunk ids by occurence count. What this
      * means is that frequently used IDs will get lower/shorter IDs - so they become
@@ -23,16 +30,10 @@ module.exports = {
      * See description in 'webpack.config.dev' for more info.
      */
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
-    }),
-    /**
-     * Some of you might recognize this! It minimizes all your JS output of chunks.
-     * Loaders are switched into a minmizing mode. Obviously, you'd only want to run
-     * your production code through this!
-     */
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+        'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
+        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX)
       }
     })
   ],
@@ -53,9 +54,19 @@ module.exports = {
         loader: 'style-loader!css-loader!less-loader'
       },
       {
-        test: /\.scss$/,
-        loader: 'style!css!sass'
+        test: /\.(png|jpg|bmp)$/,
+        loader: 'url-loader?limit=8192'
+      },
+      {
+        test: /\.hbs$/,
+        loader: 'handlebars-loader'
       }
     ]
   }
 };
+
+/**
+ * References
+ * 同时编译minified和uncompressed版本
+ * http://stackoverflow.com/a/34018909/4685522
+ */

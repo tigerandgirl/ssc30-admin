@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Button , Checkbox } from 'react-bootstrap';
-
+import { Button ,Checkbox  } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
+import MessageTips from '../components/MessageTips';
 
 import * as Actions from '../actions/arch';
 
@@ -19,9 +19,9 @@ class ArchContainer extends Component {
      * [store] 字段模型
      */
     fields: PropTypes.array.isRequired,
-      /**
-       * [store] 表体数据
-       */
+    /**
+     * [store] 表体数据
+     */
     tableData: PropTypes.array.isRequired,
     itemsPerPage: PropTypes.number.isRequired,
     startIndex: PropTypes.number.isRequired,
@@ -42,7 +42,7 @@ class ArchContainer extends Component {
 
   componentWillMount() {
     const { itemsPerPage, startIndex } = this.props;
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex,null,[]);
+    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex, null, []);
     this.props.fetchTableColumnsModel(this.props.params.baseDocId);
   }
 
@@ -55,7 +55,7 @@ class ArchContainer extends Component {
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex,null,[]);
+      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, []);
       this.props.fetchTableColumnsModel(nextType);
     }
   }
@@ -103,7 +103,7 @@ class ArchContainer extends Component {
     // ref is " user " add param : personmobile
     // bug des: 传入手机号为空
 
-    let phoneList =  ["project" , "dept" , "feeitem"];
+    let phoneList =  ["project", "dept", "feeitem"];
       _.map(phoneList,function( obj ,ind ){
           if( baseDocId == obj ){
             if(formData.person){
@@ -131,9 +131,6 @@ class ArchContainer extends Component {
   }
 
   // edit form
-  handleEditFormBlur(index, fieldModel, value) {
-    //this.props.updateEditFormFieldValue(index, fieldModel, value);
-  }
   handleEditFormSubmit(formData) {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
@@ -182,10 +179,15 @@ class ArchContainer extends Component {
     var conditions = [];
     if(e.checked){
       conditions = [
-         {"field":"enable","datatype":"boolean","value":"true"}
+         {"field":"enable","datatype":"boolean","value":"false"}
       ];
     }
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
+  }
+
+  // 关闭弹窗口
+  handleCloseMessage(){
+    this.props.handleMessage();
   }
 
   /**
@@ -193,7 +195,7 @@ class ArchContainer extends Component {
    * 跳转到下一页。这样就能避免用户快速点击的问题了。
    */
   // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
-  //handlePagination(event, selectedEvent) {
+  // handlePagination(event, selectedEvent) {
   handlePagination(eventKey) {
     const { itemsPerPage, tableData } = this.props;
     let nextPage = eventKey;
@@ -203,7 +205,7 @@ class ArchContainer extends Component {
   }
 
   getCustomComponent() {
-    var containerThis = this;
+    let containerThis = this;
     return React.createClass({
       handleEdit(event) {
 
@@ -254,8 +256,12 @@ class ArchContainer extends Component {
 
       render() {
         var enable =  this.props.rowObj.enable ;
+        const { params: {
+            baseDocId
+            } }= containerThis.props;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
-        if( enable && typeof enable == "boolean" ){
+        if( baseDocId == "dept" ||baseDocId == "project"
+            || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
           resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
         return (
@@ -276,7 +282,7 @@ class ArchContainer extends Component {
    * { id: '', code: '', name: '' }
    * ```
    */
-  getFormDefaultData(columnsModel, baseDocId) {
+  getFormDefaultData(columnsModel) {
     let formData = {};
     columnsModel.forEach(fieldModel => {
       // 隐藏字段，比如id字段，不用初始化值
@@ -284,7 +290,7 @@ class ArchContainer extends Component {
         return;
       }
       const fieldId = fieldModel.id;
-      switch(fieldModel.type) {
+      switch (fieldModel.type) {
         case 'ref':
           formData[fieldId] = {
             id: '',
@@ -317,7 +323,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert,spinner,
+      adminAlert, formAlert, spinner,messageTips,
       params: {
         baseDocId
       },
@@ -328,21 +334,45 @@ class ArchContainer extends Component {
     const cols = fields || [];
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData(cols, baseDocId);
+    const formDefaultData = this.getFormDefaultData(cols);
 
-    let enable = "";
-    if(baseDocId == "dept" ||baseDocId == "project"
+    let checkBoxContent = "";
+    if( baseDocId == "dept" ||baseDocId == "project"
         || baseDocId == "bankaccount" ||baseDocId == "feeitem"  ){
-      enable =(
+
+      checkBoxContent  =(
           <div style={{ display: 'inline-block', float: 'left' }}>
             <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
           </div>
       )
+
+      // 是否启用 转boolean值 为  string 类型
+      if(tableData.length >0 ){
+        _.map(tableData,function (obj){
+            obj.enable = booleanToString(obj.enable);
+            obj.defaultaccount = booleanToString(obj.defaultaccount);
+
+        })
+      }
+
+      function booleanToString( param ){
+        if( typeof param == "boolean"){
+          if(param){
+            param="是";
+          }else{
+            param="否";
+          }
+        }
+        return param ;
+      }
     }
 
     return (
       <div className="content">
+        <div className="blank" />
         <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
+        <MessageTips isShow={ messageTips.isShow}  onHideEvent = {::this.handleCloseMessage}
+                     txt={messageTips.txt} autoHide={ true }  refs="messageTip"> </MessageTips>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >
@@ -351,25 +381,23 @@ class ArchContainer extends Component {
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <div>
-          <div style={{ height:'64px', padding:'15px 0' }}>
-              {enable}
-              <div style={{ display: 'inline-block', float: 'right' }}>
-                <Button onClick={::this.handleCreate}>新增</Button>
-              </div>
+          <div className="btn-bar">
+            {checkBoxContent}
+            <div className="fr">
+              <Button onClick={::this.handleCreate}>新增</Button>
+            </div>
           </div>
-          <div className="ssc-grid">
-              <SSCGrid tableData={tableData} columnsModel={cols}
-                paging
-                itemsPerPage={itemsPerPage}
-                totalPage={this.props.totalPage}
-                activePage={this.props.activePage}
-                onPagination={::this.handlePagination}
-                operationColumn={{}}
-                operationColumnClass={this.getCustomComponent()}
-              />
-          </div>
+          <SSCGrid tableData={tableData} columnsModel={cols} className="ssc-grid"
+            paging
+            itemsPerPage={itemsPerPage}
+            totalPage={this.props.totalPage}
+            activePage={this.props.activePage}
+            onPagination={::this.handlePagination}
+            operationColumn={{}}
+            operationColumnClass={this.getCustomComponent()}
+          />
         </div>
-        <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
+        <AdminEditDialog className="edit-form" title="编辑" {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
           <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
             onDismiss={::this.handleFormAlertDismiss}
           >
@@ -380,12 +408,11 @@ class ArchContainer extends Component {
           <SSCForm
             fieldsModel={cols}
             defaultData={editFormData}
-            onBlur={::this.handleEditFormBlur}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.handleEditFormReset}
           />
         </AdminEditDialog>
-        <AdminEditDialog className='create-form' title='新增' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
+        <AdminEditDialog className="create-form" title="新增" {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
           <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
@@ -398,20 +425,20 @@ class ArchContainer extends Component {
       </div>
     );
   }
-};
-
-const mapStateToProps = (state, ownProps) => {
-  return {...state.arch,
-    arch: state.arch,
-    tableData: state.arch.tableData,
-    fields: state.arch.fields,
-    totalPage: state.arch.totalPage
-  }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(Actions, dispatch);
-}
+/**
+ * @param {Object} state
+ * @param {Object} ownProps
+ */
+const mapStateToProps = state => ({...state.arch,
+  arch: state.arch,
+  tableData: state.arch.tableData,
+  fields: state.arch.fields,
+  totalPage: state.arch.totalPage
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(ArchContainer);

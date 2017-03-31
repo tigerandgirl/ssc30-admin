@@ -6,7 +6,7 @@ import {
   LOAD_TABLECOLUMNS, LOAD_TABLECOLUMNS_SUCCESS, LOAD_TABLECOLUMNS_FAIL,
   DELETE_TABLEDATA, DELETE_TABLEDATA_SUCCESS, DELETE_TABLEDATA_FAIL,
   TABLEDATA_UPDATE, TABLEDATA_UPDATE_SUCCESS, TABLEDATA_UPDATE_FAIL,
-  CHANGE_SELECTED_ROWS,
+  CHANGE_SELECTED_ROWS,ENABLE_TABLEDATA_FAIL,ENABLE_TABLEDATA_SUCCESS,
 
   SHOW_EDIT_DIALOG, EDIT_DIALOG_CLOSE,
   ARCH_INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
@@ -16,7 +16,7 @@ import {
   INIT_CREATE_FORM_DATA, UPDATE_CREATE_FORM_FIELD_VALUE,
   SUBMIT_CREATE_FORM, SUBMIT_CREATE_FORM_SUCCESS, SUBMIT_CREATE_FORM_FAIL,
 
-  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,
+  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,HIDE_MESSAGE_TIPS,
   FORM_ALERT_OPEN, FORM_ALERT_CLOSE,
 
   ERROR_MESSAGES_UPDATE,
@@ -54,6 +54,10 @@ const initState = {
   },
   spinner:{
     show:true 
+  },
+  messageTips:{
+    isShow:false,
+    txt:""
   },
   // 当前页面所有的错误信息都扔进来
   errorMessages: [],
@@ -171,6 +175,22 @@ export default function arch(state = initState, action) {
         }
       };
 
+    case ENABLE_TABLEDATA_FAIL:
+          return {...state,
+            adminAlert: {...state.adminAlert,
+              show: true,
+              bsStyle: 'danger',
+              message: action.message
+            }
+      };
+
+    case ENABLE_TABLEDATA_SUCCESS:
+      return {...state,
+        messageTips:{...state.messageTips,
+           isShow:true,
+           txt:"操作成功！"
+        }
+      };
 
     // 通过表单修改表格中的一行
     case TABLEDATA_UPDATE_SUCCESS:
@@ -348,6 +368,15 @@ export default function arch(state = initState, action) {
 			}
 		  }
 		}
+      });
+
+    //提示消息
+    case HIDE_MESSAGE_TIPS:
+      return update(state, {
+        messageTips: {
+          isShow: {$set: false},
+          txt:{$set:" "}
+        }
       });
 
     default:

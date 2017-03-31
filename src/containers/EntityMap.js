@@ -52,7 +52,7 @@ class EntityMap extends Component {
     entityTableBodyData: PropTypes.array.isRequired,
     fetchLeftTree: PropTypes.func.isRequired,
     fetchLeftTreeNodeChildren: PropTypes.func.isRequired,
-    fetchTreeNodeData: PropTypes.func.isRequired,
+    fetchTreeNodeDataAndSaveClickedNodeData: PropTypes.func.isRequired,
     /**
      * URL传参
      * ```js
@@ -63,6 +63,8 @@ class EntityMap extends Component {
      * ```
      */
     params: PropTypes.object.isRequired,
+    clickedTreeNodeData: PropTypes.object.isRequired,
+    saveClickedNodeData: PropTypes.func.isRequired,
     showCreateDialog: PropTypes.func.isRequired,
     /**
      * [store] 左侧树的数据
@@ -107,9 +109,13 @@ class EntityMap extends Component {
    * @param {Object} e {selected: bool, selectedNodes, node, event}
    */
   onSelect(selectedKeys, e) {
-    // console.log('selected', selectedKeys);
-    // console.log(e.node.props.eventKey);
-    this.props.fetchTreeNodeData(e.node.props.treeNodeData);
+    let currentNodeKey = e.node.props.treeNodeData.key;
+    let lastNodeKey = this.props.clickedTreeNodeData.key;
+    if (currentNodeKey !== lastNodeKey) {
+      this.props.fetchTreeNodeDataAndSaveClickedNodeData(e.node.props.treeNodeData);
+    } else {
+      this.props.saveClickedNodeData(e.node.props.treeNodeData);
+    }
   }
 
   onCheck(checkedKeys) {
@@ -165,37 +171,33 @@ class EntityMap extends Component {
     const defaultExpandedKeys = getDefaultExpandedKeys(this.props.treeData);
 
     return (
-      <div className="entity-map-container">
-        <Grid>
-          <Row>
-            <Col>
-              <div style={{ display: 'inline-block', float: 'right' }}>
-                <Button onClick={::this.handleCreate}>新增</Button>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col className="col-fixed-230">
-              {this.props.treeData.length !== 0
-                ? <Tree
-                    onSelect={::this.onSelect}
-                    checkable
-                    onCheck={::this.onCheck}
-                    checkedKeys={this.state.checkedKeys}
-                    defaultExpandedKeys={defaultExpandedKeys}
-                    loadData={::this.onLoadData}
-                  >
-                    {treeNodes}
-                  </Tree>
-                : null
-              }
-            </Col>
-            <Col className="col-offset-250">
-              <EntityMapTable />
-            </Col>
-          </Row>
-        </Grid>
-      </div>
+        
+        <div>
+            <div className="head">
+                <button className="btn btn-default" onClick={::this.handleCreate}>新增</button>
+            </div>
+            <div className="ledger-content clearfix">
+                <div className="ledger-content-left">
+                    {this.props.treeData.length !== 0
+                        ? <Tree
+                        onSelect={::this.onSelect}
+                        checkable
+                        onCheck={::this.onCheck}
+                        checkedKeys={this.state.checkedKeys}
+                        defaultExpandedKeys={defaultExpandedKeys}
+                        loadData={::this.onLoadData}
+                    >
+                        {treeNodes}
+                    </Tree>
+                        : null
+                    }
+                </div>
+                <div className="ledger-content-right">
+                    <EntityMapTable />
+                </div>
+            </div>
+        </div>
+
     );
   }
 }

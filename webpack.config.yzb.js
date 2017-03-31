@@ -1,26 +1,35 @@
+/**
+ * 友账表
+ * - 编译生成带有source map的js，用于在生产环境下调试
+ * - 编译生成index.html首页
+ */
+
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const moment = require('moment');
 const childProcess = require('child_process');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const DEFAULT_YBZ_PROD_SERVER = '172.20.4.88:8088';
-const DEFAULT_YZB_PROD_SERVER = '10.3.14.240';
+// 友账表生产环境服务器
+const DEFAULT_PROD_SERVER = '59.110.123.20';
+const DEFAULT_PATH_PREFIX = '/ficloud';
 
 // 获取版本
 const packageJSON = require('./package.json');
 const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
+  devtool: 'source-map',
   entry: [
-    './src/index'
+    './src/index-yzb'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.min.js' // Template based on keys in entry above
+    filename: 'bundle.js' // Template based on keys in entry above
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common.min.js'),
+    new webpack.optimize.CommonsChunkPlugin('common.js'),
     /**
      * This plugin assigns the module and chunk ids by occurence count. What this
      * means is that frequently used IDs will get lower/shorter IDs - so they become
@@ -33,8 +42,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production'),
-        'YBZ_PROD_SERVER': JSON.stringify(process.env.YBZ_PROD_SERVER || DEFAULT_YBZ_PROD_SERVER),
-        'YZB_PROD_SERVER': JSON.stringify(process.env.YZB_PROD_SERVER || DEFAULT_YZB_PROD_SERVER)
+        'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
+        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX)
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -44,13 +53,21 @@ module.exports = {
       }
     }),
     new HtmlWebpackPlugin({
+      title: `友账表 v${packageJSON.version}`,
+      filename: 'index.html',
       template: 'client/index.hbs',
       hash: true,
       // User defined options
       version: packageJSON.version,
       revision: GIT_REVISION,
       buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
-    })
+    }),
+    new CopyWebpackPlugin([
+      // {from: 'src/www/css', to: 'css'},
+      {from: 'src/images', to: 'images'},
+      // {from: 'src/www/index.html'},
+      // {from: 'src/www/versions.json'},
+    ]),
   ],
   module: {
     loaders: [

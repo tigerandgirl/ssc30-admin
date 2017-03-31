@@ -26,6 +26,51 @@ import DemoFormContainer from './DemoFormContainer';
 import DemoTreeContainer from './DemoTreeContainer';
 
 /**
+ * "You cannot change <Router routes>; it will be ignored", when hot-loading
+ * https://github.com/reactjs/react-router-redux/issues/179#issuecomment-241771171
+ */
+const router = (
+  <Router>
+    <Route path="/" component={Welcome}>
+    </Route>
+    <Route path="/app" component={App}>
+      <IndexRoute component={Welcome}/>
+      <Route path="/welcome" component={Welcome}></Route>
+      <Route path="/basedocs" component={BaseDocIndex}>
+        <Route path="/basedoc/:baseDocId" component={ArchContainer} />
+      </Route>
+      <Route path="/accsubs" component={AccSubIndex}>
+        <Route path="/accsub/:baseDocId" component={AccountingSubject} />
+      </Route>
+      <Route path="/role" component={RoleContainer}></Route>
+      <Route path="/permission" component={PermissionPage}></Route>
+      <Route path="/archsetting" component={ArchSettingPage}></Route>
+      <Route path="/ncsync" component={NCSyncPage}></Route>
+      <Route path="/demo/form" component={DemoFormContainer}></Route>
+      <Route path="/demo/tree" component={DemoTreeContainer}></Route>
+      <Route path="*" component={NoMatch} />
+    </Route>
+    <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>
+      <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
+    </Route>
+    <Route path="/accsubs-no-sidebar" component={AccSubIndex}>
+      <Route path="/accsubs-no-sidebar/accsub/:baseDocId" component={AccountingSubject} />
+    </Route>
+    <Route path="/basedocs-no-sidebar-single-page/basedoc/:baseDocId" component={ArchContainer} />
+    <Route path="/external-data-modelling-no-sidebar-single-page/:billTypeCode" component={ExternalDataModelling} />
+    <Route path="/entity-no-sidebar-single-page" component={Entity} />
+    <Route
+      path="/entity-map-no-sidebar-single-page/:billTypeCode/:mappingDefId"
+      component={EntityMap}
+    />
+    <Route
+      path="/mapping-def-no-sidebar-single-page"
+      component={MappingDef}
+    />
+  </Router>
+);
+
+/**
  * Component is exported for conditional usage in Root.js
  */
 module.exports = class Root extends Component {
@@ -39,44 +84,7 @@ module.exports = class Root extends Component {
        */
       <Provider store={store}>
         <div>
-          <Router>
-            <Route path="/" component={Welcome}>
-            </Route>
-            <Route path="/app" component={App}>
-              <IndexRoute component={Welcome}/>
-              <Route path="/welcome" component={Welcome}></Route>
-              <Route path="/basedocs" component={BaseDocIndex}>
-                <Route path="/basedoc/:baseDocId" component={ArchContainer} />
-              </Route>
-              <Route path="/accsubs" component={AccSubIndex}>
-                <Route path="/accsub/:baseDocId" component={AccountingSubject} />
-              </Route>
-              <Route path="/role" component={RoleContainer}></Route>
-              <Route path="/permission" component={PermissionPage}></Route>
-              <Route path="/archsetting" component={ArchSettingPage}></Route>
-              <Route path="/ncsync" component={NCSyncPage}></Route>
-              <Route path="/demo/form" component={DemoFormContainer}></Route>
-              <Route path="/demo/tree" component={DemoTreeContainer}></Route>
-              <Route path="*" component={NoMatch} />
-            </Route>
-            <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>
-              <Route path="/basedocs-no-sidebar/basedoc/:baseDocId" component={ArchContainer} />
-            </Route>
-            <Route path="/accsubs-no-sidebar" component={AccSubIndex}>
-              <Route path="/accsubs-no-sidebar/accsub/:baseDocId" component={AccountingSubject} />
-            </Route>
-            <Route path="/basedocs-no-sidebar-single-page/basedoc/:baseDocId" component={ArchContainer} />
-            <Route path="/external-data-modelling-no-sidebar-single-page/:billTypeCode" component={ExternalDataModelling} />
-            <Route path="/entity-no-sidebar-single-page" component={Entity} />
-            <Route
-              path="/entity-map-no-sidebar-single-page/:billTypeCode/:mappingDefId"
-              component={EntityMap}
-            />
-            <Route
-              path="/mapping-def-no-sidebar-single-page"
-              component={MappingDef}
-            />
-          </Router>
+          {router}
         </div>
       </Provider>
     );

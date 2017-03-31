@@ -326,7 +326,7 @@ class AccountingSubject extends Component {
     const childFormDefaultData = this.getFormDefaultData(cols, tableData, baseDocId);
 
     return (
-      <div>
+      <div className="content">
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
                     onDismiss={::this.handlePageAlertDismiss}
         >
@@ -334,30 +334,22 @@ class AccountingSubject extends Component {
           { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
-        <Grid>
-          <Row className="show-grid">
-            <Col md={12}>
-              <h3>{}</h3>
-              <div style={{ display: 'inline-block', float: 'right' }}>
-                <Button onClick={::this.handleCreate}>新增</Button>
-              </div>
-            </Col>
-          </Row>
-          <Row className="show-grid">
-            <Col md={12}>
-              <SSCGrid tableData={tableData} columnsModel={cols}
-                       striped bordered condensed hover
-                       paging
-                       itemsPerPage={itemsPerPage}
-                       totalPage={this.props.totalPage}
-                       activePage={this.props.activePage}
-                       onPagination={::this.handlePagination}
-                       operationColumn={{}}
-                       operationColumnClass={this.getCustomComponent()}
-              />
-            </Col>
-          </Row>
-        </Grid>
+        <div>
+          <div className="btn-bar">
+            <div className="fr">
+              <Button onClick={::this.handleCreate}>新增</Button>
+            </div>
+          </div>
+          <SSCGrid tableData={tableData} columnsModel={cols} className="ssc-grid"
+                   paging
+                   itemsPerPage={itemsPerPage}
+                   totalPage={this.props.totalPage}
+                   activePage={this.props.activePage}
+                   onPagination={::this.handlePagination}
+                   operationColumn={{}}
+                   operationColumnClass={this.getCustomComponent()}
+          />
+        </div>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
           <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
                       onDismiss={::this.handleFormAlertDismiss}

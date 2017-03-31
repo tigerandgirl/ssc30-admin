@@ -107,30 +107,18 @@ class MappingDef extends Component {
     const { itemsPerPage, tableColumnsModel, tableBodyData, pageAlert } = this.props;
 
     return (
-      <div className="mapping-def-container">
-        <Grid>
-          <Row>
-            <Col md={12}>
-              <h3>{}</h3>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <AdminAlert
-                show={pageAlert.show}
-                bsStyle={pageAlert.bsStyle}
-                onDismiss={::this.handlePageAlertDismiss}
-              >
-                <p>{pageAlert.message}</p>
-              </AdminAlert>
-              <SSCGrid
+      <div className="mapping-def-container content">
+        <AdminAlert
+            show={pageAlert.show}
+            bsStyle={pageAlert.bsStyle}
+            onDismiss={::this.handlePageAlertDismiss}
+        >
+          <p>{pageAlert.message}</p>
+        </AdminAlert>
+        <div>
+          <SSCGrid className="ssc-grid"
                 columnsModel={tableColumnsModel}
                 tableData={tableBodyData}
-                // 样式
-                striped
-                bordered
-                condensed
-                hover
                 // 分页
                 paging
                 itemsPerPage={itemsPerPage}
@@ -139,10 +127,8 @@ class MappingDef extends Component {
                 onPagination={::this.handlePagination}
                 operationColumn={{}}
                 operationColumnClass={this.getCustomComponent()}
-              />
-            </Col>
-          </Row>
-        </Grid>
+          />
+        </div>
       </div>
     );
   }

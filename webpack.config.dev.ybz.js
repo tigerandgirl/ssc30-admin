@@ -6,7 +6,7 @@ module.exports = {
   entry: [
     'eventsource-polyfill', // necessary for hot reloading with IE
     'webpack-hot-middleware/client',
-    './src/index'
+    './src/index-ybz'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
@@ -33,7 +33,10 @@ module.exports = {
      * Here, we use it to specify a development build.
      */
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development')
+      'process.env': {
+        'NODE_ENV': JSON.stringify('development'),
+        'PATH_PREFIX': JSON.stringify('')
+      }
     }),
   ],
   module: {
@@ -41,7 +44,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: [/node_modules/, /styles/],
-        loaders: ['babel'],
+        loader: 'react-hot!babel',
         include: path.join(__dirname, 'src')
       },
       {
@@ -55,7 +58,11 @@ module.exports = {
       {
         test: /\.scss$/,
         loader: 'style!css!sass'
-      }
+      },
+      {
+        test: /\.(png|jpg|bmp)$/,
+        loader: 'url-loader?limit=8192'
+      },
     ]
   }
 };

@@ -15,7 +15,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
 // Webpack config for local development
-const config = require('./webpack.config.dev');
+const config = require('./webpack.config.dev.ybz');
 
 // Create a Express server, enable middlewares
 const app = express();
