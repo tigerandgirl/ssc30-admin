@@ -58,7 +58,7 @@ function getReferURL(path) {
  */
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud/querydoctype');
-const getSaveURL = type => getBaseDocURL(`/ficloud/${type}/save`);
+const getSaveURL = type => getBaseDocURL(`/ficloud/${type}/update`);
 const getAddURL = type => getBaseDocURL(`/ficloud/${type}/add`);
 const getDeleteURL = type => getBaseDocURL(`/ficloud/${type}/delete`);
 const getQueryURL = type => getBaseDocURL(`/ficloud/${type}/query`);
@@ -439,7 +439,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
             /* 7 */ .map(utils.fixReferKey)
             /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
             /* 9 */ .map(utils.fixEnumData)
-            /* 10 */.filter(filterChildSubFileds);
+            /* 10 */.filter(filterSubjectFileds);
             dispatch(receiveChildSubjectFieldsSuccess(json, fields));
           } else {
             dispatch(receiveChildSubjectFieldsFail(
