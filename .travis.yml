@@ -36,3 +36,7 @@ script:
 #  on:
 #    tags: true
 #    repo: xxd3vin/bgy-portalbillquery
+addons:
+  sauce_connect:
+    username: "xxd3vin2"
+    access_key: "29fc1dbc-3387-4497-9573-e0960ce6a8f4"
