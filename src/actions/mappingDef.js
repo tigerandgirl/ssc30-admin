@@ -64,6 +64,15 @@ const MAPPING_DEF_SAVE_URL = getMappingDefAPI('/ficloud/mappingdef/save');
 const MAPPING_DEF_DELETE_URL = getMappingDefAPI('/ficloud/mappingdef/delete');
 
 /**
+ * exception lib
+ */
+
+function SuccessFalseException(message) {
+  this.message = message;
+  this.name = 'SuccessFalseException';
+}
+
+/**
  * 获取表格的列模型
  */
 
@@ -120,10 +129,7 @@ export function fetchTableColumnsModel(baseDocId) {
               但是数据校验方法提示说：“${validationMessage}”`
             };
           } else {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message || '未知错误'
-            };
+            throw new SuccessFalseException(resObj.message);
           }
         });
     }
@@ -209,11 +215,6 @@ export function updateTableBodyData(formData) {
 export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_REQUEST = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_REQUEST';
 export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_SUCCESS = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_SUCCESS';
 export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_FAILURE = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_FAILURE';
-
-function SuccessFalseException(message) {
-  this.message = message;
-  this.name = 'SuccessFalseException';
-}
 
 /**
  * @param {Object} rowObj 删除行的数据
