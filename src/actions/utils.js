@@ -2,7 +2,47 @@
  * 常用的helper function
  */
 
-// Common helper -> utils.js/api.js
+
+ /**
+ * 组建Fetch API需要的配置参数
+ * @param {Object} reqObj 请求参数是一个JSON对象
+ */
+export const getFetchOpts = reqObj => ({
+  method: 'post',
+  headers: {
+    'Content-type': 'application/json'
+  },
+  mode: 'cors',
+  /**
+   * Fetch API credentials 选项
+   * - false 不往Fetch API中添加credentials选项
+   * - same-origin 在请求中添加Cookie（由于浏览器的same origin policy所以不会在跨域请求
+   *   中添加Cookie）
+   */
+  credentials: 'same-origin',
+  body: JSON.stringify(reqObj)
+});
+
+/**
+* 组建Fetch API需要的配置参数，针对x-www-form-urlencoded
+* @param {Object} reqObj 请求参数是一个JSON对象
+*/
+export const getFetchFormOpts = reqStr => ({
+  method: 'post',
+  headers: {
+    'Content-type': 'application/x-www-form-urlencoded'
+  },
+  mode: 'cors',
+  /**
+   * Fetch API credentials 选项
+   * - false 不往Fetch API中添加credentials选项
+   * - same-origin 在请求中添加Cookie（由于浏览器的same origin policy所以不会在跨域请求
+   *   中添加Cookie）
+   */
+  credentials: 'same-origin',
+  body: reqStr
+});
+
 export function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
