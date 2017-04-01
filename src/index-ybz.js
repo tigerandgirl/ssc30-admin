@@ -4,6 +4,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Promise from 'promise-polyfill';
 
 /**
  * Import the stylesheet you want used! Here we just reference
@@ -26,6 +27,11 @@ import './styles/ybz.less';
  */
 import { configureStore } from './store/configureStore';
 import { Root } from './containers/Root';
+
+// IE11
+if (!window.Promise) {
+  window.Promise = Promise;
+}
 
 const store = configureStore();
 

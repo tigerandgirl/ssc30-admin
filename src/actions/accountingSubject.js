@@ -58,7 +58,7 @@ function getReferURL(path) {
  */
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud/querydoctype');
-const getSaveURL = type => getBaseDocURL(`/ficloud/${type}/save`);
+const getUpdateURL = type => getBaseDocURL(`/ficloud/${type}/update`);
 const getAddURL = type => getBaseDocURL(`/ficloud/${type}/add`);
 const getDeleteURL = type => getBaseDocURL(`/ficloud/${type}/delete`);
 const getQueryURL = type => getBaseDocURL(`/ficloud/${type}/query`);
@@ -439,7 +439,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
             /* 7 */ .map(utils.fixReferKey)
             /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
             /* 9 */ .map(utils.fixEnumData)
-            /* 10 */.filter(filterChildSubFileds);
+            /* 10 */.filter(filterSubjectFileds);
             dispatch(receiveChildSubjectFieldsSuccess(json, fields));
           } else {
             dispatch(receiveChildSubjectFieldsFail(
@@ -566,7 +566,7 @@ export function addChildSubjectData(baseDocId, fields, formData, rowData, rowIdx
 }
 
 /**
- * 创建和修改表格数据都会调用到这里
+ * 创建表格数据都会调用到这里
  * rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
  * 的时候才会传这个参数
  * @param {String} baseDocId 基础档案类型名称，比如dept
@@ -655,7 +655,107 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
     };
     appendCredentials(opts);
 
-    var url = getSaveURL(baseDocId);
+    var url = getAddURL(baseDocId);
+    return fetch(url, opts)
+      .then(checkHTTPStatus)
+      .then(utils.parseJSON)
+      .then(processJSONResult)
+      .catch(function (err) {
+        console.log("保存基础档案时候出现错误：", err);
+      });
+  }
+}
+
+
+/**
+ * 修改表格数据都会调用到这里
+ * rowIdx是可选参数，只有当修改表格数据（也就是点击表格每行最右侧的编辑按钮）
+ * 的时候才会传这个参数
+ * @param {String} baseDocId 基础档案类型名称，比如dept
+ * @param {Array} fields 字段定义
+ * @param {Object} formData 表单提交的数据
+ * @param {Number} rowIndex 只有是修改了某一个行，才会传数字，否则传null
+ */
+export function updateTableData(baseDocId, fields, formData, rowIdx) {
+  return (dispatch, getState) => {
+    var requestBodyObj = { ...formData };
+
+    // 注意：处理是有顺序的，不要乱调整
+    // 1. 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
+    requestBodyObj = processRefer(requestBodyObj, fields);
+    // 2. 删除key:value中，当value为undefined/null
+    requestBodyObj = utils.removeEmpty(requestBodyObj);
+
+
+    /**
+     * 将formData中参照存储的复杂类型（包含id,code,name）转换成单值类型
+     * ```json
+     * {
+     *   bumen: {
+     *     id: '02EDD0F9-F384-43BF-9398-5E5781DAC5D0',
+     *     code: '0502',
+     *     name: '二车间'
+     *   }
+     * }
+     * ```
+     * 转换成
+     * ```json
+     * {
+     *   bumen: '02EDD0F9-F384-43BF-9398-5E5781DAC5D0'
+     * }
+     * ```
+     */
+    function processRefer(obj, fields) {
+      const newObj = { ...obj };
+      fields.forEach(field => {
+        if (field.type === 'ref') {
+          var fieldId = field.id;
+          var fieldObj = obj[fieldId];
+          // 用户是否选择过参照
+          if (fieldObj && fieldObj.id) {
+            newObj[fieldId] = fieldObj.id;
+          } else {
+            newObj[fieldId] = null;
+          }
+        }
+      });
+      return newObj;
+    }
+
+    function checkHTTPStatus(response) {
+      // TODO: HTTP状态检查，需要独立成helper function
+      if (response.status >= 200 && response.status < 300) {
+        return response;
+      } else {
+        var error = new Error(response.statusText);
+        error.response = response;
+        response.text().then(text => {
+          dispatch(updateTableDataFail(('后端返回的HTTP status code不是200', text)));
+        });
+        throw error;
+      }
+    }
+
+    function processJSONResult(json) {
+      if (json.success === true) {
+        dispatch(updateTableDataSuccess(json, rowIdx));
+      } else {
+        dispatch(updateTableDataFail('获取表格数据失败，后端返回的success是false',
+          json.message));
+      }
+    }
+
+    var opts = {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      mode: "cors",
+      body: JSON.stringify(requestBodyObj)
+    };
+    appendCredentials(opts);
+
+    var url = getUpdateURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)
@@ -686,6 +786,18 @@ export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, 
   return (dispatch, getState) => {
     const { accountingSubject } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
+      return dispatch(fetchTableBodyData(baseDocId, accountingSubject.itemsPerPage, accountingSubject.startIndex));
+    });
+  };
+}
+
+/**
+ * 复合操作：更新并刷新表格
+ */
+export function updateTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex) {
+  return (dispatch, getState) => {
+    const { accountingSubject } = getState();
+    return dispatch(updateTableData(baseDocId, fields, formData, rowIdx)).then(() => {
       return dispatch(fetchTableBodyData(baseDocId, accountingSubject.itemsPerPage, accountingSubject.startIndex));
     });
   };
@@ -1038,11 +1150,37 @@ function filterChildSubFileds({...field}) {
  * @returns {boolean}
  */
 function filterSubjectFileds({...field}) {
-  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'accproperty' || field.id === 'enable'  || field.id === 'description' ) {
+  if(field.id === 'id' || field.id === 'code' || field.id === 'name' || field.id === 'direction' || field.id === 'accproperty' || field.id === 'enable'  || field.id === 'description'  || field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3' ) {
     return true;
   } else {
     return false;
   }
+}
+
+
+/**
+ * 根据参照的类型来添加参照的config object
+ * TODO 需要转移到utils.js中
+ */
+function setReferFields(ReferDataURL, ReferUserDataURL, field) {
+  const getReferConfig = fieldDocType => {
+    const config = {
+      referConditions: {
+        refCode: fieldDocType,
+        refType: 'table',
+      }
+    };
+    if (fieldDocType === 'user') {
+      config.referDataUrl = ReferUserDataURL;
+    } else {
+      config.referDataUrl = ReferDataURL;
+    }
+    return config;
+  };
+  if (field.type === 'ref') {
+    field.referConfig = getReferConfig(field.refCode);
+  }
+  return field;
 }
 
 /**

@@ -12,14 +12,6 @@ import * as utils from './utils';
 import * as URL from '../constants/URLs';
 
 /**
- * Fetch API credentials 选项
- * - false 不往Fetch API中添加credentials选项
- * - same-origin 在请求中添加Cookie（由于浏览器的same origin policy所以不会在跨域请求
- *   中添加Cookie）
- */
-const FETCH_CREDENTIALS_OPTION = 'same-origin';
-
-/**
  * 是否启用后端的开发用服务器
  * * -1 使用本地的expressjs服务器伪造数据
  * *  0 使用后端开发人员提供的开发机上跑的服务
@@ -68,13 +60,16 @@ const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
  * 转换规则模型 组装后端接口
  */
 const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud/mappingdef/query');
+const MAPPING_DEF_SAVE_URL = getMappingDefAPI('/ficloud/mappingdef/save');
+const MAPPING_DEF_DELETE_URL = getMappingDefAPI('/ficloud/mappingdef/delete');
 
-/** 配置Fetch API的credentials参数 */
-function appendCredentials(opts) {
-  if (FETCH_CREDENTIALS_OPTION) {
-    opts.credentials = FETCH_CREDENTIALS_OPTION;
-  }
-  return opts;
+/**
+ * exception lib
+ */
+
+function SuccessFalseException(message) {
+  this.message = message;
+  this.name = 'SuccessFalseException';
 }
 
 /**
@@ -88,27 +83,21 @@ export const TABLE_COLUMNS_MODEL_FAILURE = 'TABLE_COLUMNS_MODEL_FAILURE';
 export function fetchTableColumnsModel(baseDocId) {
   // use `callAPIMiddleware`
   return {
-    types: [TABLE_COLUMNS_MODEL_REQUEST, TABLE_COLUMNS_MODEL_SUCCESS, TABLE_COLUMNS_MODEL_FAILURE],
+    types: [
+      TABLE_COLUMNS_MODEL_REQUEST,
+      TABLE_COLUMNS_MODEL_SUCCESS,
+      TABLE_COLUMNS_MODEL_FAILURE
+    ],
     // Check the cache (optional):
     // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
-      const opts = {
-        method: 'post',
-        headers: {
-          'Content-type': 'application/x-www-form-urlencoded'
-        },
-        mode: 'cors',
-        body: `doctype=${baseDocId}`
-      };
-      appendCredentials(opts);
+      let opts = utils.getFetchFormOpts(`doctype=${baseDocId}`);
       const url = `${FICLOUDPUB_INITGRID_URL}`;
-
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
         .then(resObj => {
           if (resObj.success === true) {
-
             // 进行业务层的数据校验
             const [isValid, validationMessage] = utils.validation.tableColumnsModelData(resObj);
             if (isValid) {
@@ -140,10 +129,7 @@ export function fetchTableColumnsModel(baseDocId) {
               但是数据校验方法提示说：“${validationMessage}”`
             };
           } else {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message || '未知错误'
-            };
+            throw new SuccessFalseException(resObj.message);
           }
         });
     }
@@ -165,30 +151,92 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
     // Check the cache (optional):
     // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
-      let opts = {
-        method: 'post',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        mode: 'cors',
-        body: JSON.stringify({
-          conditions: [],
-          paras: [],
-          fields: [],
-          begin: startIndex,
-          groupnum: itemsPerPage
-        })
-      };
-      appendCredentials(opts);
-
+      let opts = utils.getFetchOpts({
+        conditions: [],
+        paras: [],
+        fields: [],
+        begin: startIndex,
+        groupnum: itemsPerPage
+      });
       let url = `${QUERY_CONVERSION_RULE_DEFINITION_URL}`;
-
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
         .then(resObj => {
           // 处理success: false
           return resObj;
+        });
+    }
+  };
+}
+
+/**
+ * 表格，新增/修改操作
+ */
+
+export const MAPPING_DEF_TABLE_BODY_DATA_UPDATE_REQUEST = 'MAPPING_DEF_TABLE_BODY_DATA_UPDATE_REQUEST';
+export const MAPPING_DEF_TABLE_BODY_DATA_UPDATE_SUCCESS = 'MAPPING_DEF_TABLE_BODY_DATA_UPDATE_SUCCESS';
+export const MAPPING_DEF_TABLE_BODY_DATA_UPDATE_FAILURE = 'MAPPING_DEF_TABLE_BODY_DATA_UPDATE_FAILURE';
+
+/**
+ * @param {Object} formData 表单提交的数据
+ *                 当没有id的时候，则创建新数据
+ */
+export function updateTableBodyData(formData) {
+  // use `callAPIMiddleware`
+  return {
+    types: [
+      MAPPING_DEF_TABLE_BODY_DATA_UPDATE_REQUEST,
+      MAPPING_DEF_TABLE_BODY_DATA_UPDATE_SUCCESS,
+      MAPPING_DEF_TABLE_BODY_DATA_UPDATE_FAILURE
+    ],
+    callAPI: () => {
+      let opts = utils.getFetchOpts({ ...formData });
+      const url = MAPPING_DEF_SAVE_URL;
+      return fetch(url, opts)
+        .then(utils.checkHTTPStatus)
+        .then(utils.parseJSON)
+        .then(resObj => {
+          if (resObj.success !== true) {
+            throw {
+              name: 'SUCCESS_FALSE',
+              message: resObj.message
+            };
+          }
+        });
+    }
+  };
+}
+
+/**
+ * 表格，删除操作
+ */
+
+export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_REQUEST = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_REQUEST';
+export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_SUCCESS = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_SUCCESS';
+export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_FAILURE = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_FAILURE';
+
+/**
+ * @param {Object} rowObj 删除行的数据
+ */
+export function deleteTableBodyData(rowObj) {
+  // use `callAPIMiddleware`
+  return {
+    types: [
+      MAPPING_DEF_TABLE_BODY_DATA_DELETE_REQUEST,
+      MAPPING_DEF_TABLE_BODY_DATA_DELETE_SUCCESS,
+      MAPPING_DEF_TABLE_BODY_DATA_DELETE_FAILURE
+    ],
+    callAPI: () => {
+      let opts = utils.getFetchOpts(rowObj);
+      const url = MAPPING_DEF_DELETE_URL;
+      return fetch(url, opts)
+        .then(utils.checkHTTPStatus)
+        .then(utils.parseJSON)
+        .then(resObj => {
+          if (resObj.success !== true) {
+            throw new SuccessFalseException(resObj.message);
+          }
         });
     }
   };
@@ -211,3 +259,64 @@ export function showPageAlert(show) {
     });
   };
 }
+
+/**
+ * 创建/编辑对话框
+ */
+
+export const MAPPING_DEF_EDIT_DIALOG_SHOW = 'MAPPING_DEF_EDIT_DIALOG_SHOW';
+export const MAPPING_DEF_CREATE_DIALOG_SHOW = 'MAPPING_DEF_CREATE_DIALOG_SHOW';
+
+/**
+ * @param {boolean} show 是否显示
+ * @param {Number} [rowIdx=null] 编辑行的index
+ * @param {Object} [editFormData={}] 编辑行的数据，用于填充表单
+ */
+export const showEditDialog =
+  (show, rowIdx = null, editFormData = {}) => dispatch => dispatch({
+    type: MAPPING_DEF_EDIT_DIALOG_SHOW,
+    show,
+    rowIdx,
+    editFormData
+  });
+
+/**
+ * @param {Boolean} show 显示/隐藏对话框
+ * @param {Object} [formData={}] 需要填充到表单中的数据
+ */
+export const showCreateDialog =
+  (show, createFormData = {}) => dispatch => dispatch({
+    type: MAPPING_DEF_CREATE_DIALOG_SHOW,
+    show,
+    createFormData
+  });
+
+/**
+ * 复合操作
+ */
+
+// 更新，再刷新表格，再隐藏对话框
+export const updateTableBodyDataAndFetchTableBodyData = formData => (dispatch, getState) => {
+  const { mappingDef } = getState();
+  return dispatch(updateTableBodyData(formData))
+    .then(() => dispatch(fetchTableBodyData(mappingDef.itemsPerPage, mappingDef.startIndex)))
+    .then(() => dispatch(showEditDialog(false)));
+};
+
+// 创建，再刷新表格，再隐藏对话框
+export const createTableBodyDataAndFetchTableBodyData = formData => (dispatch, getState) => {
+  const { mappingDef } = getState();
+  return dispatch(updateTableBodyData(formData))
+    .then(() => dispatch(fetchTableBodyData(mappingDef.itemsPerPage, mappingDef.startIndex)))
+    .then(() => dispatch(showCreateDialog(false)));
+};
+
+/**
+ * 删除，再刷新表格
+ * @param {Object} rowObj
+ */
+export const deleteTableBodyDataAndFetchTableBodyData = rowObj => (dispatch, getState) => {
+  const { mappingDef } = getState();
+  return dispatch(deleteTableBodyData(rowObj))
+    .then(() => dispatch(fetchTableBodyData(mappingDef.itemsPerPage, mappingDef.startIndex)));
+};

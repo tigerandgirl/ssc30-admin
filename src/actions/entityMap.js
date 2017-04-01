@@ -492,9 +492,10 @@ export const updateTreeNodeDataAndFetchTreeNodeData = (formData) => (dispatch, g
 
 /**
  * 复合操作：删除并刷新表格
+ * @param {Object} rowObj
  */
-export const delTreeNodeDataAndFetchTreeNodeData = rowIdx => (dispatch, getState) => {
+export const delTreeNodeDataAndFetchTreeNodeData = rowObj => (dispatch, getState) => {
   const { entityMap } = getState();
-  return dispatch(delTreeNodeData(rowIdx))
+  return dispatch(delTreeNodeData(rowObj))
     .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)));
 };
