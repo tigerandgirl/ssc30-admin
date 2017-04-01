@@ -210,6 +210,11 @@ export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_REQUEST = 'MAPPING_DEF_TABLE_BOD
 export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_SUCCESS = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_SUCCESS';
 export const MAPPING_DEF_TABLE_BODY_DATA_DELETE_FAILURE = 'MAPPING_DEF_TABLE_BODY_DATA_DELETE_FAILURE';
 
+function SuccessFalseException(message) {
+  this.message = message;
+  this.name = 'SuccessFalseException';
+}
+
 /**
  * @param {Object} rowObj 删除行的数据
  */
@@ -229,10 +234,7 @@ export function deleteTableBodyData(rowObj) {
         .then(utils.parseJSON)
         .then(resObj => {
           if (resObj.success !== true) {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message
-            };
+            throw new SuccessFalseException(resObj.message);
           }
         });
     }
