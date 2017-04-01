@@ -77,7 +77,6 @@ class EntityMap extends Component {
     this.state = {
       activePage: 1,
       startIndex: 0,
-      checkedKeys: [],
       billTypeCode: this.props.params.billTypeCode,
       mappingDefId: this.props.params.mappingDefId
     };
@@ -116,13 +115,6 @@ class EntityMap extends Component {
     } else {
       this.props.saveClickedNodeData(e.node.props.treeNodeData);
     }
-  }
-
-  onCheck(checkedKeys) {
-    // console.log(checkedKeys);
-    this.setState({
-      checkedKeys,
-    });
   }
 
   /**
@@ -171,7 +163,6 @@ class EntityMap extends Component {
     const defaultExpandedKeys = getDefaultExpandedKeys(this.props.treeData);
 
     return (
-        
         <div>
             <div className="head">
                 <button className="btn btn-default" onClick={::this.handleCreate}>新增</button>
@@ -179,17 +170,14 @@ class EntityMap extends Component {
             <div className="ledger-content clearfix">
                 <div className="ledger-content-left">
                     {this.props.treeData.length !== 0
-                        ? <Tree
-                        onSelect={::this.onSelect}
-                        checkable
-                        onCheck={::this.onCheck}
-                        checkedKeys={this.state.checkedKeys}
-                        defaultExpandedKeys={defaultExpandedKeys}
-                        loadData={::this.onLoadData}
-                    >
-                        {treeNodes}
-                    </Tree>
-                        : null
+                      ? <Tree
+                          onSelect={::this.onSelect}
+                          defaultExpandedKeys={defaultExpandedKeys}
+                          loadData={::this.onLoadData}
+                        >
+                          {treeNodes}
+                        </Tree>
+                      : null
                     }
                 </div>
                 <div className="ledger-content-right">
