@@ -149,7 +149,7 @@ class AccountingSubject extends Component {
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
+    this.props.updateTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
   }
   handleEditFormReset(event) {
     this.props.closeEditDialog();
@@ -322,7 +322,7 @@ class AccountingSubject extends Component {
         return true;
       }
     });
-    
+
     // 会计平台子科目表单字段模型 / 表格列模型
     const childSubjectCols = childSubjectFields || [];
 
