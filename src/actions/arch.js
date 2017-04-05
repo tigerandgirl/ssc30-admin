@@ -363,14 +363,13 @@ export function fetchTableColumnsModel(baseDocId) {
  */
 export function deleteTableData(baseDocId, rowIdx, rowData) {
   return (dispatch) => {
-    const { id } = rowData; // 40位主键 primary key
     let opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({ id })
+      body: JSON.stringify(rowData)
     };
     appendCredentials(opts);
 
@@ -618,50 +617,6 @@ export function initEditFormData(editFormData) {
     });
   };
 }
-
-export function submitEditForm() {
-  return (dispatch, getState) => {
-    dispatch({
-      type: types.SUBMIT_EDIT_FORM
-    });
-    const processResult = result => {
-      result.error ?
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: result.error.message
-        })
-      :
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_SUCCESS,
-          bsStyle: 'success',
-          message: '提交成功'
-        })
-    };
-    const { arch: { editFormData } } = getState();
-    const idField = editFormData.find(field => field.label === 'id');
-    const options = {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(editFormData)
-    };
-    appendCredentials(options);
-    return fetch(`/api/arch/${idField.value}`, options)
-      .then(utils.checkStatus)
-      .then(utils.parseJSON)
-      .then(processResult)
-      .catch(error => {
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: error.message
-        });
-        throw error;
-      });
-  };
-};
 
 // create dialog
 

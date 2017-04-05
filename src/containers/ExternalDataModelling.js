@@ -100,14 +100,6 @@ class ExternalDataModelling extends Component {
   handleEditFormBlur(index, fieldModel, value) {
     //this.props.updateEditFormFieldValue(index, fieldModel, value);
   }
-  handleEditFormSubmit(event, formData) {
-    const { startIndex } = this.state;
-    const { fields, editDialog: { rowIdx } } = this.props;
-    const { baseDocId } = this.props.params;
-    //this.props.submitEditForm();
-    this.props.saveTableData(baseDocId, fields, formData, rowIdx);
-    event.preventDefault();
-  }
   handleEditFormReset(event) {
     this.props.closeEditDialog();
     event.preventDefault();
