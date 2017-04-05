@@ -15,6 +15,8 @@ import Promise from 'promise-polyfill';
 //import './styles/ssc-grid2.less';
 // 参照组件样式
 import './styles/refer/referStyle.css';
+// 左树结构样式
+import 'rc-tree/assets/index.css';
 
 /**
  * 在这里引用友报账的样式文件

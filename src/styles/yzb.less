@@ -23,6 +23,7 @@ body{
 .mt10{margin-top:10px;}
 .f12{font-size:12px;font-size:1.2rem;}
 .p0{padding:0;}
+.col-120 { width: 120px; }
 
 
 /**************************** 友账表UI基础设计规范 start ***************************/
@@ -117,6 +118,7 @@ body{
 // 公共表格
 .ssc-grid {
   table {
+    table-layout: fixed;
     .mb0;
     color: @wordFontColor;
     border: 1px solid @borderColor;
@@ -127,7 +129,7 @@ body{
         background-color: #FFF;
         th {
           .b0;
-          .ws;
+          //.ws;
           height: 56px;
           padding: 0 10px;
           font: 700 14px/56px "SimSun";
@@ -220,9 +222,9 @@ body{
     margin-left: 250px;   // 左树右表 右边
   }
 }
-
+   
 // 左树结构
-/*.rc-tree {
+.rc-tree {
   padding: 14px;
   .rc-tree-title {
     font: 700 12px "SimSun";
@@ -269,4 +271,4 @@ body{
 }
 ul.rc-tree-child-tree.rc-tree-child-tree-open li.rc-tree-hover:hover {
   background: rgb(247, 247, 247);
-}*/
+}

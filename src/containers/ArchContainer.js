@@ -38,17 +38,24 @@ class ArchContainer extends Component {
 
   constructor(props) {
     super(props);
+    this.state={
+      conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
+    }
   }
 
   componentWillMount() {
-    const { itemsPerPage, startIndex } = this.props;
-    // TODO 此处缺少判断
-    const conditions =  [
-      {"field":"enable","datatype":"boolean","value":"true"}
-    ];
+    const { itemsPerPage, startIndex ,params: { baseDocId }} = this.props;
+  
+    let conditions =  [];
+    if( baseDocId == "dept" ||baseDocId == "project"
+        || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
+        conditions =  [
+          {"field":"enable","datatype":"boolean","value":"true"}
+        ];
+    }
 
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex, null, conditions );
-    this.props.fetchTableColumnsModel(this.props.params.baseDocId);
+    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions );
+    this.props.fetchTableColumnsModel(baseDocId);
   }
 
   componentDidMount() {
@@ -187,6 +194,9 @@ class ArchContainer extends Component {
     if(e.checked){
       conditions = [];
     }
+    this.setState({
+      conditions:conditions
+    })
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
 
@@ -205,24 +215,24 @@ class ArchContainer extends Component {
     const { itemsPerPage, tableData } = this.props;
     let nextPage = eventKey;
     let startIndex = (nextPage-1) * itemsPerPage;
-
-    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage);
+    let conditions = this.state.conditions ;
+    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage , conditions);
   }
 
   getCustomComponent() {
-    let containerThis = this;
+    let container = this;
     return React.createClass({
       handleEdit(event) {
 
         const { rowIdx, rowObj } = this.props;
-        const { fields } = containerThis.props;
+        const { fields } = container.props;
 
         var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
         _.map( fields , function(obj ,ind ){
             _.map(control, function( con ,i  ){
                 if( con == obj.refCode  ){
                   var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
-                  containerThis.props.updateReferFields(rowObjCode, ind );
+                  container.props.updateReferFields(rowObjCode, ind );
                 }
             })
          })
@@ -237,33 +247,33 @@ class ArchContainer extends Component {
         });
 
         // 将rowData保存到store中
-        containerThis.props.showEditDialog(rowIdx, rowObj);
+        container.props.showEditDialog(rowIdx, rowObj);
         // 从store中取出editFormData填充到表单上
-        //containerThis.props.initEditFormData(rowObj);
+        // container.props.initEditFormData(rowObj);
       },
       handleRemove(event) {
         if (!confirm("是否删除？")) {
           return;
         }
         const { rowIdx, rowObj } = this.props;
-        const { startIndex } = containerThis.props;
-        const { baseDocId } = containerThis.props.params;
-        // containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
-        // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
-        containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+        const { startIndex } = container.props;
+        const { baseDocId } = container.props.params;
+        // container.props.deleteTableData(baseDocId, rowIdx, rowObj);
+        // container.props.fetchTableBodyData(baseDocId, container.props.itemsPerPage, startIndex);
+        container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
 
       handleEnable(){
         const { rowObj } = this.props;
-        const { baseDocId } = containerThis.props.params;
-        containerThis.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
+        const { baseDocId } = container.props.params;
+        container.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
       },
 
       render() {
         var enable =  this.props.rowObj.enable ;
         const { params: {
-            baseDocId
-            } }= containerThis.props;
+          baseDocId
+        }} = container.props;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
         if( baseDocId == "dept" ||baseDocId == "project"
             || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
@@ -328,7 +338,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert, spinner,messageTips,
+      adminAlert, formAlert, spinner, messageTips,
       params: {
         baseDocId
       },

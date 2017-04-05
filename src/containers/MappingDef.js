@@ -12,6 +12,7 @@ import { Grid as SSCGrid, Form as SSCForm} from 'ssc-grid';
 
 import AdminDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
+import Formula from '../components/Formula';
 
 import * as Actions from '../actions/mappingDef';
 
@@ -66,6 +67,7 @@ class MappingDef extends Component {
 
   componentDidMount() {
     document.title = '转换规则定义';
+    // this.refs.formula.showAlert();
   }
 
   componentWillReceiveProps(/* nextProps */) {
@@ -132,6 +134,14 @@ class MappingDef extends Component {
     this.props.updateTableBodyDataAndFetchTableBodyData(formData);
   }
 
+  /**
+   * 公式编辑器
+   */
+
+  handleDataBack() {
+    
+  }
+
   getCustomComponent() {
     const container = this;
     return React.createClass({
@@ -172,6 +182,7 @@ class MappingDef extends Component {
 
     return (
       <div className="mapping-def-container content">
+        <Formula ref="formula" eid='10' backFormula={::this.handleDataBack} />
         <AdminAlert
             show={pageAlert.show}
             bsStyle={pageAlert.bsStyle}
@@ -192,7 +203,10 @@ class MappingDef extends Component {
             totalPage={this.props.totalPage}
             activePage={this.state.activePage}
             onPagination={::this.handlePagination}
-            operationColumn={{}}
+            operationColumn={{
+              className: 'col-120',
+              text: '操作'
+            }}
             operationColumnClass={this.getCustomComponent()}
           />
         </div>

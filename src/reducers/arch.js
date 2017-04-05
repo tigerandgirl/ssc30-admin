@@ -53,7 +53,7 @@ const initState = {
     }
   },
   spinner:{
-    show:true 
+    show:true
   },
   messageTips:{
     isShow:false,
@@ -232,17 +232,17 @@ export default function arch(state = initState, action) {
     // 删除表格中的一行
     case DELETE_TABLEDATA_SUCCESS:
       return update(state, {
-        adminAlert: {
-          show: {$set: true},
-          bsStyle: {$set: 'success'},
-          message: {$set: '删除成功'}
-        }
+        // adminAlert: {
+        //   show: {$set: true},
+        //   bsStyle: {$set: 'success'},
+        //   message: {$set: '删除成功'}
+        // }
       });
 
     case CHANGE_SELECTED_ROWS:
       return {...state,
         selectedRows: action.selectedRows
-      }
+      };
 
     // 对话框
 
@@ -275,7 +275,7 @@ export default function arch(state = initState, action) {
     case ARCH_INIT_EDIT_FORM_DATA:
       return {...state,
         editFormData: action.editFormData
-      }
+      };
     case SUBMIT_EDIT_FORM:
       return {...state,
         submitting: true
@@ -325,7 +325,7 @@ export default function arch(state = initState, action) {
     case INIT_CREATE_FORM_DATA:
       return {...state,
         createFormData: action.formData
-      }
+      };
     case SUBMIT_CREATE_FORM:
       return {...state,
         submitting: true
@@ -359,23 +359,23 @@ export default function arch(state = initState, action) {
 
     case REFER_FIELDS_UPDATE:
       return update(state, {
-		fields: {
-		  [action.fieldIndex]: {
-			referConfig: {
-			  referConditions: {
-				filterNotContainCondition: { $set : action.code }
-			  }
-			}
-		  }
-		}
+        fields: {
+          [action.fieldIndex]: {
+            referConfig: {
+              referConditions: {
+                filterNotContainCondition: { $set: action.code }
+              }
+            }
+          }
+        }
       });
 
-    //提示消息
+    // 提示消息
     case HIDE_MESSAGE_TIPS:
       return update(state, {
         messageTips: {
           isShow: {$set: false},
-          txt:{$set:" "}
+          txt: {$set: ' '}
         }
       });
 
