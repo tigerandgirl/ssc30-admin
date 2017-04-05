@@ -189,49 +189,6 @@ export const SUBMIT_EDIT_FORM = 'SUBMIT_EDIT_FORM';
 export const SUBMIT_EDIT_FORM_SUCCESS = 'SUBMIT_EDIT_FORM_SUCCESS';
 export const SUBMIT_EDIT_FORM_FAIL = 'SUBMIT_EDIT_FORM_FAIL';
 
-export function submitEditForm() {
-  return (dispatch, getState) => {
-    dispatch({
-      type: SUBMIT_EDIT_FORM
-    });
-    const processResult = result => {
-      result.error ?
-        dispatch({
-          type: SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: result.error.message
-        })
-      :
-        dispatch({
-          type: SUBMIT_EDIT_FORM_SUCCESS,
-          bsStyle: 'success',
-          message: '提交成功'
-        })
-    };
-    const { ncSync: { editFormData } } = getState();
-    const idField = editFormData.find(field => field.label === 'id');
-    const options = {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(editFormData)
-    };
-    return fetch(`/api/ncsync/${idField.value}`, options)
-      .then(checkStatus)
-      .then(parseJSON)
-      .then(processResult)
-      .catch(error => {
-        dispatch({
-          type: SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: error.message
-        });
-        throw error;
-      });
-  };
-};
-
 // NC sync: create new data
 
 export const SUBMIT_CREATE_FORM = 'SUBMIT_CREATE_FORM';

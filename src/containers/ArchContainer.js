@@ -147,7 +147,6 @@ class ArchContainer extends Component {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
 
-    // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
     var phoneList =  ["project" , "dept" , "feeitem"] ;
     _.map(phoneList,function( obj ,ind ){
