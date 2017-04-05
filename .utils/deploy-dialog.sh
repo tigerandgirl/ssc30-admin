@@ -48,7 +48,7 @@ case $CHOICE in
         3)
             # 友报账5088
             ip=$YBZ_IP
-            target=/ssc/tomcat_dc_integration/webapps/manaaccount/
+            target=/ssc/tomcat_dc_integration_2/webapps/manaaccount/
             ;;
         4)
             # 友报账6088
