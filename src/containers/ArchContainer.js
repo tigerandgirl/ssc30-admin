@@ -38,6 +38,9 @@ class ArchContainer extends Component {
 
   constructor(props) {
     super(props);
+    this.state={
+      conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
+    }
   }
 
   componentWillMount() {
@@ -187,6 +190,9 @@ class ArchContainer extends Component {
     if(e.checked){
       conditions = [];
     }
+    this.setState({
+      conditions:conditions
+    })
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
 
@@ -205,8 +211,8 @@ class ArchContainer extends Component {
     const { itemsPerPage, tableData } = this.props;
     let nextPage = eventKey;
     let startIndex = (nextPage-1) * itemsPerPage;
-
-    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage);
+    let conditions = this.state.conditions ;
+    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage , conditions);
   }
 
   getCustomComponent() {

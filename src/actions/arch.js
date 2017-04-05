@@ -265,9 +265,9 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
 /**
  * 复合操作：获取表格数据并将页码设定为下一页
  */
-export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage) {
+export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage , conditions) {
   return (dispatch) => {
-    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, []))
+    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions ))
       .then(() => {
         return dispatch(gotoPage(startIndex, nextPage));
       });
