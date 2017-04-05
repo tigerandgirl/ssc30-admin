@@ -44,14 +44,18 @@ class ArchContainer extends Component {
   }
 
   componentWillMount() {
-    const { itemsPerPage, startIndex } = this.props;
-    // TODO 此处缺少判断
-    const conditions =  [
-      {"field":"enable","datatype":"boolean","value":"true"}
-    ];
+    const { itemsPerPage, startIndex ,params: { baseDocId }} = this.props;
+  
+    let conditions =  [];
+    if( baseDocId == "dept" ||baseDocId == "project"
+        || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
+        conditions =  [
+          {"field":"enable","datatype":"boolean","value":"true"}
+        ];
+    }
 
-    this.props.fetchTableBodyData(this.props.params.baseDocId, itemsPerPage, startIndex, null, conditions );
-    this.props.fetchTableColumnsModel(this.props.params.baseDocId);
+    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions );
+    this.props.fetchTableColumnsModel(baseDocId);
   }
 
   componentDidMount() {
