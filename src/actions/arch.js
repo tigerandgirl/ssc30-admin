@@ -390,43 +390,42 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       });
   };
 }
+
 /**
  * 启用 / 停用
- * */
-export function enableTableData(baseDocId, rowObj){
-  return (dispatch, getState) => {
-    var { id,enable } = rowObj; // 40位主键 primary key
-    var turnEnable = false ;
-    if( !enable ){
-       turnEnable = true  ;
+ */
+export function enableTableData(baseDocId, rowObj) {
+  return dispatch => {
+    let turnEnable = false;
+    if (!rowObj.enable) {
+      turnEnable = true;
     }
-    var opts = {
+    const opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({ id,
-        enable:turnEnable
+      body: JSON.stringify({...rowObj,
+        enable: turnEnable
       })
     };
     appendCredentials(opts);
 
-    var url = getEnableURL(baseDocId);
+    const url = getEnableURL(baseDocId);
     return fetch(url, opts)
-        .then(response => {
-          return response.json();
-        }).then(json => {
-          if( json.success ==  true ) {
-            dispatch(enableTableDataSuccess(json));
-          }else{
-            dispatch(enableTableDataFail(json.message));
-          }
-        }).catch(function (err) {
-          console.log("操作出现错误：", err);
-        });
-  }
-
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        if (json.success === true) {
+          dispatch(enableTableDataSuccess(json));
+        }else{
+          dispatch(enableTableDataFail(json.message));
+        }
+      })
+      .catch(err => console.log('操作出现错误：', err));
+  };
 }
 
 /**
