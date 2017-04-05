@@ -530,11 +530,11 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
 /**
  * 复合操作：创建/保存并刷新表格
  */
-export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex) {
+export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex,conditions) {
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,conditions));
     });
   };
 }

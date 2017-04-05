@@ -49,9 +49,7 @@ class ArchContainer extends Component {
     let conditions =  [];
     if( baseDocId == "dept" ||baseDocId == "project"
         || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
-        conditions =  [
-          {"field":"enable","datatype":"boolean","value":"true"}
-        ];
+        conditions =  this.state.conditions ;
     }
 
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions );
@@ -135,7 +133,7 @@ class ArchContainer extends Component {
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex,this.state.conditions);
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
