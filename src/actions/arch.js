@@ -363,14 +363,13 @@ export function fetchTableColumnsModel(baseDocId) {
  */
 export function deleteTableData(baseDocId, rowIdx, rowData) {
   return (dispatch) => {
-    const { id } = rowData; // 40位主键 primary key
     let opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({ id })
+      body: JSON.stringify(rowData)
     };
     appendCredentials(opts);
 
