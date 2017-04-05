@@ -60,9 +60,6 @@ class BaseDocIndex extends Component {
   handleEditFormBlur(label, value) {
     this.props.updateEditFormFieldValue(label, value);
   }
-  handleEditFormSubmit() {
-    this.props.submitEditForm();
-  }
 
   handleAlertDismiss(){
     this.props.hideAdminAlert();

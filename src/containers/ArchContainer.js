@@ -1,8 +1,12 @@
+/**
+ * 基础档案
+ */
+
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Button ,Checkbox  } from 'react-bootstrap';
+import { Button, Checkbox } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
@@ -38,9 +42,20 @@ class ArchContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state={
-      conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
+    const { params: { baseDocId }} = props;
+    
+    if( baseDocId == "dept" ||baseDocId == "project"
+        || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
+          this.state={
+            conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
+          }
+    } else {
+      this.state={
+        conditions : [  ]
+      }
     }
+    
+
   }
 
   componentWillMount() {
@@ -145,7 +160,6 @@ class ArchContainer extends Component {
     const { startIndex, fields, editDialog: { rowIdx } } = this.props;
     const { baseDocId } = this.props.params;
 
-    // this.props.submitEditForm();
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
     var phoneList =  ["project" , "dept" , "feeitem"] ;
     _.map(phoneList,function( obj ,ind ){
@@ -218,19 +232,19 @@ class ArchContainer extends Component {
   }
 
   getCustomComponent() {
-    let containerThis = this;
+    let container = this;
     return React.createClass({
       handleEdit(event) {
 
         const { rowIdx, rowObj } = this.props;
-        const { fields } = containerThis.props;
+        const { fields } = container.props;
 
         var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
         _.map( fields , function(obj ,ind ){
             _.map(control, function( con ,i  ){
                 if( con == obj.refCode  ){
                   var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
-                  containerThis.props.updateReferFields(rowObjCode, ind );
+                  container.props.updateReferFields(rowObjCode, ind );
                 }
             })
          })
@@ -245,33 +259,33 @@ class ArchContainer extends Component {
         });
 
         // 将rowData保存到store中
-        containerThis.props.showEditDialog(rowIdx, rowObj);
+        container.props.showEditDialog(rowIdx, rowObj);
         // 从store中取出editFormData填充到表单上
-        //containerThis.props.initEditFormData(rowObj);
+        // container.props.initEditFormData(rowObj);
       },
       handleRemove(event) {
         if (!confirm("是否删除？")) {
           return;
         }
         const { rowIdx, rowObj } = this.props;
-        const { startIndex } = containerThis.props;
-        const { baseDocId } = containerThis.props.params;
-        // containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
-        // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
-        containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+        const { startIndex } = container.props;
+        const { baseDocId } = container.props.params;
+        // container.props.deleteTableData(baseDocId, rowIdx, rowObj);
+        // container.props.fetchTableBodyData(baseDocId, container.props.itemsPerPage, startIndex);
+        container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
 
       handleEnable(){
         const { rowObj } = this.props;
-        const { baseDocId } = containerThis.props.params;
-        containerThis.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
+        const { baseDocId } = container.props.params;
+        container.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
       },
 
       render() {
         var enable =  this.props.rowObj.enable ;
         const { params: {
-            baseDocId
-            } }= containerThis.props;
+          baseDocId
+        }} = container.props;
         var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
         if( baseDocId == "dept" ||baseDocId == "project"
             || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
@@ -336,7 +350,7 @@ class ArchContainer extends Component {
       tableData, fields,
       editDialog, editFormData,
       createDialog,
-      adminAlert, formAlert, spinner,messageTips,
+      adminAlert, formAlert, spinner, messageTips,
       params: {
         baseDocId
       },

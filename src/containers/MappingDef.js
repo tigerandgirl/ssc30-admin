@@ -203,7 +203,10 @@ class MappingDef extends Component {
             totalPage={this.props.totalPage}
             activePage={this.state.activePage}
             onPagination={::this.handlePagination}
-            operationColumn={{}}
+            operationColumn={{
+              className: 'col-120',
+              text: '操作'
+            }}
             operationColumnClass={this.getCustomComponent()}
           />
         </div>

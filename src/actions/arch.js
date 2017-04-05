@@ -265,7 +265,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
 /**
  * 复合操作：获取表格数据并将页码设定为下一页
  */
-export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage , conditions) {
+export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage, conditions) {
   return (dispatch) => {
     return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions ))
       .then(() => {
@@ -363,14 +363,13 @@ export function fetchTableColumnsModel(baseDocId) {
  */
 export function deleteTableData(baseDocId, rowIdx, rowData) {
   return (dispatch) => {
-    const { id } = rowData; // 40位主键 primary key
     let opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({ id })
+      body: JSON.stringify(rowData)
     };
     appendCredentials(opts);
 
@@ -390,43 +389,42 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       });
   };
 }
+
 /**
  * 启用 / 停用
- * */
-export function enableTableData(baseDocId, rowObj){
-  return (dispatch, getState) => {
-    var { id,enable } = rowObj; // 40位主键 primary key
-    var turnEnable = false ;
-    if( !enable ){
-       turnEnable = true  ;
+ */
+export function enableTableData(baseDocId, rowObj) {
+  return dispatch => {
+    let turnEnable = false;
+    if (!rowObj.enable) {
+      turnEnable = true;
     }
-    var opts = {
+    const opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({ id,
-        enable:turnEnable
+      body: JSON.stringify({...rowObj,
+        enable: turnEnable
       })
     };
     appendCredentials(opts);
 
-    var url = getEnableURL(baseDocId);
+    const url = getEnableURL(baseDocId);
     return fetch(url, opts)
-        .then(response => {
-          return response.json();
-        }).then(json => {
-          if( json.success ==  true ) {
-            dispatch(enableTableDataSuccess(json));
-          }else{
-            dispatch(enableTableDataFail(json.message));
-          }
-        }).catch(function (err) {
-          console.log("操作出现错误：", err);
-        });
-  }
-
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        if (json.success === true) {
+          dispatch(enableTableDataSuccess(json));
+        }else{
+          dispatch(enableTableDataFail(json.message));
+        }
+      })
+      .catch(err => console.log('操作出现错误：', err));
+  };
 }
 
 /**
@@ -619,50 +617,6 @@ export function initEditFormData(editFormData) {
     });
   };
 }
-
-export function submitEditForm() {
-  return (dispatch, getState) => {
-    dispatch({
-      type: types.SUBMIT_EDIT_FORM
-    });
-    const processResult = result => {
-      result.error ?
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: result.error.message
-        })
-      :
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_SUCCESS,
-          bsStyle: 'success',
-          message: '提交成功'
-        })
-    };
-    const { arch: { editFormData } } = getState();
-    const idField = editFormData.find(field => field.label === 'id');
-    const options = {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(editFormData)
-    };
-    appendCredentials(options);
-    return fetch(`/api/arch/${idField.value}`, options)
-      .then(utils.checkStatus)
-      .then(utils.parseJSON)
-      .then(processResult)
-      .catch(error => {
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: error.message
-        });
-        throw error;
-      });
-  };
-};
 
 // create dialog
 
