@@ -217,25 +217,27 @@ body {
 .ledger-content .ledger-content-right {
   margin-left: 250px;
 }
-/*.rc-tree {
+.rc-tree {
   padding: 14px;
-  .rc-tree-title {
-    font: 700 12px "SimSun";
-    color: @wordFontColor;
-  }
-  .rc-tree-node-selected {
-    background-color: #ffe6b0;
-    border: 1px #ffb951 solid;
-    opacity: 0.8;
-  }
+}
+.rc-tree .rc-tree-title {
+  font: 700 12px "SimSun";
+  color: #333333;
+}
+.rc-tree .rc-tree-node-selected {
+  background-color: #ffe6b0;
+  border: 1px #ffb951 solid;
+  opacity: 0.8;
 }
 .rc-tree li {
   line-height: 30px;
-  .rc-tree-node-content-wrapper {
-    height: auto;
-  }
 }
-.rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle {
+.rc-tree li .rc-tree-node-content-wrapper {
+  height: auto;
+}
+.rc-tree li span.rc-tree-switcher,
+.rc-tree li span.rc-tree-checkbox,
+.rc-tree li span.rc-tree-iconEle {
   bakground-image: none;
 }
 .rc-tree li span.rc-tree-switcher.rc-tree-noline_close {
@@ -246,22 +248,30 @@ body {
   background: url(../images/rc-tree-noline_open.png) no-repeat 0 3px;
   margin-right: 10px;
 }
-.rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__close  {
+.rc-tree li span.rc-tree-switcher,
+.rc-tree li span.rc-tree-checkbox,
+.rc-tree li span.rc-tree-iconEle.rc-tree-icon__close {
   background: url(../images/rc-tree-icon__close.png) no-repeat;
   margin-right: 10px;
 }
-.rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__open {
+.rc-tree li span.rc-tree-switcher,
+.rc-tree li span.rc-tree-checkbox,
+.rc-tree li span.rc-tree-iconEle.rc-tree-icon__open {
   background: url(../images/rc-tree-icon__open.png) no-repeat;
   margin-right: 10px;
 }
-.rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__docu {
+.rc-tree li span.rc-tree-switcher,
+.rc-tree li span.rc-tree-checkbox,
+.rc-tree li span.rc-tree-iconEle.rc-tree-icon__docu {
   background: url(../images/rc-tree-icon__docu.png) no-repeat;
   margin-right: 10px;
 }
-.rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__docu + span.rc-tree-title {
+.rc-tree li span.rc-tree-switcher,
+.rc-tree li span.rc-tree-checkbox,
+.rc-tree li span.rc-tree-iconEle.rc-tree-icon__docu + span.rc-tree-title {
   font: 400 12px "SimSun";
-  color: @wordFontColor;
+  color: #333333;
 }
 ul.rc-tree-child-tree.rc-tree-child-tree-open li.rc-tree-hover:hover {
-  background: rgb(247, 247, 247);
-}*/
+  background: #f7f7f7;
+}

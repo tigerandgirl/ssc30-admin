@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import 'rc-tree/assets/index.css';
+//import 'rc-tree/assets/index.css';
 import Tree, { TreeNode } from 'rc-tree';
 
 export default class AdminTree extends Component {
