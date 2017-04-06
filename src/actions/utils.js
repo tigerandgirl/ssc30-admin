@@ -1,7 +1,15 @@
 /**
- * 常用的helper function
+ * exception lib
  */
 
+export function SuccessFalseException(message) {
+  this.message = message || '未知错误';
+  this.name = 'SuccessFalseException';
+}
+
+/**
+ * 常用的helper function
+ */
 
  /**
  * 组建Fetch API需要的配置参数

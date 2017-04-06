@@ -64,15 +64,6 @@ const MAPPING_DEF_SAVE_URL = getMappingDefAPI('/ficloud/mappingdef/save');
 const MAPPING_DEF_DELETE_URL = getMappingDefAPI('/ficloud/mappingdef/delete');
 
 /**
- * exception lib
- */
-
-function SuccessFalseException(message) {
-  this.message = message;
-  this.name = 'SuccessFalseException';
-}
-
-/**
  * 获取表格的列模型
  */
 
@@ -129,7 +120,7 @@ export function fetchTableColumnsModel(baseDocId) {
               但是数据校验方法提示说：“${validationMessage}”`
             };
           } else {
-            throw new SuccessFalseException(resObj.message);
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }
@@ -239,7 +230,7 @@ export function deleteTableBodyData(rowObj) {
         .then(utils.parseJSON)
         .then(resObj => {
           if (resObj.success !== true) {
-            throw new SuccessFalseException(resObj.message);
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }
