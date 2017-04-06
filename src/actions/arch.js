@@ -394,7 +394,7 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
  * 启用 / 停用
  */
 export function enableTableData(baseDocId, rowObj) {
-  return dispatch => {
+  return (dispatch) => {
     let turnEnable = false;
     if (!rowObj.enable) {
       turnEnable = true;
@@ -405,7 +405,8 @@ export function enableTableData(baseDocId, rowObj) {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({...rowObj,
+      body: JSON.stringify({
+        ...rowObj,
         enable: turnEnable
       })
     };
@@ -413,13 +414,13 @@ export function enableTableData(baseDocId, rowObj) {
 
     const url = getEnableURL(baseDocId);
     return fetch(url, opts)
-      .then(response => {
+      .then((response) => {
         return response.json();
       })
-      .then(json => {
+      .then((json) => {
         if (json.success === true) {
           dispatch(enableTableDataSuccess(json));
-        }else{
+        } else {
           dispatch(enableTableDataFail(json.message));
         }
       })

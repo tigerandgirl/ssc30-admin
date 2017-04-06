@@ -275,7 +275,7 @@ class ArchContainer extends Component {
         container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
       },
 
-      handleEnable(){
+      handleEnable() {
         const { rowObj } = this.props;
         const { baseDocId } = container.props.params;
         container.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);

@@ -59,18 +59,9 @@ const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 /**
  * 转换规则模型 组装后端接口
  */
-const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud/mappingdef/query');
+const MAPPING_DEF_QUERY_URL = getMappingDefAPI('/ficloud/mappingdef/query');
 const MAPPING_DEF_SAVE_URL = getMappingDefAPI('/ficloud/mappingdef/save');
 const MAPPING_DEF_DELETE_URL = getMappingDefAPI('/ficloud/mappingdef/delete');
-
-/**
- * exception lib
- */
-
-function SuccessFalseException(message) {
-  this.message = message;
-  this.name = 'SuccessFalseException';
-}
 
 /**
  * 获取表格的列模型
@@ -129,7 +120,7 @@ export function fetchTableColumnsModel(baseDocId) {
               但是数据校验方法提示说：“${validationMessage}”`
             };
           } else {
-            throw new SuccessFalseException(resObj.message);
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }
@@ -140,14 +131,18 @@ export function fetchTableColumnsModel(baseDocId) {
  * 获取实体模型
  */
 
-export const CONVERSION_RULE_DEFINITION_REQUEST = 'CONVERSION_RULE_DEFINITION_REQUEST';
-export const CONVERSION_RULE_DEFINITION_SUCCESS = 'CONVERSION_RULE_DEFINITION_SUCCESS';
-export const CONVERSION_RULE_DEFINITION_FAILURE = 'CONVERSION_RULE_DEFINITION_FAILURE';
+export const MAPPING_DEF_TABLE_BODY_DATA_REQUEST = 'MAPPING_DEF_TABLE_BODY_DATA_REQUEST';
+export const MAPPING_DEF_TABLE_BODY_DATA_SUCCESS = 'MAPPING_DEF_TABLE_BODY_DATA_SUCCESS';
+export const MAPPING_DEF_TABLE_BODY_DATA_FAILURE = 'MAPPING_DEF_TABLE_BODY_DATA_FAILURE';
 
 export function fetchTableBodyData(itemsPerPage, startIndex) {
   // use `callAPIMiddleware`
   return {
-    types: [CONVERSION_RULE_DEFINITION_REQUEST, CONVERSION_RULE_DEFINITION_SUCCESS, CONVERSION_RULE_DEFINITION_FAILURE],
+    types: [
+      MAPPING_DEF_TABLE_BODY_DATA_REQUEST,
+      MAPPING_DEF_TABLE_BODY_DATA_SUCCESS,
+      MAPPING_DEF_TABLE_BODY_DATA_FAILURE
+    ],
     // Check the cache (optional):
     // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
@@ -158,7 +153,7 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
         begin: startIndex,
         groupnum: itemsPerPage
       });
-      let url = `${QUERY_CONVERSION_RULE_DEFINITION_URL}`;
+      let url = `${MAPPING_DEF_QUERY_URL}`;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
@@ -235,7 +230,7 @@ export function deleteTableBodyData(rowObj) {
         .then(utils.parseJSON)
         .then(resObj => {
           if (resObj.success !== true) {
-            throw new SuccessFalseException(resObj.message);
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }
