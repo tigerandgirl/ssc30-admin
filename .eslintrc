@@ -1,5 +1,5 @@
 {
-  "extends": ["eslint-config-airbnb"],
+  "extends": ["eslint-config-airbnb", "plugin:jsx-a11y/recommended"],
   "env": {
     "browser": true,
     "node": true
@@ -10,7 +10,8 @@
   "parser": "babel-eslint",
   "plugins": [
     "react",
-    "babel"
+    "babel",
+    "jsx-a11y"
   ],
   "rules": {
     "constructor-super": 2,
