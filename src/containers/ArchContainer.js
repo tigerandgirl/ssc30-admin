@@ -13,6 +13,7 @@ import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
 import MessageTips from '../components/MessageTips';
+import MessageConfirm from '../components/MessageConfirm';
 
 import * as Actions from '../actions/arch';
 
@@ -264,15 +265,24 @@ class ArchContainer extends Component {
         // container.props.initEditFormData(rowObj);
       },
       handleRemove(event) {
-        if (!confirm("是否删除？")) {
-          return;
-        }
-        const { rowIdx, rowObj } = this.props;
-        const { startIndex } = container.props;
-        const { baseDocId } = container.props.params;
+
+       const { rowIdx, rowObj } = this.props;
+       const { startIndex } = container.props;
+       const { baseDocId } = container.props.params;
+       var param ={
+            isShow :true ,
+            txt:"是否删除？",
+            sureFn:function(){
+               container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+            }
+        };
+
+        container.refs.messageConfirm.initParam(param);
+
         // container.props.deleteTableData(baseDocId, rowIdx, rowObj);
         // container.props.fetchTableBodyData(baseDocId, container.props.itemsPerPage, startIndex);
-        container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+
+      //
       },
 
       handleEnable() {
@@ -395,7 +405,8 @@ class ArchContainer extends Component {
         <div className="blank" />
         <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
         <MessageTips isShow={ messageTips.isShow}  onHideEvent = {::this.handleCloseMessage}
-                     txt={messageTips.txt} autoHide={ true }  refs="messageTip"> </MessageTips>
+                     txt={messageTips.txt} autoHide={ true } > </MessageTips>
+        <MessageConfirm  ref="messageConfirm"/>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >
