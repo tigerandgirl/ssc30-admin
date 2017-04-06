@@ -6,7 +6,7 @@ ip=172.20.4.88
 port=22
 user=root
 src=dist/
-dest=/ssc/tomcat_dc_integration/webapps/manaaccount/
+dest=/ssc/tomcat_dc_integration_3/tomcat_dc_integration/webapps/manaaccount
 
 # Change to source root dir
 utils_dir=`dirname $(readlink -f $0)`
@@ -15,7 +15,7 @@ cd $root_dir
 
 # Bundle and upload
 
-echo "同步本地编译后的数据到友报账联调服务器 172.20.4.88"
+echo "同步本地编译后的数据到友报账联调服务器 172.20.4.88:6088"
 rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx $src $user@$ip:$dest
 
 date

@@ -12,7 +12,7 @@ root_dir=`dirname $utils_dir`
 cd $root_dir
 
 # Bundle and upload
-echo "同步本地编译后的数据到集群中的一个节点 10.3.14.237"
+echo "同步本地编译后的数据到友账表服务器 10.3.14.237"
 rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx dist/ $user@$ip:/data/ficloud/uiresources/manaaccount/
 
 date

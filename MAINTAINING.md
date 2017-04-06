@@ -35,13 +35,8 @@ PROD_SERVER=10.3.14.240 npm run release # 重新指定后端服务器地址
 
 ```
 npm run release:ybz
-```
-
-发布到友报账服务器的其他端口（因为该服务器启动了多个tomcat，比如端口6088）
-
-```
-PROD_SERVER=172.20.4.88:6088 npm run build:ybz # 重新指定后端服务器地址和端口
-.utils/deploy-dialog.sh # 选择目标服务器和地址
+npm run release:ybz-5088
+npm run release:ybz-6088
 ```
 
 ## 发布友账表

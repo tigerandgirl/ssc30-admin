@@ -18,8 +18,12 @@
     "build:ybz": "npm run clean && npm run webpack:ybz && npm run webpack:ybz-min",
     "build:yzb": "npm run clean && npm run webpack:yzb && npm run webpack:yzb-min",
     "deploy:ybz": ".utils/deploy-ybz.sh",
+    "deploy:ybz-5088": ".utils/deploy-ybz-5088.sh",
+    "deploy:ybz-6088": ".utils/deploy-ybz-6088.sh",
     "deploy:yzb": ".utils/deploy-yzb.sh",
     "release:ybz": "npm run build:ybz && npm run deploy:ybz",
+    "release:ybz-5088": "PROD_SERVER=172.20.4.88:5088 npm run build:ybz && npm run deploy:ybz-5088",
+    "release:ybz-6088": "PROD_SERVER=172.20.4.88:5088 npm run build:ybz && npm run deploy:ybz-6088",
     "release:yzb": "npm run build:yzb && npm run deploy:yzb",
     "db:reset": "node api/mocks/reset_db.js"
   },

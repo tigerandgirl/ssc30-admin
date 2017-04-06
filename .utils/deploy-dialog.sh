@@ -24,6 +24,7 @@ OPTIONS=(1 "友报账 172.20.4.88:8088"
          2 "友账表 59.110.123.20"
          3 "友报账 172.20.4.88:5088"
          4 "友报账 172.20.4.88:6088"
+         5 "debugger"
 )
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
@@ -37,23 +38,23 @@ clear
 case $CHOICE in
         1)
             # 友报账 8088
-            ip=$YBZ_IP
-            target=/ssc/tomcat_dc_integration/webapps/manaaccount/
+            .utils/deploy-ybz.sh
             ;;
         2)
             # 友账表
-            ip=$YZB_IP
-            target=/data/ficloud/uiresources/manaaccount/
+            .utils/deploy-yzb.sh
             ;;
         3)
             # 友报账5088
-            ip=$YBZ_IP
-            target=/ssc/tomcat_dc_integration_2/webapps/manaaccount/
+            .utils/deploy-ybz-5088.sh
             ;;
         4)
             # 友报账6088
-            ip=$YBZ_IP
-            target=/ssc/tomcat_dc_integration_3/tomcat_dc_integration/webapps/manaaccount
+            .utils/deploy-ybz-6088.sh
+            ;;
+        5)
+            # debugger;
+            pwd
             ;;
 esac
 
@@ -61,15 +62,3 @@ if [ -z $ip ]; then
   echo "没有选择"
   exit 0
 fi
-
-echo "正在部署到服务器..."
-
-# Change to source root dir
-utils_dir=`dirname $(readlink -f $0)`
-root_dir=`dirname $utils_dir`
-cd $root_dir
-
-# upload data
-rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx dist/ $user@$ip:$target
-
-date
