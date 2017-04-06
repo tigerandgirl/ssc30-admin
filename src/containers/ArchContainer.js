@@ -1,8 +1,12 @@
+/**
+ * 基础档案
+ */
+
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Button ,Checkbox  } from 'react-bootstrap';
+import { Button, Checkbox } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
@@ -38,9 +42,20 @@ class ArchContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state={
-      conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
+    const { params: { baseDocId }} = props;
+    
+    if( baseDocId == "dept" ||baseDocId == "project"
+        || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
+          this.state={
+            conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
+          }
+    } else {
+      this.state={
+        conditions : [  ]
+      }
     }
+    
+
   }
 
   componentWillMount() {
@@ -49,9 +64,7 @@ class ArchContainer extends Component {
     let conditions =  [];
     if( baseDocId == "dept" ||baseDocId == "project"
         || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
-        conditions =  [
-          {"field":"enable","datatype":"boolean","value":"true"}
-        ];
+        conditions =  this.state.conditions ;
     }
 
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions );
@@ -135,7 +148,7 @@ class ArchContainer extends Component {
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex,this.state.conditions);
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
