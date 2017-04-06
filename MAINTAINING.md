@@ -31,16 +31,16 @@ npm run release
 PROD_SERVER=10.3.14.240 npm run release # 重新指定后端服务器地址
 ```
 
-## 发布友报账
+## 发布友报账和友账表
+
+注意：由于使用rsync+ssh，所以请在本地和远程配置好密钥对。
 
 ```
+git clone https://github.com/yyssc/ssc30-admin.git
+cd ssc30-admin
+npm install
 npm run release:ybz
 npm run release:ybz-5088
 npm run release:ybz-6088
-```
-
-## 发布友账表
-
-```
 npm run release:yzb
 ```
