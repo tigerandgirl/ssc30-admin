@@ -1,6 +1,6 @@
 {
   "name": "ssc30-admin",
-  "version": "0.2.12",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "build:ybz": "npm run clean && npm run webpack:ybz && npm run webpack:ybz-min",
