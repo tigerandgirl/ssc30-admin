@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { Button } from 'react-bootstrap';
-import { Grid as SSCGrid, Form as SSCForm} from 'ssc-grid';
+import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
-import Formula from '../components/Formula';
+import FormulaField from '../components/FormulaField';
 
 import * as Actions from '../actions/mappingDef';
 
@@ -41,22 +41,22 @@ class MappingDef extends Component {
     /**
      * store中存储的表体数据
      */
-    tableBodyData: PropTypes.array.isRequired,
+    tableBodyData: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired
+    })).isRequired,
     /**
      * store中存储的表头数据
      */
-    tableColumnsModel: PropTypes.array.isRequired,
-    totalPage: PropTypes.number,
+    tableColumnsModel: PropTypes.arrayOf(PropTypes.shape({
+      type: PropTypes.string.isRequired
+    })).isRequired,
+    totalPage: PropTypes.number.isRequired,
     updateTableBodyDataAndFetchTableBodyData: PropTypes.func.isRequired
   }
 
   state = {
     activePage: 1,
     startIndex: 0
-  }
-
-  constructor(props) {
-    super(props);
   }
 
   componentWillMount() {
@@ -67,7 +67,6 @@ class MappingDef extends Component {
 
   componentDidMount() {
     document.title = '转换规则定义';
-    // this.refs.formula.showAlert();
   }
 
   componentWillReceiveProps(/* nextProps */) {
@@ -134,14 +133,6 @@ class MappingDef extends Component {
     this.props.updateTableBodyDataAndFetchTableBodyData(formData);
   }
 
-  /**
-   * 公式编辑器
-   */
-
-  handleDataBack() {
-    
-  }
-
   getCustomComponent() {
     const container = this;
     return React.createClass({
@@ -180,9 +171,16 @@ class MappingDef extends Component {
       itemsPerPage, tableColumnsModel, tableBodyData, pageAlert
     } = this.props;
 
+    // 准备制作自定义组件 - 公式编辑器
+    const tableColumnsModel2 = tableColumnsModel.map(({ ...columnModel }) => {
+      if (columnModel.datatype === 20 && columnModel.type === 'custom') {
+        columnModel.component = FormulaField;
+      }
+      return columnModel;
+    });
+
     return (
       <div className="mapping-def-container content">
-        <Formula ref="formula" eid='10' backFormula={::this.handleDataBack} />
         <AdminAlert
             show={pageAlert.show}
             bsStyle={pageAlert.bsStyle}
@@ -236,7 +234,7 @@ class MappingDef extends Component {
             {this.props.serverMessage}
           </p>
           <SSCForm
-            fieldsModel={tableColumnsModel}
+            fieldsModel={tableColumnsModel2}
             defaultData={this.props.editFormData}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.closeEditDialog}
@@ -247,13 +245,16 @@ class MappingDef extends Component {
   }
 }
 
-const mapStateToProps = (state/* , ownProps */) => {
-  return {...state.mappingDef};
-};
+/**
+ * @param {Object} state
+ * @param {Object} ownProps
+ */
+const mapStateToProps = state => ({ ...state.mappingDef });
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(Actions, dispatch);
-};
+/**
+ * @param {Function} dispatch
+ */
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(MappingDef);

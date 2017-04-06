@@ -120,7 +120,7 @@ export const removeEmpty = (obj) => {
  * 1. 后端使用lable，需要复制一份改成label，以保证Grid组件等没有问题
  * 2. 对于数据类型，后端使用int，前端使用string，添加string类型的type字段
  */
-export function fixFieldTypo ({...field}) {
+export function fixFieldTypo({ ...field }) {
   field.label = field.lable; // API中将label错误的写成了lable
   field.key = field.id; // API后来将key改成了id
   return field;
@@ -130,11 +130,14 @@ export function fixFieldTypo ({...field}) {
  * 将后端使用数字表示的data type转换成前端的名称
  * 后端使用datatype=0, 前端使用type='string'
  */
-export function convertDataType({...field}) {
+export function convertDataType({ ...field }) {
   const TYPE = [
     'string', 'integer', 'double', 'date', 'boolean', // 0~4
-    'ref', 'enum', '', 'datetime', 'text' // 5~9
-  ]
+    'ref', 'enum', '', 'datetime', 'text', // 5~9
+    '', '', '', '', '', // 10~14
+    '', '', '', '', '', // 15~19
+    'custom', '', '', '', '' // 20~24
+  ];
   field.type = TYPE[field.datatype];
   return field;
 }
