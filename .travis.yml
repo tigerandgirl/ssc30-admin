@@ -21,6 +21,7 @@ script:
 #- npm run lint
 - npm run build:ybz
 - npm run build:yzb
+- npm test
 #after_success:
 #- curl http://101.200.74.182:8080/job/ssc30-admin/build?token=yonyou.com1988
 #before_deploy:
