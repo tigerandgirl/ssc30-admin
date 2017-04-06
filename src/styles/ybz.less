@@ -106,7 +106,12 @@ body{
           color: @mainColor;
           .clearfix;
           .pointer;
-          &:hover { color: @darkColor; }
+          &:hover {
+            color: @darkColor;
+          }
+          &:focus, &:active {
+            color: @darkColor;
+          }
         }
       }
     }
