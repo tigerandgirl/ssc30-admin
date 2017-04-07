@@ -171,6 +171,14 @@ function enableTableDataFail(message) {
     message
   };
 }
+
+// 开始获取表格体数据
+function updateTableDataRequest() {
+  return {
+    type: types.TABLEDATA_UPDATE_REQUEST
+  }
+}
+
 // rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
 function updateTableDataSuccess(json, rowIdx) {
   // 后端返回的response总包含了修改之后的值，填写到表格中
@@ -185,9 +193,9 @@ function updateTableDataSuccess(json, rowIdx) {
   };
 }
 
-function updateTableDataFail(message, resBody) {
+function updateTableDataFailure(message, resBody) {
   return {
-    type: types.TABLEDATA_UPDATE_FAIL,
+    type: types.TABLEDATA_UPDATE_FAILURE,
     message,
     resBody
   };
@@ -440,6 +448,7 @@ export function enableTableData(baseDocId, rowObj) {
 export function saveTableData(baseDocId, fields, formData, rowIdx) {
   return (dispatch) => {
     let requestBodyObj = { ...formData };
+    dispatch(updateTableDataRequest());
 
     // 注意：处理是有顺序的，不要乱调整
     // 1. 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
@@ -490,7 +499,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
         let error = new Error(response.statusText);
         error.response = response;
         response.text().then(text => {
-          dispatch(updateTableDataFail(('后端返回的HTTP status code不是200', text)));
+          dispatch(updateTableDataFailure(('后端返回的HTTP status code不是200', text)));
         });
         throw error;
       }
@@ -500,7 +509,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       if (json.success === true) {
         dispatch(updateTableDataSuccess(json, rowIdx));
       } else {
-        dispatch(updateTableDataFail('获取表格数据失败，后端返回的success是false',
+        dispatch(updateTableDataFailure('获取表格数据失败，后端返回的success是false',
           json.message));
       }
     }
