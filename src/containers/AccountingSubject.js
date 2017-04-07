@@ -257,12 +257,9 @@ class AccountingSubject extends Component {
       render() {
         return (
           <td>
-            <span onClick={this.handleEdit}
-                  className="glyphicon glyphicon-pencil" title="编辑"></span>
-            <span onClick={this.handleRemove}
-                  className="glyphicon glyphicon-trash" title="删除"></span>
-            <span onClick={this.handleAddChildSubject}
-                  className="glyphicon glyphicon-plus" title="新增"></span>
+            <span onClick={::this.handleEdit}>修改</span>
+            <span onClick={::this.handleRemove}>删除</span>
+            <span onClick={::this.handleAddChildSubject}>新增子科目</span>
           </td>
         );
       }
