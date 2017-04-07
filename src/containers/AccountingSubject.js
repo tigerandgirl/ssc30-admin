@@ -12,6 +12,7 @@ import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
+import MessageConfirm from '../components/MessageConfirm';
 
 import * as Actions from '../actions/accountingSubject';
 
@@ -219,15 +220,23 @@ class AccountingSubject extends Component {
         //containerThis.props.initEditFormData(rowObj);
       },
       handleRemove(event) {
-        if (!confirm("是否删除？")) {
-          return;
-        }
+
         const { rowIdx, rowObj } = this.props;
         const { startIndex } = containerThis.props;
         const { baseDocId } = containerThis.props.params;
+        var param ={
+          isShow :true ,
+          txt:"是否删除？",
+          sureFn:function(){
+            containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+          }
+        };
+
+        containerThis.refs.messageConfirm.initParam(param);
+
         // containerThis.props.deleteTableData(baseDocId, rowIdx, rowObj);
         // containerThis.props.fetchTableBodyData(baseDocId, containerThis.props.itemsPerPage, startIndex);
-        containerThis.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+
       },
       handleAddChildSubject(event) {
         const { rowIdx, rowObj } = this.props;
@@ -334,6 +343,7 @@ class AccountingSubject extends Component {
 
     return (
       <div className="content">
+        <MessageConfirm  ref="messageConfirm"/>
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
                     onDismiss={::this.handlePageAlertDismiss}
         >
