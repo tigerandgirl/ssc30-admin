@@ -5,8 +5,8 @@ import {
   LOAD_TABLEDATA, LOAD_TABLEDATA_SUCCESS, LOAD_TABLEDATA_FAIL,
   LOAD_TABLECOLUMNS, LOAD_TABLECOLUMNS_SUCCESS, LOAD_TABLECOLUMNS_FAIL,
   DELETE_TABLEDATA, DELETE_TABLEDATA_SUCCESS, DELETE_TABLEDATA_FAIL,
-  TABLEDATA_UPDATE, TABLEDATA_UPDATE_SUCCESS, TABLEDATA_UPDATE_FAIL,
-  CHANGE_SELECTED_ROWS,ENABLE_TABLEDATA_FAIL,ENABLE_TABLEDATA_SUCCESS,
+  TABLEDATA_UPDATE_REQUEST, TABLEDATA_UPDATE_SUCCESS, TABLEDATA_UPDATE_FAILURE,
+  CHANGE_SELECTED_ROWS, ENABLE_TABLEDATA_FAIL, ENABLE_TABLEDATA_SUCCESS,
 
   SHOW_EDIT_DIALOG, EDIT_DIALOG_CLOSE,
   ARCH_INIT_EDIT_FORM_DATA, UPDATE_EDIT_FORM_FIELD_VALUE,
@@ -193,16 +193,22 @@ export default function arch(state = initState, action) {
       };
 
     // 通过表单修改表格中的一行
+    case TABLEDATA_UPDATE_REQUEST:
+      return { ...state,
+        spinner: {
+          show: true
+        }
+      };
     case TABLEDATA_UPDATE_SUCCESS:
       return update(state, {
         tableData: {
-          [action.data.rowIdx]: {$set: action.data.rowData}
+          [action.data.rowIdx]: { $set: action.data.rowData }
         },
         createDialog: {
-          show: {$set: false}
+          show: { $set: false }
         },
         editDialog: {
-          show: {$set: false}
+          show: { $set: false }
         },
         // YBZSAAS-316
         // adminAlert: {
@@ -210,11 +216,11 @@ export default function arch(state = initState, action) {
         //   bsStyle: {$set: 'success'},
         //   message: {$set: '保存成功'}
         // },
-        spinner:{
-          show:{$set:false }
+        spinner: {
+          show: { $set: false }
         }
       });
-    case TABLEDATA_UPDATE_FAIL:
+    case TABLEDATA_UPDATE_FAILURE:
       return update(state, {
         formAlert: {
           $set: {
@@ -226,6 +232,9 @@ export default function arch(state = initState, action) {
         },
         serverMessage: {
           $set: action.resBody
+        },
+        spinner: {
+          show: { $set: true }
         }
       });
 
