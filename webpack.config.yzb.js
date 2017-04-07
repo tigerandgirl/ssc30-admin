@@ -12,7 +12,8 @@ const childProcess = require('child_process');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // 友账表生产环境服务器
-const DEFAULT_PROD_SERVER = '59.110.123.20';
+// 曾用：59.110.123.20
+const DEFAULT_PROD_SERVER = 'fi.yonyoucloud.com';
 const DEFAULT_PATH_PREFIX = '/ficloud';
 
 // 获取版本
