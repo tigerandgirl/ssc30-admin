@@ -31,7 +31,7 @@ const DEV_BACKEND_INDEX = -1;
  * 比如：http://59.110.123.20/ficloud/outerentitytree/querymdtree
  */
 function getURL(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -47,7 +47,7 @@ function getURL(path) {
  * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
  */
 function getReferURL(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);

@@ -15,6 +15,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 // 曾用：59.110.123.20
 const DEFAULT_PROD_SERVER = 'fi.yonyoucloud.com';
 const DEFAULT_PATH_PREFIX = '/ficloud';
+const DEFAULT_PROTOCOL = 'https';
 
 // 获取版本
 const packageJSON = require('./package.json');
@@ -44,7 +45,8 @@ module.exports = {
       'process.env': {
         'NODE_ENV': JSON.stringify('production'),
         'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
-        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX)
+        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX),
+        'PROTOCOL': JSON.stringify(process.env.PROTOCOL || DEFAULT_PROTOCOL)
       }
     }),
     new webpack.optimize.UglifyJsPlugin({

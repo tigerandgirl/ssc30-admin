@@ -24,7 +24,7 @@ const DEV_BACKEND_INDEX = -1;
  * 比如：http://127.0.0.1:3009/dept/query
  */
 function getBaseDocURL(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -40,7 +40,7 @@ function getBaseDocURL(path) {
  * 比如：http://10.1.218.36:8080/ficloud/mappingdef/query
  */
 function getMappingDefAPI(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
