@@ -13,7 +13,7 @@ import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 import AdminDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 import FormulaField from '../components/FormulaField';
-
+import MessageConfirm from '../components/MessageConfirm';
 import * as Actions from '../actions/mappingDef';
 
 const BASE_DOC_ID = 'mappingdef';
@@ -142,11 +142,16 @@ class MappingDef extends Component {
         container.props.showEditDialog(true, rowIdx, rowObj);
       },
       handleRemove(event) {
-        if (!confirm('是否删除？')) {
-          return;
-        }
         const { rowObj } = this.props;
-        container.props.deleteTableBodyDataAndFetchTableBodyData(rowObj);
+        var param ={
+          isShow :true ,
+          txt:"是否删除？",
+          sureFn:function(){
+            container.props.deleteTableBodyDataAndFetchTableBodyData(rowObj);
+          }
+        };
+        container.refs.messageConfirm.initParam(param);
+
       },
       render() {
         const {rowObj: {
@@ -181,6 +186,7 @@ class MappingDef extends Component {
 
     return (
       <div className="mapping-def-container content">
+        <MessageConfirm  ref="messageConfirm"/>
         <AdminAlert
             show={pageAlert.show}
             bsStyle={pageAlert.bsStyle}
