@@ -3,7 +3,7 @@
  */
 
 /** 本地开发环境，使用swagger作为后端 */
-export const LOCAL_EXPRESS_SERVER = '127.0.0.1:3009';
+export const LOCAL_EXPRESS_SERVER = '10.3.14.240';
 
 /**
  * 后端开发/联调/测试服务器
