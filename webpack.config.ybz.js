@@ -42,10 +42,10 @@ module.exports = {
      */
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production'),
-        'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
-        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX),
-        'PROTOCOL': JSON.stringify(process.env.PROTOCOL || DEFAULT_PROTOCOL)
+        NODE_ENV: JSON.stringify('production'),
+        PROD_SERVER: JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
+        PATH_PREFIX: JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX),
+        PROTOCOL: JSON.stringify(process.env.PROTOCOL || DEFAULT_PROTOCOL)
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -57,7 +57,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: `友报账 v${packageJSON.version}`,
       filename: 'index.html',
-      template: 'client/index.hbs',
+      template: 'client/index-ybz.hbs',
       hash: true,
       // User defined options
       version: packageJSON.version,
@@ -66,7 +66,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       // {from: 'src/www/css', to: 'css'},
-      {from: 'src/images', to: 'images'},
+      { from: 'src/images', to: 'images' },
       // {from: 'src/www/index.html'},
       // {from: 'src/www/versions.json'},
     ]),
