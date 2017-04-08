@@ -162,7 +162,7 @@ class MappingDef extends Component {
           <td>
             <span onClick={this.handleRemove}>删除</span>
             <span onClick={this.handleEdit}>修改</span>
-            <Link to={`/entity-map-no-sidebar-single-page/${des_billtype}/${id}`}>
+            <Link to={`/entity-map-no-sidebar-single-page/${des_billtype.id}/${id}`}>
               子表
             </Link>
           </td>
