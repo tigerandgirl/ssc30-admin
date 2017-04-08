@@ -11,13 +11,14 @@ const moment = require('moment');
 const childProcess = require('child_process');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const packageJSON = require('./package.json');
+
 // 友报账生产环境服务器
 const DEFAULT_PROD_SERVER = '172.20.4.88:8088';
 const DEFAULT_PATH_PREFIX = '';
 const DEFAULT_PROTOCOL = 'http';
 
 // 获取版本
-const packageJSON = require('./package.json');
 const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
