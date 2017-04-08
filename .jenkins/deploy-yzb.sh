@@ -6,7 +6,7 @@ set
 echo DEBUG-end
 
 ## before_install:
-#export CHROME_BIN=chromium-browser
+export CHROME_BIN=google-chrome
 export DISPLAY=:99.0
 sudo systemctl start xvfb.service
 
