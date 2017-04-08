@@ -68,16 +68,16 @@ function getReferURL(path) {
 /**
  * 会计平台 组装后端接口
  */
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
-const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud/querydoctype');
-const getUpdateURL = type => getBaseDocURL(`/ficloud/${type}/update`);
-const getAddURL = type => getBaseDocURL(`/ficloud/${type}/add`);
-const getDeleteURL = type => getBaseDocURL(`/ficloud/${type}/delete`);
-const getQueryURL = type => getBaseDocURL(`/ficloud/${type}/query`);
+const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
+const QUERY_DOCTYPE_URL = getBaseDocURL('/querydoctype');
+const getUpdateURL = type => getBaseDocURL(`/${type}/update`);
+const getAddURL = type => getBaseDocURL(`/${type}/add`);
+const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
+const getQueryURL = type => getBaseDocURL(`/${type}/query`);
 /**
  * 参照 组装后端接口
  */
-const ReferDataURL = getReferURL('/ficloud/refbase_ctr/queryRefJSON');
+const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
 const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /** 配置Fetch API的credentials参数 */
