@@ -13,4 +13,5 @@ export DISPLAY=:99.0
 cnpm install
 
 ## script:
-npm test && npm run release:yzb-local
+#npm test
+npm run release:yzb-local
