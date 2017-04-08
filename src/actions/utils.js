@@ -409,7 +409,7 @@ export function fixEnumData({...field}) {
  * TODO 需要转移到utils.js中
  */
 export function setReferFields(ReferDataURL, ReferUserDataURL, field) {
-  const getReferConfig = fieldDocType => {
+  const getReferConfig = (fieldDocType) => {
     const config = {
       referConditions: {
         refCode: fieldDocType, // 'dept',
