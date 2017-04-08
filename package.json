@@ -24,7 +24,7 @@
     "release:ybz-6088": "PROD_SERVER=172.20.4.88:6088 npm run build:ybz && npm run deploy:ybz-6088",
     "release:ybz-8080": "PROD_SERVER=10.3.14.233:8080 npm run build:ybz && npm run deploy:ybz-8080",
     "release:yzb": "npm run build:yzb && npm run deploy:yzb",
-    "release:yzb-local": "npm run build:yzb-local && npm run deploy:yzb-local",
+    "release:yzb-local": "npm run build:yzb && npm run deploy:yzb-local",
     "start": "npm run dev",
     "tdd": "karma start",
     "test": "npm run test-browser",
