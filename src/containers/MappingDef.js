@@ -136,6 +136,15 @@ class MappingDef extends Component {
   getCustomComponent() {
     const container = this;
     return React.createClass({
+      propTypes: {
+        rowIdx: PropTypes.number.isRequired,
+        rowObj: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          des_billtype: PropTypes.shape({
+            id: PropTypes.string.isRequired
+          }).isRequired
+        }).isRequired
+      },
       handleEdit(/* event */) {
         const { rowIdx, rowObj } = this.props;
         // 将rowData保存到store中
@@ -151,20 +160,23 @@ class MappingDef extends Component {
           }
         };
         container.refs.messageConfirm.initParam(param);
-
       },
       render() {
-        const {rowObj: {
-          id,
-          des_billtype
-        }} = this.props;
+        const {
+          rowObj: { id }
+        } = this.props;
+        const desBillType = this.props.rowObj.des_billtype;
         return (
           <td>
             <span onClick={this.handleRemove}>删除</span>
             <span onClick={this.handleEdit}>修改</span>
-            <Link to={`/entity-map-no-sidebar-single-page/${des_billtype.id}/${id}`}>
-              子表
-            </Link>
+            {
+              typeof desBillType === 'object' && desBillType !== null
+              ? <Link to={`/entity-map-no-sidebar-single-page/${desBillType.id}/${id}`}>
+                  子表
+                </Link>
+              : null
+            }
           </td>
         );
       }
