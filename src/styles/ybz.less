@@ -53,16 +53,62 @@ body{
 @errorColor: #fe631f;           // 错误信息提示色、警告框颜色
 @labelColor: #8d8d8d;           // 标签字体颜色
 
+// a链接颜色
+a {
+  color: @mainColor;
+  text-decoration: none;
+  outline: none;
+  &:hover {
+    color: @hoverColor;
+    .pointer;
+    text-decoration: none;
+  }
+  &:focus, &:visited {
+    color: @darkColor;
+    text-decoration: none;
+  }
+}
+
+// .btn样式重置
+.btn {
+  .br2;
+  padding: 5px 20px;
+}
+.btn.btn-primary {      // 确认 保存 按钮
+  color: #fff;
+  border: 1px solid @hoverColor;
+  background-color: @mainColor;
+  box-sizing: border-box;
+  &:hover {
+    border-color: @hoverColor;
+    background-color: @hoverColor;
+  }
+  &:focus, &:active, &.active {
+    border-color: @darkColor;
+    background-color: @darkColor;
+  }
+}
+.btn.btn-default {      // 取消 一般 按钮
+  color: @mainColor;
+  border-color: @mainColor;
+  &:hover {
+    color: #fff;
+    border-color: @hoverColor;
+    background-color: @hoverColor;
+  }
+  &:focus, &:active, &.active {
+    color: #fff;
+    border-color: @darkColor;
+    background-color: @darkColor;
+  }
+}
+
 // grid表格顶部的按钮条
 .btn-bar {
   height: 64px;
   padding: 15px 0;
   >div {
     .clearfix;
-  }
-  .btn {
-    border-radius: 2px;
-    padding: 5px 20px;
   }
 }
 
@@ -160,50 +206,12 @@ body{
       }
     }
   }
-  .modal-footer {
-    .btn {
-      padding: 5px 10px;
-      min-width: 70px;
-    }
-  }
 }
 
 .content{
   padding: 15px;
 }
 
-// .btn样式重置
-.btn {
-  .br2;
-}
-.btn.btn-primary {      // 确认 保存 按钮
-  color: #fff;
-  border: 1px solid @hoverColor;
-  background-color: @mainColor;
-  box-sizing: border-box;
-  &:hover {
-    border-color: @hoverColor;
-    background-color: @hoverColor;
-  }
-  &:focus, &:active, &.active {
-    border-color: @darkColor;
-    background-color: @darkColor;
-  }
-}
-.btn.btn-default {      // 取消 一般 按钮
-  color: @mainColor;
-  border-color: @mainColor;
-  &:hover {
-    color: #fff;
-    border-color: @hoverColor;
-    background-color: @hoverColor;
-  }
-  &:focus, &:active, &.active {
-    color: #fff;
-    border-color: @darkColor;
-    background-color: @darkColor;
-  }
-}
 // 错误信息字体色
 .server-message {
   color: @errorColor;
