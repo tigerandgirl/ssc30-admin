@@ -48,12 +48,4 @@ src=dist/
 dest=/ssc/tomcat_dc_integration_3/tomcat_dc_integration/webapps/manaaccount
 rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx $src $user@$ip:$dest
 
-#8088 废弃
-ip=172.20.4.88
-port=22
-user=root
-src=dist/
-dest=/ssc/tomcat_dc_integration/webapps/manaaccount/
-rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx $src $user@$ip:$dest
-
 date
