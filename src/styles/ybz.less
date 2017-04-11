@@ -10,12 +10,14 @@ body{
   background: url("../images/blank.png");
 }
 .b0{border:0;}
+.br0{border-radius:0;}
 .mr10{margin-right:10px;}
 .mb0{margin-bottom:0;}
 .clearfix{display:inline-block;}
 .pointer{cursor:pointer;}
 .fl{float:left;}
 .fr{float:right;}
+.tc{text-align:center;}
 .oh{overflow:hidden;}
 .ws{white-space:nowrap;}
 .ellipsis{.ws;.oh;text-overflow:ellipsis;}
@@ -131,6 +133,32 @@ body{
     &:focus {
       border-color: @darkColor;
       background-color: @darkColor;
+    }
+  }
+}
+
+// modal弹出框
+.modal-dialog {
+  .modal-content {
+    .br0;
+  }
+  .modal-header {
+    .tc;
+    color: #fff;
+    background-color: @mainColor;
+    padding: 10px 15px;
+    .close {
+      color: #fff;
+      opacity: 1;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  .modal-footer {
+    .btn {
+      padding: 5px 10px;
+      min-width: 70px;
     }
   }
 }
