@@ -26,6 +26,11 @@ cd $root_dir
 
 # Bundle and upload
 echo "同步本地编译后的数据到友账表服务器 10.3.14.237(localhost)"
+cat <<EOT > dist/config.js
+var G_SCHEME = 'https';
+var G_HOST_PORT = 'fi.yonyoucloud.com';
+var G_PATH_PREFIX = /ficloud'';
+EOT
 rsync -arvzh --delete --progress --chmod=a+rwx $src /data/ficloud/uiresources/manaaccount/
 
 

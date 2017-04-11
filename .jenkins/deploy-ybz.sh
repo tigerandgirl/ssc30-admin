@@ -25,6 +25,11 @@ src=dist/
 cd $root_dir
 
 #8080
+cat <<EOT > dist/config.js
+var G_SCHEME = 'http';
+var G_HOST_PORT = '10.3.14.233:8080';
+var G_PATH_PREFIX = '';
+EOT
 ip=10.3.14.233
 port=22
 user=sscweb
@@ -33,6 +38,11 @@ dest=/server/tomcat_ssc/webapps/manaaccount
 rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx $src $user@$ip:$dest
 
 #5088 以后的测试环境
+cat <<EOT > dist/config.js
+var G_SCHEME = 'http';
+var G_HOST_PORT = '172.20.4.88:5088';
+var G_PATH_PREFIX = '';
+EOT
 ip=172.20.4.88
 port=22
 user=root
@@ -41,6 +51,11 @@ dest=/ssc/tomcat_dc_integration_2/webapps/manaaccount/
 rsync -arvzh -e "ssh -p $port" --progress --chmod=a+rwx $src $user@$ip:$dest
 
 #6088
+cat <<EOT > dist/config.js
+var G_SCHEME = 'http';
+var G_HOST_PORT = '172.20.4.88:6088';
+var G_PATH_PREFIX = '';
+EOT
 ip=172.20.4.88
 port=22
 user=root
