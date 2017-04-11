@@ -52,7 +52,12 @@ export default class FormulaField extends Component {
           onChange={this.handleChange}
           onClick={this.handleClick}
         />
-        <Formula ref={(ref) => { this.formula = ref; }} eid="10" backFormula={this.handleDataBack} />
+        <Formula
+          formulaText={this.state.value}
+          ref={(ref) => { this.formula = ref; }}
+          eid="10"
+          backFormula={this.handleDataBack}
+        />
       </div>
     );
   }
