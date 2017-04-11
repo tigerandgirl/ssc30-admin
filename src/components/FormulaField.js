@@ -56,6 +56,7 @@ export default class FormulaField extends Component {
           formulaText={this.state.value}
           ref={(ref) => { this.formula = ref; }}
           eid="10"
+          refItem="dept"
           backFormula={this.handleDataBack}
         />
       </div>
