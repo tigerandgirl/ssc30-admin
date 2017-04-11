@@ -1,6 +1,7 @@
-import * as types from '../constants/ActionTypes';
 import fetch from 'isomorphic-fetch';
 import _ from 'lodash';
+
+import * as types from '../constants/ActionTypes';
 
 // help functions
 import * as utils from './utils';
