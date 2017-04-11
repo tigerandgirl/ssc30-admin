@@ -8,7 +8,7 @@ import fetch from 'isomorphic-fetch';
 import * as utils from './utils';
 import * as treeUtils from './utils.tree';
 
-// 后端接口URL，比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
+// 后端接口URL
 import * as URL from '../constants/URLs';
 
 /**
@@ -17,66 +17,6 @@ import * as URL from '../constants/URLs';
  * - same-origin 在请求中添加Cookie
  */
 const FETCH_CREDENTIALS_OPTION = 'same-origin';
-
-/**
- * 是否启用后端的开发用服务器
- * * -1 使用本地的expressjs服务器伪造数据
- * *  0 使用后端开发人员提供的开发机上跑的服务
- * *  1 使用后端提供的测试服务器
- */
-const DEV_BACKEND_INDEX = -1;
-
-/**
- * 根据配置获取到实体映射的绝对路径
- * 比如：http://59.110.123.20/ficloud/outerentitytree/querymdtree
- */
-function getURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.ENTITYMAP_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 根据配置获取到参照的绝对路径
- * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
- */
-function getReferURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 实体映射模型 exchanger/entitymap.md
- */
-
-// 左树查询服务
-// const OUTER_ENTITY_TREE_URL = getURL('/ficloud_web/template/tree');
-const OUTER_ENTITY_TREE_URL = getURL('/ficloud/outerentitytree/querymdtree');
-// 左树节点查询服务
-// const OUTER_ENTITY_TREE_NODE_CHILDREN_URL = getURL('/ficloud_web/template/node');
-// 右表查询服务
-const OUTER_ENTITY_TREE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/querynodedata');
-const OUTER_ENTITY_TREE_ADD_NODE_DATA_URL = getURL('/ficloud/outerentitytree/addnodedata');
-const OUTER_ENTITY_TREE_UPDATE_NODE_DATA_URL = getURL('/ficloud/outerentitytree/updatenodedata');
-const OUTER_ENTITY_TREE_DEL_NODE_DATA_URL = getURL('/ficloud/outerentitytree/delnodedata');
-/**
- * 参照 组装后端接口
- */
-const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
@@ -119,7 +59,7 @@ export function fetchLeftTree(billTypeCode, mappingDefId) {
       };
       appendCredentials(opts);
 
-      let url = `${OUTER_ENTITY_TREE_URL}`;
+      let url = `${URL.OUTER_ENTITY_TREE_URL}`;
 
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
@@ -161,7 +101,7 @@ export function fetchLeftTreeNodeChildren(key) {
       };
       appendCredentials(opts);
 
-      var url = `${OUTER_ENTITY_TREE_NODE_CHILDREN_URL}`;
+      var url = `${URL.OUTER_ENTITY_TREE_NODE_CHILDREN_URL}`;
 
       return fetch(url, opts)
         .then(response => {
@@ -224,7 +164,7 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
         body: JSON.stringify(treeNodeData)
       };
       appendCredentials(opts);
-      const url = `${OUTER_ENTITY_TREE_NODE_DATA_URL}`;
+      const url = `${URL.OUTER_ENTITY_TREE_NODE_DATA_URL}`;
 
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
@@ -252,7 +192,7 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
             /*  5 */ .map(utils.setHiddenFields)
             /*  6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
             /*  7 */ .map(utils.fixReferKey)
-            /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+            /*  8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL, URL.ReferUserDataURL))
             /*  9 */ .map(utils.fixEnumData)
             /* 10 */ .map(utils.setLengthValidation);
 
@@ -336,7 +276,7 @@ export function updateTreeNodeData(formData) {
       };
       appendCredentials(opts);
 
-      const url = OUTER_ENTITY_TREE_UPDATE_NODE_DATA_URL;
+      const url = URL.OUTER_ENTITY_TREE_UPDATE_NODE_DATA_URL;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
@@ -377,7 +317,7 @@ export const addTreeNodeData = formData => ({
     };
     appendCredentials(opts);
 
-    const url = OUTER_ENTITY_TREE_ADD_NODE_DATA_URL;
+    const url = URL.OUTER_ENTITY_TREE_ADD_NODE_DATA_URL;
     return fetch(url, opts)
       .then(utils.checkHTTPStatus)
       .then(utils.parseJSON)
@@ -420,7 +360,7 @@ export function delTreeNodeData(rowObj) {
       };
       appendCredentials(opts);
 
-      const url = OUTER_ENTITY_TREE_DEL_NODE_DATA_URL;
+      const url = URL.OUTER_ENTITY_TREE_DEL_NODE_DATA_URL;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)

@@ -16,61 +16,6 @@ import * as URL from '../constants/URLs';
  */
 const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
-/**
- * 是否启用后端的开发用服务器
- * * -1 使用本地的expressjs服务器伪造数据
- * *  0 使用后端开发人员提供的开发机上跑的服务
- * *  1 使用后端提供的测试服务器
- */
-const DEV_BACKEND_INDEX = -1;
-
-/**
- * 根据配置获取到基础档案的绝对路径
- * 比如：http://127.0.0.1:3009/dept/query
- */
-function getBaseDocURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${process.env.PATH_PREFIX}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.BASEDOC_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 根据配置获取到参照的绝对路径
- * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
- */
-function getReferURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 基础档案 组装后端接口
- */
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
-// const QUERY_DOCTYPE_URL = getBaseDocURL('/ficloud_pub/querydoctype');
-const getSaveURL = type => getBaseDocURL(`/${type}/save`);
-const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
-const getQueryURL = type => getBaseDocURL(`/${type}/query`);
-const getEnableURL = type => getBaseDocURL(`/${type}/turnenable`);
-/**
- * 参照 组装后端接口
- */
-const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
-
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
   if (FETCH_CREDENTIALS_OPTION) {
@@ -233,7 +178,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
     };
     appendCredentials(opts);
 
-    let url = getQueryURL(baseDocId);
+    let url = URL.getQueryURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         // TODO: HTTP状态检查，需要独立成helper function
@@ -300,7 +245,7 @@ export function fetchTableColumnsModel(baseDocId) {
     };
     appendCredentials(opts);
 
-    let url = `${FICLOUDPUB_INITGRID_URL}`;
+    let url = `${URL.FICLOUDPUB_INITGRID_URL}`;
     return fetch(url, opts)
       .then(response => {
         // TODO: HTTP状态检查，需要独立成helper function
@@ -340,7 +285,7 @@ export function fetchTableColumnsModel(baseDocId) {
               /*  5 */ .map(utils.setHiddenFields)
               /*  6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
               /*  7 */ .map(utils.fixReferKey)
-              /*  8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+              /*  8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL, URL.ReferUserDataURL))
               /*  9 */ .map(utils.fixEnumData)
               /* 10 */ .map(utils.setLengthValidation);
               /* 11 */
@@ -382,7 +327,7 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
     };
     appendCredentials(opts);
 
-    let url = getDeleteURL(baseDocId);
+    let url = URL.getDeleteURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         return response.json();
@@ -421,7 +366,7 @@ export function enableTableData(baseDocId, rowObj) {
     };
     appendCredentials(opts);
 
-    const url = getEnableURL(baseDocId);
+    const url = URL.getEnableURL(baseDocId);
     return fetch(url, opts)
       .then((response) => {
         return response.json();
@@ -525,7 +470,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
     };
     appendCredentials(opts);
 
-    let url = getSaveURL(baseDocId);
+    let url = URL.getSaveURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)

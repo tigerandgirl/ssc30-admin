@@ -33,6 +33,12 @@ Created-By: Webpack
 Built-By: Webpack
 Build-Time: {{htmlWebpackPlugin.options.buildTime}}
 -->
+<script>
+var G_SCHEME = '{{htmlWebpackPlugin.options.scheme}}';
+var G_HOST_PORT = '{{htmlWebpackPlugin.options.hostPort}}';
+var G_PATH_PREFIX = '{{htmlWebpackPlugin.options.pathPrefix}}';
+</script>
+<script src="config.js"></script>
 <div id="root"></div>
 </body>
 </html>

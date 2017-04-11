@@ -13,12 +13,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const packageJSON = require('./package.json');
 
-// 友账表生产环境服务器
-// 曾用：59.110.123.20
-const DEFAULT_PROD_SERVER = 'fi.yonyoucloud.com';
-const DEFAULT_PATH_PREFIX = '/ficloud';
-const DEFAULT_PROTOCOL = 'https';
-
 // 获取版本
 const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
@@ -44,10 +38,7 @@ module.exports = {
      */
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production'),
-        PROD_SERVER: JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
-        PATH_PREFIX: JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX),
-        PROTOCOL: JSON.stringify(process.env.PROTOCOL || DEFAULT_PROTOCOL)
+        NODE_ENV: JSON.stringify('production')
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -64,7 +55,10 @@ module.exports = {
       // User defined options
       version: packageJSON.version,
       revision: GIT_REVISION,
-      buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
+      buildTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      scheme: 'https',
+      hostPort: 'fi.yonyoucloud.com',
+      pathPrefix: '/ficloud'
     }),
     new CopyWebpackPlugin([
       // {from: 'src/www/css', to: 'css'},

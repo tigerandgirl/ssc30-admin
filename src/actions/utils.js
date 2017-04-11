@@ -11,6 +11,45 @@ export function SuccessFalseException(message) {
  * 常用的helper function
  */
 
+/**
+ * 组装URL
+ * @param {String} protocol 比如：`http`或者`https`
+ * @param {String} server 比如：`fi.yonyoucloud.com`
+ * @param {String} prefix 比如：`/ficloud`
+ * @param {String} path 比如：`/mappingdef/query`
+ */
+const url = (protocol, server, prefix, path) => `${protocol}://${server}${prefix}${path}`;
+
+/**
+ * 判断是否为生产环境
+ * @param {Object} env 传入`process.env`环境变量对象
+ */
+const isProduction = env => env.NODE_ENV === 'production';
+
+/**
+ * 根据URLs.js中的配置，获取到基础档案等的绝对路径
+ * 比如：http://127.0.0.1:3009/dept/query
+ * 优先级：
+ * 1. config.js
+ * 2. process.env.X
+ * 3. URLs.js
+ * @param {Object} env 传入process.env环境变量对象
+ * @param {Object} config 传入URLs.js导出的对象
+ * @param {String} path 接口对应的路径，如果有统一的路径前缀，比如`/ficloud`，请去掉。
+ */
+export function getURL(env, config, path) {
+  let protocol = PROD_SERVER_PROTOCOL || env.PROTOCOL;
+  let server = PROD_SERVER || env.PROD_SERVER;
+  let pathPrefix = PATH_PREFIX || env.PATH_PREFIX;
+  // 在非生产环境下，根据URLs.js中的配置，选择使用ssc-dev-server还是后端的测试服务器
+  if (!isProduction(env)) {
+    server = config.DEV_BACKEND_INDEX === -1
+      ? config.LOCAL_EXPRESS_SERVER
+      : config.YBZ_BASEDOC_DEV_SERVERS[config.DEV_BACKEND_INDEX];
+  }
+  return url(protocol, server, pathPrefix, path);
+}
+
  /**
  * 组建Fetch API需要的配置参数
  * @param {Object} reqObj 请求参数是一个JSON对象

@@ -18,68 +18,6 @@ import * as URL from '../constants/URLs';
  */
 const FETCH_CREDENTIALS_OPTION = 'same-origin';
 
-/**
- * 是否启用后端的开发用服务器
- * - 0 使用本地的expressjs服务器伪造数据
- * - 1 使用后端提供的测试服务器
- */
-const ENABLE_DEV_BACKEND = 0;
-
-/**
- * 是否启用后端的开发用服务器
- * * -1 使用本地的expressjs服务器伪造数据
- * *  0 使用后端开发人员提供的开发机上跑的服务
- * *  1 使用后端提供的测试服务器
- */
-const DEV_BACKEND_INDEX = -1;
-
-/**
- * 根据配置获取到基础档案的绝对路径
- * 比如：http://127.0.0.1:3009/dept/query
- */
-function getBaseDocURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${process.env.PATH_PREFIX}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.BASEDOC_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 根据配置获取到参照的绝对路径
- * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
- */
-function getReferURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 会计平台 组装后端接口
- */
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud_pub/initgrid');
-const QUERY_DOCTYPE_URL = getBaseDocURL('/querydoctype');
-const getUpdateURL = type => getBaseDocURL(`/${type}/update`);
-const getAddURL = type => getBaseDocURL(`/${type}/add`);
-const getDeleteURL = type => getBaseDocURL(`/${type}/delete`);
-const getQueryURL = type => getBaseDocURL(`/${type}/query`);
-/**
- * 参照 组装后端接口
- */
-const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
-
 /** 配置Fetch API的credentials参数 */
 function appendCredentials(opts) {
   if (FETCH_CREDENTIALS_OPTION) {
@@ -255,7 +193,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
     };
     appendCredentials(opts);
 
-    var url = getQueryURL(baseDocId);
+    var url = URL.getQueryURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         // TODO: HTTP状态检查，需要独立成helper function
@@ -324,7 +262,7 @@ export function fetchTableColumnsModel(baseDocId) {
     };
     appendCredentials(opts);
 
-    var url = `${FICLOUDPUB_INITGRID_URL}`;
+    var url = `${URL.FICLOUDPUB_INITGRID_URL}`;
     return fetch(url, opts)
       .then(response => {
         // TODO: HTTP状态检查，需要独立成helper function
@@ -365,7 +303,7 @@ export function fetchTableColumnsModel(baseDocId) {
             /* 5 */ .map(utils.setHiddenFields)
             /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
             /* 7 */ .map(utils.fixReferKey)
-            /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+            /* 8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL, URL.ReferUserDataURL))
             /* 9 */ .map(utils.fixEnumData);
             dispatch(receiveTableColumnsModelSuccess(json, fields));
           } else {
@@ -408,7 +346,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
     };
     appendCredentials(opts);
 
-    var url = `${FICLOUDPUB_INITGRID_URL}`;
+    var url = `${URL.FICLOUDPUB_INITGRID_URL}`;
     return fetch(url, opts)
       .then(response => {
         // TODO: HTTP状态检查，需要独立成helper function
@@ -449,7 +387,7 @@ export function fetchChildSubjectTableColumnsModel(baseDocId) {
             /* 5 */ .map(utils.setHiddenFields)
             /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
             /* 7 */ .map(utils.fixReferKey)
-            /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL))
+            /* 8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL, URL.ReferUserDataURL))
             /* 9 */ .map(utils.fixEnumData)
             /* 10 */.filter(filterSubjectFileds);
             dispatch(receiveChildSubjectFieldsSuccess(json, fields));
@@ -493,7 +431,7 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
     };
     appendCredentials(opts);
 
-    var url = getDeleteURL(baseDocId);
+    var url = URL.getDeleteURL(baseDocId);
     return fetch(url, opts)
       .then(response => {
         return response.json();
@@ -566,7 +504,7 @@ export function addChildSubjectData(baseDocId, fields, formData, rowData, rowIdx
     };
     appendCredentials(opts);
 
-    var url = getAddURL(baseDocId);
+    var url = URL.getAddURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)
@@ -667,7 +605,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
     };
     appendCredentials(opts);
 
-    var url = getAddURL(baseDocId);
+    var url = URL.getAddURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)
@@ -767,7 +705,7 @@ export function updateTableData(baseDocId, fields, formData, rowIdx) {
     };
     appendCredentials(opts);
 
-    var url = getUpdateURL(baseDocId);
+    var url = URL.getUpdateURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
       .then(utils.parseJSON)

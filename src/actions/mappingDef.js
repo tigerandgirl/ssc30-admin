@@ -8,82 +8,8 @@ import fetch from 'isomorphic-fetch';
 // help functions
 import * as utils from './utils';
 
-// 后端接口URL，比如: LOCAL_EXPRESS_SERVER = '127.0.0.1:3009'
+// 后端接口URL
 import * as URL from '../constants/URLs';
-
-/**
- * 是否启用后端的开发用服务器
- * * -1 使用本地的expressjs服务器伪造数据
- * *  0 使用后端开发人员提供的开发机上跑的服务
- * *  1 使用后端提供的测试服务器
- */
-const DEV_BACKEND_INDEX = -1;
-
-/**
- * 根据配置获取到基础档案的绝对路径
- * 比如：http://127.0.0.1:3009/dept/query
- */
-function getBaseDocURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.YBZ_BASEDOC_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 根据配置获取到实体模型的绝对路径
- * 比如：http://10.1.218.36:8080/ficloud/mappingdef/query
- */
-function getMappingDefAPI(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.MAPPING_DEF_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 根据配置获取到参照的绝对路径
- * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
- */
-function getReferURL(path) {
-  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
-  // 生产环境下直接使用生产服务器IP
-  if (process.env.NODE_ENV === 'production') {
-    return url(process.env.PROD_SERVER);
-  }
-  if (DEV_BACKEND_INDEX === -1) {
-    return url(URL.LOCAL_EXPRESS_SERVER);
-  }
-  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
-}
-
-/**
- * 基础档案 组装后端接口
- */
-const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
-
-/**
- * 转换规则模型 组装后端接口
- */
-const MAPPING_DEF_QUERY_URL = getMappingDefAPI('/ficloud/mappingdef/query');
-const MAPPING_DEF_SAVE_URL = getMappingDefAPI('/ficloud/mappingdef/save');
-const MAPPING_DEF_DELETE_URL = getMappingDefAPI('/ficloud/mappingdef/delete');
-
-/**
- * 参照 组装后端接口
- */
-const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
-const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /**
  * 获取表格的列模型
@@ -105,7 +31,7 @@ export function fetchTableColumnsModel(baseDocId) {
     // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
       let opts = utils.getFetchFormOpts(`doctype=${baseDocId}`);
-      const url = `${FICLOUDPUB_INITGRID_URL}`;
+      const url = `${URL.FICLOUDPUB_INITGRID_URL}`;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
@@ -130,7 +56,7 @@ export function fetchTableColumnsModel(baseDocId) {
                 /* 5 */ .map(utils.setHiddenFields)
                 /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
                 /* 7 */ .map(utils.fixReferKey)
-                /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL));
+                /* 8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL, URL.ReferUserDataURL));
               return {
                 data: fields
               };
@@ -175,7 +101,7 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
         begin: startIndex,
         groupnum: itemsPerPage
       });
-      let url = `${MAPPING_DEF_QUERY_URL}`;
+      let url = `${URL.MAPPING_DEF_QUERY_URL}`;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
@@ -211,7 +137,7 @@ export function updateTableBodyData(formData) {
     ],
     callAPI: () => {
       let opts = utils.getFetchOpts({ ...formData });
-      const url = MAPPING_DEF_SAVE_URL;
+      const url = URL.MAPPING_DEF_SAVE_URL;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
@@ -248,7 +174,7 @@ export function deleteTableBodyData(rowObj) {
     ],
     callAPI: () => {
       let opts = utils.getFetchOpts(rowObj);
-      const url = MAPPING_DEF_DELETE_URL;
+      const url = URL.MAPPING_DEF_DELETE_URL;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
