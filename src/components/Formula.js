@@ -1,3 +1,5 @@
+// Copy from http://git.yonyou.com/sscplatform/FC/blob/develop/src/containers/setting/Formula.js
+
 /**
  * 公式编辑器
  * @param
@@ -12,10 +14,10 @@
  *
  */
 import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import {Modal,Button } from 'react-bootstrap';
 // import Config from '../../config';
 function getConfig() {
-  let serverUrl = 'http://59.110.123.20/ficloud';
+  let serverUrl = 'https://fi.yonyoucloud.com/ficloud';
   // 本地调试环境不进行auth
   if (process.env.NODE_ENV === 'development') {
     serverUrl = 'http://10.3.14.240/ficloud';
@@ -24,13 +26,18 @@ function getConfig() {
   return {
     workechart: {
       metatree: serverUrl + '/echart/metatree'
+    },
+    refer:{
+      referDataUrl:serverUrl+'/refbase_ctr/queryRefJSON', //refer 其他参照，调用refbase_ctr/queryRefJSON 10.3.14.240
+      referDataUserUrl:serverUrl+'/refbase_ctr/queryRefUserJSON' //人员参照API
     }
   };
 }
 const Config = getConfig();
+import {Refers} from 'ssc-refer';
 
-let inittree = false;
-export default class Formula extends React.Component {
+var inittree = false;
+export default class Formula extends React.Component{
     constructor(props) {
         super(props);
         props;
@@ -56,12 +63,14 @@ export default class Formula extends React.Component {
             let _scrollTop = $(top.document).scrollTop();
             let _marginTop = _scrollTop === 0 ? 30 : _scrollTop;
             _dialog.css({"margin-top":_marginTop+"px"});
+            _this.showEnv('1');
         });
     }
     sureFn = () => {
         //begin在此处写逻辑
         let data = document.getElementById('textarea').value;//"formula";
-        this.props.backFormula(data);
+        let list = that.state.list;
+        this.props.backFormula(data,list);
         //end在此处写逻辑
         this.close();
     }
@@ -206,10 +215,26 @@ export default class Formula extends React.Component {
     	return ret ;
     }
     componentDidMount() {
-		
+    	
     }
+    handleChange(item,selected,event){
+        // console.log(arguments);
+        // console.log(selected[0]);
+    	if(selected && selected.length>0){
+    		 let that = this;
+    	     let selecteditem =selected[0];
+    	     let _refItem= this.props.refItem ;
+    	     console.log(selecteditem);
+    	     this.insertText( " getID('"+_refItem+"','"+selecteditem.name +"','"+selecteditem.id+"') ");
+    	}
+        		
+      }
     render () {
         let _this=this;
+        let _textArea= this.props.formulaText ;
+        let _refText= this.props.refText ;
+        let _refItem= this.props.refItem ;
+        let defaultSelected= this.props.refSelected ? Object.assign([],[this.props.refSelected]) : []
         return (
             <Modal show ={this.state.showModal} onHide={this.close} className ="static-modal">
                 <Modal.Header closeButton>
@@ -219,70 +244,43 @@ export default class Formula extends React.Component {
                     <table> 
                     	<tr> 
                     		<td colSpan="2">
-                    			<textarea  id = 'textarea'  rows="8" cols="70"></textarea>
+                    			<textarea  id = 'textarea'  rows="8" cols="70" className ="formula-resizenone">{_textArea}</textarea>
                     		</td>
                     	 </tr>
                     	 
                     	 <tr>
-                 			<td>
-		                    	<table className="formula-table"> 
-		                    		<tr>
-			        					<td>  <a id="title1" className="btn  btn-primary"  onClick={_this.showContent.bind(_this,'1')}>数学函数</a> </td>
-			        					<td>  <a id="title2"  className="btn btn-default "  onClick={_this.showContent.bind(_this,'2')}>字符串函数</a> </td>
-			        					<td>  <a id="title3"  className="btn btn-default "  onClick={_this.showContent.bind(_this,'3')}>自定义函数</a>  </td>
-			        				</tr>
-			        				<tr>
-			        					<td colSpan="4" > 
-			        						<div id="content1" className="formula-div">
-			        							<table >
-			        								<tr><td> <a  className="formula-a" onClick={_this.insertText.bind(_this,'max( , )')}><kbd> max </kbd></a>  </td>    <td>取最大值 </td> </tr>
-			        								<tr><td> <a  className="formula-a"  onClick={_this.insertText.bind(_this,'min( , )')}><kbd> min </kbd></a>  </td>	 <td>取最小值 </td> </tr>
-			        								<tr><td> <a  className="formula-a" onClick={_this.insertText.bind(_this,'abs(  )')}><kbd> abs </kbd></a>  </td>		 <td>取绝对值 </td> </tr>
-			        								<tr><td> <a  className="formula-a" onClick={_this.insertText.bind(_this,'sin( )')}><kbd> sin </kbd></a>  </td> 		<td>取sin值 </td> </tr>
-			        								<tr><td> <a  className="formula-a" onClick={_this.insertText.bind(_this,'cos( )')}><kbd> cos </kbd></a>  </td> 		<td>取cos值 </td> </tr>
-			        							</table>
-			        						</div> 
-			        						<div id="content2" className="formula-div none">
-				        						<table >
-			        								<tr><td> <a  className="formula-a" onClick={_this.insertText.bind(_this,'concat( , )')}><kbd> concat </kbd></a>  </td>   <td>字符串拼接 </td></tr>
-			        								<tr><td> <a  className="formula-a"  onClick={_this.insertText.bind(_this,'length(  )')}><kbd> length </kbd></a>  </td>   <td>取字符串长度 </td></tr>
-			        								<tr><td> <a  className="formula-a" onClick={_this.insertText.bind(_this,'substr( , )')}><kbd> substr </kbd></a>  </td>   <td>substr(index,length) ,取指定长度字符串 </td></tr>
-		        								</table>
-			        						</div> 
-			        						<div id="content3" className="formula-div none">
-				        						<table >
-		        									<tr><td> <a  className="formula-a"  onClick={_this.insertText.bind(_this,' iif( , , )')}><kbd> Iif </kbd></a>  </td>  <td>条件判断语句 </td></tr>
-		        									<tr><td> <a  className="formula-a"  onClick={_this.insertText.bind(_this,' cmapping( , , ... )')}><kbd> cmapping </kbd></a>  </td>  <td>对照表 </td></tr>
-		        								</table>
-		        							</div> 	
-			        					
-			        					</td>
-			        				</tr>
-		        				</table>
-	        				</td>
-	        				
-	        				<td>
+	        				<td colSpan="2">
 		        				<table className="formula-table"> 
 				        			<tr>
-			        					<td>  <a id="envtitle1" className="btn  btn-primary"  onClick={_this.showEnv.bind(_this,'1')}>环境变量</a> </td>
-			        					<td>  <a id="envtitle2"  className="btn btn-default "  onClick={_this.showEnv.bind(_this,'2')}>元素</a> </td>
+			        					<td width="50px">  <a id="envtitle1" className="btn  btn-primary"  onClick={_this.showEnv.bind(_this,'1')}>元素</a> </td>
+			        					<td width="50px">  <a id="envtitle2"  className="btn btn-default "  onClick={_this.showEnv.bind(_this,'2')}>固定值</a> </td>
+			        					<td>  &nbsp; </td>
 			        				</tr>
 			        				<tr>
-			        					<td colSpan="2" > 
-				        					<div id="env1" className="formula-div">
-			        							<table >
-			        								<tr><td> <a  className="formula-a" onClick={_this.insertText.bind(_this,' $userid ')}><kbd> userid </kbd></a>  </td>    <td>取当前登录人id </td> </tr>
-			        								<tr><td> <a  className="formula-a"  onClick={_this.insertText.bind(_this,' $date ')}><kbd> date </kbd></a>  </td>	 <td>取当前时间 </td> </tr>
-			        							</table>
-		        							</div> 
-		        							
-		        							<div id="env2" className="formula-div none">
-		        							
-			        							<ul id="mytree" className="filetree">
-				        							 
-				        					    </ul>
-		        					    
-		        							</div> 
+			        					
+			        					<td colSpan="3" > 
+			        						<table className="formula-table-inner"> 
+			        						<tr><td>
+					        					<div id="env1" className="formula-div">
+							        					<ul id="mytree" className="filetree">
+						        					    </ul>
+			        							</div> 
+			        							
+			        							<div id="env2" className="formula-div none">
+				        							<Refers
+				        							  emptyLabel=' '
+				        							  labelKey="name"
+				        							  onChange={this.handleChange.bind(this,_refItem)}
+				        							  placeholder={_refText}
+				        							  referConditions={{"refCode":_refItem,"refType":"table","displayFields":["code","name","email"]}}
+				        							  referDataUrl={_refItem=='user'?Config.refer.referDataUserUrl:Config.refer.referDataUrl}
+				        							  referType="list"
+				        							  ref={_refItem}
+				        							  defaultSelected={defaultSelected}
+				        							/>
+			        							</div> 
+			        						</td></tr>
+			        						</table>
 		        						</td>
 		        					</tr>
 	        					</table>
