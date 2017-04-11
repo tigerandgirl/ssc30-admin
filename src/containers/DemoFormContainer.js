@@ -10,7 +10,7 @@ import { Grid, Row, Col, Button, Modal } from 'react-bootstrap';
 import AdminEditForm from '../components/AdminEditForm';
 
 class DemoFormContainer extends Component {
-  static PropTypes = {
+  static propTypes = {
     dispatch: PropTypes.func.isRequired
   }
 

@@ -8,7 +8,7 @@ import Tree, { TreeNode } from 'rc-tree';
 import * as DemoActions from '../actions/demo';
 
 class DemoTreeContainer extends Component {
-  static PropTypes = {
+  static propTypes = {
     dispatch: PropTypes.func.isRequired
   }
 

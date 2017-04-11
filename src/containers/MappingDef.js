@@ -8,12 +8,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
 import { Button } from 'react-bootstrap';
-import { Grid as SSCGrid, Form as SSCForm} from 'ssc-grid';
+import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
 import AdminDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
-import Formula from '../components/Formula';
-
+import FormulaField from '../components/FormulaField';
+import MessageConfirm from '../components/MessageConfirm';
 import * as Actions from '../actions/mappingDef';
 
 const BASE_DOC_ID = 'mappingdef';
@@ -41,22 +41,22 @@ class MappingDef extends Component {
     /**
      * store中存储的表体数据
      */
-    tableBodyData: PropTypes.array.isRequired,
+    tableBodyData: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired
+    })).isRequired,
     /**
      * store中存储的表头数据
      */
-    tableColumnsModel: PropTypes.array.isRequired,
-    totalPage: PropTypes.number,
+    tableColumnsModel: PropTypes.arrayOf(PropTypes.shape({
+      type: PropTypes.string.isRequired
+    })).isRequired,
+    totalPage: PropTypes.number.isRequired,
     updateTableBodyDataAndFetchTableBodyData: PropTypes.func.isRequired
   }
 
   state = {
     activePage: 1,
     startIndex: 0
-  }
-
-  constructor(props) {
-    super(props);
   }
 
   componentWillMount() {
@@ -67,7 +67,6 @@ class MappingDef extends Component {
 
   componentDidMount() {
     document.title = '转换规则定义';
-    // this.refs.formula.showAlert();
   }
 
   componentWillReceiveProps(/* nextProps */) {
@@ -134,41 +133,50 @@ class MappingDef extends Component {
     this.props.updateTableBodyDataAndFetchTableBodyData(formData);
   }
 
-  /**
-   * 公式编辑器
-   */
-
-  handleDataBack() {
-    
-  }
-
   getCustomComponent() {
     const container = this;
     return React.createClass({
+      propTypes: {
+        rowIdx: PropTypes.number.isRequired,
+        rowObj: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          des_billtype: PropTypes.shape({
+            id: PropTypes.string.isRequired
+          }).isRequired
+        }).isRequired
+      },
       handleEdit(/* event */) {
         const { rowIdx, rowObj } = this.props;
         // 将rowData保存到store中
         container.props.showEditDialog(true, rowIdx, rowObj);
       },
       handleRemove(event) {
-        if (!confirm('是否删除？')) {
-          return;
-        }
         const { rowObj } = this.props;
-        container.props.deleteTableBodyDataAndFetchTableBodyData(rowObj);
+        var param ={
+          isShow :true ,
+          txt:"是否删除？",
+          sureFn:function(){
+            container.props.deleteTableBodyDataAndFetchTableBodyData(rowObj);
+          }
+        };
+        container.refs.messageConfirm.initParam(param);
       },
       render() {
-        const {rowObj: {
-          id,
-          des_billtype
-        }} = this.props;
+        const {
+          rowObj: { id }
+        } = this.props;
+        const desBillType = this.props.rowObj.des_billtype;
         return (
           <td>
             <span onClick={this.handleRemove}>删除</span>
             <span onClick={this.handleEdit}>修改</span>
-            <Link to={`/entity-map-no-sidebar-single-page/${des_billtype}/${id}`}>
-              子表
-            </Link>
+            {
+              typeof desBillType === 'object' && desBillType !== null
+              ? <Link to={`/entity-map-no-sidebar-single-page/${desBillType.id}/${id}`}>
+                  子表
+                </Link>
+              : null
+            }
           </td>
         );
       }
@@ -180,9 +188,17 @@ class MappingDef extends Component {
       itemsPerPage, tableColumnsModel, tableBodyData, pageAlert
     } = this.props;
 
+    // 准备制作自定义组件 - 公式编辑器
+    const tableColumnsModel2 = tableColumnsModel.map(({ ...columnModel }) => {
+      if (columnModel.datatype === 20 && columnModel.type === 'custom') {
+        columnModel.component = FormulaField;
+      }
+      return columnModel;
+    });
+
     return (
       <div className="mapping-def-container content">
-        <Formula ref="formula" eid='10' backFormula={::this.handleDataBack} />
+        <MessageConfirm  ref="messageConfirm"/>
         <AdminAlert
             show={pageAlert.show}
             bsStyle={pageAlert.bsStyle}
@@ -203,7 +219,10 @@ class MappingDef extends Component {
             totalPage={this.props.totalPage}
             activePage={this.state.activePage}
             onPagination={::this.handlePagination}
-            operationColumn={{}}
+            operationColumn={{
+              className: 'col-120',
+              text: '操作'
+            }}
             operationColumnClass={this.getCustomComponent()}
           />
         </div>
@@ -233,7 +252,7 @@ class MappingDef extends Component {
             {this.props.serverMessage}
           </p>
           <SSCForm
-            fieldsModel={tableColumnsModel}
+            fieldsModel={tableColumnsModel2}
             defaultData={this.props.editFormData}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.closeEditDialog}
@@ -244,13 +263,16 @@ class MappingDef extends Component {
   }
 }
 
-const mapStateToProps = (state/* , ownProps */) => {
-  return {...state.mappingDef};
-};
+/**
+ * @param {Object} state
+ * @param {Object} ownProps
+ */
+const mapStateToProps = state => ({ ...state.mappingDef });
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(Actions, dispatch);
-};
+/**
+ * @param {Function} dispatch
+ */
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(MappingDef);

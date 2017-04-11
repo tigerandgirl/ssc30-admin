@@ -1,5 +1,5 @@
 {
-  "extends": ["eslint-config-airbnb"],
+  "extends": ["eslint-config-airbnb", "plugin:jsx-a11y/recommended"],
   "env": {
     "browser": true,
     "node": true
@@ -10,7 +10,8 @@
   "parser": "babel-eslint",
   "plugins": [
     "react",
-    "babel"
+    "babel",
+    "jsx-a11y"
   ],
   "rules": {
     "constructor-super": 2,
@@ -25,6 +26,7 @@
     "no-this-before-super": 2,
     "babel/object-shorthand": 2,
     "react/jsx-boolean-value": 2,
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-no-duplicate-props": 2,
     "react/sort-comp": 0,
     "react/prop-types": [2, { "ignore": [

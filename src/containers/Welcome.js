@@ -1,68 +1,58 @@
+/**
+ * 调试首页
+ */
+
 import React from 'react';
+import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
 import * as WelcomeActions from '../actions/welcome';
 
-import { Link } from 'react-router';
-import NormalWidget from './../components/NormalWidget';
-
 class Welcome extends React.Component {
-
-  constructor(props) {
-    super(props);
-  }
 
   componentWillMount() {
   }
 
   render() {
+    const link = (path, name) => (
+      <Link to={path}>{name}</Link>
+    );
+    const listLink = (path, name) => (
+      <li>{link(path, name)}</li>
+    );
+    const kuaijipingtai = [
+      { path: '/external-data-modelling-no-sidebar-single-page',
+        name: '外部数据建模 ExternalDataModelling (no-sidebar, single-page)' },
+      { path: '/entity-no-sidebar-single-page',
+        name: '实体模型 Entity (no-sidebar, single-page)' },
+      { path: '/mapping-def-no-sidebar-single-page',
+        name: '转换规则定义 MappingDef (no-sidebar, single-page)' }
+    ];
     return (
-      <div className="welcomeContainer">
-        <NormalWidget />
+      <div className="welcome-container">
         <div>
           <h2>基础档案</h2>
           <ul>
-            <li>
-              <Link to={`/basedocs`}>
-                所有基础档案类型
-              </Link>
-            </li>
-            <li>
-              <Link to={`/basedocs-no-sidebar`}>
-                所有基础档案类型(no-sidebar)
-              </Link>
-            </li>
-            <li>
-              <Link to={`/basedocs-no-sidebar-single-page/basedoc/dept`}>
-                基础档案 - 部门(no-sidebar, single-page)
-              </Link>
-            </li>
+            {listLink('/basedocs', '所有基础档案类型')}
+            {listLink('/basedocs-no-sidebar', '所有基础档案类型(no-sidebar)')}
+            {listLink('/basedocs-no-sidebar-single-page/basedoc/dept', '基础档案 - 部门(no-sidebar, single-page)')}
           </ul>
         </div>
         <div>
-          <h2>会计平台</h2>
+          <h2>友账表 - 会计平台</h2>
           <ul>
-            <li>
-              <Link to={`/external-data-modelling-no-sidebar-single-page`}>
-                外部数据建模 ExternalDataModelling (no-sidebar, single-page)
-              </Link>
-            </li>
-            <li>
-              <Link to={`/entity-no-sidebar-single-page`}>
-                实体模型 Entity (no-sidebar, single-page)
-              </Link>
-            </li>
-            <li>
-              <Link to={`/mapping-def-no-sidebar-single-page`}>
-                转换规则定义 MappingDef (no-sidebar, single-page)
-              </Link>
-            </li>
+            {kuaijipingtai.map(item => (
+              <li key={item.path}>
+                <Link to={item.path}>{item.name}</Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div>
           <ul>
             <li>
-              <Link to={`/accsubs-no-sidebar`}>
+              <Link to="/accsubs-no-sidebar">
                 会计平台科目
               </Link>
             </li>

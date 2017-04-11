@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import Tree, { TreeNode } from 'rc-tree';
 
 export default class AdminTree extends Component {
-  static PropTypes = {
+  static propTypes = {
     rootNode: PropTypes.object.isRequired
   }
 

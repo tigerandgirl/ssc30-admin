@@ -20,7 +20,7 @@ const itemsPerPage = 5;
 const startIndex = 1;
 
 class ArchSettingPage extends Component {
-  static PropTypes = {
+  static propTypes = {
     //dispatch: PropTypes.func.isRequired
   }
 

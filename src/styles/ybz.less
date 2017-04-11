@@ -83,6 +83,7 @@ body{
       td {
         .b0;
         .ellipsis;
+        max-width: 150px;
         //input {
         //  background-image: url("../image/checked.png");
         //}
@@ -90,9 +91,9 @@ body{
         //  background-image: url("../image/checked.png");
         //}
       }
-      td:not(:last-child){
-        max-width: 150px;
-      }
+      //td:not(:last-child){
+      //  max-width: 150px;
+      //}
       td:last-child >a, td:last-child span{
         color: transparent;
         .mr10;
@@ -105,7 +106,12 @@ body{
           color: @mainColor;
           .clearfix;
           .pointer;
-          &:hover { color: @darkColor; }
+          &:hover {
+            color: @darkColor;
+          }
+          &:focus, &:active {
+            color: @darkColor;
+          }
         }
       }
     }
@@ -133,6 +139,20 @@ body{
   padding: 15px;
 }
 
+.btn.btn-primary {      // 确认 保存 按钮
+  color: #fff;
+  border: 1px solid @hoverColor;
+  background-color: @mainColor;
+  box-sizing: border-box;
+  &:hover {
+    border-color: @hoverColor;
+    background-color: @hoverColor;
+  }
+  &:focus, &:active, &.active {
+    border-color: @darkColor;
+    background-color: @darkColor;
+  }
+}
 .btn.btn-default {      // 取消 一般 按钮
   color: @mainColor;
   border-color: @mainColor;

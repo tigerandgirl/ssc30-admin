@@ -6,6 +6,7 @@ import { Grid as SSCGrid, Form } from 'ssc-grid';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
+import FormulaField from '../components/FormulaField';
 
 import * as Actions from '../actions/entityMap';
 
@@ -173,11 +174,16 @@ class EntityMapTable extends Component {
       pageAlert
     } = this.props;
 
-    // 表单字段模型 / 表格列模型
-    const cols = entityFieldsModel || [];
+    // 准备制作自定义组件 - 公式编辑器
+    const entityFieldsModel2 = entityFieldsModel.map(({ ...columnModel }) => {
+      if (columnModel.datatype === 20 && columnModel.type === 'custom') {
+        columnModel.component = FormulaField;
+      }
+      return columnModel;
+    });
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData(cols);
+    const formDefaultData = this.getFormDefaultData(entityFieldsModel2);
 
     return (
       <div>
@@ -188,7 +194,7 @@ class EntityMapTable extends Component {
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <SSCGrid tableData={entityTableBodyData} columnsModel={cols}
+        <SSCGrid tableData={entityTableBodyData} columnsModel={entityFieldsModel2}
           className="ssc-grid"
           operationColumn={{}}
           operationColumnClass={this.getCustomComponent()}
@@ -203,7 +209,7 @@ class EntityMapTable extends Component {
             {this.props.serverMessage}
           </p>
           <Form
-            fieldsModel={cols}
+            fieldsModel={entityFieldsModel2}
             defaultData={editFormData}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.handleEditFormReset}
@@ -219,7 +225,7 @@ class EntityMapTable extends Component {
             {this.props.serverMessage}
           </p>
           <Form
-            fieldsModel={cols}
+            fieldsModel={entityFieldsModel2}
             defaultData={formDefaultData}
             onSubmit={::this.handleCreateFormSubmit}
             onReset={::this.handleCreateFormReset}

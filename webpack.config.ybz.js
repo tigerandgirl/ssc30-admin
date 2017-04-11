@@ -11,12 +11,14 @@ const moment = require('moment');
 const childProcess = require('child_process');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const packageJSON = require('./package.json');
+
 // 友报账生产环境服务器
 const DEFAULT_PROD_SERVER = '172.20.4.88:8088';
 const DEFAULT_PATH_PREFIX = '';
+const DEFAULT_PROTOCOL = 'http';
 
 // 获取版本
-const packageJSON = require('./package.json');
 const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
@@ -41,9 +43,10 @@ module.exports = {
      */
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production'),
-        'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
-        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX)
+        NODE_ENV: JSON.stringify('production'),
+        PROD_SERVER: JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
+        PATH_PREFIX: JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX),
+        PROTOCOL: JSON.stringify(process.env.PROTOCOL || DEFAULT_PROTOCOL)
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -55,7 +58,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: `友报账 v${packageJSON.version}`,
       filename: 'index.html',
-      template: 'client/index.hbs',
+      template: 'client/index-ybz.hbs',
       hash: true,
       // User defined options
       version: packageJSON.version,
@@ -64,7 +67,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       // {from: 'src/www/css', to: 'css'},
-      {from: 'src/images', to: 'images'},
+      { from: 'src/images', to: 'images' },
       // {from: 'src/www/index.html'},
       // {from: 'src/www/versions.json'},
     ]),

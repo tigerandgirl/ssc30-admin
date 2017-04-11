@@ -28,7 +28,7 @@ const DEV_BACKEND_INDEX = -1;
  * 比如：http://127.0.0.1:3009/dept/query
  */
 function getBaseDocURL(path) {
-  const url = server => `http://${server}${process.env.PATH_PREFIX}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${process.env.PATH_PREFIX}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -44,7 +44,7 @@ function getBaseDocURL(path) {
  * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
  */
 function getReferURL(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -171,6 +171,14 @@ function enableTableDataFail(message) {
     message
   };
 }
+
+// 开始获取表格体数据
+function updateTableDataRequest() {
+  return {
+    type: types.TABLEDATA_UPDATE_REQUEST
+  }
+}
+
 // rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
 function updateTableDataSuccess(json, rowIdx) {
   // 后端返回的response总包含了修改之后的值，填写到表格中
@@ -185,9 +193,9 @@ function updateTableDataSuccess(json, rowIdx) {
   };
 }
 
-function updateTableDataFail(message, resBody) {
+function updateTableDataFailure(message, resBody) {
   return {
-    type: types.TABLEDATA_UPDATE_FAIL,
+    type: types.TABLEDATA_UPDATE_FAILURE,
     message,
     resBody
   };
@@ -265,9 +273,9 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
 /**
  * 复合操作：获取表格数据并将页码设定为下一页
  */
-export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage) {
+export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage, conditions) {
   return (dispatch) => {
-    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, []))
+    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions ))
       .then(() => {
         return dispatch(gotoPage(startIndex, nextPage));
       });
@@ -363,14 +371,13 @@ export function fetchTableColumnsModel(baseDocId) {
  */
 export function deleteTableData(baseDocId, rowIdx, rowData) {
   return (dispatch) => {
-    const { id } = rowData; // 40位主键 primary key
     let opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({ id })
+      body: JSON.stringify(rowData)
     };
     appendCredentials(opts);
 
@@ -390,43 +397,43 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
       });
   };
 }
+
 /**
  * 启用 / 停用
- * */
-export function enableTableData(baseDocId, rowObj){
-  return (dispatch, getState) => {
-    var { id,enable } = rowObj; // 40位主键 primary key
-    var turnEnable = false ;
-    if( !enable ){
-       turnEnable = true  ;
+ */
+export function enableTableData(baseDocId, rowObj) {
+  return (dispatch) => {
+    let turnEnable = false;
+    if (!rowObj.enable) {
+      turnEnable = true;
     }
-    var opts = {
+    const opts = {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({ id,
-        enable:turnEnable
+      body: JSON.stringify({
+        ...rowObj,
+        enable: turnEnable
       })
     };
     appendCredentials(opts);
 
-    var url = getEnableURL(baseDocId);
+    const url = getEnableURL(baseDocId);
     return fetch(url, opts)
-        .then(response => {
-          return response.json();
-        }).then(json => {
-          if( json.success ==  true ) {
-            dispatch(enableTableDataSuccess(json));
-          }else{
-            dispatch(enableTableDataFail(json.message));
-          }
-        }).catch(function (err) {
-          console.log("操作出现错误：", err);
-        });
-  }
-
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        if (json.success === true) {
+          dispatch(enableTableDataSuccess(json));
+        } else {
+          dispatch(enableTableDataFail(json.message));
+        }
+      })
+      .catch(err => console.log('操作出现错误：', err));
+  };
 }
 
 /**
@@ -441,6 +448,7 @@ export function enableTableData(baseDocId, rowObj){
 export function saveTableData(baseDocId, fields, formData, rowIdx) {
   return (dispatch) => {
     let requestBodyObj = { ...formData };
+    dispatch(updateTableDataRequest());
 
     // 注意：处理是有顺序的，不要乱调整
     // 1. 存储在formData中的参照是对象，往后端传的时候需要取出refer.selected[0].id传给后端。
@@ -491,7 +499,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
         let error = new Error(response.statusText);
         error.response = response;
         response.text().then(text => {
-          dispatch(updateTableDataFail(('后端返回的HTTP status code不是200', text)));
+          dispatch(updateTableDataFailure(('后端返回的HTTP status code不是200', text)));
         });
         throw error;
       }
@@ -501,7 +509,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       if (json.success === true) {
         dispatch(updateTableDataSuccess(json, rowIdx));
       } else {
-        dispatch(updateTableDataFail('获取表格数据失败，后端返回的success是false',
+        dispatch(updateTableDataFailure('获取表格数据失败，后端返回的success是false',
           json.message));
       }
     }
@@ -530,11 +538,11 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
 /**
  * 复合操作：创建/保存并刷新表格
  */
-export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex) {
+export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex,conditions) {
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,conditions));
     });
   };
 }
@@ -619,50 +627,6 @@ export function initEditFormData(editFormData) {
     });
   };
 }
-
-export function submitEditForm() {
-  return (dispatch, getState) => {
-    dispatch({
-      type: types.SUBMIT_EDIT_FORM
-    });
-    const processResult = result => {
-      result.error ?
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: result.error.message
-        })
-      :
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_SUCCESS,
-          bsStyle: 'success',
-          message: '提交成功'
-        })
-    };
-    const { arch: { editFormData } } = getState();
-    const idField = editFormData.find(field => field.label === 'id');
-    const options = {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(editFormData)
-    };
-    appendCredentials(options);
-    return fetch(`/api/arch/${idField.value}`, options)
-      .then(utils.checkStatus)
-      .then(utils.parseJSON)
-      .then(processResult)
-      .catch(error => {
-        dispatch({
-          type: types.SUBMIT_EDIT_FORM_FAIL,
-          bsStyle: 'danger',
-          message: error.message
-        });
-        throw error;
-      });
-  };
-};
 
 // create dialog
 

@@ -16,6 +16,7 @@ const initState = {
   itemsPerPage: 15, // TODO 常量不应该放在这里
   startIndex: 0,
   activePage: 1,
+  totalPage: 1,
   // 页面错误提示
   pageAlert: {
     show: false,
@@ -41,18 +42,22 @@ const initState = {
 export default handleActions({
 
   // 获得表体数据
-  [ActionTypes.CONVERSION_RULE_DEFINITION_REQUEST]: (state) => ({...state,
+  [ActionTypes.MAPPING_DEF_TABLE_BODY_DATA_REQUEST]: state => ({
+    ...state,
     tableBodyDataLoading: true
   }),
-  [ActionTypes.CONVERSION_RULE_DEFINITION_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.MAPPING_DEF_TABLE_BODY_DATA_SUCCESS]: (state, action) => ({
+    ...state,
     tableBodyDataLoading: false,
     tableBodyDataLoaded: true,
     tableBodyData: [...action.payload.data.data]
   }),
-  [ActionTypes.CONVERSION_RULE_DEFINITION_FAILURE]: (state, action) => ({...state,
+  [ActionTypes.MAPPING_DEF_TABLE_BODY_DATA_FAILURE]: (state, action) => ({
+    ...state,
     tableBodyDataLoading: false,
     tableBodyDataLoaded: false,
-    pageAlert: {...state.pageAlert,
+    pageAlert: {
+      ...state.pageAlert,
       show: true,
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
@@ -60,18 +65,22 @@ export default handleActions({
   }),
 
   // 获取表头数据
-  [ActionTypes.TABLE_COLUMNS_MODEL_REQUEST]: (state) => ({...state,
+  [ActionTypes.TABLE_COLUMNS_MODEL_REQUEST]: state => ({
+    ...state,
     tableColumnsModelloading: true
   }),
-  [ActionTypes.TABLE_COLUMNS_MODEL_SUCCESS]: (state, action) => ({...state,
+  [ActionTypes.TABLE_COLUMNS_MODEL_SUCCESS]: (state, action) => ({
+    ...state,
     tableColumnsModelloading: false,
     tableColumnsModelloaded: true,
     tableColumnsModel: [...action.payload.data]
   }),
-  [ActionTypes.TABLE_COLUMNS_MODEL_FAILURE]: (state, action) => ({...state,
+  [ActionTypes.TABLE_COLUMNS_MODEL_FAILURE]: (state, action) => ({
+    ...state,
     tableColumnsModelloading: false,
     tableColumnsModelloaded: false,
-    pageAlert: {...state.pageAlert,
+    pageAlert: {
+      ...state.pageAlert,
       show: true,
       bsStyle: action.payload.bsStyle,
       message: action.payload.message
@@ -84,21 +93,23 @@ export default handleActions({
 
   [ActionTypes.SHOW_PAGE_ALERT]: (state, action) => update(state, {
     pageAlert: {
-      show: {$set: action.show}
+      show: { $set: action.show }
     }
   }),
 
   /**
    * 带表单的创建/编辑对话框
    */
-  [ActionTypes.MAPPING_DEF_EDIT_DIALOG_SHOW]: (state, action) => ({...state,
+  [ActionTypes.MAPPING_DEF_EDIT_DIALOG_SHOW]: (state, action) => ({
+    ...state,
     editDialog: {
       show: action.show,
       rowIdx: action.rowIdx
     },
     editFormData: action.editFormData
   }),
-  [ActionTypes.MAPPING_DEF_CREATE_DIALOG_SHOW]: (state, action) => ({...state,
+  [ActionTypes.MAPPING_DEF_CREATE_DIALOG_SHOW]: (state, action) => ({
+    ...state,
     createDialog: {
       show: action.show
     },

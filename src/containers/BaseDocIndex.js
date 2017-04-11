@@ -19,7 +19,7 @@ const itemsPerPage = 5;
 const startIndex = 1;
 
 class BaseDocIndex extends Component {
-  static PropTypes = {
+  static propTypes = {
     //dispatch: PropTypes.func.isRequired
   }
 
@@ -59,9 +59,6 @@ class BaseDocIndex extends Component {
   // edit form
   handleEditFormBlur(label, value) {
     this.props.updateEditFormFieldValue(label, value);
-  }
-  handleEditFormSubmit() {
-    this.props.submitEditForm();
   }
 
   handleAlertDismiss(){

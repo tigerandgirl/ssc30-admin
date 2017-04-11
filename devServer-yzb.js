@@ -36,7 +36,10 @@ app.use(webpackMiddleware(compiler, {
 }));
 app.use(webpackHotMiddleware(compiler));
 
-app.use('/', express.static(path.join(__dirname + '/client')));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dev-yzb.html'));
+});
+app.use('/', express.static(path.join(__dirname, 'client')));
 
 app.use(require('./server/routes/fakeApiArch')());
 app.use(require('./server/routes/fakeApiRole')());
@@ -47,7 +50,7 @@ app.use(require('./server/routes/fakeApiNCSync')());
 const port = process.env.PORT || 3008;
 const ip = process.env.IP || '0.0.0.0';
 
-app.listen(port, ip, err => {
+app.listen(port, ip, (err) => {
   if (err) {
     console.log(err);
     return;

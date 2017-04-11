@@ -24,7 +24,7 @@ const DEV_BACKEND_INDEX = -1;
  * 比如：http://127.0.0.1:3009/dept/query
  */
 function getBaseDocURL(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -40,7 +40,7 @@ function getBaseDocURL(path) {
  * 比如：http://10.1.218.36:8080/ficloud/mappingdef/query
  */
 function getMappingDefAPI(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -52,6 +52,22 @@ function getMappingDefAPI(path) {
 }
 
 /**
+ * 根据配置获取到参照的绝对路径
+ * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
+ */
+function getReferURL(path) {
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
+  // 生产环境下直接使用生产服务器IP
+  if (process.env.NODE_ENV === 'production') {
+    return url(process.env.PROD_SERVER);
+  }
+  if (DEV_BACKEND_INDEX === -1) {
+    return url(URL.LOCAL_EXPRESS_SERVER);
+  }
+  return url(URL.REFER_DEV_SERVERS[DEV_BACKEND_INDEX]);
+}
+
+/**
  * 基础档案 组装后端接口
  */
 const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
@@ -59,18 +75,15 @@ const FICLOUDPUB_INITGRID_URL = getBaseDocURL('/ficloud/ficloud_pub/initgrid');
 /**
  * 转换规则模型 组装后端接口
  */
-const QUERY_CONVERSION_RULE_DEFINITION_URL = getMappingDefAPI('/ficloud/mappingdef/query');
+const MAPPING_DEF_QUERY_URL = getMappingDefAPI('/ficloud/mappingdef/query');
 const MAPPING_DEF_SAVE_URL = getMappingDefAPI('/ficloud/mappingdef/save');
 const MAPPING_DEF_DELETE_URL = getMappingDefAPI('/ficloud/mappingdef/delete');
 
 /**
- * exception lib
+ * 参照 组装后端接口
  */
-
-function SuccessFalseException(message) {
-  this.message = message;
-  this.name = 'SuccessFalseException';
-}
+const ReferDataURL = getReferURL('/refbase_ctr/queryRefJSON');
+const ReferUserDataURL = getReferURL('/userCenter/queryUserAndDeptByDeptPk');
 
 /**
  * 获取表格的列模型
@@ -96,7 +109,7 @@ export function fetchTableColumnsModel(baseDocId) {
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
+        .then((resObj) => {
           if (resObj.success === true) {
             // 进行业务层的数据校验
             const [isValid, validationMessage] = utils.validation.tableColumnsModelData(resObj);
@@ -117,7 +130,7 @@ export function fetchTableColumnsModel(baseDocId) {
                 /* 5 */ .map(utils.setHiddenFields)
                 /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
                 /* 7 */ .map(utils.fixReferKey)
-                /* 8 */ /* .map(utils.setReferFields.bind(this)) */;
+                /* 8 */ .map(utils.setReferFields.bind(this, ReferDataURL, ReferUserDataURL));
               return {
                 data: fields
               };
@@ -129,7 +142,7 @@ export function fetchTableColumnsModel(baseDocId) {
               但是数据校验方法提示说：“${validationMessage}”`
             };
           } else {
-            throw new SuccessFalseException(resObj.message);
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }
@@ -140,14 +153,18 @@ export function fetchTableColumnsModel(baseDocId) {
  * 获取实体模型
  */
 
-export const CONVERSION_RULE_DEFINITION_REQUEST = 'CONVERSION_RULE_DEFINITION_REQUEST';
-export const CONVERSION_RULE_DEFINITION_SUCCESS = 'CONVERSION_RULE_DEFINITION_SUCCESS';
-export const CONVERSION_RULE_DEFINITION_FAILURE = 'CONVERSION_RULE_DEFINITION_FAILURE';
+export const MAPPING_DEF_TABLE_BODY_DATA_REQUEST = 'MAPPING_DEF_TABLE_BODY_DATA_REQUEST';
+export const MAPPING_DEF_TABLE_BODY_DATA_SUCCESS = 'MAPPING_DEF_TABLE_BODY_DATA_SUCCESS';
+export const MAPPING_DEF_TABLE_BODY_DATA_FAILURE = 'MAPPING_DEF_TABLE_BODY_DATA_FAILURE';
 
 export function fetchTableBodyData(itemsPerPage, startIndex) {
   // use `callAPIMiddleware`
   return {
-    types: [CONVERSION_RULE_DEFINITION_REQUEST, CONVERSION_RULE_DEFINITION_SUCCESS, CONVERSION_RULE_DEFINITION_FAILURE],
+    types: [
+      MAPPING_DEF_TABLE_BODY_DATA_REQUEST,
+      MAPPING_DEF_TABLE_BODY_DATA_SUCCESS,
+      MAPPING_DEF_TABLE_BODY_DATA_FAILURE
+    ],
     // Check the cache (optional):
     // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
@@ -158,12 +175,14 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
         begin: startIndex,
         groupnum: itemsPerPage
       });
-      let url = `${QUERY_CONVERSION_RULE_DEFINITION_URL}`;
+      let url = `${MAPPING_DEF_QUERY_URL}`;
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
-          // 处理success: false
+        .then((resObj) => {
+          if (resObj.success !== true) {
+            throw new utils.SuccessFalseException(resObj.message);
+          }
           return resObj;
         });
     }
@@ -235,7 +254,7 @@ export function deleteTableBodyData(rowObj) {
         .then(utils.parseJSON)
         .then(resObj => {
           if (resObj.success !== true) {
-            throw new SuccessFalseException(resObj.message);
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }

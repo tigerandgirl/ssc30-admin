@@ -24,14 +24,14 @@ const FETCH_CREDENTIALS_OPTION = 'same-origin';
  * *  0 使用后端开发人员提供的开发机上跑的服务
  * *  1 使用后端提供的测试服务器
  */
-const DEV_BACKEND_INDEX = 1;
+const DEV_BACKEND_INDEX = -1;
 
 /**
  * 根据配置获取到实体映射的绝对路径
  * 比如：http://59.110.123.20/ficloud/outerentitytree/querymdtree
  */
 function getURL(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -47,7 +47,7 @@ function getURL(path) {
  * 比如：http://127.0.0.1:3009/userCenter/queryUserAndDeptByDeptPk
  */
 function getReferURL(path) {
-  const url = server => `http://${server}${path}`;
+  const url = server => `${process.env.PROTOCOL}://${server}${path}`;
   // 生产环境下直接使用生产服务器IP
   if (process.env.NODE_ENV === 'production') {
     return url(process.env.PROD_SERVER);
@@ -124,8 +124,10 @@ export function fetchLeftTree(billTypeCode, mappingDefId) {
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
-          // 处理success: false
+        .then((resObj) => {
+          if (resObj.success !== true) {
+            throw new utils.SuccessFalseException(resObj.message);
+          }
           return resObj;
         });
     }
@@ -205,7 +207,11 @@ export const ENTITY_TREE_NODE_DATA_FAILURE = 'ENTITY_TREE_NODE_DATA_FAILURE';
 export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
   // use `callAPIMiddleware`
   return {
-    types: [ENTITY_TREE_NODE_DATA_REQUEST, ENTITY_TREE_NODE_DATA_SUCCESS, ENTITY_TREE_NODE_DATA_FAILURE],
+    types: [
+      ENTITY_TREE_NODE_DATA_REQUEST,
+      ENTITY_TREE_NODE_DATA_SUCCESS,
+      ENTITY_TREE_NODE_DATA_FAILURE
+    ],
     // Check the cache (optional):
     // shouldCallAPI: (state) => !state.posts[userId],
     callAPI: () => {
@@ -223,12 +229,9 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
+        .then((resObj) => {
           if (resObj.success !== true) {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message || '未知错误'
-            };
+            throw new utils.SuccessFalseException(resObj.message);
           }
 
           // 1. 删除不用的字段，按理说应该后端从response中删除掉的
@@ -339,10 +342,7 @@ export function updateTreeNodeData(formData) {
         .then(utils.parseJSON)
         .then(resObj => {
           if (resObj.success !== true) {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message
-            };
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }
@@ -381,12 +381,9 @@ export const addTreeNodeData = formData => ({
     return fetch(url, opts)
       .then(utils.checkHTTPStatus)
       .then(utils.parseJSON)
-      .then(resObj => {
+      .then((resObj) => {
         if (resObj.success !== true) {
-          throw {
-            name: 'SUCCESS_FALSE',
-            message: resObj.message
-          };
+          throw new utils.SuccessFalseException(resObj.message);
         }
       });
   }
@@ -427,12 +424,9 @@ export function delTreeNodeData(rowObj) {
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
+        .then((resObj) => {
           if (resObj.success !== true) {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message
-            };
+            throw new utils.SuccessFalseException(resObj.message);
           }
         })
     }
