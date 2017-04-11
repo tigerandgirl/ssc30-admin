@@ -140,7 +140,8 @@ export default handleActions({
       show: action.show,
       rowIdx: action.rowIdx
     },
-    editFormData: action.editFormData
+    editFormData: action.editFormData,
+    serverMessage: ''
   }),
 
   /**
@@ -152,7 +153,8 @@ export default handleActions({
     createDialog: {
       show: action.show
     },
-    createFormData: action.formData
+    createFormData: action.formData,
+    serverMessage: ''
   }),
 
   /**
