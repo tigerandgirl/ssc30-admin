@@ -111,7 +111,6 @@
     "react-bootstrap-date-picker": "^3.7.0",
     "react-bootstrap-datetimepicker": "0.0.22",
     "react-bootstrap-switch": "^3.4.1",
-    "react-deep-link-state": "0.0.2",
     "react-dom": "0.14.8",
     "react-redux": "4.0.0",
     "react-router": "^1.0.0",
