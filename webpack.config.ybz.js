@@ -42,12 +42,6 @@ module.exports = {
         NODE_ENV: JSON.stringify('production')
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
-      compress: {
-        warnings: false
-      }
-    }),
     new HtmlWebpackPlugin({
       title: `友报账 v${packageJSON.version}`,
       filename: 'index.dev.html',
@@ -63,7 +57,7 @@ module.exports = {
       { from: 'src/images', to: 'images' },
       // {from: 'src/www/index.html'},
       // {from: 'src/www/versions.json'},
-    ]),
+    ])
   ],
   module: {
     loaders: [

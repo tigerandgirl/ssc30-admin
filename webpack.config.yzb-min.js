@@ -48,6 +48,12 @@ module.exports = {
       version: packageJSON.version,
       revision: GIT_REVISION,
       buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      compress: {
+        warnings: false
+      }
     })
   ],
   module: {
