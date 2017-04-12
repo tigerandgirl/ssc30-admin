@@ -137,23 +137,13 @@ a {
         .b0;
         .ellipsis;
         max-width: 150px;
-        //input {
-        //  background-image: url("../image/checked.png");
-        //}
-        //input[checked] {
-        //  background-image: url("../image/checked.png");
-        //}
       }
-      //td:not(:last-child){
-      //  max-width: 150px;
-      //}
       td:last-child >a, td:last-child span{
         color: transparent;
         .mr10;
       }
       &:hover {
         td { .b0; }
-        border: 1px solid @borderHoverColor;
         background-color: @gridHoverBackColor;
         td:last-child >a, td:last-child >span {
           color: @mainColor;
@@ -167,6 +157,9 @@ a {
           }
         }
       }
+    }
+    tbody tr.selected {
+      border-color: @mainColor;
     }
   }
 }
