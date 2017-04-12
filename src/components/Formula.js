@@ -1,4 +1,5 @@
 // Copy from http://git.yonyou.com/sscplatform/FC/blob/develop/src/containers/setting/Formula.js
+// 测试页面 https://fi.yonyoucloud.com/#/setting/test?_k=vrhahl
 
 /**
  * 公式编辑器
