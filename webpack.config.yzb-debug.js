@@ -1,8 +1,7 @@
 /**
  * 友账表
- * - 编译生成index.dev.html
+ * - 编译生成index.debug.html
  * - 编译生成带有source map的js，用于在生产环境下调试
- * - 复制源码中的图片
  */
 
 const path = require('path');

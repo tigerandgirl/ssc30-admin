@@ -2,6 +2,7 @@
  * 友账表
  * - 编译生成index.html
  * - 编译生成混淆压缩后的js
+ * - 复制源码中的图片
  */
 
 const path = require('path');
@@ -9,6 +10,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const moment = require('moment');
 const childProcess = require('child_process');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const packageJSON = require('./package.json');
 
@@ -54,7 +56,13 @@ module.exports = {
       compress: {
         warnings: false
       }
-    })
+    }),
+    new CopyWebpackPlugin([
+      // {from: 'src/www/css', to: 'css'},
+      { from: 'src/images', to: 'images' },
+      // {from: 'src/www/index.html'},
+      // {from: 'src/www/versions.json'},
+    ])
   ],
   module: {
     loaders: [
