@@ -1,7 +1,8 @@
 /**
  * 友账表
+ * - 编译生成index.dev.html
  * - 编译生成带有source map的js，用于在生产环境下调试
- * - 编译生成index.html首页
+ * - 复制源码中的图片
  */
 
 const path = require('path');
@@ -49,16 +50,13 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: `友账表 v${packageJSON.version}`,
-      filename: 'index.html',
+      filename: 'index.dev.html',
       template: 'client/index-yzb.hbs',
       hash: true,
       // User defined options
       version: packageJSON.version,
       revision: GIT_REVISION,
-      buildTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-      scheme: 'https',
-      hostPort: 'fi.yonyoucloud.com',
-      pathPrefix: '/ficloud'
+      buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
     }),
     new CopyWebpackPlugin([
       // {from: 'src/www/css', to: 'css'},

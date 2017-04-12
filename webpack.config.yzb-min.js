@@ -1,14 +1,19 @@
 /**
  * 友账表
+ * - 编译生成index.html
  * - 编译生成混淆压缩后的js
  */
 
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const moment = require('moment');
+const childProcess = require('child_process');
 
-// 友账表生产环境服务器
-const DEFAULT_PROD_SERVER = '59.110.123.20';
-const DEFAULT_PATH_PREFIX = '/ficloud';
+const packageJSON = require('./package.json');
+
+// 获取版本
+const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
   entry: [
@@ -31,10 +36,18 @@ module.exports = {
      */
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production'),
-        'PROD_SERVER': JSON.stringify(process.env.PROD_SERVER || DEFAULT_PROD_SERVER),
-        'PATH_PREFIX': JSON.stringify(process.env.PATH_PREFIX || DEFAULT_PATH_PREFIX)
+        NODE_ENV: JSON.stringify('production')
       }
+    }),
+    new HtmlWebpackPlugin({
+      title: `友账表 v${packageJSON.version}`,
+      filename: 'index.html',
+      template: 'client/index-yzb.hbs',
+      hash: true,
+      // User defined options
+      version: packageJSON.version,
+      revision: GIT_REVISION,
+      buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
     })
   ],
   module: {
