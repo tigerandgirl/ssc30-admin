@@ -17,17 +17,23 @@ const GBH_SERVER = '10.1.218.36:8080';
 // 后端某台测试服务器
 const DEV_SERVER = '10.3.14.240';
 
-/**
- * 友账表
- */
+// 友账表生产环境服务器
+// 曾用：59.110.123.20
+const DEFAULT_SCHEME = 'http';
+const DEFAULT_HOST_PORT = LOCAL_EXPRESS_SERVER;
+const DEFAULT_PATH_PREFIX = '/ficloud';
 
-const SCHEME = 'http';
-const HOST_PORT = [
-  LOCAL_EXPRESS_SERVER,
-  GBH_SERVER,
-  DEV_SERVER
-][DEV_BACKEND_INDEX];
-const PATH_PREFIX = '/ficloud';
+export const SCHEME = typeof G_SCHEME === 'undefined'
+  ? DEFAULT_SCHEME
+  : G_SCHEME;
+export const HOST_PORT = [
+  /* 0 */ LOCAL_EXPRESS_SERVER,
+  /* 1 */ GBH_SERVER,
+  /* 2 */ DEV_SERVER
+][DEV_BACKEND_INDEX] || DEFAULT_HOST_PORT;
+export const PATH_PREFIX = typeof G_PATH_PREFIX === 'undefined'
+  ? DEFAULT_PATH_PREFIX
+  : G_PATH_PREFIX;
 
 // scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
 const makeURL = path => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}${path}`;

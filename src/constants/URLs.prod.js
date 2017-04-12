@@ -15,9 +15,15 @@ const DEFAULT_SCHEME = 'https';
 const DEFAULT_HOST_PORT = 'fi.yonyoucloud.com';
 const DEFAULT_PATH_PREFIX = '/ficloud';
 
-export const SCHEME = G_SCHEME || DEFAULT_SCHEME;
-export const HOST_PORT = G_HOST_PORT || DEFAULT_HOST_PORT;
-export const PATH_PREFIX = G_PATH_PREFIX || DEFAULT_PATH_PREFIX;
+export const SCHEME = typeof G_SCHEME === 'undefined'
+  ? DEFAULT_SCHEME
+  : G_SCHEME;
+export const HOST_PORT = typeof G_HOST_PORT === 'undefined'
+  ? DEFAULT_HOST_PORT
+  : G_HOST_PORT;
+export const PATH_PREFIX = typeof G_PATH_PREFIX === 'undefined'
+  ? DEFAULT_PATH_PREFIX
+  : G_PATH_PREFIX;
 
 // scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
 const makeURL = path => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}${path}`;
