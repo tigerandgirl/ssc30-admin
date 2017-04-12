@@ -3,8 +3,8 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "build:ybz": "npm run clean && npm run webpack:ybz && npm run webpack:ybz-min",
-    "build:yzb": "npm run clean && npm run webpack:yzb && npm run webpack:yzb-min",
+    "build:ybz": "npm run clean && npm run webpack:ybz && npm run webpack:ybz-min && npm run webpack:ybz-debug",
+    "build:yzb": "npm run clean && npm run webpack:yzb && npm run webpack:yzb-min && npm run webpack:yzb-debug",
     "clean": "rimraf dist",
     "db:reset": "node api/mocks/reset_db.js",
     "demo": "cross-env NODE_ENV=production node ./demoServer.js",
@@ -19,8 +19,10 @@
     "test-browser": "cross-env NODE_ENV=test karma start --single-run",
     "webpack:ybz": "cross-env NODE_ENV=production webpack --config webpack.config.ybz.js --profile --progress",
     "webpack:ybz-min": "cross-env NODE_ENV=production webpack --config webpack.config.ybz-min.js --profile --progress",
+    "webpack:ybz-debug": "cross-env NODE_ENV=production webpack --config webpack.config.ybz-debug.js --profile --progress",
     "webpack:yzb": "cross-env NODE_ENV=production webpack --config webpack.config.yzb.js --profile --progress",
-    "webpack:yzb-min": "cross-env NODE_ENV=production webpack --config webpack.config.yzb-min.js --profile --progress"
+    "webpack:yzb-min": "cross-env NODE_ENV=production webpack --config webpack.config.yzb-min.js --profile --progress",
+    "webpack:yzb-debug": "cross-env NODE_ENV=production webpack --config webpack.config.yzb-debug.js --profile --progress"
   },
   "devDependencies": {
     "babel-core": "^6.8.0",
