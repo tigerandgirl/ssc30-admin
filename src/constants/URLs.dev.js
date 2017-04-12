@@ -4,32 +4,28 @@
 
 /**
  * 是否启用后端的开发用服务器
- * * 0 使用本地的expressjs服务器伪造数据
- * * 1 使用后端开发人员提供的开发机上跑的服务
- * * 2 使用后端提供的测试服务器
+ * * -1 使用本地的expressjs服务器伪造数据
+ * *  1 使用后端开发人员提供的开发机上跑的服务
+ * *  2 使用后端提供的测试服务器
  */
-const DEV_BACKEND_INDEX = 0;
+const DEV_BACKEND_INDEX = -1;
 
-// 本地开发环境，使用swagger作为后端
-const LOCAL_EXPRESS_SERVER = '127.0.0.1:3009';
 // 郭老师私服
 const GBH_SERVER = '10.1.218.36:8080';
 // 后端某台测试服务器
 const DEV_SERVER = '10.3.14.240';
 
-// 友账表生产环境服务器
-// 曾用：59.110.123.20
+// 默认使用本地开发环境，使用swagger作为后端，而且默认使用友报账后端
 const DEFAULT_SCHEME = 'http';
-const DEFAULT_HOST_PORT = LOCAL_EXPRESS_SERVER;
-const DEFAULT_PATH_PREFIX = '/ficloud';
+const DEFAULT_HOST_PORT = '127.0.0.1:3009';
+const DEFAULT_PATH_PREFIX = '';
 
 export const SCHEME = typeof G_SCHEME === 'undefined'
   ? DEFAULT_SCHEME
   : G_SCHEME;
 export const HOST_PORT = [
-  /* 0 */ LOCAL_EXPRESS_SERVER,
-  /* 1 */ GBH_SERVER,
-  /* 2 */ DEV_SERVER
+  /* 0 */ GBH_SERVER,
+  /* 1 */ DEV_SERVER
 ][DEV_BACKEND_INDEX] || DEFAULT_HOST_PORT;
 export const PATH_PREFIX = typeof G_PATH_PREFIX === 'undefined'
   ? DEFAULT_PATH_PREFIX

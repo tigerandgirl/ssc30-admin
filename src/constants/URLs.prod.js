@@ -9,11 +9,10 @@
  * ```
  */
 
-// 友账表生产环境服务器
-// 曾用：59.110.123.20
-const DEFAULT_SCHEME = 'https';
-const DEFAULT_HOST_PORT = 'fi.yonyoucloud.com';
-const DEFAULT_PATH_PREFIX = '/ficloud';
+// 默认使用友报账服务器，这也是ssc30-admin一开始就为了这个产品开发的
+const DEFAULT_SCHEME = 'http';
+const DEFAULT_HOST_PORT = '10.3.14.233:8080';
+const DEFAULT_PATH_PREFIX = '';
 
 export const SCHEME = typeof G_SCHEME === 'undefined'
   ? DEFAULT_SCHEME
