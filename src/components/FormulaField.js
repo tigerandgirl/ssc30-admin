@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-
-import Formula from './Formula';
+import Formula from 'ssc-formula';
+// import Formula from './Formula';
 
 export default class FormulaField extends Component {
   static propTypes = {
