@@ -207,7 +207,7 @@ class MappingDef extends Component {
           <p>{pageAlert.message}</p>
         </AdminAlert>
         <div className="head" style={{textAlign: 'right'}}>
-          <Button className="btn btn-default" onClick={::this.handleCreate}>新增</Button>
+          <Button onClick={::this.handleCreate}>新增</Button>
         </div>
         <div>
           <SSCGrid className="ssc-grid"
