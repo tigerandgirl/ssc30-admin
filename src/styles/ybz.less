@@ -9,6 +9,7 @@ body{
 .blank {
   background: url("../images/blank.png");
 }
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
 .b0{border:0;}
 .br0{border-radius:0;}
 .br2{border-radius:2px;}
@@ -48,6 +49,7 @@ body{
 @gridHeaderFontColor:#666666;   // 用于表头标题信息 （如事由、类型、日期等）
 @gridHeaderBackColor:#f0f9fb;   // 表头背景色
 @gridHoverBackColor: #f7f7f7;   // 表格列表hover背景色
+@gridSelectedColor: #e8f7fc;    // 表格选中行背景色
 // 其他色
 @placeholderColor: #c7c7c7;     // 辅助色，搜索框内提示颜色
 @errorColor: #fe631f;           // 错误信息提示色、警告框颜色
@@ -94,8 +96,6 @@ a {
   }
 }
 .btn.btn-default {      // 取消 一般 按钮
-  color: @mainColor;
-  border-color: @mainColor;
   &:hover {
     color: #fff;
     border-color: @hoverColor;
@@ -114,6 +114,10 @@ a {
   padding: 15px 0;
   >div {
     .clearfix;
+  }
+  .btn-default {
+    color: @mainColor;
+    border-color: @mainColor;
   }
 }
 
@@ -165,6 +169,7 @@ a {
     }
     tbody tr.selected {
       border: 1px solid @mainColor;
+      background-color: @gridSelectedColor;
     }
   }
 }
