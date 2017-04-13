@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { Router, Route, Link, IndexRoute } from 'react-router';
+import { Router, Route, IndexRoute } from 'react-router';
 import App from './App';
-//import DevTools from './DevTools';
+// import DevTools from './DevTools';
 
 import NoMatch from '../components/NoMatch';
 import Welcome from './Welcome';
@@ -32,23 +32,22 @@ import DemoTreeContainer from './DemoTreeContainer';
  */
 const router = (
   <Router>
-    <Route path="/" component={Welcome}>
-    </Route>
+    <Route path="/" component={Welcome} />
     <Route path="/app" component={App}>
-      <IndexRoute component={Welcome}/>
-      <Route path="/welcome" component={Welcome}></Route>
+      <IndexRoute component={Welcome} />
+      <Route path="/welcome" component={Welcome} />
       <Route path="/basedocs" component={BaseDocIndex}>
         <Route path="/basedoc/:baseDocId" component={ArchContainer} />
       </Route>
       <Route path="/accsubs" component={AccSubIndex}>
         <Route path="/accsub/:baseDocId" component={AccountingSubject} />
       </Route>
-      <Route path="/role" component={RoleContainer}></Route>
-      <Route path="/permission" component={PermissionPage}></Route>
-      <Route path="/archsetting" component={ArchSettingPage}></Route>
-      <Route path="/ncsync" component={NCSyncPage}></Route>
-      <Route path="/demo/form" component={DemoFormContainer}></Route>
-      <Route path="/demo/tree" component={DemoTreeContainer}></Route>
+      <Route path="/role" component={RoleContainer} />
+      <Route path="/permission" component={PermissionPage} />
+      <Route path="/archsetting" component={ArchSettingPage} />
+      <Route path="/ncsync" component={NCSyncPage} />
+      <Route path="/demo/form" component={DemoFormContainer} />
+      <Route path="/demo/tree" component={DemoTreeContainer} />
       <Route path="*" component={NoMatch} />
     </Route>
     <Route path="/basedocs-no-sidebar" component={BaseDocIndex}>

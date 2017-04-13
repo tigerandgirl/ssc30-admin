@@ -1,7 +1,7 @@
 /**
- * 友报账
- * - 编译生成index.html
- * - 编译生成混淆压缩后的js
+ * 友账表
+ * - 编译生成index.debug.html
+ * - 编译生成带有source map的js，用于在生产环境下调试
  */
 
 const path = require('path');
@@ -16,15 +16,16 @@ const packageJSON = require('./package.json');
 const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
+  devtool: 'source-map',
   entry: [
-    './src/index-ybz'
+    './src/index-yzb'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.min.js' // Template based on keys in entry above
+    filename: 'bundle.debug.js' // Template based on keys in entry above
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common.min.js'),
+    new webpack.optimize.CommonsChunkPlugin('common.debug.js'),
     /**
      * This plugin assigns the module and chunk ids by occurence count. What this
      * means is that frequently used IDs will get lower/shorter IDs - so they become
@@ -36,24 +37,18 @@ module.exports = {
      */
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production')
+        NODE_ENV: JSON.stringify('development')
       }
     }),
     new HtmlWebpackPlugin({
-      title: `友报账 v${packageJSON.version}`,
-      filename: 'index.html',
-      template: 'client/index-ybz.hbs',
+      title: `友账表 调试版 v${packageJSON.version}`,
+      filename: 'index.debug.html',
+      template: 'client/index-yzb.hbs',
       hash: true,
       // User defined options
       version: packageJSON.version,
       revision: GIT_REVISION,
       buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
-      compress: {
-        warnings: false
-      }
     })
   ],
   module: {

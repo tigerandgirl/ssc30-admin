@@ -1,7 +1,7 @@
 /**
  * 友报账
- * - 编译生成index.dev.html
- * - 编译生成带有source map的js，用于在生产环境下调试
+ * - 编译生成index.html
+ * - 编译生成混淆压缩后的js
  * - 复制源码中的图片
  */
 
@@ -18,16 +18,15 @@ const packageJSON = require('./package.json');
 const GIT_REVISION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 module.exports = {
-  devtool: 'source-map',
   entry: [
     './src/index-ybz'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js' // Template based on keys in entry above
+    filename: 'bundle.min.js' // Template based on keys in entry above
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common.js'),
+    new webpack.optimize.CommonsChunkPlugin('common.min.js'),
     /**
      * This plugin assigns the module and chunk ids by occurence count. What this
      * means is that frequently used IDs will get lower/shorter IDs - so they become
@@ -44,13 +43,19 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: `友报账 v${packageJSON.version}`,
-      filename: 'index.dev.html',
+      filename: 'index.html',
       template: 'client/index-ybz.hbs',
       hash: true,
       // User defined options
       version: packageJSON.version,
       revision: GIT_REVISION,
       buildTime: moment().format('YYYY-MM-DD HH:mm:ss')
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      compress: {
+        warnings: false
+      }
     }),
     new CopyWebpackPlugin([
       // {from: 'src/www/css', to: 'css'},
