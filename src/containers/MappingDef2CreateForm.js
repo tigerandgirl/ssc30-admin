@@ -6,6 +6,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import _ from 'lodash';
 
 import { Button, Grid, Row, Col } from 'react-bootstrap';
 import { Form as SSCForm } from 'ssc-grid';
@@ -24,6 +25,10 @@ class MappingDefCreateForm extends Component {
   // }
 
   componentWillMount() {
+    // 如果用户刷新了页面，store中的数据就清空了，需要返回到列表页面再次获取数据
+    if (_.isEmpty(this.props.createFormData).valueOf()) {
+      this.context.router.push('/mapping-def2');
+    }
   }
 
   componentDidMount() {
@@ -43,7 +48,7 @@ class MappingDefCreateForm extends Component {
     // 准备制作自定义组件 - 公式编辑器
     const fieldModel = tableColumnsModel.map(({ ...columnModel }) => {
       if (columnModel.datatype === 20 && columnModel.type === 'custom') {
-        // columnModel.component = FormulaField;
+        columnModel.component = FormulaField;
       }
       return columnModel;
     });
@@ -104,6 +109,10 @@ class MappingDefCreateForm extends Component {
     );
   }
 }
+
+MappingDefCreateForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
 
 MappingDefCreateForm.propTypes = {
   createFormData: PropTypes.object.isRequired,

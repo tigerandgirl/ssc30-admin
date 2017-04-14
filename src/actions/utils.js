@@ -500,6 +500,7 @@ export const validation = {
     // 获取所有columnModel的id，检查是否有重复，否则在之后表格的绘制，以及
     // 基于现有model提交新数据等环节，都有很大可能导致意想不到的问题。
     let ids = json.data.map(columnModel => columnModel.id);
+    // 为什么没有import lodash还能使用_？
     let duplicatedIds = _.filter(ids, (value, index, iteratee) => {
       return _.includes(iteratee, value, index + 1);
     });
