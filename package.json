@@ -91,6 +91,7 @@
     "bluebird": "^2.9.34",
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
+    "core-js": "^2.4.1",
     "debug": "~2.2.0",
     "express": "~4.13.4",
     "file-loader": "^0.8.4",
@@ -111,8 +112,7 @@
     "react-bootstrap-switch": "^3.4.1",
     "react-dom": "0.14.8",
     "react-redux": "4.0.0",
-    "react-router": "^1.0.0",
-    "react-router-active-component": "^3.0.0",
+    "react-router": "^2.8.1",
     "redux": "v3.0.2",
     "redux-actions": "^0.12.0",
     "redux-logger": "^2.0.4",
@@ -121,7 +121,7 @@
     "serve-favicon": "~2.3.0",
     "ssc-comp": "^0.12.0",
     "ssc-formula": "^0.1.0",
-    "ssc-grid": "^0.64.0",
+    "ssc-grid": "^0.64.2",
     "style-loader": "^0.12.3",
     "url-loader": "^0.5.6"
   }

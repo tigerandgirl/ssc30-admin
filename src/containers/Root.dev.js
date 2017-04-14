@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { Router, Route, IndexRoute } from 'react-router';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router'
 import App from './App';
 // import DevTools from './DevTools';
 
@@ -11,7 +11,11 @@ import ArchContainer from './ArchContainer'; // 基础档案
 import AccountingSubject from './AccountingSubject'; // 会计平台科目
 import BaseDocIndex from './BaseDocIndex'; // 基础档案列表页面
 import AccSubIndex from './AccSubIndex'; // 会计平台列表页面
-import MappingDef from './MappingDef'; // 转换规则定义
+// 转换规则定义
+import MappingDef from './MappingDef';
+import MappingDef2 from './MappingDef2';
+import MappingDef2CreateForm from './MappingDef2CreateForm';
+import MappingDef2EditForm from './MappingDef2EditForm';
 import ExternalDataModelling from './ExternalDataModelling'; // 外部数据建模
 import Entity from './Entity'; // 实体模型
 import EntityMap from './EntityMap'; // 实体映射
@@ -31,7 +35,7 @@ import DemoTreeContainer from './DemoTreeContainer';
  * https://github.com/reactjs/react-router-redux/issues/179#issuecomment-241771171
  */
 const router = (
-  <Router>
+  <Router history={hashHistory}>
     <Route path="/" component={Welcome} />
     <Route path="/app" component={App}>
       <IndexRoute component={Welcome} />
@@ -66,6 +70,18 @@ const router = (
     <Route
       path="/mapping-def-no-sidebar-single-page"
       component={MappingDef}
+    />
+    <Route
+      path="/mapping-def2"
+      component={MappingDef2}
+    />
+    <Route
+      path="/mapping-def2/create"
+      component={MappingDef2CreateForm}
+    />
+    <Route
+      path="/mapping-def2/:id"
+      component={MappingDef2EditForm}
     />
   </Router>
 );

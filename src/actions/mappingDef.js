@@ -48,7 +48,7 @@ export function fetchTableColumnsModel(baseDocId) {
               // 6. 有些字段的类型错误，暂时在前端写死新类型
               // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
               // 8. 添加参照的配置
-              let fields = resObj.data
+              let fieldsModel = resObj.data
                 /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
                 /* 2 */ .map(utils.fixFieldTypo)
                 /* 3 */ .map(utils.convertDataType)
@@ -56,17 +56,20 @@ export function fetchTableColumnsModel(baseDocId) {
                 /* 5 */ .map(utils.setHiddenFields)
                 /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
                 /* 7 */ .map(utils.fixReferKey)
-                /* 8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL, URL.ReferUserDataURL));
+                /* 8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL,
+                          URL.ReferUserDataURL));
+
+              // 初始化表单的默认数据
+              const formDefaultData = utils.getFormDefaultData(fieldsModel);
+
               return {
-                data: fields
+                fieldsModel,
+                formDefaultData
               };
             }
 
-            throw {
-              name: 'INVALID_JSON',
-              message: `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
-              但是数据校验方法提示说：“${validationMessage}”`
-            };
+            throw new utils.InvalidJSONException(`虽然后端返回的success是true，
+              而且客户端也获得到了JSON数据，但是数据校验方法提示说：“${validationMessage}”`);
           } else {
             throw new utils.SuccessFalseException(resObj.message);
           }
