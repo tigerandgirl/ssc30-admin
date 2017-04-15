@@ -48,8 +48,8 @@ root_dir=`dirname $utils_dir`
 src=dist/
 cd $root_dir
 
-# 8080
-gen_config 'http' '10.3.14.233:8080' ''
+# 官网
+gen_config 'https' 'ybz.yonyoucloud.com' ''
 sync_files '10.3.14.233' '22' 'sscweb' 'dist/' \
   '/server/tomcat_ssc/webapps/manaaccount'
 
