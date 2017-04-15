@@ -66,7 +66,7 @@ MappingDefCreateForm.propTypes = {
   createTableBodyDataAndFetchTableBodyData: PropTypes.func.isRequired,
   // store
   createFormData: PropTypes.shape({
-    name: PropTypes.string.isRequired
+    name: PropTypes.string
   }).isRequired,
   serverMessage: PropTypes.string.isRequired,
   tableColumnsModel: PropTypes.arrayOf(PropTypes.shape({

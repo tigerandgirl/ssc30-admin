@@ -111,8 +111,8 @@ FormPanel.contextTypes = {
 FormPanel.propTypes = {
   className: PropTypes.string.isRequired,
   formData: PropTypes.shape({
-    name: PropTypes.string.isRequired
-  }).isRequired,
+    name: PropTypes.string
+  }),
   formTitle: PropTypes.string.isRequired,
   onFormSubmit: PropTypes.func.isRequired,
   serverMessage: PropTypes.string,
@@ -122,6 +122,7 @@ FormPanel.propTypes = {
 };
 
 FormPanel.defaultProps = {
+  formData: {},
   serverMessage: ''
 };
 
