@@ -28,6 +28,10 @@ class MappingDef extends Component {
       activePage: 1,
       startIndex: 0
     };
+    // This binding is necessary to make `this` work in the callback
+    this.handlePageAlertDismiss = this.handlePageAlertDismiss.bind(this);
+    this.handlePagination = this.handlePagination.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
   }
 
   componentWillMount() {
@@ -119,12 +123,12 @@ class MappingDef extends Component {
         // 将rowData保存到store中
         container.props.showEditDialog(true, rowIdx, rowObj);
       },
-      handleRemove(event) {
+      handleRemove(/* event */) {
         const { rowObj } = this.props;
-        var param ={
-          isShow :true ,
-          txt:"是否删除？",
-          sureFn:function(){
+        let param = {
+          isShow: true,
+          txt: '是否删除？',
+          sureFn: () => {
             container.props.deleteTableBodyDataAndFetchTableBodyData(rowObj);
           }
         };
@@ -161,16 +165,16 @@ class MappingDef extends Component {
 
     return (
       <div className="mapping-def-container content">
-        <MessageConfirm ref="messageConfirm" />
+        <MessageConfirm ref={(c) => { this.messageConfirm = c; }} />
         <AdminAlert
           show={pageAlert.show}
           bsStyle={pageAlert.bsStyle}
-          onDismiss={::this.handlePageAlertDismiss}
+          onDismiss={this.handlePageAlertDismiss}
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
         <div className="head" style={{ textAlign: 'right' }}>
-          <Button onClick={::this.handleCreate}>新增</Button>
+          <Button onClick={this.handleCreate}>新增</Button>
         </div>
         <div>
           <SSCGrid
@@ -182,7 +186,7 @@ class MappingDef extends Component {
             itemsPerPage={itemsPerPage}
             totalPage={this.props.totalPage}
             activePage={this.state.activePage}
-            onPagination={::this.handlePagination}
+            onPagination={this.handlePagination}
             operationColumn={{
               className: 'col-120',
               text: '操作'
@@ -196,7 +200,7 @@ class MappingDef extends Component {
 }
 
 MappingDef.contextTypes = {
-  router: React.PropTypes.object.isRequired
+  router: PropTypes.object.isRequired
 };
 
 MappingDef.propTypes = {

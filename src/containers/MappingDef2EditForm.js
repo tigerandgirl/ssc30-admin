@@ -6,6 +6,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import _ from 'lodash';
 
 import { Button, Grid, Row, Col } from 'react-bootstrap';
 import { Form as SSCForm } from 'ssc-grid';
@@ -24,6 +25,10 @@ class MappingDefEditForm extends Component {
   // }
 
   componentWillMount() {
+    // 如果用户刷新了页面，store中的数据就清空了，需要返回到列表页面再次获取数据
+    if (_.isEmpty(this.props.tableColumnsModel).valueOf()) {
+      this.context.router.push('/mapping-def2');
+    }
   }
 
   componentDidMount() {
@@ -107,6 +112,10 @@ class MappingDefEditForm extends Component {
     );
   }
 }
+
+MappingDefEditForm.contextTypes = {
+  router: PropTypes.object.isRequired
+};
 
 MappingDefEditForm.propTypes = {
   // react-router

@@ -26,7 +26,7 @@ class MappingDefCreateForm extends Component {
 
   componentWillMount() {
     // 如果用户刷新了页面，store中的数据就清空了，需要返回到列表页面再次获取数据
-    if (_.isEmpty(this.props.createFormData).valueOf()) {
+    if (_.isEmpty(this.props.tableColumnsModel).valueOf()) {
       this.context.router.push('/mapping-def2');
     }
   }
@@ -111,14 +111,17 @@ class MappingDefCreateForm extends Component {
 }
 
 MappingDefCreateForm.contextTypes = {
-  router: React.PropTypes.object.isRequired
+  router: PropTypes.object.isRequired
 };
 
 MappingDefCreateForm.propTypes = {
-  createFormData: PropTypes.object.isRequired,
+  // action
   createTableBodyDataAndFetchTableBodyData: PropTypes.func.isRequired,
-  serverMessage: PropTypes.string.isRequired,
   // store
+  createFormData: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  serverMessage: PropTypes.string.isRequired,
   tableColumnsModel: PropTypes.arrayOf(PropTypes.shape({
     type: PropTypes.string.isRequired
   })).isRequired
