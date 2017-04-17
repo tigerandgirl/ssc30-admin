@@ -24,6 +24,7 @@ h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
 .ws{white-space:nowrap;}
 .ellipsis{.ws;.oh;text-overflow:ellipsis;}
 .clearfix{display:inline-block;}
+.fff{background-color:#fff;}
 
 /*** 通用色变量 ***/
 //@mainColor: #1baede;      // 主色调（icon、提交按钮等）
@@ -54,6 +55,11 @@ h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
 @placeholderColor: #c7c7c7;     // 辅助色，搜索框内提示颜色
 @errorColor: #fe631f;           // 错误信息提示色、警告框颜色
 @labelColor: #8d8d8d;           // 标签字体颜色
+
+.content{
+  padding: 15px;
+  background-color: @backColor;
+}
 
 // a链接颜色
 a {
@@ -123,6 +129,7 @@ a {
 
 // ssc-grid 组件 表格默认样式
 .ssc-grid {
+  .fff;
   .table {
     .mb0;
     color: @importantFontColor;
@@ -193,6 +200,7 @@ a {
 
 // modal弹出框
 .modal-dialog {
+  margin-top: 11%;
   .modal-content {
     .br0;
   }
@@ -209,11 +217,16 @@ a {
       }
     }
   }
+  .form-horizontal {
+    >div:last-child {
+      button {
+        min-width: 100px;
+        margin-left: 15px;
+      }
+    }
+  }
 }
 
-.content{
-  padding: 15px;
-}
 
 // 错误信息字体色
 .server-message {
