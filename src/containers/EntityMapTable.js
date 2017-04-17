@@ -178,6 +178,9 @@ class EntityMapTable extends Component {
     const entityFieldsModel2 = entityFieldsModel.map(({ ...columnModel }) => {
       if (columnModel.datatype === 20 && columnModel.type === 'custom') {
         columnModel.component = FormulaField;
+        FormulaField.defaultProps = {
+          refItem: columnModel.refinfocode
+        };
       }
       return columnModel;
     });
@@ -194,7 +197,9 @@ class EntityMapTable extends Component {
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <SSCGrid tableData={entityTableBodyData} columnsModel={entityFieldsModel2}
+        <SSCGrid
+          columnsModel={entityFieldsModel2}
+          tableData={entityTableBodyData}
           className="ssc-grid"
           operationColumn={{}}
           operationColumnClass={this.getCustomComponent()}
@@ -205,7 +210,7 @@ class EntityMapTable extends Component {
           show={editDialog.show}
           onHide={::this.closeEditDialog}
         >
-          <p className="server-message" style={{color: 'red'}}>
+          <p className="server-message" style={{ color: 'red' }}>
             {this.props.serverMessage}
           </p>
           <Form
@@ -221,7 +226,7 @@ class EntityMapTable extends Component {
           show={createDialog.show}
           onHide={::this.closeCreateDialog}
         >
-          <p className="server-message" style={{color: 'red'}}>
+          <p className="server-message" style={{ color: 'red' }}>
             {this.props.serverMessage}
           </p>
           <Form
@@ -241,7 +246,7 @@ class EntityMapTable extends Component {
  * @param {Object} ownProps
  */
 const mapStateToProps = (state) => {
-  return {...state.entityMap};
+  return { ...state.entityMap };
 };
 
 const mapDispatchToProps = (dispatch) => {
