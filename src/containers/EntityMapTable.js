@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { Grid as SSCGrid, Form } from 'ssc-grid';
+import Formula from 'ssc-formula';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
@@ -164,6 +165,55 @@ class EntityMapTable extends Component {
     return formData;
   }
 
+  getFormulaField(refCode, entityId) {
+    return React.createClass({
+      getInitialState: function() {
+        return {
+          value: this.props.customFieldValue
+        };
+      },
+      handleChange: function(event) {
+        let value = event.target.value;
+        this.setState({ value });
+        if (this.props.onCustomFieldChange) {
+          this.props.onCustomFieldChange(value);
+        }
+      },
+      handleClick: function() {
+        this.formula.showAlert();
+      },
+      /**
+       * 公式编辑器点击完成
+       */
+      handleDataBack: function(data) {
+        this.setState({ value: data });
+        if (this.props.onCustomFieldChange) {
+          this.props.onCustomFieldChange(data);
+        }
+      },
+      render: function() {
+        return (
+          <div>
+            <input
+              value={this.state.value}
+              onChange={this.handleChange}
+              onClick={this.handleClick}
+            />
+            <Formula
+              formulaText={this.state.value}
+              ref={(ref) => { this.formula = ref; }}
+              // source entity id 源实体
+              eid={entityId}
+              // 参照 refinfocode/refCode
+              refItem={refCode}
+              backFormula={this.handleDataBack}
+            />
+          </div>
+        );
+      }
+    });
+  }
+
   render() {
     const {
       entityFieldsModel,
@@ -175,12 +225,24 @@ class EntityMapTable extends Component {
     } = this.props;
 
     // 准备制作自定义组件 - 公式编辑器
-    const entityFieldsModel2 = entityFieldsModel.map(({ ...columnModel }) => {
+    let entityFieldsModel2 = entityFieldsModel.map(({ ...columnModel }) => {
       if (columnModel.datatype === 20 && columnModel.type === 'custom') {
-        columnModel.component = FormulaField;
+        columnModel.component = this.getFormulaField(columnModel.refinfocode);
       }
       return columnModel;
     });
+
+    if (!_.isEmpty(editFormData)) {
+      entityFieldsModel2 = entityFieldsModel.map(({ ...columnModel }) => {
+        if (columnModel.datatype === 20 && columnModel.type === 'custom') {
+          columnModel.component = this.getFormulaField(
+            columnModel.refinfocode,
+            editFormData.src_entityid.id
+          );
+        }
+        return columnModel;
+      });
+    }
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(entityFieldsModel2);
@@ -194,7 +256,9 @@ class EntityMapTable extends Component {
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <SSCGrid tableData={entityTableBodyData} columnsModel={entityFieldsModel2}
+        <SSCGrid
+          columnsModel={entityFieldsModel2}
+          tableData={entityTableBodyData}
           className="ssc-grid"
           operationColumn={{}}
           operationColumnClass={this.getCustomComponent()}
@@ -205,7 +269,7 @@ class EntityMapTable extends Component {
           show={editDialog.show}
           onHide={::this.closeEditDialog}
         >
-          <p className="server-message" style={{color: 'red'}}>
+          <p className="server-message" style={{ color: 'red' }}>
             {this.props.serverMessage}
           </p>
           <Form
@@ -221,7 +285,7 @@ class EntityMapTable extends Component {
           show={createDialog.show}
           onHide={::this.closeCreateDialog}
         >
-          <p className="server-message" style={{color: 'red'}}>
+          <p className="server-message" style={{ color: 'red' }}>
             {this.props.serverMessage}
           </p>
           <Form
@@ -241,7 +305,7 @@ class EntityMapTable extends Component {
  * @param {Object} ownProps
  */
 const mapStateToProps = (state) => {
-  return {...state.entityMap};
+  return { ...state.entityMap };
 };
 
 const mapDispatchToProps = (dispatch) => {

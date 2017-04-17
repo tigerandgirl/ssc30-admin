@@ -73,7 +73,8 @@ export default handleActions({
     ...state,
     tableColumnsModelloading: false,
     tableColumnsModelloaded: true,
-    tableColumnsModel: [...action.payload.data]
+    tableColumnsModel: [...action.payload.fieldsModel],
+    createFormData: { ...action.payload.formDefaultData }
   }),
   [ActionTypes.TABLE_COLUMNS_MODEL_FAILURE]: (state, action) => ({
     ...state,

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-
-import Formula from './Formula';
+import Formula from 'ssc-formula';
+// import Formula from './Formula';
 
 export default class FormulaField extends Component {
   static propTypes = {
@@ -55,8 +55,10 @@ export default class FormulaField extends Component {
         <Formula
           formulaText={this.state.value}
           ref={(ref) => { this.formula = ref; }}
-          eid="10"
-          refItem="dept"
+          // source entity id 源实体
+          eid={this.props.eid}
+          // 参照 refinfocode/refCode
+          refItem={this.props.refItem}
           backFormula={this.handleDataBack}
         />
       </div>

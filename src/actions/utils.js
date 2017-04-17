@@ -3,52 +3,18 @@
  */
 
 export function SuccessFalseException(message) {
-  this.message = message || '未知错误';
+  this.message = message || 'SuccessFalseException的未知错误';
   this.name = 'SuccessFalseException';
+}
+
+export function InvalidJSONException(message) {
+  this.message = message || 'InvalidJSONException的未知错误';
+  this.name = 'InvalidJSONException';
 }
 
 /**
  * 常用的helper function
  */
-
-/**
- * 组装URL
- * @param {String} protocol 比如：`http`或者`https`
- * @param {String} server 比如：`fi.yonyoucloud.com`
- * @param {String} prefix 比如：`/ficloud`
- * @param {String} path 比如：`/mappingdef/query`
- */
-const url = (protocol, server, prefix, path) => `${protocol}://${server}${prefix}${path}`;
-
-/**
- * 判断是否为生产环境
- * @param {Object} env 传入`process.env`环境变量对象
- */
-const isProduction = env => env.NODE_ENV === 'production';
-
-/**
- * 根据URLs.js中的配置，获取到基础档案等的绝对路径
- * 比如：http://127.0.0.1:3009/dept/query
- * 优先级：
- * 1. config.js
- * 2. process.env.X
- * 3. URLs.js
- * @param {Object} env 传入process.env环境变量对象
- * @param {Object} config 传入URLs.js导出的对象
- * @param {String} path 接口对应的路径，如果有统一的路径前缀，比如`/ficloud`，请去掉。
- */
-export function getURL(env, config, path) {
-  let protocol = PROD_SERVER_PROTOCOL || env.PROTOCOL;
-  let server = PROD_SERVER || env.PROD_SERVER;
-  let pathPrefix = PATH_PREFIX || env.PATH_PREFIX;
-  // 在非生产环境下，根据URLs.js中的配置，选择使用ssc-dev-server还是后端的测试服务器
-  if (!isProduction(env)) {
-    server = config.DEV_BACKEND_INDEX === -1
-      ? config.LOCAL_EXPRESS_SERVER
-      : config.YBZ_BASEDOC_DEV_SERVERS[config.DEV_BACKEND_INDEX];
-  }
-  return url(protocol, server, pathPrefix, path);
-}
 
  /**
  * 组建Fetch API需要的配置参数
@@ -119,7 +85,7 @@ export function checkHTTPStatus(response) {
     return response;
   }
 
-  let error = new Error(response.status + ' ' + response.statusText);
+  let error = new Error(`${response.status} ${response.statusText}`);
   error.response = response;
 
   throw error;
@@ -145,16 +111,17 @@ export function parseJSON(response) {
  * 注意：不会修改输入的obj参数
  */
 export const removeEmpty = (obj) => {
-  var prop, newObj = {};
+  let prop;
+  let newObj = {};
   for (prop in obj) {
     if (obj.hasOwnProperty(prop)) {
-      if (obj[prop] == null || obj[prop] == undefined) {
+      if (obj[prop] == null || obj[prop] === undefined) {
         continue;
       }
       newObj[prop] = obj[prop];
     }
   }
-  return newObj
+  return newObj;
 };
 
 /**
@@ -193,7 +160,7 @@ export function convertDataType({ ...field }) {
  * 根据指定的档案类型和字段id，判断指定字段是否为必填项
  * 目前将这些数据在前端写死
  */
-export function setRequiredFields(baseDocId, {...field}) {
+export function setRequiredFields(baseDocId, { ...field }) {
   const data = {
     accperiod: { // 会计期间
       pk_org: true,
@@ -243,10 +210,10 @@ export function setRequiredFields(baseDocId, {...field}) {
       name: true,
       pk_org: true
     },
-    feeitem:{
+    feeitem: {
       code: true,
       name: true,
-      classifyid:true
+      classifyid: true
     },
     feeitemclass: {
       code: true,
@@ -284,81 +251,81 @@ export function setRequiredFields(baseDocId, {...field}) {
  * 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
  * 而是口口相传的，所以写在这里
  */
-export function shouldNotRemoveFields(baseDocId, {...field}) {
+export function shouldNotRemoveFields(baseDocId, { ...field }) {
   let shouldNotRemove = true;
   // 将需要隐藏的字段设置为true，如果不指定，或者设定为false说明不隐藏
   // 仅需要将打算隐藏的字段列出来。
   const data = {
-    "accbook": {
-      "pk_org": true
+    accbook: {
+      pk_org: true
     },
-    "accelement": {
-      "pk_org": true
+    accelement: {
+      pk_org: true
     },
-    "accperiod": {
-      "pk_org": true
+    accperiod: {
+      pk_org: true
     },
-    "accperiodscheme": {
-      "pk_org": true
+    accperiodscheme: {
+      pk_org: true
     },
-    "accstandard": {
-      "pk_org": true
+    accstandard: {
+      pk_org: true
     },
-    "accsubjectchart": {
-      "pk_org": true
+    accsubjectchart: {
+      pk_org: true
     },
-    "bank": {
-      "pk_org": true,
+    bank: {
+      pk_org: true,
       description: true,
       enable: true,
       classifyid: false
     },
-    "bankaccount": {
-      "pk_org": true,
+    bankaccount: {
+      pk_org: true,
       bank: true,
       description: true,
-      accounttype:true
+      accounttype: true
     },
-    "bankclass": {
-      "pk_org": true,
-      "enable":true
+    bankclass: {
+      pk_org: true,
+      enable: true
     },
-    "currency": {
-      "pk_org": true,
+    currency: {
+      pk_org: true,
       description: true,
       pricerount: true,
       moneyrount: true
     },
-    "dept": {
-      "pk_org": true
+    dept: {
+      pk_org: true
     },
-    "feeitem": {
-      "pk_org": true
+    feeitem: {
+      pk_org: true
     },
-    "feeitemclass": {
-      "pk_org": true
+    feeitemclass: {
+      pk_org: true
     },
-    "measuredoc": {
-      "pk_org": true
+    measuredoc: {
+      pk_org: true
     },
-    "multidimension": {
-      "pk_org": true
+    multidimension: {
+      pk_org: true
     },
-    "project": {
-      "pk_org": true
+    project: {
+      pk_org: true
     },
-    "projectclass": {
-      "pk_org": true,
-      "enable":true
+    projectclass: {
+      pk_org: true,
+      enable: true
     },
-    "subjectchart": {
-      "pk_org": true
+    subjectchart: {
+      pk_org: true
     },
-    "user": {
-      "pk_org": true
+    user: {
+      pk_org: true
     },
-    "valuerang": {
-      "pk_org": true
+    valuerang: {
+      pk_org: true
     }
   };
 
@@ -379,7 +346,7 @@ export function shouldNotRemoveFields(baseDocId, {...field}) {
  * 比如id字段是主键，不需要在表格中以及表单中显示，但是当往后端发送请求的时候，
  * 需要带有该id
  */
-export function setHiddenFields({...field}) {
+export function setHiddenFields({ ...field }) {
   if (field.id === 'id') {
     field.hidden = true;
   }
@@ -397,7 +364,7 @@ export function setHiddenFields({...field}) {
  * 2. 前端将该类型写死为枚举型
  * 由于后端同事很难沟通，所以这里我们采用第二方案，由前端来写死了
  */
-export function fixDataTypes(baseDocId, {...field}) {
+export function fixDataTypes(baseDocId, { ...field }) {
   // 后端虽然使用字符串类型，但是字符串有固定格式，
   // 后端文档针对accountproperty字段定义如下：
   // > BASE("基本"),NORMAL("一般"),TEMPORARY("临时"),SPECIAL("专用")
@@ -408,10 +375,10 @@ export function fixDataTypes(baseDocId, {...field}) {
     field.datatype = 6; // 枚举型
     field.type = 'enum';
     field.data = [
-      {key: 'BASE', value: '基本'},
-      {key: 'NORMAL', value: '一般'},
-      {key: 'TEMPORARY', value: '临时'},
-      {key: 'SPECIAL', value: '专用'}
+      { key: 'BASE', value: '基本' },
+      { key: 'NORMAL', value: '一般' },
+      { key: 'TEMPORARY', value: '临时' },
+      { key: 'SPECIAL', value: '专用' }
     ];
   }
   return field;
@@ -429,23 +396,22 @@ export function fixDataTypes(baseDocId, {...field}) {
  * }
  * ```
  */
-export function fixEnumData({...field}) {
+export function fixEnumData({ ...field }) {
   if (field.type === 'enum') {
     field.data = [];
-    field.enumdata.forEach(item => {
+    field.enumdata.forEach((item) => {
       let key = Object.keys(item)[0];
       field.data.push({
         key,
         value: item[key]
       });
-    })
+    });
   }
   return field;
 }
 
 /**
  * 根据参照的类型来添加参照的config object
- * TODO 需要转移到utils.js中
  */
 export function setReferFields(ReferDataURL, ReferUserDataURL, field) {
   const getReferConfig = (fieldDocType) => {
@@ -454,7 +420,8 @@ export function setReferFields(ReferDataURL, ReferUserDataURL, field) {
         refCode: fieldDocType, // 'dept',
         refType: 'tree',
         rootName: '部门'
-      }
+      },
+      labelKey: 'name'
     };
     if (fieldDocType === 'user') {
       config.referDataUrl = ReferUserDataURL;
@@ -464,6 +431,8 @@ export function setReferFields(ReferDataURL, ReferUserDataURL, field) {
     return config;
   };
   if (field.type === 'ref') {
+    // referConfig会当作参数直接传给<Refers>组件
+    // 比如referConfig.foo='bar'就相当于<Refers foo="bar">
     field.referConfig = getReferConfig(field.refCode);
   }
   return field;
@@ -525,17 +494,17 @@ export const validation = {
    *   - `isValid` 是否校验成功
    *   - `message` 校验失败的时候，用来提供相应的错误信息
    */
-  tableColumnsModelData: json => {
+  tableColumnsModelData: (json) => {
     let isValid = true;
     let message = '';
     // 获取所有columnModel的id，检查是否有重复，否则在之后表格的绘制，以及
     // 基于现有model提交新数据等环节，都有很大可能导致意想不到的问题。
     let ids = json.data.map(columnModel => columnModel.id);
-    let duplicatedIds = _.filter(ids, function (value, index, iteratee) {
+    // 为什么没有import lodash还能使用_？
+    let duplicatedIds = _.filter(ids, (value, index, iteratee) => {
       return _.includes(iteratee, value, index + 1);
     });
-    if (_.isEmpty(duplicatedIds)) {
-    } else {
+    if (!_.isEmpty(duplicatedIds)) {
       isValid = false;
       message = `JSON中出现了重复的id：${duplicatedIds}，请立即停止所有操作，
         否则可能产生意想不到的结果！如果你不明白这里发生了什么事情，请咨询网站管理员。
@@ -552,8 +521,8 @@ export const validation = {
  * @param field
  * @returns {boolean}
  */
-export function filterChildSubFileds({...field}) {
-  if(field.id === 'code' || field.id === 'name' || field.id === 'direction') {
+export function filterChildSubFileds({ ...field }) {
+  if (field.id === 'code' || field.id === 'name' || field.id === 'direction') {
     return true;
   }/*else if(/^vr\d+/g.exec(field.id) !== null) {
    return true;
@@ -562,4 +531,45 @@ export function filterChildSubFileds({...field}) {
   } else {
     return false;
   }
+}
+
+/**
+ * 根据列模型和表格体数据来构建空表单需要的数据
+ * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
+ * tableData中获取参照的具体信息，一般是：
+ * ```json
+ * { id: '', code: '', name: '' }
+ * ```
+ * @param {Array} columnsModel 表格列模型
+ */
+export function getFormDefaultData(columnsModel) {
+  let formData = {};
+  columnsModel.forEach((fieldModel) => {
+    // 隐藏字段，比如id字段，不用初始化值
+    if (fieldModel.hidden === true) {
+      return;
+    }
+    const fieldId = fieldModel.id;
+    switch (fieldModel.type) {
+      case 'ref':
+        formData[fieldId] = {
+          id: '',
+          code: '',
+          name: ''
+        };
+        break;
+      case 'boolean':
+        // XXDEBUG-START
+        // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
+        if (fieldId === 'enable') {
+          formData[fieldId] = true;
+        }
+        // XXDEBUG-END
+        break;
+      default:
+        formData[fieldId] = '';
+        break;
+    }
+  });
+  return formData;
 }

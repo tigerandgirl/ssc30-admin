@@ -5,14 +5,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Promise from 'promise-polyfill';
+// IE11不支持Array.prototype.find()
+import 'core-js/fn/array/find';
+// 左树结构样式
+import 'rc-tree/assets/index.css';
 
 /**
- * Import the stylesheet you want used! Here we just reference
- * the main SCSS file we have in the styles directory.
+ * Import the stylesheet you want used!
  */
-// import './styles/main.scss';
-// import './styles/ybz.css';
-// import './styles/ssc-grid2.less';
 // 参照组件样式
 import './styles/refer/referStyle.css';
 
