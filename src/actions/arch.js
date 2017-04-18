@@ -193,7 +193,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
         throw error;
       })
       .then(utils.parseJSON)
-      .then(json => {
+      .then((json) => {
         if (json.success === true) {
           // 进行业务层的数据校验
           const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
@@ -210,7 +210,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
           dispatch(receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
             json.message));
         }
-      }).catch(err => {
+      }).catch((err) => {
         console.log('fetch table body error:', err);
       });
   };

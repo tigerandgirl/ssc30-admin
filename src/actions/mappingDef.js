@@ -112,7 +112,11 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
           if (resObj.success !== true) {
             throw new utils.SuccessFalseException(resObj.message);
           }
-          return resObj;
+          return {
+            tableData: resObj.data.data,
+            totalDataCount: resObj.totalnum,
+            totalPage: Math.ceil(resObj.totalnum / itemsPerPage)
+          };
         });
     }
   };
