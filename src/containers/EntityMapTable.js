@@ -51,7 +51,7 @@ class EntityMapTable extends Component {
   }
 
   closeEditDialog() {
-    this.props.showEditDialog(false, null, {});
+    this.props.showEditDialog(false);
   }
 
   closeCreateDialog() {

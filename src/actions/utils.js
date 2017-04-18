@@ -152,7 +152,7 @@ export function fixFieldTypo({ ...field }) {
  * }]
  * @param {Object} field Array.prototype.map 传入参数
  */
-export function convertDataType(replace = [], { ...field }) {
+export function convertDataType(/* replace = [], */{ ...field }) {
   // 默认转换类型
   const TYPE = [
     'string', 'integer', 'double', 'date', 'boolean', // 0~4
@@ -162,7 +162,7 @@ export function convertDataType(replace = [], { ...field }) {
     'custom', '', '', '', '' // 20~24
   ];
   // 用户自定义转换，覆盖上述默认转换
-  replace.forEach((r) => { TYPE[r.code] = r.name; });
+  // replace.forEach((r) => { TYPE[r.code] = r.name; });
   field.type = TYPE[field.datatype];
   return field;
 }
