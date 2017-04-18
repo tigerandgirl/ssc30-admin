@@ -143,8 +143,17 @@ export function fixFieldTypo({ ...field }) {
 /**
  * 将后端使用数字表示的data type转换成前端的名称
  * 后端使用datatype=0, 前端使用type='string'
+ * @param {Array} [replace=[]] 用于替换默认的转换
+ * 比如默认5转换为ref，可以通过以下方式将5转换成custom
+ * ```js
+ * [{
+ *   code: 5,
+ *   name: 'custom'
+ * }]
+ * @param {Object} field Array.prototype.map 传入参数
  */
-export function convertDataType({ ...field }) {
+export function convertDataType(replace = [], { ...field }) {
+  // 默认转换类型
   const TYPE = [
     'string', 'integer', 'double', 'date', 'boolean', // 0~4
     'ref', 'enum', '', 'datetime', 'text', // 5~9
@@ -152,6 +161,8 @@ export function convertDataType({ ...field }) {
     '', '', '', '', '', // 15~19
     'custom', '', '', '', '' // 20~24
   ];
+  // 用户自定义转换，覆盖上述默认转换
+  replace.forEach((r) => { TYPE[r.code] = r.name; });
   field.type = TYPE[field.datatype];
   return field;
 }
@@ -417,7 +428,7 @@ export function setReferFields(ReferDataURL, ReferUserDataURL, field) {
   const getReferConfig = (fieldDocType) => {
     const config = {
       referConditions: {
-        refCode: fieldDocType, // 'dept',
+        refCode: fieldDocType, // 'dept'
         refType: 'tree',
         rootName: '部门'
       },
