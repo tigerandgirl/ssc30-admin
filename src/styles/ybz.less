@@ -56,9 +56,11 @@ h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
 @errorColor: #fe631f;           // 错误信息提示色、警告框颜色
 @labelColor: #8d8d8d;           // 标签字体颜色
 
+.page, #root {
+  background-color: @backColor;
+}
 .content{
   padding: 15px;
-  background-color: @backColor;
 }
 
 // a链接颜色
@@ -142,9 +144,9 @@ a {
         .b0;
         .ws;
         font-weight: normal;
-        &:hover {
-          background-color: @gridHoverBackColor;
-        }
+        //&:hover {
+        //  background-color: @gridHoverBackColor;
+        //}
       }
     }
     tbody tr {
