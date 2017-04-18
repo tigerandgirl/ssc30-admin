@@ -187,12 +187,14 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
           let fieldsModel = resObj.data.head
             /*  1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
             /*  2 */ .map(utils.fixFieldTypo)
-            /*  3 */ .map(utils.convertDataType)
+            /*  3 */ .map(utils.convertDataType.bind(this, [{
+              code: 5, name: 'custom' }]))
             /*  4 */ .map(utils.setRequiredFields.bind(this, baseDocId))
             /*  5 */ .map(utils.setHiddenFields)
             /*  6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
             /*  7 */ .map(utils.fixReferKey)
-            /*  8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL, URL.ReferUserDataURL))
+            /*  8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL,
+              URL.ReferUserDataURL))
             /*  9 */ .map(utils.fixEnumData)
             /* 10 */ .map(utils.setLengthValidation);
 

@@ -1,13 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import { Grid as SSCGrid, Form } from 'ssc-grid';
 import Formula from 'ssc-formula';
+import { Refers } from 'ssc-refer';
 
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
-import FormulaField from '../components/FormulaField';
+// import FormulaField from '../components/FormulaField';
 
 import * as Actions from '../actions/entityMap';
 
@@ -141,15 +143,15 @@ class EntityMapTable extends Component {
         return;
       }
       const fieldId = fieldModel.id;
-      switch (fieldModel.type) {
-        case 'ref':
-          formData[fieldId] = {
+      switch (fieldModel.datatype) {
+        case '5':
+          formData[fieldId] = [{
             id: '',
             code: '',
             name: ''
-          };
+          }];
           break;
-        case 'boolean':
+        case '4':
           // XXDEBUG-START
           // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
           if (fieldId === 'enable') {
@@ -214,6 +216,75 @@ class EntityMapTable extends Component {
     });
   }
 
+  getReferField() {
+    // 封装一个参照组件作为自定义组件
+    return React.createClass({
+      propTypes: {
+        /**
+         * Form表单组件传入的值
+         * ```js
+         * [{
+         *   id: 'G001ZM0000BASEDOCDEFAULTORG000000000',
+         *   code: '0001',
+         *   name: '默认组织'
+         * }]
+         * ```
+         */
+        customFieldValue: React.PropTypes.array,
+        /**
+         * 自定义类型字段发生变化的时候
+         * @param {Object} value 参照值，比如
+         * ```js
+         * [{
+         *   id: 'G001ZM0000BASEDOCDEFAULTORG000000000',
+         *   code: '0001',
+         *   name: '默认组织'
+         * }]
+         * ```
+         */
+        onCustomFieldChange: React.PropTypes.func
+      },
+      getDefaultProps() {
+        return {
+        };
+      },
+      getInitialState() {
+        return {
+        };
+      },
+      handleChange(selected) {
+        // alert(JSON.stringify(selected));
+        if (this.props.onCustomFieldChange) {
+          this.props.onCustomFieldChange(selected);
+        }
+      },
+      render() {
+        const referConditions = {
+          refCode: 'dept',
+          refType: 'tree',
+          rootName: '部门'
+        };
+        const referDataUrl = 'http://127.0.0.1:3009/refbase_ctr/queryRefJSON';
+        return (
+          <Refers
+            disabled={false}
+            minLength={0}
+            align="justify"
+            emptyLabel=""
+            labelKey="name"
+            onChange={this.handleChange}
+            placeholder="请选择..."
+            referConditions={referConditions}
+            referDataUrl={referDataUrl}
+            referType="list"
+            defaultSelected={this.props.customFieldValue}
+            ref={(ref) => { this.myrefers = ref; }}
+          />
+        );
+      }
+    });
+  }
+
   render() {
     const {
       entityFieldsModel,
@@ -224,25 +295,46 @@ class EntityMapTable extends Component {
       pageAlert
     } = this.props;
 
-    // 准备制作自定义组件 - 公式编辑器
-    let entityFieldsModel2 = entityFieldsModel.map(({ ...columnModel }) => {
-      if (columnModel.datatype === 20 && columnModel.type === 'custom') {
-        columnModel.component = this.getFormulaField(columnModel.refinfocode);
-      }
-      return columnModel;
-    });
-
-    if (!_.isEmpty(editFormData)) {
-      entityFieldsModel2 = entityFieldsModel.map(({ ...columnModel }) => {
-        if (columnModel.datatype === 20 && columnModel.type === 'custom') {
-          columnModel.component = this.getFormulaField(
-            columnModel.refinfocode,
-            editFormData.src_entityid.id
-          );
+    let entityFieldsModel2 = entityFieldsModel
+      // 准备制作自定义组件 - 公式编辑器
+      .map(({ ...fieldModel }) => {
+        if (fieldModel.datatype === 20 && fieldModel.type === 'custom') {
+          if (!_.isEmpty(editFormData)) {
+            fieldModel.component = this.getFormulaField(
+              fieldModel.refinfocode,
+              editFormData.src_entityid.id
+            );
+          } else {
+            // TODO 当创建窗口弹出的时候，需要用户先点击选择“源实体”，然后从选择结果中取出
+            // id，作为getFormulaField的第二个参数。
+            let srcEntityid = {
+              id: 'xxdebug'
+            };
+            fieldModel.component = this.getFormulaField(
+              fieldModel.refinfocode,
+              srcEntityid.id
+            );
+          }
         }
-        return columnModel;
+        return fieldModel;
+      })
+      // 参照型的初始化
+      .map(({ ...fieldModel }) => {
+        if (fieldModel.datatype === 5 && fieldModel.type === 'custom') {
+          // 表单的自定义组件
+          fieldModel.component = this.getReferField(fieldModel.refinfocode);
+          // 初始化编辑表单的值
+          if (!_.isEmpty(editFormData)) {
+            editFormData[fieldModel.id] = [editFormData[fieldModel.id]];
+          }
+          // 表格单元格的格式化
+          fieldModel.formatter = {
+            type: 'custom',
+            callback: value => value.name
+          };
+        }
+        return fieldModel;
       });
-    }
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(entityFieldsModel2);

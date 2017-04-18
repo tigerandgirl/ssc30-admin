@@ -46,3 +46,17 @@ npm run release:ybz-5088
 npm run release:ybz-6088
 npm run release:yzb
 ```
+
+## 发布到测试服务器
+
+由于[这个问题](https://trello.com/c/wDFRGQl8/12-172-20-13-230)以及[这个问题](https://trello.com/c/dhpJBvVg/11-4-19)，所以这里提供一个方式绕开，也就是从本地部署到测试服务器。
+
+以下拿10.3.14.238这台测试服务器为例
+
+```
+npm run build:yzb
+. ".jenkins/functions.sh"
+gen_config 'http' '10.3.14.238' '/ficloud'
+sync_files '10.3.14.238' '22' 'sscweb' 'dist/' \
+  '/data/ficloud/uiresources/manaaccount'
+```
