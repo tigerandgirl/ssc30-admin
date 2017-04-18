@@ -61,6 +61,12 @@ class MappingDef extends Component {
       activePage: 1,
       startIndex: 0
     };
+    this.handlePageAlertDismiss = this.handlePageAlertDismiss.bind(this);
+    this.handlePagination = this.handlePagination.bind(this);
+    this.closeCreateDialog = this.closeCreateDialog.bind(this);
+    this.handleCreateFormSubmit = this.handleCreateFormSubmit.bind(this);
+    this.closeEditDialog = this.closeEditDialog.bind(this);
+    this.handleEditFormSubmit = this.handleEditFormSubmit.bind(this);
   }
 
   componentWillMount() {
@@ -154,12 +160,12 @@ class MappingDef extends Component {
         // 将rowData保存到store中
         container.props.showEditDialog(true, rowIdx, rowObj);
       },
-      handleRemove(event) {
+      handleRemove(/* event */) {
         const { rowObj } = this.props;
-        var param ={
-          isShow :true ,
-          txt:"是否删除？",
-          sureFn:function(){
+        let param = {
+          isShow: true,
+          txt: '是否删除？',
+          sureFn: () => {
             container.props.deleteTableBodyDataAndFetchTableBodyData(rowObj);
           }
         };
@@ -202,19 +208,21 @@ class MappingDef extends Component {
 
     return (
       <div className="mapping-def-container content">
-        <MessageConfirm  ref="messageConfirm"/>
+        <MessageConfirm ref={(c) => { this.messageConfirm = c; }} />
+        <h1 className="text-center">平台接入配置</h1>
         <AdminAlert
           show={pageAlert.show}
           bsStyle={pageAlert.bsStyle}
-          onDismiss={::this.handlePageAlertDismiss}
+          onDismiss={this.handlePageAlertDismiss}
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <div className="head" style={{ textAlign: 'right' }}>
+        <div className="head text-right">
           <Button onClick={this.handleCreate}>新增</Button>
         </div>
         <div>
-          <SSCGrid className="ssc-grid"
+          <SSCGrid
+            className="ssc-grid"
             columnsModel={tableColumnsModel}
             tableData={tableBodyData}
             // 分页
@@ -222,7 +230,7 @@ class MappingDef extends Component {
             itemsPerPage={itemsPerPage}
             totalPage={this.props.totalPage}
             activePage={this.state.activePage}
-            onPagination={::this.handlePagination}
+            onPagination={this.handlePagination}
             operationColumn={{
               className: 'col-120',
               text: '操作'
@@ -234,32 +242,32 @@ class MappingDef extends Component {
           className="create-form"
           title="新增"
           show={this.props.createDialog.show}
-          onHide={::this.closeCreateDialog}
+          onHide={this.closeCreateDialog}
         >
-          <p className="server-message" style={{color: 'red'}}>
+          <p className="server-message" style={{ color: 'red' }}>
             {this.props.serverMessage}
           </p>
           <SSCForm
             fieldsModel={tableColumnsModel}
             defaultData={this.state.createFormData}
-            onSubmit={::this.handleCreateFormSubmit}
-            onReset={::this.closeCreateDialog}
+            onSubmit={this.handleCreateFormSubmit}
+            onReset={this.closeCreateDialog}
           />
         </AdminDialog>
         <AdminDialog
           className="edit-form"
           title="编辑"
           show={this.props.editDialog.show}
-          onHide={::this.closeEditDialog}
+          onHide={this.closeEditDialog}
         >
-          <p className="server-message" style={{color: 'red'}}>
+          <p className="server-message" style={{ color: 'red' }}>
             {this.props.serverMessage}
           </p>
           <SSCForm
             fieldsModel={tableColumnsModel2}
             defaultData={this.props.editFormData}
-            onSubmit={::this.handleEditFormSubmit}
-            onReset={::this.closeEditDialog}
+            onSubmit={this.handleEditFormSubmit}
+            onReset={this.closeEditDialog}
           />
         </AdminDialog>
       </div>
