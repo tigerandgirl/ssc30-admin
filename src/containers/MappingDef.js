@@ -54,9 +54,13 @@ class MappingDef extends Component {
     updateTableBodyDataAndFetchTableBodyData: PropTypes.func.isRequired
   }
 
-  state = {
-    activePage: 1,
-    startIndex: 0
+  constructor(props) {
+    super(props);
+    this.handleCreate = this.handleCreate.bind(this);
+    this.state = {
+      activePage: 1,
+      startIndex: 0
+    };
   }
 
   componentWillMount() {
@@ -200,14 +204,14 @@ class MappingDef extends Component {
       <div className="mapping-def-container content">
         <MessageConfirm  ref="messageConfirm"/>
         <AdminAlert
-            show={pageAlert.show}
-            bsStyle={pageAlert.bsStyle}
-            onDismiss={::this.handlePageAlertDismiss}
+          show={pageAlert.show}
+          bsStyle={pageAlert.bsStyle}
+          onDismiss={::this.handlePageAlertDismiss}
         >
           <p>{pageAlert.message}</p>
         </AdminAlert>
-        <div className="head" style={{textAlign: 'right'}}>
-          <Button onClick={::this.handleCreate}>新增</Button>
+        <div className="head" style={{ textAlign: 'right' }}>
+          <Button onClick={this.handleCreate}>新增</Button>
         </div>
         <div>
           <SSCGrid className="ssc-grid"
