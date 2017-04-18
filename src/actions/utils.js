@@ -471,6 +471,23 @@ export function fixReferKey(field) {
 }
 
 /**
+ * 根据字段类型来设定单元格的格式化方式
+ */
+export function setTableCellFormatter({ ...field }) {
+  switch (field.type) {
+    case 'boolean':
+      field.formatter = {
+        type: 'custom',
+        callback: value => (value ? '是' : '否')
+      };
+      break;
+    default:
+      break;
+  }
+  return field;
+}
+
+/**
  * 给字段设置长度校验
  */
 export function setLengthValidation(field) {
