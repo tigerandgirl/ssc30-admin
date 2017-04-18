@@ -169,7 +169,7 @@ class MappingDef extends Component {
             container.props.deleteTableBodyDataAndFetchTableBodyData(rowObj);
           }
         };
-        container.refs.messageConfirm.initParam(param);
+        container.messageConfirm.initParam(param);
       },
       render() {
         const {
