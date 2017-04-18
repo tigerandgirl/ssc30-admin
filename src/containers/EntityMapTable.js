@@ -7,11 +7,13 @@ import { Grid as SSCGrid, Form } from 'ssc-grid';
 import Formula from 'ssc-formula';
 import { Refers } from 'ssc-refer';
 
+// 后端接口URL
+import * as URL from '../constants/URLs';
+import * as Actions from '../actions/entityMap';
+
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 // import FormulaField from '../components/FormulaField';
-
-import * as Actions from '../actions/entityMap';
 
 class EntityMapTable extends Component {
   static displayName = 'EntityMapTable'
@@ -202,6 +204,15 @@ class EntityMapTable extends Component {
               onClick={this.handleClick}
             />
             <Formula
+              config={{
+                workechart: {
+                  metatree: URL.FormulaURL
+                },
+                refer: {
+                  referDataUrl: URL.ReferDataURL,
+                  referDataUserUrl: URL.ReferUserDataURL
+                }
+              }}
               formulaText={this.state.value}
               ref={(ref) => { this.formula = ref; }}
               // source entity id 源实体

@@ -44,6 +44,9 @@ export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${ty
 export const ReferDataURL = makeURL('/refbase_ctr/queryRefJSON');
 export const ReferUserDataURL = makeURL('/userCenter/queryUserAndDeptByDeptPk');
 
+// 公式编辑器
+export const FormulaURL = makeURL('/echart/metatree');
+
 /**
  * 转换规则模型
  */
