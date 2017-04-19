@@ -255,7 +255,11 @@ export function setRequiredFields(baseDocId, { ...field }) {
       email: true,
       positionstate: true
     },
-    trader:{  //客商类型
+    trader:{  //客商
+      code: true,
+      name: true
+    },
+    traderclass:{  //客商类型
       code: true,
       name: true
     }
