@@ -227,7 +227,7 @@ class EntityMapTable extends Component {
     });
   }
 
-  getReferField() {
+  getReferField(refCode) {
     // 封装一个参照组件作为自定义组件
     return React.createClass({
       propTypes: {
@@ -271,11 +271,11 @@ class EntityMapTable extends Component {
       },
       render() {
         const referConditions = {
-          refCode: 'dept',
+          refCode,
           refType: 'tree',
           rootName: '部门'
         };
-        const referDataUrl = 'http://127.0.0.1:3009/refbase_ctr/queryRefJSON';
+        // URL.ReferUserDataURL
         return (
           <Refers
             disabled={false}
@@ -286,7 +286,7 @@ class EntityMapTable extends Component {
             onChange={this.handleChange}
             placeholder="请选择..."
             referConditions={referConditions}
-            referDataUrl={referDataUrl}
+            referDataUrl={URL.ReferDataURL}
             referType="list"
             defaultSelected={this.props.customFieldValue}
             ref={(ref) => { this.myrefers = ref; }}
