@@ -254,6 +254,10 @@ export function setRequiredFields(baseDocId, { ...field }) {
       sex: true,
       email: true,
       positionstate: true
+    },
+    trader:{  //客商类型
+      code: true,
+      name: true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
