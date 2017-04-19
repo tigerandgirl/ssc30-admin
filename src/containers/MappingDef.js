@@ -209,7 +209,11 @@ class MappingDef extends Component {
     return (
       <div className="mapping-def-container content">
         <MessageConfirm ref={(c) => { this.messageConfirm = c; }} />
-        <h1 className="text-center">平台接入配置</h1>
+        <div className="header">
+          <div className="header-title">
+            <span>平台接入配置</span>
+          </div>
+        </div>
         <AdminAlert
           show={pageAlert.show}
           bsStyle={pageAlert.bsStyle}
