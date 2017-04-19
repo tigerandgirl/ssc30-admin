@@ -23,16 +23,25 @@ class ArchContainer extends Component {
     /**
      * [store] 字段模型
      */
-    fields: PropTypes.array.isRequired,
+    fields: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      datatype: PropTypes.number.isRequired,
+      label: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired
+    })).isRequired,
     /**
      * [store] 表体数据
      */
-    tableData: PropTypes.array.isRequired,
+    tableData: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired
+    })).isRequired,
     itemsPerPage: PropTypes.number.isRequired,
     startIndex: PropTypes.number.isRequired,
     fetchTableBodyData: PropTypes.func.isRequired,
     fetchTableColumnsModel: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired,
+    params: PropTypes.shape({
+      baseDocId: PropTypes.string.isRequired
+    }).isRequired,
     showCreateDialog: PropTypes.func.isRequired,
     closeEditDialog: PropTypes.func.isRequired,
     hideCreateDialog: PropTypes.func.isRequired,
@@ -45,9 +54,9 @@ class ArchContainer extends Component {
     super(props);
     const { params: { baseDocId }} = props;
     
-    if( baseDocId == "dept" ||baseDocId == "project"
-        || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
-          this.state={
+    if (baseDocId === 'dept' || baseDocId === 'project'
+        || baseDocId === "bankaccount" ||baseDocId === "feeitem" ){
+          this.state = {
             conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
           }
     } else {
