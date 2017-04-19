@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 # 友报账
 
 scripts_dir="$(dirname "$0")"
-. "$scripts/functions.sh"
+. "$scripts_dir/functions.sh"
 
 echo DEBUG-start
 pwd
