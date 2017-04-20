@@ -237,6 +237,14 @@ export function setRequiredFields(baseDocId, { ...field }) {
       code: true,
       name: true
     },
+    mappingdef: {
+      code: true,
+      name: true,
+      src_system: true,
+      des_system: true,
+      src_billtype: true,
+      des_billtype: true
+    },
     project: {
       code: true,
       name: true,
@@ -246,12 +254,6 @@ export function setRequiredFields(baseDocId, { ...field }) {
       code: true,
       name: true
     },
-    user: {
-      name: true,
-      sex: true,
-      email: true,
-      positionstate: true
-    },
     trader: {  // 客商
       code: true,
       name: true
@@ -259,6 +261,12 @@ export function setRequiredFields(baseDocId, { ...field }) {
     traderclass: {  // 客商类型
       code: true,
       name: true
+    },
+    user: {
+      name: true,
+      sex: true,
+      email: true,
+      positionstate: true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {

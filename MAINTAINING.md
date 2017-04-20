@@ -56,7 +56,8 @@ npm run release:yzb
 ```
 npm run build:yzb
 . ".jenkins/functions.sh"
-gen_config 'http' '10.3.14.238' '/ficloud'
+#gen_config 'http' '10.3.14.238' '/ficloud'
+ansible-playbook .playbook/gen_config.yaml
 sync_files '10.3.14.238' '22' 'sscweb' 'dist/' \
   '/data/ficloud/uiresources/manaaccount'
 ```
