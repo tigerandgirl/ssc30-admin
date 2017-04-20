@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 基础档案
  */
 
@@ -48,6 +48,12 @@ class ArchContainer extends Component {
   }
 
   state = {
+  }
+
+  getInitialState() {
+    return {
+      multiple: false
+    };
   }
 
   constructor(props) {
@@ -370,6 +376,7 @@ class ArchContainer extends Component {
       },
       itemsPerPage
     } = this.props;
+    const {multiple} = this.state;
 
     // 表单字段模型 / 表格列模型
     let cols = fields || [];
@@ -382,7 +389,7 @@ class ArchContainer extends Component {
         || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
       checkBoxContent = (
         <div style={{ display: 'inline-block', float: 'left' }}>
-          <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
+          <Checkbox   checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
         </div>
       );
     }
