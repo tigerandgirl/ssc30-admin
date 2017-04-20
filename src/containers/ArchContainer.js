@@ -461,8 +461,6 @@ class ArchContainer extends Component {
             show={formAlert.show} bsStyle={formAlert.bsStyle}
             onDismiss={::this.handleFormAlertDismiss}
           >
-            <p>{formAlert.message}</p>
-            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <SSCForm
