@@ -278,6 +278,10 @@ class EntityMapTable extends Component {
         const referConditions = {
           refCode,
           refType: 'tree',
+          // 赵老师说：参照出不来name的问题，我这边改了下，在请求中加个参数 ，
+          // 如下实例 "convertcol":"{name:displayName}"，标示将数据库中的
+          // displayName字段对照到name，这样，就可以了
+          convertcol: '{name:displayName}',
           rootName: '部门'
         };
         // URL.ReferUserDataURL
