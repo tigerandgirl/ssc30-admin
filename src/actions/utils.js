@@ -355,6 +355,9 @@ export function shouldNotRemoveFields(baseDocId, { ...field }) {
     },
     valuerang: {
       pk_org: true
+    },
+    trader:{
+      pk_org:true
     }
   };
 
