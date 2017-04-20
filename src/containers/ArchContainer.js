@@ -14,7 +14,7 @@ import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
 import MessageTips from '../components/MessageTips';
 import MessageConfirm from '../components/MessageConfirm';
-
+   
 import * as Actions from '../actions/arch';
 import getBaseDocTypes from '../constants/BaseDocTypes';
 
