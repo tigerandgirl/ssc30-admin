@@ -423,8 +423,6 @@ class ArchContainer extends Component {
           show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >
-          <p>{adminAlert.message}</p>
-          { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <div>
