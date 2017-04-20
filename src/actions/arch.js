@@ -445,7 +445,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
         let error = new Error(response.statusText);
         error.response = response;
         response.text().then(text => {
-          dispatch(updateTableDataFailure(('后端返回的HTTP status code不是200', text)));
+          dispatch(updateTableDataFailure(('', text)));
         });
         throw error;
       }
@@ -455,7 +455,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       if (json.success === true) {
         dispatch(updateTableDataSuccess(json, rowIdx));
       } else {
-        dispatch(updateTableDataFailure('获取表格数据失败，后端返回的success是false',
+        dispatch(updateTableDataFailure('',
           json.message));
       }
     }
