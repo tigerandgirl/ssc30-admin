@@ -6,9 +6,10 @@ import { browserHistory } from 'react-router';
 import Tree, { TreeNode } from 'rc-tree';
 import { Button } from 'react-bootstrap';
 
-import EntityMapTable from './EntityMapTable';
-
+import { fieldModelShape, tableRowShape } from './PropTypes';
 import * as Actions from '../actions/entityMap';
+
+import EntityMapTable from './EntityMapTable';
 
 const DEFAULT_EXPANDED_LEVEL = 2;
 
@@ -50,7 +51,8 @@ function getDefaultExpandedKeys([...treeData]) {
 class EntityMap extends Component {
   static displayName = 'EntityMap'
   static propTypes = {
-    entityTableBodyData: PropTypes.array.isRequired,
+    entityFieldsModel: PropTypes.arrayOf(fieldModelShape).isRequired,
+    entityTableBodyData: PropTypes.arrayOf(tableRowShape).isRequired,
     fetchLeftTree: PropTypes.func.isRequired,
     fetchLeftTreeNodeChildren: PropTypes.func.isRequired,
     fetchTreeNodeDataAndSaveClickedNodeData: PropTypes.func.isRequired,
@@ -178,6 +180,7 @@ class EntityMap extends Component {
           <button
             className="btn btn-default"
             onClick={this.handleCreate}
+            disabled={this.props.entityFieldsModel.length === 0}
           >
             新增
           </button>

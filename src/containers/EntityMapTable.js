@@ -9,6 +9,7 @@ import { Refers } from 'ssc-refer';
 
 // 后端接口URL
 import * as URL from '../constants/URLs';
+import { fieldModelShape, tableRowShape } from './PropTypes';
 import * as Actions from '../actions/entityMap';
 
 import AdminEditDialog from '../components/AdminEditDialog';
@@ -22,8 +23,8 @@ class EntityMapTable extends Component {
     createDialog: PropTypes.object.isRequired,
     editDialog: PropTypes.object.isRequired,
     editFormData: PropTypes.object.isRequired,
-    entityTableBodyData: PropTypes.array.isRequired,
-    entityFieldsModel: PropTypes.array.isRequired,
+    entityFieldsModel: PropTypes.arrayOf(fieldModelShape).isRequired,
+    entityTableBodyData: PropTypes.arrayOf(tableRowShape).isRequired,
     pageAlert: PropTypes.object.isRequired,
     serverMessage: PropTypes.string.isRequired,
     showCreateDialog: PropTypes.func.isRequired,
@@ -92,24 +93,24 @@ class EntityMapTable extends Component {
     // event.preventDefault();
   }
 
-  handlePageAlertDismiss(){
+  handlePageAlertDismiss() {
     this.props.showPageAlert(false, '');
   }
 
-  handleFormAlertDismiss(){
+  handleFormAlertDismiss() {
     this.props.showFormAlert(false, '');
   }
 
   getCustomComponent() {
     let container = this;
     return React.createClass({
-      handleEdit(event) {
+      handleEdit(/* event*/) {
         const { rowIdx, rowObj } = this.props;
         // 显示编辑对话框并填充表单
         container.props.showEditDialog(true, rowIdx, rowObj);
       },
-      handleRemove(event) {
-        if (!confirm("是否删除？")) {
+      handleRemove(/* event*/) {
+        if (!confirm('是否删除？')) {
           return;
         }
         const { rowIdx, rowObj } = this.props;
@@ -119,10 +120,14 @@ class EntityMapTable extends Component {
       render() {
         return (
           <td>
-            <span onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil" title="编辑"></span>
-            <span onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash" title="删除"></span>
+            <span
+              onClick={this.handleEdit}
+              className="glyphicon glyphicon-pencil" title="编辑"
+            />
+            <span
+              onClick={this.handleRemove}
+              className="glyphicon glyphicon-trash" title="删除"
+            />
           </td>
         );
       }
@@ -139,7 +144,7 @@ class EntityMapTable extends Component {
    */
   getFormDefaultData(columnsModel) {
     let formData = {};
-    columnsModel.forEach(fieldModel => {
+    columnsModel.forEach((fieldModel) => {
       // 隐藏字段，比如id字段，不用初始化值
       if (fieldModel.hidden === true) {
         return;
@@ -171,31 +176,31 @@ class EntityMapTable extends Component {
 
   getFormulaField(refCode, entityId) {
     return React.createClass({
-      getInitialState: function() {
+      getInitialState() {
         return {
           value: this.props.customFieldValue
         };
       },
-      handleChange: function(event) {
+      handleChange(event) {
         let value = event.target.value;
         this.setState({ value });
         if (this.props.onCustomFieldChange) {
           this.props.onCustomFieldChange(value);
         }
       },
-      handleClick: function() {
+      handleClick() {
         this.formula.showAlert();
       },
       /**
        * 公式编辑器点击完成
        */
-      handleDataBack: function(data) {
+      handleDataBack(data) {
         this.setState({ value: data });
         if (this.props.onCustomFieldChange) {
           this.props.onCustomFieldChange(data);
         }
       },
-      render: function() {
+      render() {
         return (
           <div>
             <input
@@ -336,7 +341,7 @@ class EntityMapTable extends Component {
           fieldModel.component = this.getReferField(fieldModel.refinfocode);
           // 初始化编辑表单的值
           if (!_.isEmpty(editFormData)) {
-            editFormData[fieldModel.id] = [editFormData[fieldModel.id]];
+            editFormData[fieldModel.id] = [editFormData[fieldModel.id], {}];
           }
           // 表格单元格的格式化
           fieldModel.formatter = {
@@ -407,13 +412,9 @@ class EntityMapTable extends Component {
  * @param {Object} state
  * @param {Object} ownProps
  */
-const mapStateToProps = (state) => {
-  return { ...state.entityMap };
-};
+const mapStateToProps = state => ({ ...state.entityMap });
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(Actions, dispatch);
-};
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(EntityMapTable);

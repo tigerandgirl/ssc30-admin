@@ -14,8 +14,9 @@ import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
 import MessageTips from '../components/MessageTips';
 import MessageConfirm from '../components/MessageConfirm';
-
+   
 import * as Actions from '../actions/arch';
+import getBaseDocTypes from '../constants/BaseDocTypes';
 
 class ArchContainer extends Component {
   static displayName = 'ArchContainer'
@@ -410,6 +411,13 @@ class ArchContainer extends Component {
     }
     cols = cols.map(setFormatterBoolean);
 
+    let value = '客商';
+    getBaseDocTypes().forEach((item)=>{
+        if(item.id == this.props.params.baseDocId){
+          value = item.name;
+        }
+    });
+
     return (
       <div className="content">
         <div className="blank" />
@@ -426,6 +434,11 @@ class ArchContainer extends Component {
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <div>
+          <div className="header">
+              <div className="header-title">
+                  <span>{value}</span>
+              </div>
+          </div>
           <div className="btn-bar">
             {checkBoxContent}
             <div className="fr">

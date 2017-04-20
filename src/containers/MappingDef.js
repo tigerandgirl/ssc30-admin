@@ -10,11 +10,13 @@ import { Link } from 'react-router';
 import { Button } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
+import { fieldModelShape, tableRowShape } from './PropTypes';
+import * as Actions from '../actions/mappingDef';
+
 import AdminDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 import FormulaField from '../components/FormulaField';
 import MessageConfirm from '../components/MessageConfirm';
-import * as Actions from '../actions/mappingDef';
 
 const BASE_DOC_ID = 'mappingdef';
 
@@ -24,6 +26,7 @@ const BASE_DOC_ID = 'mappingdef';
  */
 
 class MappingDef extends Component {
+  static displayName = 'MappingDef'
   static propTypes = {
     createDialog: PropTypes.object.isRequired,
     createTableBodyDataAndFetchTableBodyData: PropTypes.func.isRequired,
@@ -38,18 +41,8 @@ class MappingDef extends Component {
     showEditDialog: PropTypes.func.isRequired,
     showPageAlert: PropTypes.func.isRequired,
     startIndex: PropTypes.number.isRequired,
-    /**
-     * store中存储的表体数据
-     */
-    tableBodyData: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string.isRequired
-    })).isRequired,
-    /**
-     * store中存储的表头数据
-     */
-    tableColumnsModel: PropTypes.arrayOf(PropTypes.shape({
-      type: PropTypes.string.isRequired
-    })).isRequired,
+    tableBodyData: PropTypes.arrayOf(tableRowShape).isRequired,
+    tableColumnsModel: PropTypes.arrayOf(fieldModelShape).isRequired,
     totalPage: PropTypes.number.isRequired,
     updateTableBodyDataAndFetchTableBodyData: PropTypes.func.isRequired
   }
