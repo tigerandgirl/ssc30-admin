@@ -104,12 +104,12 @@ class EntityMapTable extends Component {
   getCustomComponent() {
     let container = this;
     return React.createClass({
-      handleEdit(event) {
+      handleEdit(/* event*/) {
         const { rowIdx, rowObj } = this.props;
         // 显示编辑对话框并填充表单
         container.props.showEditDialog(true, rowIdx, rowObj);
       },
-      handleRemove(event) {
+      handleRemove(/* event*/) {
         if (!confirm('是否删除？')) {
           return;
         }
@@ -341,7 +341,7 @@ class EntityMapTable extends Component {
           fieldModel.component = this.getReferField(fieldModel.refinfocode);
           // 初始化编辑表单的值
           if (!_.isEmpty(editFormData)) {
-            editFormData[fieldModel.id] = [editFormData[fieldModel.id]];
+            editFormData[fieldModel.id] = [editFormData[fieldModel.id], {}];
           }
           // 表格单元格的格式化
           fieldModel.formatter = {
