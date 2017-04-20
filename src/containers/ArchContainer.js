@@ -51,16 +51,10 @@ class ArchContainer extends Component {
   state = {
   }
 
-  getInitialState() {
-    return {
-      multiple: false
-    };
-  }
 
   constructor(props) {
     super(props);
     const { params: { baseDocId } } = props;
-
     if (baseDocId === 'dept' || baseDocId === 'project'
         || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
       this.state = {
@@ -95,9 +89,19 @@ class ArchContainer extends Component {
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, []);
+      let conditions = [];
+      if (nextType == 'dept' || nextType == 'project'
+          || nextType == 'bankaccount' || nextType == 'feeitem') {
+        conditions =  [{ field: 'enable', datatype: 'boolean', value: 'true' }];
+      }
+
+      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, conditions);
       this.props.fetchTableColumnsModel(nextType);
+      this.setState({
+        multiple: false
+      })
     }
+
   }
 
   // admin card actions
@@ -214,14 +218,18 @@ class ArchContainer extends Component {
   handleEnableCheck(event) {
     let e = event.target;
     const { params: { baseDocId }, itemsPerPage, startIndex } = this.props;
+    let multiple = false;
     let conditions = [
       { field: 'enable', datatype: 'boolean', value: 'true' }
     ];
     if (e.checked) {
       conditions = [];
+      multiple = true
+
     }
     this.setState({
-      conditions
+      conditions,
+      multiple: multiple
     });
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
