@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 基础档案
  */
 
@@ -9,32 +9,20 @@ import { connect } from 'react-redux';
 import { Button, Checkbox } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
+import { fieldModelShape, tableRowShape } from './PropTypes';
+import * as Actions from '../actions/arch';
+
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
 import MessageTips from '../components/MessageTips';
 import MessageConfirm from '../components/MessageConfirm';
 
-import * as Actions from '../actions/arch';
-
 class ArchContainer extends Component {
   static displayName = 'ArchContainer'
   static propTypes = {
-    /**
-     * [store] 字段模型
-     */
-    fields: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      datatype: PropTypes.number.isRequired,
-      label: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired
-    })).isRequired,
-    /**
-     * [store] 表体数据
-     */
-    tableData: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string.isRequired
-    })).isRequired,
+    fields: PropTypes.arrayOf(fieldModelShape).isRequired,
+    tableData: PropTypes.arrayOf(tableRowShape).isRequired,
     itemsPerPage: PropTypes.number.isRequired,
     startIndex: PropTypes.number.isRequired,
     fetchTableBodyData: PropTypes.func.isRequired,
@@ -47,28 +35,20 @@ class ArchContainer extends Component {
     hideCreateDialog: PropTypes.func.isRequired,
   }
 
-  state = {
-  }
-
-  getInitialState() {
-    return {
-      multiple: false
-    };
-  }
-
   constructor(props) {
     super(props);
     const { params: { baseDocId } } = props;
 
+    this.state = {
+      conditions: [],
+      multiple: false
+    };
+
     if (baseDocId === 'dept' || baseDocId === 'project'
         || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
-      this.state = {
-        conditions: [{ field: 'enable', datatype: 'boolean', value: 'true' }]
-      };
-    } else {
-      this.state = {
-        conditions: []
-      };
+      this.state.conditions = [
+        { field: 'enable', datatype: 'boolean', value: 'true' }
+      ];
     }
   }
 
@@ -376,7 +356,7 @@ class ArchContainer extends Component {
       },
       itemsPerPage
     } = this.props;
-    const {multiple} = this.state;
+    const { multiple } = this.state;
 
     // 表单字段模型 / 表格列模型
     let cols = fields || [];
@@ -389,7 +369,7 @@ class ArchContainer extends Component {
         || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
       checkBoxContent = (
         <div style={{ display: 'inline-block', float: 'left' }}>
-          <Checkbox   checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
+          <Checkbox checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
         </div>
       );
     }
