@@ -27,6 +27,19 @@ function appendCredentials(opts) {
 }
 
 /**
+ * 当刚进入页面时候，清理上次保留的状态，如果存在的话
+ */
+
+export const ENTITY_MAP_STATE_CLEAN = 'ENTITY_MAP_STATE_CLEAN';
+export function cleanPageState() {
+  return (dispatch) => {
+    dispatch({
+      type: ENTITY_MAP_STATE_CLEAN
+    });
+  };
+}
+
+/**
  * 左边的树
  */
 
@@ -124,9 +137,9 @@ export function fetchLeftTreeNodeChildren(key) {
  * 从后端获取指定节点的数据，用于填充右侧的表格和表单
  */
 
-export const ENTITY_TREE_NODE_DATA_REQUEST = 'ENTITY_TREE_NODE_DATA_REQUEST';
-export const ENTITY_TREE_NODE_DATA_SUCCESS = 'ENTITY_TREE_NODE_DATA_SUCCESS';
-export const ENTITY_TREE_NODE_DATA_FAILURE = 'ENTITY_TREE_NODE_DATA_FAILURE';
+export const ENTITY_MAP_TREE_NODE_DATA_REQUEST = 'ENTITY_TREE_NODE_DATA_REQUEST';
+export const ENTITY_MAP_TREE_NODE_DATA_SUCCESS = 'ENTITY_TREE_NODE_DATA_SUCCESS';
+export const ENTITY_MAP_TREE_NODE_DATA_FAILURE = 'ENTITY_TREE_NODE_DATA_FAILURE';
 
 /**
  * 根据一个节点提供的信息，包括title和key，发送请求获取该节点的数据，用于显示
@@ -146,9 +159,9 @@ export function fetchTreeNodeData(treeNodeData, baseDocId = 'entity') {
   // use `callAPIMiddleware`
   return {
     types: [
-      ENTITY_TREE_NODE_DATA_REQUEST,
-      ENTITY_TREE_NODE_DATA_SUCCESS,
-      ENTITY_TREE_NODE_DATA_FAILURE
+      ENTITY_MAP_TREE_NODE_DATA_REQUEST,
+      ENTITY_MAP_TREE_NODE_DATA_SUCCESS,
+      ENTITY_MAP_TREE_NODE_DATA_FAILURE
     ],
     // Check the cache (optional):
     // shouldCallAPI: (state) => !state.posts[userId],

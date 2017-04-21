@@ -20,6 +20,7 @@ class EntityMapTable extends Component {
   static displayName = 'EntityMapTable'
   static propTypes = {
     addTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired,
+    cleanPageState: PropTypes.func.isRequired,
     createDialog: PropTypes.object.isRequired,
     editDialog: PropTypes.object.isRequired,
     editFormData: PropTypes.object.isRequired,
@@ -41,6 +42,7 @@ class EntityMapTable extends Component {
   }
 
   componentWillMount() {
+    this.props.cleanPageState();
   }
 
   componentDidMount() {
