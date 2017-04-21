@@ -173,14 +173,14 @@ class EntityMapTable extends Component {
       }
       const fieldId = fieldModel.id;
       switch (fieldModel.datatype) {
-        case '5':
+        case 5:
           formData[fieldId] = [{
             id: '',
             code: '',
             name: ''
           }];
           break;
-        case '4':
+        case 4:
           // XXDEBUG-START
           // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
           if (fieldId === 'enable') {

@@ -87,9 +87,9 @@ export function fetchLeftTreeNodeChildren(key) {
   return {
     types: [TEMPLATE_NODE_REQUEST, TEMPLATE_NODE_SUCCESS, TEMPLATE_NODE_FAILURE],
     // Check the cache (optional):
-    shouldCallAPI: (state) => !treeUtils.hasChildren(state.entityMap.treeData, key),
+    shouldCallAPI: state => !treeUtils.hasChildren(state.entityMap.treeData, key),
     callAPI: (state) => {
-      var opts = {
+      let opts = {
         method: 'post',
         headers: {
           'Content-type': 'application/json'
@@ -101,13 +101,11 @@ export function fetchLeftTreeNodeChildren(key) {
       };
       appendCredentials(opts);
 
-      var url = `${URL.OUTER_ENTITY_TREE_NODE_CHILDREN_URL}`;
+      let url = `${URL.OUTER_ENTITY_TREE_NODE_CHILDREN_URL}`;
 
       return fetch(url, opts)
-        .then(response => {
-          return response.json();
-        })
-        .then(resObj => {
+        .then(response => response.json())
+        .then((resObj) => {
           // 处理success: false
 
           // 从store中取得树数据，然后添加节点，再保存回store中
@@ -117,9 +115,9 @@ export function fetchLeftTreeNodeChildren(key) {
           return {
             treeData: newTreeData
           };
-        })
+        });
     }
-  }
+  };
 }
 
 /**
@@ -285,7 +283,7 @@ export function updateTreeNodeData(formData) {
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
+        .then((resObj) => {
           if (resObj.success !== true) {
             throw new utils.SuccessFalseException(resObj.message);
           }
@@ -318,7 +316,7 @@ export const addTreeNodeData = formData => ({
         'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: JSON.stringify({...formData})
+      body: JSON.stringify({ ...formData })
     };
     appendCredentials(opts);
 
@@ -373,9 +371,9 @@ export function delTreeNodeData(rowObj) {
           if (resObj.success !== true) {
             throw new utils.SuccessFalseException(resObj.message);
           }
-        })
+        });
     }
-  }
+  };
 }
 
 /**
@@ -404,10 +402,8 @@ export const showFormAlert = (show, message) => dispatch => dispatch({
 /**
  * 复合操作：获取节点数据（用于填充右侧表格）并记录选中的节点
  */
-export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch => {
-  return dispatch(fetchTreeNodeData(treeNodeData))
+export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch => dispatch(fetchTreeNodeData(treeNodeData))
     .then(() => dispatch(saveClickedNodeData(treeNodeData)));
-};
 
 /**
  * 复合操作：创建并刷新表格
@@ -422,7 +418,7 @@ export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getSta
 /**
  * 复合操作：更新并刷新表格
  */
-export const updateTreeNodeDataAndFetchTreeNodeData = (formData) => (dispatch, getState) => {
+export const updateTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(updateTreeNodeData(formData))
     .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)))
