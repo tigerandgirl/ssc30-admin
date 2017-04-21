@@ -97,8 +97,8 @@ class EntityMapTable extends Component {
       }
     });
     // 手动加两个字段
-    const { infoKey, data: { refEntity } } = this.props.clickedTreeNodeData;
-    formData.des_entityid = refEntity;
+    const { infoKey, key } = this.props.clickedTreeNodeData;
+    formData.des_entityid = key.split(':')[1];
     formData.mappingdefid = infoKey;
     this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
   }
@@ -121,8 +121,8 @@ class EntityMapTable extends Component {
       }
     });
     // 手动加两个字段
-    const { infoKey, data: { refEntity } } = this.props.clickedTreeNodeData;
-    formData.des_entityid = refEntity;
+    const { infoKey, key } = this.props.clickedTreeNodeData;
+    formData.des_entityid = key.split(':')[1];
     formData.mappingdefid = infoKey;
     this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
   }
