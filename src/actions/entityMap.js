@@ -402,8 +402,9 @@ export const showFormAlert = (show, message) => dispatch => dispatch({
 /**
  * 复合操作：获取节点数据（用于填充右侧表格）并记录选中的节点
  */
-export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch => dispatch(fetchTreeNodeData(treeNodeData))
-    .then(() => dispatch(saveClickedNodeData(treeNodeData)));
+export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch => dispatch(
+  fetchTreeNodeData(treeNodeData)
+).then(() => dispatch(saveClickedNodeData(treeNodeData)));
 
 /**
  * 复合操作：创建并刷新表格
