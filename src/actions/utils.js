@@ -257,7 +257,7 @@ export function setRequiredFields(baseDocId, { ...field }) {
     trader: {  // 客商
       code: true,
       name: true,
-      classifyid:true
+      classifyid: true
     },
     traderclass: {  // 客商类型
       code: true,
@@ -374,8 +374,8 @@ export function shouldNotRemoveFields(baseDocId, { ...field }) {
     valuerang: {
       pk_org: true
     },
-    trader:{
-      pk_org:true
+    trader: {
+      pk_org: true
     }
   };
 
@@ -533,6 +533,14 @@ export function setLengthValidation(field) {
   }
   // 对于boolean型/枚举/参照，不校验长度
   if (NOT_CHECK_THESE_TYPES.indexOf(field.type) !== -1) {
+    return field;
+  }
+  // 不校验参照类型，因为参照类型的type可能已经被修改为custom，所以只好再去校验一下datatype
+  if (field.datatype === 5) {
+    return field;
+  }
+  // 不校验公式编辑器类型
+  if (field.datatype === 20) {
     return field;
   }
   if (!field.validators) {
