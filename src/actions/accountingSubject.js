@@ -122,7 +122,7 @@ function updateTableDataSuccess(json, rowIdx) {
 
 function updateTableDataFail(message, resBody) {
   return {
-    type: types.TABLEDATA_UPDATE_FAIL,
+    type: types.TABLEDATA_UPDATE_FAILURE,
     message,
     resBody
   }
