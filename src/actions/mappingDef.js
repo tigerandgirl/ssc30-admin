@@ -48,6 +48,7 @@ export function fetchTableColumnsModel(baseDocId) {
               // 6. 有些字段的类型错误，暂时在前端写死新类型
               // 7. 参照字段，后端传来的是refinfocode，但是前端Refer组件使用的是refCode
               // 8. 添加参照的配置
+              // 9. 自定义布尔型字段的格式化
               let fieldsModel = resObj.data
                 /* 1 */ .filter(utils.shouldNotRemoveFields.bind(this, baseDocId))
                 /* 2 */ .map(utils.fixFieldTypo)
@@ -57,7 +58,8 @@ export function fetchTableColumnsModel(baseDocId) {
                 /* 6 */ .map(utils.fixDataTypes.bind(this, baseDocId))
                 /* 7 */ .map(utils.fixReferKey)
                 /* 8 */ .map(utils.setReferFields.bind(this, URL.ReferDataURL,
-                          URL.ReferUserDataURL));
+                          URL.ReferUserDataURL))
+                /* 9 */ .map(utils.setTableCellFormatter);
 
               // 初始化表单的默认数据
               const formDefaultData = utils.getFormDefaultData(fieldsModel);
@@ -112,7 +114,11 @@ export function fetchTableBodyData(itemsPerPage, startIndex) {
           if (resObj.success !== true) {
             throw new utils.SuccessFalseException(resObj.message);
           }
-          return resObj;
+          return {
+            tableData: resObj.data.data,
+            totalDataCount: resObj.totalnum,
+            totalPage: Math.ceil(resObj.totalnum / itemsPerPage)
+          };
         });
     }
   };

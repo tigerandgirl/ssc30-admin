@@ -28,6 +28,7 @@ const initState = {
   itemsPerPage: 15, // TODO 常量不应该放在这里
   startIndex: 0,
   activePage: 1,
+  totalPage: 1,
   loaded: false,
   tableData: [],
   fields: [],

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * exception lib
  */
@@ -110,18 +112,13 @@ export function parseJSON(response) {
  * }
  * 注意：不会修改输入的obj参数
  */
-export const removeEmpty = (obj) => {
-  let prop;
-  let newObj = {};
-  for (prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      if (obj[prop] == null || obj[prop] === undefined) {
-        continue;
-      }
-      newObj[prop] = obj[prop];
+export const removeEmpty = ({ ...obj }) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == null || obj[key] === undefined) {
+      delete obj[key];
     }
-  }
-  return newObj;
+  });
+  return obj;
 };
 
 /**
@@ -240,12 +237,29 @@ export function setRequiredFields(baseDocId, { ...field }) {
       code: true,
       name: true
     },
+    mappingdef: {
+      code: true,
+      name: true,
+      src_system: true,
+      des_system: true,
+      src_billtype: true,
+      des_billtype: true
+    },
     project: {
       code: true,
       name: true,
       classifyid: true
     },
     projectclass: {
+      code: true,
+      name: true
+    },
+    trader: {  // 客商
+      code: true,
+      name: true,
+      classifyid:true
+    },
+    traderclass: {  // 客商类型
       code: true,
       name: true
     },
@@ -268,15 +282,22 @@ export function setRequiredFields(baseDocId, { ...field }) {
 }
 
 /**
- * 有些字段需要隐藏，暂时写死在前端
- * 有些字段需要隐藏，但是又不是在JSON中使用hidden来控制的，
- * 而是口口相传的，所以写在这里
+ * 有些字段需要删除，但是又不是在JSON中使用hidden来控制的，暂时写死在前端
+ * 这些都是口口相传的，并没有原型指定，所以写在这里
+ * @param {string} baseDocId 基础档案id，比如“部门”的id为`dept`
+ * @param {Object} field 字段模型对象
  */
 export function shouldNotRemoveFields(baseDocId, { ...field }) {
   let shouldNotRemove = true;
-  // 将需要隐藏的字段设置为true，如果不指定，或者设定为false说明不隐藏
-  // 仅需要将打算隐藏的字段列出来。
-  const data = {
+  // 将需要删除的字段设置为true，如果不指定，或者设定为false说明不需要删除
+  // 仅需要将打算删除的字段列出来。
+  const removedFields = {
+    // 格式模板：
+    // ```js
+    // <baseDocId>: {
+    //   <fieldId>: true
+    // }
+    // ```
     accbook: {
       pk_org: true
     },
@@ -326,6 +347,11 @@ export function shouldNotRemoveFields(baseDocId, { ...field }) {
     feeitemclass: {
       pk_org: true
     },
+    mappingdef: {
+      src_action: true,
+      des_action: true,
+      effector: true,
+    },
     measuredoc: {
       pk_org: true
     },
@@ -347,12 +373,15 @@ export function shouldNotRemoveFields(baseDocId, { ...field }) {
     },
     valuerang: {
       pk_org: true
+    },
+    trader:{
+      pk_org:true
     }
   };
 
   // 按照业务的要求，这些字段是不需要的，但是后端非得传，
   // 所以暂时写死在前端
-  if (data[baseDocId] && data[baseDocId][field.id] === true) {
+  if (removedFields[baseDocId] && removedFields[baseDocId][field.id] === true) {
     shouldNotRemove = false;
   }
   // 以name开头后面跟数字，比如name2，这样的字段需要删除
@@ -471,6 +500,23 @@ export function fixReferKey(field) {
 }
 
 /**
+ * 根据字段类型来设定单元格的格式化方式
+ */
+export function setTableCellFormatter({ ...field }) {
+  switch (field.type) {
+    case 'boolean':
+      field.formatter = {
+        type: 'custom',
+        callback: value => (value ? '是' : '否')
+      };
+      break;
+    default:
+      break;
+  }
+  return field;
+}
+
+/**
  * 给字段设置长度校验
  */
 export function setLengthValidation(field) {
@@ -522,9 +568,8 @@ export const validation = {
     // 基于现有model提交新数据等环节，都有很大可能导致意想不到的问题。
     let ids = json.data.map(columnModel => columnModel.id);
     // 为什么没有import lodash还能使用_？
-    let duplicatedIds = _.filter(ids, (value, index, iteratee) => {
-      return _.includes(iteratee, value, index + 1);
-    });
+    let duplicatedIds = _.filter(ids, (value, index, iteratee) =>
+      _.includes(iteratee, value, index + 1));
     if (!_.isEmpty(duplicatedIds)) {
       isValid = false;
       message = `JSON中出现了重复的id：${duplicatedIds}，请立即停止所有操作，
@@ -545,13 +590,12 @@ export const validation = {
 export function filterChildSubFileds({ ...field }) {
   if (field.id === 'code' || field.id === 'name' || field.id === 'direction') {
     return true;
-  }/*else if(/^vr\d+/g.exec(field.id) !== null) {
-   return true;
-   }*/else if(field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3') {
+  } else if (/^vr\d+/g.exec(field.id) !== null) {
+    // return true;
+  } else if (field.id === 'vr1' || field.id === 'vr2' || field.id === 'vr3') {
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
 
 /**

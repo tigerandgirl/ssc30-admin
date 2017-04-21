@@ -1,13 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
 
-import { Grid, Row, Col, Button } from 'react-bootstrap';
 import Tree, { TreeNode } from 'rc-tree';
+import { Button } from 'react-bootstrap';
+
+import { fieldModelShape, tableRowShape } from './PropTypes';
+import * as Actions from '../actions/entityMap';
 
 import EntityMapTable from './EntityMapTable';
-
-import * as Actions from '../actions/entityMap';
 
 const DEFAULT_EXPANDED_LEVEL = 2;
 
@@ -20,17 +22,17 @@ const DEFAULT_EXPANDED_LEVEL = 2;
 function getDefaultExpandedKeys([...treeData]) {
   let expandedKeys = [];
   let level = 1;
-  const loop = nodes => {
-    nodes.forEach(node => {
+  const loop = (nodes) => {
+    nodes.forEach((node) => {
       if (level === DEFAULT_EXPANDED_LEVEL) {
         return;
       }
 
       expandedKeys.push(node.key);
       if (node.children) {
-        level++;
+        level += 1;
         loop(node.children);
-        level--;
+        level -= 1;
       }
     });
   };
@@ -49,7 +51,8 @@ function getDefaultExpandedKeys([...treeData]) {
 class EntityMap extends Component {
   static displayName = 'EntityMap'
   static propTypes = {
-    entityTableBodyData: PropTypes.array.isRequired,
+    entityFieldsModel: PropTypes.arrayOf(fieldModelShape).isRequired,
+    entityTableBodyData: PropTypes.arrayOf(tableRowShape).isRequired,
     fetchLeftTree: PropTypes.func.isRequired,
     fetchLeftTreeNodeChildren: PropTypes.func.isRequired,
     fetchTreeNodeDataAndSaveClickedNodeData: PropTypes.func.isRequired,
@@ -62,7 +65,10 @@ class EntityMap extends Component {
      * }
      * ```
      */
-    params: PropTypes.object.isRequired,
+    params: PropTypes.shape({
+      billTypeCode: PropTypes.string.isRequired,
+      mappingDefId: PropTypes.string.isRequired
+    }).isRequired,
     clickedTreeNodeData: PropTypes.object.isRequired,
     saveClickedNodeData: PropTypes.func.isRequired,
     showCreateDialog: PropTypes.func.isRequired,
@@ -80,6 +86,9 @@ class EntityMap extends Component {
       billTypeCode: this.props.params.billTypeCode,
       mappingDefId: this.props.params.mappingDefId
     };
+    this.handleCreate = this.handleCreate.bind(this);
+    this.onSelect = this.onSelect.bind(this);
+    this.onLoadData = this.onLoadData.bind(this);
   }
 
   componentWillMount() {
@@ -121,9 +130,7 @@ class EntityMap extends Component {
    * 用户点击节点左侧加号打开节点的时候
    */
   onLoadData(treeNode) {
-    const emptyPromise = new Promise((resolve/* , reject */) => {
-      return resolve();
-    });
+    const emptyPromise = new Promise(resolve => resolve());
 
     const ENABLE_LAZY_LOAD = 0;
     if (!ENABLE_LAZY_LOAD) {
@@ -140,52 +147,64 @@ class EntityMap extends Component {
   }
 
   render() {
-    const loop = (data) => {
-      return data.map((item) => {
-        if (item.children) {
-          return (
-            <TreeNode title={item.title} key={item.key}
-              treeNodeData={item}
-            >
-              {loop(item.children)}
-            </TreeNode>
-          );
-        }
+    const loop = data => data.map((item) => {
+      if (item.children) {
         return (
-          <TreeNode title={item.title} key={item.key} isLeaf={item.isLeaf}
+          <TreeNode
+            title={item.title}
+            key={item.key}
             treeNodeData={item}
-          />
+          >
+            {loop(item.children)}
+          </TreeNode>
         );
-      });
-    };
+      }
+      return (
+        <TreeNode
+          title={item.title}
+          key={item.key}
+          isLeaf={item.isLeaf}
+          treeNodeData={item}
+        />
+      );
+    });
 
     const treeNodes = loop(this.props.treeData);
     const defaultExpandedKeys = getDefaultExpandedKeys(this.props.treeData);
 
     return (
-        <div>
-            <div className="head">
-                <button className="btn btn-default" onClick={::this.handleCreate}>新增</button>
-            </div>
-            <div className="ledger-content clearfix">
-                <div className="ledger-content-left">
-                    {this.props.treeData.length !== 0
-                      ? <Tree
-                          onSelect={::this.onSelect}
-                          defaultExpandedKeys={defaultExpandedKeys}
-                          loadData={::this.onLoadData}
-                        >
-                          {treeNodes}
-                        </Tree>
-                      : null
-                    }
-                </div>
-                <div className="ledger-content-right">
-                    <EntityMapTable />
-                </div>
-            </div>
+      <div>
+        <div className="head">
+          <Button onClick={browserHistory.goBack}>返回</Button>
+          {' '}
+          <button
+            className="btn btn-default"
+            onClick={this.handleCreate}
+            disabled={this.props.entityFieldsModel.length === 0}
+          >
+            新增
+          </button>
         </div>
-
+        <div className="ledger-content clearfix">
+          <div className="ledger-content-left">
+            {
+              this.props.treeData.length !== 0
+              ?
+                <Tree
+                  onSelect={this.onSelect}
+                  defaultExpandedKeys={defaultExpandedKeys}
+                  loadData={this.onLoadData}
+                >
+                  { treeNodes }
+                </Tree>
+              : null
+            }
+          </div>
+          <div className="ledger-content-right">
+            <EntityMapTable />
+          </div>
+        </div>
+      </div>
     );
   }
 }
@@ -194,13 +213,10 @@ class EntityMap extends Component {
  * @param {Object} state
  * @param {Object} ownProps
  */
-const mapStateToProps = (state) => {
-  return {...state.entityMap};
-};
+const mapStateToProps = state => ({ ...state.entityMap });
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(Actions, dispatch);
-};
+
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(EntityMap);

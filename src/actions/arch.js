@@ -193,7 +193,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
         throw error;
       })
       .then(utils.parseJSON)
-      .then(json => {
+      .then((json) => {
         if (json.success === true) {
           // 进行业务层的数据校验
           const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
@@ -210,7 +210,7 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
           dispatch(receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
             json.message));
         }
-      }).catch(err => {
+      }).catch((err) => {
         console.log('fetch table body error:', err);
       });
   };
@@ -445,7 +445,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
         let error = new Error(response.statusText);
         error.response = response;
         response.text().then(text => {
-          dispatch(updateTableDataFailure(('后端返回的HTTP status code不是200', text)));
+          dispatch(updateTableDataFailure(('', text)));
         });
         throw error;
       }
@@ -455,7 +455,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       if (json.success === true) {
         dispatch(updateTableDataSuccess(json, rowIdx));
       } else {
-        dispatch(updateTableDataFailure('获取表格数据失败，后端返回的success是false',
+        dispatch(updateTableDataFailure('',
           json.message));
       }
     }

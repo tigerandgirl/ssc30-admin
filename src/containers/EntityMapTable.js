@@ -7,11 +7,14 @@ import { Grid as SSCGrid, Form } from 'ssc-grid';
 import Formula from 'ssc-formula';
 import { Refers } from 'ssc-refer';
 
+// 后端接口URL
+import * as URL from '../constants/URLs';
+import { fieldModelShape, tableRowShape } from './PropTypes';
+import * as Actions from '../actions/entityMap';
+
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 // import FormulaField from '../components/FormulaField';
-
-import * as Actions from '../actions/entityMap';
 
 class EntityMapTable extends Component {
   static displayName = 'EntityMapTable'
@@ -20,8 +23,8 @@ class EntityMapTable extends Component {
     createDialog: PropTypes.object.isRequired,
     editDialog: PropTypes.object.isRequired,
     editFormData: PropTypes.object.isRequired,
-    entityTableBodyData: PropTypes.array.isRequired,
-    entityFieldsModel: PropTypes.array.isRequired,
+    entityFieldsModel: PropTypes.arrayOf(fieldModelShape).isRequired,
+    entityTableBodyData: PropTypes.arrayOf(tableRowShape).isRequired,
     pageAlert: PropTypes.object.isRequired,
     serverMessage: PropTypes.string.isRequired,
     showCreateDialog: PropTypes.func.isRequired,
@@ -90,24 +93,24 @@ class EntityMapTable extends Component {
     // event.preventDefault();
   }
 
-  handlePageAlertDismiss(){
+  handlePageAlertDismiss() {
     this.props.showPageAlert(false, '');
   }
 
-  handleFormAlertDismiss(){
+  handleFormAlertDismiss() {
     this.props.showFormAlert(false, '');
   }
 
   getCustomComponent() {
     let container = this;
     return React.createClass({
-      handleEdit(event) {
+      handleEdit(/* event*/) {
         const { rowIdx, rowObj } = this.props;
         // 显示编辑对话框并填充表单
         container.props.showEditDialog(true, rowIdx, rowObj);
       },
-      handleRemove(event) {
-        if (!confirm("是否删除？")) {
+      handleRemove(/* event*/) {
+        if (!confirm('是否删除？')) {
           return;
         }
         const { rowIdx, rowObj } = this.props;
@@ -117,10 +120,14 @@ class EntityMapTable extends Component {
       render() {
         return (
           <td>
-            <span onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil" title="编辑"></span>
-            <span onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash" title="删除"></span>
+            <span
+              onClick={this.handleEdit}
+              className="glyphicon glyphicon-pencil" title="编辑"
+            />
+            <span
+              onClick={this.handleRemove}
+              className="glyphicon glyphicon-trash" title="删除"
+            />
           </td>
         );
       }
@@ -137,7 +144,7 @@ class EntityMapTable extends Component {
    */
   getFormDefaultData(columnsModel) {
     let formData = {};
-    columnsModel.forEach(fieldModel => {
+    columnsModel.forEach((fieldModel) => {
       // 隐藏字段，比如id字段，不用初始化值
       if (fieldModel.hidden === true) {
         return;
@@ -169,31 +176,31 @@ class EntityMapTable extends Component {
 
   getFormulaField(refCode, entityId) {
     return React.createClass({
-      getInitialState: function() {
+      getInitialState() {
         return {
           value: this.props.customFieldValue
         };
       },
-      handleChange: function(event) {
+      handleChange(event) {
         let value = event.target.value;
         this.setState({ value });
         if (this.props.onCustomFieldChange) {
           this.props.onCustomFieldChange(value);
         }
       },
-      handleClick: function() {
+      handleClick() {
         this.formula.showAlert();
       },
       /**
        * 公式编辑器点击完成
        */
-      handleDataBack: function(data) {
+      handleDataBack(data) {
         this.setState({ value: data });
         if (this.props.onCustomFieldChange) {
           this.props.onCustomFieldChange(data);
         }
       },
-      render: function() {
+      render() {
         return (
           <div>
             <input
@@ -202,6 +209,15 @@ class EntityMapTable extends Component {
               onClick={this.handleClick}
             />
             <Formula
+              config={{
+                workechart: {
+                  metatree: URL.FormulaURL
+                },
+                refer: {
+                  referDataUrl: URL.ReferDataURL,
+                  referDataUserUrl: URL.ReferUserDataURL
+                }
+              }}
               formulaText={this.state.value}
               ref={(ref) => { this.formula = ref; }}
               // source entity id 源实体
@@ -216,7 +232,7 @@ class EntityMapTable extends Component {
     });
   }
 
-  getReferField() {
+  getReferField(refCode) {
     // 封装一个参照组件作为自定义组件
     return React.createClass({
       propTypes: {
@@ -260,11 +276,15 @@ class EntityMapTable extends Component {
       },
       render() {
         const referConditions = {
-          refCode: 'dept',
+          refCode,
           refType: 'tree',
+          // 赵老师说：参照出不来name的问题，我这边改了下，在请求中加个参数 ，
+          // 如下实例 "convertcol":"{name:displayName}"，标示将数据库中的
+          // displayName字段对照到name，这样，就可以了
+          convertcol: '{name:displayName}',
           rootName: '部门'
         };
-        const referDataUrl = 'http://127.0.0.1:3009/refbase_ctr/queryRefJSON';
+        // URL.ReferUserDataURL
         return (
           <Refers
             disabled={false}
@@ -275,7 +295,7 @@ class EntityMapTable extends Component {
             onChange={this.handleChange}
             placeholder="请选择..."
             referConditions={referConditions}
-            referDataUrl={referDataUrl}
+            referDataUrl={URL.ReferDataURL}
             referType="list"
             defaultSelected={this.props.customFieldValue}
             ref={(ref) => { this.myrefers = ref; }}
@@ -396,13 +416,9 @@ class EntityMapTable extends Component {
  * @param {Object} state
  * @param {Object} ownProps
  */
-const mapStateToProps = (state) => {
-  return { ...state.entityMap };
-};
+const mapStateToProps = state => ({ ...state.entityMap });
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(Actions, dispatch);
-};
+const mapDispatchToProps = dispatch => bindActionCreators(Actions, dispatch);
 
 // The component will subscribe to Redux store updates.
 export default connect(mapStateToProps, mapDispatchToProps)(EntityMapTable);

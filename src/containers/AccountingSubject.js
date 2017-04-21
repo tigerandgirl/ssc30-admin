@@ -344,8 +344,8 @@ class AccountingSubject extends Component {
         <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
                     onDismiss={::this.handlePageAlertDismiss}
         >
-          <p>{adminAlert.message}</p>
-          { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
+          {/**  <p>{adminAlert.message}</p>
+          { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }  **/}
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <div>
@@ -368,8 +368,8 @@ class AccountingSubject extends Component {
           <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
                       onDismiss={::this.handleFormAlertDismiss}
           >
-            <p>{formAlert.message}</p>
-            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
+            {/** <p>{formAlert.message}</p>
+            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }**/}
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <SSCForm

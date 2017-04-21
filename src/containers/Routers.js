@@ -70,6 +70,10 @@ const Routers = (
       component={MappingDef}
     />
     <Route
+      path="/mapping-def"
+      component={MappingDef}
+    />
+    <Route
       path="/mapping-def2"
       component={MappingDef2}
     />

@@ -50,7 +50,9 @@ export default handleActions({
     ...state,
     tableBodyDataLoading: false,
     tableBodyDataLoaded: true,
-    tableBodyData: [...action.payload.data.data]
+    tableBodyData: [...action.payload.tableData],
+    totalDataCount: action.payload.totalDataCount,
+    totalPage: action.payload.totalPage
   }),
   [ActionTypes.MAPPING_DEF_TABLE_BODY_DATA_FAILURE]: (state, action) => ({
     ...state,

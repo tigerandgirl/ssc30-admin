@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 基础档案
  */
 
@@ -14,8 +14,9 @@ import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
 import MessageTips from '../components/MessageTips';
 import MessageConfirm from '../components/MessageConfirm';
-
+   
 import * as Actions from '../actions/arch';
+import getBaseDocTypes from '../constants/BaseDocTypes';
 
 class ArchContainer extends Component {
   static displayName = 'ArchContainer'
@@ -23,16 +24,25 @@ class ArchContainer extends Component {
     /**
      * [store] 字段模型
      */
-    fields: PropTypes.array.isRequired,
+    fields: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      datatype: PropTypes.number.isRequired,
+      label: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired
+    })).isRequired,
     /**
      * [store] 表体数据
      */
-    tableData: PropTypes.array.isRequired,
+    tableData: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired
+    })).isRequired,
     itemsPerPage: PropTypes.number.isRequired,
     startIndex: PropTypes.number.isRequired,
     fetchTableBodyData: PropTypes.func.isRequired,
     fetchTableColumnsModel: PropTypes.func.isRequired,
-    params: PropTypes.object.isRequired,
+    params: PropTypes.shape({
+      baseDocId: PropTypes.string.isRequired
+    }).isRequired,
     showCreateDialog: PropTypes.func.isRequired,
     closeEditDialog: PropTypes.func.isRequired,
     hideCreateDialog: PropTypes.func.isRequired,
@@ -41,34 +51,32 @@ class ArchContainer extends Component {
   state = {
   }
 
+
   constructor(props) {
     super(props);
-    const { params: { baseDocId }} = props;
-    
-    if( baseDocId == "dept" ||baseDocId == "project"
-        || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
-          this.state={
-            conditions : [ {"field":"enable","datatype":"boolean","value":"true"} ]
-          }
+    const { params: { baseDocId } } = props;
+    if (baseDocId === 'dept' || baseDocId === 'project'
+        || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
+      this.state = {
+        conditions: [{ field: 'enable', datatype: 'boolean', value: 'true' }]
+      };
     } else {
-      this.state={
-        conditions : [  ]
-      }
+      this.state = {
+        conditions: []
+      };
     }
-    
-
   }
 
   componentWillMount() {
-    const { itemsPerPage, startIndex ,params: { baseDocId }} = this.props;
-  
-    let conditions =  [];
-    if( baseDocId == "dept" ||baseDocId == "project"
-        || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
-        conditions =  this.state.conditions ;
+    const { itemsPerPage, startIndex, params: { baseDocId } } = this.props;
+
+    let conditions = [];
+    if (baseDocId == 'dept' || baseDocId == 'project'
+        || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
+      conditions = this.state.conditions;
     }
 
-    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions );
+    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
     this.props.fetchTableColumnsModel(baseDocId);
   }
 
@@ -81,9 +89,19 @@ class ArchContainer extends Component {
     const currentType = this.props.params.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
-      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, []);
+      let conditions = [];
+      if (nextType == 'dept' || nextType == 'project'
+          || nextType == 'bankaccount' || nextType == 'feeitem') {
+        conditions =  [{ field: 'enable', datatype: 'boolean', value: 'true' }];
+      }
+
+      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, conditions);
       this.props.fetchTableColumnsModel(nextType);
+      this.setState({
+        multiple: false
+      })
     }
+
   }
 
   // admin card actions
@@ -129,18 +147,18 @@ class ArchContainer extends Component {
     // ref is " user " add param : personmobile
     // bug des: 传入手机号为空
 
-    let phoneList =  ["project", "dept", "feeitem"];
-      _.map(phoneList,function( obj ,ind ){
-          if( baseDocId == obj ){
-            if(formData.person){
-              if(formData.person.phone){
-                  formData.personmobile =  formData.person.phone ;
-               }
-              if(formData.person.mobile ){
-                formData.personmobile =  formData.person.mobile ;
-              }
-            }
+    let phoneList = ['project', 'dept', 'feeitem'];
+    _.map(phoneList, (obj, ind) => {
+      if (baseDocId == obj) {
+        if (formData.person) {
+          if (formData.person.phone) {
+            formData.personmobile = formData.person.phone;
           }
+          if (formData.person.mobile) {
+            formData.personmobile = formData.person.mobile;
+          }
+        }
+      }
     });
 
     if (baseDocId === 'bankaccount') {
@@ -149,7 +167,7 @@ class ArchContainer extends Component {
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex,this.state.conditions);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex, this.state.conditions);
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
@@ -162,25 +180,24 @@ class ArchContainer extends Component {
     const { baseDocId } = this.props.params;
 
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
-    var phoneList =  ["project" , "dept" , "feeitem"] ;
-    _.map(phoneList,function( obj ,ind ){
-        if( baseDocId == obj ){
-          if(formData.person){
-            if(formData.person.phone ){
-                formData.personmobile =  formData.person.phone ;
-             }
-            if(formData.person.mobile ){
-              formData.personmobile =  formData.person.mobile ;
-            }
+    let phoneList = ['project', 'dept', 'feeitem'];
+    _.map(phoneList, (obj, ind) => {
+      if (baseDocId == obj) {
+        if (formData.person) {
+          if (formData.person.phone) {
+            formData.personmobile = formData.person.phone;
           }
-
+          if (formData.person.mobile) {
+            formData.personmobile = formData.person.mobile;
+          }
         }
-    })
+      }
+    });
 
-    if(baseDocId == "bankaccount"){
-     if(formData.depositbank){
-         formData.bank = formData.depositbank ;
-     }
+    if (baseDocId == 'bankaccount') {
+      if (formData.depositbank) {
+        formData.bank = formData.depositbank;
+      }
     }
 
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
@@ -190,31 +207,35 @@ class ArchContainer extends Component {
     event.preventDefault();
   }
 
-  handlePageAlertDismiss(){
+  handlePageAlertDismiss() {
     this.props.hideAdminAlert();
   }
 
-  handleFormAlertDismiss(){
+  handleFormAlertDismiss() {
     this.props.hideAdminAlert();
   }
 
   handleEnableCheck(event) {
-    var e = event.target;
-    const { params: {baseDocId}, itemsPerPage, startIndex } = this.props;
-    var conditions = [
-      {"field":"enable","datatype":"boolean","value":"true"}
+    let e = event.target;
+    const { params: { baseDocId }, itemsPerPage, startIndex } = this.props;
+    let multiple = false;
+    let conditions = [
+      { field: 'enable', datatype: 'boolean', value: 'true' }
     ];
-    if(e.checked){
+    if (e.checked) {
       conditions = [];
+      multiple = true
+
     }
     this.setState({
-      conditions:conditions
-    })
+      conditions,
+      multiple: multiple
+    });
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
 
   // 关闭弹窗口
-  handleCloseMessage(){
+  handleCloseMessage() {
     this.props.handleMessage();
   }
 
@@ -227,31 +248,30 @@ class ArchContainer extends Component {
   handlePagination(eventKey) {
     const { itemsPerPage, tableData } = this.props;
     let nextPage = eventKey;
-    let startIndex = (nextPage-1) * itemsPerPage;
-    let conditions = this.state.conditions ;
-    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage , conditions);
+    let startIndex = (nextPage - 1) * itemsPerPage;
+    let conditions = this.state.conditions;
+    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage, conditions);
   }
 
   getCustomComponent() {
     let container = this;
     return React.createClass({
       handleEdit(event) {
-
         const { rowIdx, rowObj } = this.props;
         const { fields } = container.props;
 
-        var control = ["dept", "feeitemclass" , "projectclass","bank"]; // 需要过滤的参照类型
-        _.map( fields , function(obj ,ind ){
-            _.map(control, function( con ,i  ){
-                if( con == obj.refCode  ){
-                  var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
-                  container.props.updateReferFields(rowObjCode, ind );
-                }
-            })
-         })
+        let control = ['dept', 'feeitemclass', 'projectclass', 'bank']; // 需要过滤的参照类型
+        _.map(fields, (obj, ind) => {
+          _.map(control, (con, i) => {
+            if (con == obj.refCode) {
+              let rowObjCode = `{\"id\"=\"${rowObj.id}\"}`;
+              container.props.updateReferFields(rowObjCode, ind);
+            }
+          });
+        });
 
         // 修复后端数据中的null
-        fields.forEach(field => {
+        fields.forEach((field) => {
           if (field.type === 'string') {
             if (rowObj[field.id] === null) {
               rowObj[field.id] = '';
@@ -265,16 +285,15 @@ class ArchContainer extends Component {
         // container.props.initEditFormData(rowObj);
       },
       handleRemove(event) {
-
-       const { rowIdx, rowObj } = this.props;
-       const { startIndex } = container.props;
-       const { baseDocId } = container.props.params;
-       var param ={
-            isShow :true ,
-            txt:"是否删除？",
-            sureFn:function(){
-               container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
-            }
+        const { rowIdx, rowObj } = this.props;
+        const { startIndex } = container.props;
+        const { baseDocId } = container.props.params;
+        let param = {
+          isShow: true,
+          txt: '是否删除？',
+          sureFn() {
+            container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+          }
         };
 
         container.refs.messageConfirm.initParam(param);
@@ -292,14 +311,14 @@ class ArchContainer extends Component {
       },
 
       render() {
-        var enable =  this.props.rowObj.enable ;
+        let enable = this.props.rowObj.enable;
         const { params: {
           baseDocId
-        }} = container.props;
-        var resultDom = (   <span onClick={this.handleRemove}>删除</span> );
-        if( baseDocId == "dept" ||baseDocId == "project"
-            || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
-          resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
+        } } = container.props;
+        let resultDom = (<span onClick={this.handleRemove}>删除</span>);
+        if (baseDocId == 'dept' || baseDocId == 'project'
+            || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
+          resultDom = (<span onClick={this.handleEnable}>{enable == true ? '停用' : '启用'}</span>);
         }
         return (
           <td>
@@ -321,7 +340,7 @@ class ArchContainer extends Component {
    */
   getFormDefaultData(columnsModel) {
     let formData = {};
-    columnsModel.forEach(fieldModel => {
+    columnsModel.forEach((fieldModel) => {
       // 隐藏字段，比如id字段，不用初始化值
       if (fieldModel.hidden === true) {
         return;
@@ -366,6 +385,7 @@ class ArchContainer extends Component {
       },
       itemsPerPage
     } = this.props;
+    const {multiple} = this.state;
 
     // 表单字段模型 / 表格列模型
     let cols = fields || [];
@@ -373,55 +393,68 @@ class ArchContainer extends Component {
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     const formDefaultData = this.getFormDefaultData(cols);
 
-    let checkBoxContent = "";
-    if( baseDocId == "dept" ||baseDocId == "project"
-        || baseDocId == "bankaccount" ||baseDocId == "feeitem"  ){
-
-      checkBoxContent  =(
-          <div style={{ display: 'inline-block', float: 'left' }}>
-            <Checkbox onChange={::this.handleEnableCheck}>显示停用</Checkbox>
-          </div>
-      )
+    let checkBoxContent = '';
+    if (baseDocId == 'dept' || baseDocId == 'project'
+        || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
+      checkBoxContent = (
+        <div style={{ display: 'inline-block', float: 'left' }}>
+          <Checkbox   checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
+        </div>
+      );
     }
-      function setFormatterBoolean(field) {
-          switch (field.type) {
-              case 'boolean':
-                  field.formatter = {
-                      type: 'custom',
-                      callback: function (value) {
-                          return value ? '是' : '否';
-                      }
-                  };
-                  break;
-              default:
-                  break;
-          }
-          return field;
+    function setFormatterBoolean(field) {
+      switch (field.type) {
+        case 'boolean':
+          field.formatter = {
+            type: 'custom',
+            callback(value) {
+              return value ? '是' : '否';
+            }
+          };
+          break;
+        default:
+          break;
       }
-      cols = cols.map(setFormatterBoolean);
+      return field;
+    }
+    cols = cols.map(setFormatterBoolean);
+
+    let value = '客商';
+    getBaseDocTypes().forEach((item)=>{
+        if(item.id == this.props.params.baseDocId){
+          value = item.name;
+        }
+    });
 
     return (
       <div className="content">
         <div className="blank" />
-        <Spinner show={ spinner.show  } text="努力加载中..."></Spinner>
-        <MessageTips isShow={ messageTips.isShow}  onHideEvent = {::this.handleCloseMessage}
-                     txt={messageTips.txt} autoHide={ true } > </MessageTips>
-        <MessageConfirm  ref="messageConfirm"/>
-        <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
+        <Spinner show={spinner.show} text="努力加载中..." />
+        <MessageTips
+          isShow={messageTips.isShow} onHideEvent={::this.handleCloseMessage}
+          txt={messageTips.txt} autoHide
+        />
+        <MessageConfirm ref="messageConfirm" />
+        <AdminAlert
+          show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={::this.handlePageAlertDismiss}
         >
-          <p>{adminAlert.message}</p>
-          { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
           { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
         </AdminAlert>
         <div>
+          <div className="header">
+              <div className="header-title">
+                  <span>{value}</span>
+              </div>
+          </div>
           <div className="btn-bar">
             {checkBoxContent}
             <div className="fr">
               <Button onClick={::this.handleCreate}>新增</Button>
             </div>
           </div>
-          <SSCGrid tableData={tableData} columnsModel={cols} className="ssc-grid"
+          <SSCGrid
+            tableData={tableData} columnsModel={cols} className="ssc-grid"
             paging
             itemsPerPage={itemsPerPage}
             totalPage={this.props.totalPage}
@@ -432,11 +465,10 @@ class ArchContainer extends Component {
           />
         </div>
         <AdminEditDialog className="edit-form" title="编辑" {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
-          <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
+          <AdminAlert
+            show={formAlert.show} bsStyle={formAlert.bsStyle}
             onDismiss={::this.handleFormAlertDismiss}
           >
-            <p>{formAlert.message}</p>
-            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <SSCForm
@@ -465,7 +497,7 @@ class ArchContainer extends Component {
  * @param {Object} state
  * @param {Object} ownProps
  */
-const mapStateToProps = state => ({...state.arch,
+const mapStateToProps = state => ({ ...state.arch,
   arch: state.arch,
   tableData: state.arch.tableData,
   fields: state.arch.fields,

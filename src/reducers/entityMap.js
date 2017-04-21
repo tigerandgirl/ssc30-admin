@@ -40,7 +40,7 @@ export default handleActions({
 
   // 获取三层数据
 
-  [ActionTypes.LEFT_TREE_REQUEST]: (state) => ({
+  [ActionTypes.LEFT_TREE_REQUEST]: state => ({
     ...state,
     loading: true
   }),
@@ -74,7 +74,7 @@ export default handleActions({
    * 更新指定节点下的子节点
    */
 
-  [ActionTypes.TEMPLATE_NODE_REQUEST]: (state) => ({
+  [ActionTypes.TEMPLATE_NODE_REQUEST]: state => ({
     ...state,
     loading: true
   }),
@@ -108,7 +108,7 @@ export default handleActions({
   /**
    * 右表的字段模型和表体数据
    */
-  [ActionTypes.ENTITY_TREE_NODE_DATA_REQUEST]: (state) => ({
+  [ActionTypes.ENTITY_TREE_NODE_DATA_REQUEST]: state => ({
     ...state,
     entityFieldsModelloading: true
   }),
@@ -134,13 +134,15 @@ export default handleActions({
    * 带表单的编辑对话框
    */
 
-  [ActionTypes.ENTITY_MAP_EDIT_DIALOG_SHOW]: (state, action) => ({
-    ...state,
+  [ActionTypes.ENTITY_MAP_EDIT_DIALOG_SHOW]: (state, action) => ({ ...state,
     editDialog: {
       show: action.show,
       rowIdx: action.rowIdx
     },
-    editFormData: action.editFormData,
+    // http://redux.js.org/docs/recipes/reducers/ImmutableUpdatePatterns.html
+    // 对于nested object，最好先做扁平化处理，否则容易把references传进来，比如导致了
+    // 这个bug: FICLOUD-493
+    editFormData: { ...action.editFormData },
     serverMessage: ''
   }),
 
@@ -162,11 +164,11 @@ export default handleActions({
    */
 
   // 添加
-  [ActionTypes.TREE_NODE_DATA_ADD_REQUEST]: (state) => ({
+  [ActionTypes.TREE_NODE_DATA_ADD_REQUEST]: state => ({
     ...state,
     treeNodeDataLoading: true
   }),
-  [ActionTypes.TREE_NODE_DATA_ADD_SUCCESS]: (state) => ({
+  [ActionTypes.TREE_NODE_DATA_ADD_SUCCESS]: state => ({
     ...state,
     treeNodeDataLoading: false,
     treeNodeDataLoaded: true
@@ -177,11 +179,11 @@ export default handleActions({
     serverMessage: { $set: action.payload.message }
   }),
   // 修改
-  [ActionTypes.TREE_NODE_DATA_UPDATE_REQUEST]: (state) => ({
+  [ActionTypes.TREE_NODE_DATA_UPDATE_REQUEST]: state => ({
     ...state,
     treeNodeDataLoading: true
   }),
-  [ActionTypes.TREE_NODE_DATA_UPDATE_SUCCESS]: (state) => ({
+  [ActionTypes.TREE_NODE_DATA_UPDATE_SUCCESS]: state => ({
     ...state,
     treeNodeDataLoading: false,
     treeNodeDataLoaded: true,
@@ -192,11 +194,11 @@ export default handleActions({
     serverMessage: { $set: action.payload.message }
   }),
   // 删除
-  [ActionTypes.TREE_NODE_DATA_DEL_REQUEST]: (state) => ({
+  [ActionTypes.TREE_NODE_DATA_DEL_REQUEST]: state => ({
     ...state,
     treeNodeDataLoading: true
   }),
-  [ActionTypes.TREE_NODE_DATA_DEL_SUCCESS]: (state) => ({
+  [ActionTypes.TREE_NODE_DATA_DEL_SUCCESS]: state => ({
     ...state,
     treeNodeDataLoading: false,
     treeNodeDataLoaded: true,
