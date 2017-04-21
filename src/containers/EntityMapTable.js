@@ -34,11 +34,10 @@ class EntityMapTable extends Component {
     updateTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired
   }
 
-  state = {
-  }
-
   constructor(props) {
     super(props);
+    this.handleCreateFormChange = this.handleCreateFormChange.bind(this);
+    this.state = {};
   }
 
   componentWillMount() {
@@ -61,6 +60,13 @@ class EntityMapTable extends Component {
     this.props.showCreateDialog(false, {});
   }
 
+  handleCreateFormChange(fieldId, value) {
+    if (fieldId === 'src_entityid') {
+      this.setState({
+        src_entityid: value[0].id
+      });
+    }
+  }
   /**
    * formData
    * 如果是refer
@@ -350,7 +356,7 @@ class EntityMapTable extends Component {
             // TODO 当创建窗口弹出的时候，需要用户先点击选择“源实体”，然后从选择结果中取出
             // id，作为getFormulaField的第二个参数。
             let srcEntityid = {
-              id: 'xxdebug'
+              id: this.state.src_entityid
             };
             fieldModel.component = this.getFormulaField(
               fieldModel.refinfocode,
@@ -426,6 +432,7 @@ class EntityMapTable extends Component {
             fieldsModel={entityFieldsModel2}
             defaultData={formDefaultData}
             onSubmit={::this.handleCreateFormSubmit}
+            onChange={this.handleCreateFormChange}
             onReset={::this.handleCreateFormReset}
           />
         </AdminEditDialog>
