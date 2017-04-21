@@ -150,12 +150,9 @@ export function updateTableBodyData(formData) {
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
+        .then((resObj) => {
           if (resObj.success !== true) {
-            throw {
-              name: 'SUCCESS_FALSE',
-              message: resObj.message
-            };
+            throw new utils.SuccessFalseException(resObj.message);
           }
         });
     }
@@ -187,7 +184,7 @@ export function deleteTableBodyData(rowObj) {
       return fetch(url, opts)
         .then(utils.checkHTTPStatus)
         .then(utils.parseJSON)
-        .then(resObj => {
+        .then((resObj) => {
           if (resObj.success !== true) {
             throw new utils.SuccessFalseException(resObj.message);
           }
@@ -206,7 +203,7 @@ export const SHOW_PAGE_ALERT = 'SHOW_PAGE_ALERT';
  * @param {Boolean} show 是否显示
  */
 export function showPageAlert(show) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: SHOW_PAGE_ALERT,
       show

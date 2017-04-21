@@ -1,5 +1,5 @@
 export default function callAPIMiddleware({ dispatch, getState }) {
-  return next => action => {
+  return next => (action) => {
     const {
       types,
       callAPI,
@@ -28,34 +28,34 @@ export default function callAPIMiddleware({ dispatch, getState }) {
       return undefined;
     }
 
-    const [ requestType, successType, failureType ] = types;
+    const [requestType, successType, failureType] = types;
 
     dispatch(Object.assign({}, payload, {
       type: requestType
     }));
 
-    return callAPI(getState()).then(
-      response => dispatch({
-        payload: {...response},
-        type: successType
-      }),
-      error => dispatch({
-        type: failureType,
-        error,
-        payload: {
-          bsStyle: 'danger',
-          message: error.message
-        }
-      })
-    ).catch(
-      error => dispatch({
-        type: failureType,
-        error,
-        payload: {
-          bsStyle: 'danger',
-          message: error.message
-        }
-      })
-    );
+    return callAPI(getState())
+      .then(
+        response => dispatch({
+          payload: { ...response },
+          type: successType
+        }),
+        // 处理自定义异常，比如SuccessFalseException
+        error => dispatch({
+          type: failureType,
+          error,
+          payload: {
+            message: error.message
+          }
+        })
+      ).catch(
+        error => dispatch({
+          type: failureType,
+          error,
+          payload: {
+            message: error.message
+          }
+        })
+      );
   };
 }
