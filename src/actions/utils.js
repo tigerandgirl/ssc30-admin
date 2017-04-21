@@ -257,7 +257,7 @@ export function setRequiredFields(baseDocId, { ...field }) {
     trader: {  // 客商
       code: true,
       name: true,
-      classifyid: true
+      classifyid: false
     },
     traderclass: {  // 客商类型
       code: true,
@@ -375,7 +375,8 @@ export function shouldNotRemoveFields(baseDocId, { ...field }) {
       pk_org: true
     },
     trader: {
-      pk_org: true
+      pk_org: true,
+      classifyid: false
     }
   };
 
