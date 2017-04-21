@@ -342,6 +342,10 @@ export function shouldNotRemoveFields(baseDocId, { ...field }) {
     dept: {
       pk_org: true
     },
+    entity: {
+      des_entityid: true,
+      mappingdefid: true
+    },
     feeitem: {
       pk_org: true
     },
