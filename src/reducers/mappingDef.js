@@ -12,6 +12,9 @@ const initState = {
   tableBodyDataLoading: false,
   tableBodyDataLoaded: false,
   tableBodyData: [],
+  // 表体保存
+  tableBodyDataSaving: false,
+  tableBodyDataSaved: false,
   // 表格分页
   itemsPerPage: 15, // TODO 常量不应该放在这里
   startIndex: 0,
@@ -61,7 +64,7 @@ export default handleActions({
     pageAlert: {
       ...state.pageAlert,
       show: true,
-      bsStyle: action.payload.bsStyle,
+      bsStyle: 'danger',
       message: action.payload.message
     }
   }),
@@ -85,9 +88,25 @@ export default handleActions({
     pageAlert: {
       ...state.pageAlert,
       show: true,
-      bsStyle: action.payload.bsStyle,
+      bsStyle: 'danger',
       message: action.payload.message
     }
+  }),
+
+  // 修改表体数据
+  [ActionTypes.MAPPING_DEF_TABLE_BODY_DATA_UPDATE_REQUEST]: state => ({
+    ...state,
+    tableBodyDataSaving: true
+  }),
+  [ActionTypes.MAPPING_DEF_TABLE_BODY_DATA_UPDATE_SUCCESS]: state => ({
+    ...state,
+    tableBodyDataSaving: false,
+    tableBodyDataSaved: true,
+  }),
+  [ActionTypes.MAPPING_DEF_TABLE_BODY_DATA_UPDATE_FAILURE]: (state, action) => update(state, {
+    tableBodyDataSaving: { $set: false },
+    tableBodyDataSaved: { $set: false },
+    serverMessage: { $set: action.payload.message }
   }),
 
   /**
@@ -109,14 +128,16 @@ export default handleActions({
       show: action.show,
       rowIdx: action.rowIdx
     },
-    editFormData: action.editFormData
+    editFormData: action.editFormData,
+    serverMessage: ''
   }),
   [ActionTypes.MAPPING_DEF_CREATE_DIALOG_SHOW]: (state, action) => ({
     ...state,
     createDialog: {
       show: action.show
     },
-    createFormData: action.createFormData
+    createFormData: action.createFormData,
+    serverMessage: ''
   })
 
 }, initState);
