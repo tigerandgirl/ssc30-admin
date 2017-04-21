@@ -345,7 +345,7 @@ class EntityMapTable extends Component {
           fieldModel.component = this.getReferField(fieldModel.refinfocode);
           // 初始化编辑表单的值
           if (!_.isEmpty(editFormData)) {
-            editFormData[fieldModel.id] = [editFormData[fieldModel.id], {}];
+            editFormData[fieldModel.id] = [editFormData[fieldModel.id]];
           }
           // 表格单元格的格式化
           fieldModel.formatter = {
