@@ -122,12 +122,12 @@ class EntityMapTable extends Component {
           <td>
             <span
               onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil" title="编辑"
-            />
+              className="" title="修改"
+            >修改</span>
             <span
               onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash" title="删除"
-            />
+              className="" title="删除"
+            >删除</span>
           </td>
         );
       }
@@ -377,7 +377,7 @@ class EntityMapTable extends Component {
         />
         <AdminEditDialog
           className="edit-form"
-          title="编辑"
+          title="修改"
           show={editDialog.show}
           onHide={::this.closeEditDialog}
         >

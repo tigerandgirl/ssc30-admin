@@ -253,7 +253,7 @@ class MappingDef extends Component {
         </AdminDialog>
         <AdminDialog
           className="edit-form"
-          title="编辑"
+          title="修改"
           show={this.props.editDialog.show}
           onHide={this.closeEditDialog}
         >
