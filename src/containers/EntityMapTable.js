@@ -77,18 +77,40 @@ class EntityMapTable extends Component {
    * ```
    */
   handleCreateFormSubmit(formData) {
+    this.props.entityFieldsModel.forEach((fieldModel) => {
+      switch (fieldModel.datatype) {
+        case 5:
+          if (formData[fieldModel.id] && formData[fieldModel.id].length === 1) {
+            formData[fieldModel.id] = formData[fieldModel.id][0];
+          }
+          break;
+        default:
+          break;
+      }
+    });
     this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
   }
-  handleCreateFormReset(event) {
+  handleCreateFormReset(/* event*/) {
     this.props.showCreateDialog(false, {});
     // event.preventDefault();
   }
 
   // edit form
   handleEditFormSubmit(formData) {
+    this.props.entityFieldsModel.forEach((fieldModel) => {
+      switch (fieldModel.datatype) {
+        case 5:
+          if (formData[fieldModel.id] && formData[fieldModel.id].length === 1) {
+            formData[fieldModel.id] = formData[fieldModel.id][0];
+          }
+          break;
+        default:
+          break;
+      }
+    });
     this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
   }
-  handleEditFormReset(event) {
+  handleEditFormReset(/* event*/) {
     this.props.showEditDialog(false, null, {});
     // event.preventDefault();
   }
@@ -350,7 +372,7 @@ class EntityMapTable extends Component {
           // 表格单元格的格式化
           fieldModel.formatter = {
             type: 'custom',
-            callback: value => value.name
+            callback: value => (value ? value.name : '')
           };
         }
         return fieldModel;
