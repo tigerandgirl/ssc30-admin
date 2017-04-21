@@ -40,22 +40,17 @@ export default function callAPIMiddleware({ dispatch, getState }) {
           payload: { ...response },
           type: successType
         }),
-        // 处理自定义异常，比如SuccessFalseException
-        error => dispatch({
-          type: failureType,
-          error,
-          payload: {
-            message: error.message
-          }
-        })
-      ).catch(
-        error => dispatch({
-          type: failureType,
-          error,
-          payload: {
-            message: error.message
-          }
-        })
+        // 处理自定义异常，比如SuccessFalseException，然后将错误继续往下游抛
+        (error) => {
+          dispatch({
+            type: failureType,
+            error,
+            payload: {
+              message: error.message
+            }
+          });
+          return Promise.reject(error);
+        }
       );
   };
 }

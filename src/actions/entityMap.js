@@ -415,9 +415,11 @@ export const showFormAlert = (show, message) => dispatch => dispatch({
 /**
  * 复合操作：获取节点数据（用于填充右侧表格）并记录选中的节点
  */
-export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch => dispatch(
-  fetchTreeNodeData(treeNodeData)
-).then(() => dispatch(saveClickedNodeData(treeNodeData)));
+export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch =>
+  dispatch(
+    fetchTreeNodeData(treeNodeData)
+  )
+  .then(() => dispatch(saveClickedNodeData(treeNodeData)));
 
 /**
  * 复合操作：创建并刷新表格
@@ -425,8 +427,13 @@ export const fetchTreeNodeDataAndSaveClickedNodeData = treeNodeData => dispatch 
 export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(addTreeNodeData(formData))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)))
-    .then(() => dispatch(showCreateDialog(false)));
+    .then(() => {
+      dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData));
+      dispatch(showCreateDialog(false));
+    })
+    .catch(() => {
+      // 这里可以处理addTreeNodeData中的异常
+    });
 };
 
 /**
@@ -435,8 +442,13 @@ export const addTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getSta
 export const updateTreeNodeDataAndFetchTreeNodeData = formData => (dispatch, getState) => {
   const { entityMap } = getState();
   return dispatch(updateTreeNodeData(formData))
-    .then(() => dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData)))
-    .then(() => dispatch(showEditDialog(false)));
+    .then(() => {
+      dispatch(fetchTreeNodeData(entityMap.clickedTreeNodeData));
+      dispatch(showEditDialog(false));
+    })
+    .catch(() => {
+      // 这里可以处理updateTreeNodeData中的异常
+    });
 };
 
 /**
