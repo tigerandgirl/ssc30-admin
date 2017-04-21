@@ -38,9 +38,9 @@ h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
 
 /**************************** 友报账UI基础设计规范 begin ***************************/
 // 主题色
-@mainColor: #03c0ff;            // 主色调 （注：确认保存按钮、default按钮hover背景色等）
-@hoverColor:#40cbfa;            // 主色调的hover背景色
-@darkColor: #16a5d5;            // 主色选中时色值 （注：确认保存按钮focus色值）
+@mainColor: #f63641;            // 主色调 （注：确认保存按钮、default按钮hover背景色等）
+@hoverColor:#fa525c;            // 主色调的hover背景色
+@darkColor: #e62f39;            // 主色选中时色值 （注：确认保存按钮focus色值）
 @backColor: #f9f9f9;            // 主题大背景色
 // 边框色
 @borderColor:#e5e5e5;           // 边框色
@@ -83,6 +83,9 @@ a {
 .btn {
   .br2;
   padding: 5px 20px;
+  &:focus {
+    outline: none;
+  }
 }
 .input-group-btn .btn {
   padding: 6px 12px;

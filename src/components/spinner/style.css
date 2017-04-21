@@ -39,7 +39,7 @@
 
 .svg-loader circle {
   fill: transparent;
-  stroke: #00abe4;
+  stroke: #f63641;
   stroke-width: 0.07em;
   stroke-dasharray: 2.3525em 0.4705em;
   animation: 1.3s strokeDashArray infinite linear, 24s infinite linear;
