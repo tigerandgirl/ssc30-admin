@@ -240,6 +240,7 @@ export function setRequiredFields(baseDocId, { ...field }) {
     mappingdef: {
       code: true,
       name: true,
+      pk_org: true,
       src_system: true,
       des_system: true,
       src_billtype: true,
