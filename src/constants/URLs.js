@@ -46,6 +46,7 @@ export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type
 export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete`;
 export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/query`;
 export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable`;
+export const getUpdateURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/update`;
 
 // 参照 查询接口
 export const ReferDataURL = makeURL('/refbase_ctr/queryRefJSON');

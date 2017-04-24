@@ -711,7 +711,7 @@ export function updateTableData(baseDocId, fields, formData, rowIdx) {
       .then(utils.parseJSON)
       .then(processJSONResult)
       .catch(function (err) {
-        console.log("保存基础档案时候出现错误：", err);
+        console.log("修改基础档案时候出现错误：", err);
       });
   }
 }
