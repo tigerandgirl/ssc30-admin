@@ -38,6 +38,14 @@ const initState = {
 // Show case for redux-actions
 export default handleActions({
 
+  // 清理上次保存的状态
+  [ActionTypes.ENTITY_MAP_STATE_CLEAN]: state => ({
+    ...state,
+    entityFieldsModel: [],
+    entityTableBodyData: [],
+    clickedTreeNodeData: {}
+  }),
+
   // 获取三层数据
 
   [ActionTypes.LEFT_TREE_REQUEST]: state => ({
@@ -108,18 +116,18 @@ export default handleActions({
   /**
    * 右表的字段模型和表体数据
    */
-  [ActionTypes.ENTITY_TREE_NODE_DATA_REQUEST]: state => ({
+  [ActionTypes.ENTITY_MAP_TREE_NODE_DATA_REQUEST]: state => ({
     ...state,
     entityFieldsModelloading: true
   }),
-  [ActionTypes.ENTITY_TREE_NODE_DATA_SUCCESS]: (state, action) => ({
+  [ActionTypes.ENTITY_MAP_TREE_NODE_DATA_SUCCESS]: (state, action) => ({
     ...state,
     entityFieldsModelloading: false,
     entityFieldsModelloaded: true,
     entityFieldsModel: [...action.payload.fieldsModel],
     entityTableBodyData: [...action.payload.tableBodyData]
   }),
-  [ActionTypes.ENTITY_TREE_NODE_DATA_FAILURE]: (state, action) => ({
+  [ActionTypes.ENTITY_MAP_TREE_NODE_DATA_FAILURE]: (state, action) => ({
     ...state,
     entityFieldsModelloading: false,
     entityFieldsModelloaded: false,

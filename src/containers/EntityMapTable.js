@@ -20,6 +20,7 @@ class EntityMapTable extends Component {
   static displayName = 'EntityMapTable'
   static propTypes = {
     addTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired,
+    cleanPageState: PropTypes.func.isRequired,
     createDialog: PropTypes.object.isRequired,
     editDialog: PropTypes.object.isRequired,
     editFormData: PropTypes.object.isRequired,
@@ -34,14 +35,14 @@ class EntityMapTable extends Component {
     updateTreeNodeDataAndFetchTreeNodeData: PropTypes.func.isRequired
   }
 
-  state = {
-  }
-
   constructor(props) {
     super(props);
+    this.handleCreateFormChange = this.handleCreateFormChange.bind(this);
+    this.state = {};
   }
 
   componentWillMount() {
+    this.props.cleanPageState();
   }
 
   componentDidMount() {
@@ -61,6 +62,13 @@ class EntityMapTable extends Component {
     this.props.showCreateDialog(false, {});
   }
 
+  handleCreateFormChange(fieldId, value) {
+    if (fieldId === 'src_entityid') {
+      this.setState({
+        src_entityid: value[0].id
+      });
+    }
+  }
   /**
    * formData
    * 如果是refer
@@ -77,18 +85,48 @@ class EntityMapTable extends Component {
    * ```
    */
   handleCreateFormSubmit(formData) {
+    this.props.entityFieldsModel.forEach((fieldModel) => {
+      switch (fieldModel.datatype) {
+        case 5:
+          if (formData[fieldModel.id] && formData[fieldModel.id].length === 1) {
+            formData[fieldModel.id] = formData[fieldModel.id][0];
+          }
+          break;
+        default:
+          break;
+      }
+    });
+    // 手动加两个字段
+    const { infoKey, key } = this.props.clickedTreeNodeData;
+    formData.des_entityid = key.split(':')[1];
+    formData.mappingdefid = infoKey;
     this.props.addTreeNodeDataAndFetchTreeNodeData(formData);
   }
-  handleCreateFormReset(event) {
+  handleCreateFormReset(/* event*/) {
     this.props.showCreateDialog(false, {});
     // event.preventDefault();
   }
 
   // edit form
   handleEditFormSubmit(formData) {
+    this.props.entityFieldsModel.forEach((fieldModel) => {
+      switch (fieldModel.datatype) {
+        case 5:
+          if (formData[fieldModel.id] && formData[fieldModel.id].length === 1) {
+            formData[fieldModel.id] = formData[fieldModel.id][0];
+          }
+          break;
+        default:
+          break;
+      }
+    });
+    // 手动加两个字段
+    const { infoKey, key } = this.props.clickedTreeNodeData;
+    formData.des_entityid = key.split(':')[1];
+    formData.mappingdefid = infoKey;
     this.props.updateTreeNodeDataAndFetchTreeNodeData(formData);
   }
-  handleEditFormReset(event) {
+  handleEditFormReset(/* event*/) {
     this.props.showEditDialog(false, null, {});
     // event.preventDefault();
   }
@@ -122,12 +160,12 @@ class EntityMapTable extends Component {
           <td>
             <span
               onClick={this.handleEdit}
-              className="glyphicon glyphicon-pencil" title="编辑"
-            />
+              className="" title="修改"
+            >修改</span>
             <span
               onClick={this.handleRemove}
-              className="glyphicon glyphicon-trash" title="删除"
-            />
+              className="" title="删除"
+            >删除</span>
           </td>
         );
       }
@@ -151,14 +189,14 @@ class EntityMapTable extends Component {
       }
       const fieldId = fieldModel.id;
       switch (fieldModel.datatype) {
-        case '5':
+        case 5:
           formData[fieldId] = [{
             id: '',
             code: '',
             name: ''
           }];
           break;
-        case '4':
+        case 4:
           // XXDEBUG-START
           // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
           if (fieldId === 'enable') {
@@ -328,7 +366,7 @@ class EntityMapTable extends Component {
             // TODO 当创建窗口弹出的时候，需要用户先点击选择“源实体”，然后从选择结果中取出
             // id，作为getFormulaField的第二个参数。
             let srcEntityid = {
-              id: 'xxdebug'
+              id: this.state.src_entityid
             };
             fieldModel.component = this.getFormulaField(
               fieldModel.refinfocode,
@@ -350,7 +388,7 @@ class EntityMapTable extends Component {
           // 表格单元格的格式化
           fieldModel.formatter = {
             type: 'custom',
-            callback: value => value.name
+            callback: value => (value ? value.name : '')
           };
         }
         return fieldModel;
@@ -377,7 +415,7 @@ class EntityMapTable extends Component {
         />
         <AdminEditDialog
           className="edit-form"
-          title="编辑"
+          title="修改"
           show={editDialog.show}
           onHide={::this.closeEditDialog}
         >
@@ -404,6 +442,7 @@ class EntityMapTable extends Component {
             fieldsModel={entityFieldsModel2}
             defaultData={formDefaultData}
             onSubmit={::this.handleCreateFormSubmit}
+            onChange={this.handleCreateFormChange}
             onReset={::this.handleCreateFormReset}
           />
         </AdminEditDialog>
