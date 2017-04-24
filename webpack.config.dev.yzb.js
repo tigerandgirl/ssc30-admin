@@ -59,7 +59,7 @@ module.exports = {
         loader: 'style!css!sass'
       },
       {
-        test: /\.(png|jpg|bmp)$/,
+        test: /\.(png|jpg|bmp|gif)$/,
         loader: 'url-loader?limit=8192'
       },
     ]

@@ -68,7 +68,7 @@ module.exports = {
         loader: 'style-loader!css-loader!less-loader'
       },
       {
-        test: /\.(png|jpg|bmp)$/,
+        test: /\.(png|jpg|bmp|gif)$/,
         loader: 'url-loader?limit=8192'
       },
       {
