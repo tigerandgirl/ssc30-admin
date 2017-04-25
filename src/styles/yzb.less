@@ -1,3 +1,5 @@
+@import '../components/spinner/style.css';
+
 // common.less 中的通用变量
 html { font-size: 62.5%; }  // 16px = 1.6rem
 body{
@@ -300,10 +302,14 @@ ul.rc-tree-child-tree.rc-tree-child-tree-open li.rc-tree-hover:hover {
   margin-bottom: 10px;
 }
 
-.filerefer, .filetree {
+.filetree {
   padding-top: 10px;
   height: 150px;
   overflow-y: auto;
+}
+
+.filerefer {
+  padding-top: 10px;
 }
 
 .none {
@@ -324,3 +330,8 @@ ul.rc-tree-child-tree.rc-tree-child-tree-open li.rc-tree-hover:hover {
 }
 
 .server-message{color:red}
+
+// spinner 加载圈颜色
+.svg-loader circle {
+  stroke: @mainColor;
+}

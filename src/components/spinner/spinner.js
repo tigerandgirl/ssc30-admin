@@ -5,7 +5,7 @@
 
 import React, {Component} from 'react';
 import Gif from './gif';
-import style from './style.css';
+// import style from './style.css';
 
 //let style = require('style-loader!css-loader!./style.css');
 
