@@ -10,6 +10,8 @@ import _ from 'lodash';
 import { Button, Checkbox } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
 
+import BaseDocTable from './BaseDocTable';
+
 import AdminEditDialog from '../components/AdminEditDialog';
 import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
@@ -66,10 +68,6 @@ class ArchContainer extends Component {
 
   componentWillMount() {
     const { itemsPerPage, startIndex, params: { baseDocId } } = this.props;
-
-    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null,
-      this.state.conditions);
-    this.props.fetchTableColumnsModel(baseDocId);
   }
 
   componentDidMount() {
@@ -86,9 +84,6 @@ class ArchContainer extends Component {
         conditions = [{ field: 'enable', datatype: 'boolean', value: 'true' }];
       }
 
-      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null,
-        conditions);
-      this.props.fetchTableColumnsModel(nextType);
       this.setState({
         multiple: false
       });
@@ -229,98 +224,6 @@ class ArchContainer extends Component {
   }
 
   /**
-   * 用户点击下一页的时候，组件先向后端请求数据，等数据回来之后，再把分页组件
-   * 跳转到下一页。这样就能避免用户快速点击的问题了。
-   */
-  // http://git.yonyou.com/sscplatform/ssc_web/commit/767e39de04b1182d8ba6ad55636e959a04b99d2b#note_3528
-  // handlePagination(event, selectedEvent) {
-  handlePagination(eventKey) {
-    const { itemsPerPage, tableData } = this.props;
-    let nextPage = eventKey;
-    let startIndex = (nextPage - 1) * itemsPerPage;
-    let conditions = this.state.conditions;
-    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId,
-      itemsPerPage, startIndex, nextPage, conditions);
-  }
-
-  getCustomComponent() {
-    let container = this;
-    return React.createClass({
-      handleEdit(event) {
-        const { rowIdx, rowObj } = this.props;
-        const { fields } = container.props;
-
-        let control = ['dept', 'feeitemclass', 'projectclass', 'bank']; // 需要过滤的参照类型
-        _.map(fields, (obj, ind) => {
-          _.map(control, (con, i) => {
-            if (con == obj.refCode) {
-              let rowObjCode = `{\"id\"=\"${rowObj.id}\"}`;
-              container.props.updateReferFields(rowObjCode, ind);
-            }
-          });
-        });
-
-        // 修复后端数据中的null
-        fields.forEach((field) => {
-          if (field.type === 'string') {
-            if (rowObj[field.id] === null) {
-              rowObj[field.id] = '';
-            }
-          }
-        });
-
-        // 将rowData保存到store中
-        container.props.showEditDialog(rowIdx, rowObj);
-        // 从store中取出editFormData填充到表单上
-        // container.props.initEditFormData(rowObj);
-      },
-      handleRemove(event) {
-        const { rowIdx, rowObj } = this.props;
-        const { startIndex } = container.props;
-        const { baseDocId } = container.props.params;
-        let param = {
-          isShow: true,
-          txt: '是否删除？',
-          sureFn() {
-            container.props.deleteTableDataAndFetchTableBodyData(
-              baseDocId, rowIdx, rowObj, startIndex);
-          }
-        };
-
-        container.refs.messageConfirm.initParam(param);
-
-        // container.props.deleteTableData(baseDocId, rowIdx, rowObj);
-        // container.props.fetchTableBodyData(baseDocId, container.props.itemsPerPage, startIndex);
-
-      //
-      },
-
-      handleEnable() {
-        const { rowObj } = this.props;
-        const { baseDocId } = container.props.params;
-        container.props.enableTableDataAndFetchTableBodyData(baseDocId, rowObj);
-      },
-
-      render() {
-        let enable = this.props.rowObj.enable;
-        const { params: {
-          baseDocId
-        } } = container.props;
-        let resultDom = (<span onClick={this.handleRemove}>删除</span>);
-        if (container.props.showEnableCheckbox.indexOf(baseDocId) !== -1) {
-          resultDom = (<span onClick={this.handleEnable}>{enable === true ? '停用' : '启用'}</span>);
-        }
-        return (
-          <td>
-            <span onClick={this.handleEdit}>修改</span>
-            {resultDom}
-          </td>
-        );
-      }
-    });
-  }
-
-  /**
    * 根据列模型和表格体数据来构建空表单需要的数据
    * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
    * tableData中获取参照的具体信息，一般是：
@@ -445,16 +348,7 @@ class ArchContainer extends Component {
               <Button onClick={::this.handleCreate}>新增</Button>
             </div>
           </div>
-          <SSCGrid
-            tableData={tableData} columnsModel={cols} className="ssc-grid"
-            paging
-            itemsPerPage={itemsPerPage}
-            totalPage={this.props.totalPage}
-            activePage={this.props.activePage}
-            onPagination={::this.handlePagination}
-            operationColumn={{}}
-            operationColumnClass={this.getCustomComponent()}
-          />
+          <BaseDocTable baseDocId={baseDocId} {...this.props} />
         </div>
         <AdminEditDialog
           className="edit-form"
