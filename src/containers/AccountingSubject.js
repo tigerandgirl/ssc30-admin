@@ -365,13 +365,7 @@ class AccountingSubject extends Component {
           />
         </div>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
-          <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
-                      onDismiss={::this.handleFormAlertDismiss}
-          >
-            {/** <p>{formAlert.message}</p>
-            { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }**/}
-            { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
-          </AdminAlert>
+          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
             defaultData={editFormData}
@@ -391,13 +385,7 @@ class AccountingSubject extends Component {
           />
         </AdminEditDialog>
         <AdminEditDialog className='child-form' title='新增子科目' {...this.props} show={childDialog.show} onHide={::this.closeChildDialog}>
-          <AdminAlert show={formAlert.show} bsStyle={formAlert.bsStyle}
-                      onDismiss={::this.handleFormAlertDismiss}
-          >
-            {/** <p>{formAlert.message}</p>
-             { formAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }**/}
-            { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
-          </AdminAlert>
+          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={childSubjectCols}
             defaultData={childFormDefaultData}
