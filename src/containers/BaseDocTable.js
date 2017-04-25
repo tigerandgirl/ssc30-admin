@@ -13,6 +13,7 @@ class BaseDocTable extends Component {
   static displayName = 'BaseDocTable'
   static propTypes = {
     activePage: PropTypes.number.isRequired,
+    baseDocId: PropTypes.string.isRequired,
     /**
      * [store] 字段模型
      */
@@ -33,7 +34,6 @@ class BaseDocTable extends Component {
     fetchTableBodyData: PropTypes.func.isRequired,
     fetchTableBodyDataAndGotoPage: PropTypes.func.isRequired,
     fetchTableColumnsModel: PropTypes.func.isRequired,
-    baseDocId: PropTypes.string.isRequired,
     showEnableCheckbox: PropTypes.arrayOf(PropTypes.string).isRequired,
     totalPage: PropTypes.number.isRequired
   }
