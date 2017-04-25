@@ -45,19 +45,15 @@ class ArchContainer extends Component {
       baseDocId: PropTypes.string.isRequired
     }).isRequired,
     showCreateDialog: PropTypes.func.isRequired,
+    showEnableCheckbox: PropTypes.arrayOf(PropTypes.string).isRequired,
     closeEditDialog: PropTypes.func.isRequired,
     hideCreateDialog: PropTypes.func.isRequired,
   }
 
-  state = {
-  }
-
-
   constructor(props) {
     super(props);
     const { params: { baseDocId } } = props;
-    if (baseDocId === 'dept' || baseDocId === 'project'
-        || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
+    if (props.showEnableCheckbox.indexOf(baseDocId) !== -1) {
       this.state = {
         conditions: [{ field: 'enable', datatype: 'boolean', value: 'true' }]
       };
@@ -71,13 +67,8 @@ class ArchContainer extends Component {
   componentWillMount() {
     const { itemsPerPage, startIndex, params: { baseDocId } } = this.props;
 
-    let conditions = [];
-    if (baseDocId === 'dept' || baseDocId === 'project'
-        || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
-      conditions = this.state.conditions;
-    }
-
-    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
+    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null,
+      this.state.conditions);
     this.props.fetchTableColumnsModel(baseDocId);
   }
 
@@ -91,12 +82,12 @@ class ArchContainer extends Component {
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
       let conditions = [];
-      if (nextType === 'dept' || nextType === 'project'
-          || nextType === 'bankaccount' || nextType === 'feeitem') {
+      if (nextProps.showEnableCheckbox.indexOf(nextType) !== -1) {
         conditions = [{ field: 'enable', datatype: 'boolean', value: 'true' }];
       }
 
-      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, conditions);
+      this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null,
+        conditions);
       this.props.fetchTableColumnsModel(nextType);
       this.setState({
         multiple: false
@@ -164,7 +155,8 @@ class ArchContainer extends Component {
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, null, startIndex, this.state.conditions);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData,
+      null, startIndex, this.state.conditions);
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
@@ -191,13 +183,14 @@ class ArchContainer extends Component {
       }
     });
 
-    if (baseDocId == 'bankaccount') {
+    if (baseDocId === 'bankaccount') {
       if (formData.depositbank) {
         formData.bank = formData.depositbank;
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData,
+      rowIdx, startIndex);
   }
   handleEditFormReset(event) {
     this.props.closeEditDialog();
@@ -314,8 +307,7 @@ class ArchContainer extends Component {
           baseDocId
         } } = container.props;
         let resultDom = (<span onClick={this.handleRemove}>删除</span>);
-        if (baseDocId === 'dept' || baseDocId === 'project'
-            || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
+        if (container.props.showEnableCheckbox.indexOf(baseDocId) !== -1) {
           resultDom = (<span onClick={this.handleEnable}>{enable === true ? '停用' : '启用'}</span>);
         }
         return (
@@ -396,7 +388,9 @@ class ArchContainer extends Component {
         || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
       checkBoxContent = (
         <div style={{ display: 'inline-block', float: 'left' }}>
-          <Checkbox checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
+          <Checkbox checked={multiple} onChange={::this.handleEnableCheck}>
+            显示停用
+          </Checkbox>
         </div>
       );
     }

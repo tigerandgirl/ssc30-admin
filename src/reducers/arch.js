@@ -71,7 +71,9 @@ const initState = {
       message: ''
     }
   },
-  serverMessage: ''
+  serverMessage: '',
+  // 哪些基础档案类型需要显示“启用/停用”复选框
+  showEnableCheckbox: ['dept', 'project', 'bankaccount', 'feeitem']
 };
 
 export default function arch(state = initState, action) {
