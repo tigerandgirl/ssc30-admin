@@ -16,7 +16,7 @@ import {
   INIT_CREATE_FORM_DATA, UPDATE_CREATE_FORM_FIELD_VALUE,
   SUBMIT_CREATE_FORM, SUBMIT_CREATE_FORM_SUCCESS, SUBMIT_CREATE_FORM_FAIL,
 
-  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT,HIDE_MESSAGE_TIPS,
+  SHOW_ADMIN_ALERT, HIDE_ADMIN_ALERT, HIDE_MESSAGE_TIPS,
   FORM_ALERT_OPEN, FORM_ALERT_CLOSE,
 
   ERROR_MESSAGES_UPDATE,
@@ -53,12 +53,12 @@ const initState = {
       resBody: '' // 需要改成details，因为这里不仅仅会填写response body
     }
   },
-  spinner:{
-    show:true
+  spinner: {
+    show: true
   },
-  messageTips:{
-    isShow:false,
-    txt:""
+  messageTips: {
+    isShow: false,
+    txt: ''
   },
   // 当前页面所有的错误信息都扔进来
   errorMessages: [],
@@ -89,13 +89,13 @@ export default function arch(state = initState, action) {
     case SHOW_ADMIN_ALERT:
       return update(state, {
         adminAlert: {
-          show: {$set: true}
+          show: { $set: true }
         }
       });
     case HIDE_ADMIN_ALERT:
       return update(state, {
         adminAlert: {
-          show: {$set: false}
+          show: { $set: false }
         }
       });
 
@@ -103,41 +103,41 @@ export default function arch(state = initState, action) {
     case FORM_ALERT_OPEN:
       return update(state, {
         formAlert: {
-          show: {$set: true}
+          show: { $set: true }
         }
       });
     case FORM_ALERT_CLOSE:
       return update(state, {
         formAlert: {
-          show: {$set: false}
+          show: { $set: false }
         }
       });
 
     // 获取表格体数据
     case LOAD_TABLEDATA:
-      return {...state,
+      return { ...state,
         loading: true,
-        spinner:{
-          show:true
+        spinner: {
+          show: true
         },
       };
     case LOAD_TABLEDATA_SUCCESS:
-      return {...state,
+      return { ...state,
         loading: false,
         loaded: true,
-        spinner:{
-          show:false
+        spinner: {
+          show: false
         },
         tableData: action.data.items,
         totalDataCount: action.data.totalCount,
         totalPage: action.data.totalPage
       };
     case LOAD_TABLEDATA_FAIL:
-      return {...state,
+      return { ...state,
         loading: false,
         loaded: false,
         tableData: [],
-        adminAlert: {...state.adminAlert,
+        adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: 'danger',
           message: action.message,
@@ -147,19 +147,19 @@ export default function arch(state = initState, action) {
 
     // 获取表格头数据
     case LOAD_TABLECOLUMNS:
-      return {...state,
+      return { ...state,
         adminAlert: {
           show: false
         }
       };
     case LOAD_TABLECOLUMNS_SUCCESS:
-      return {...state,
+      return { ...state,
         fields: action.data.fields,
       };
     case LOAD_TABLECOLUMNS_FAIL:
-      return {...state,
+      return { ...state,
         fields: [],
-        adminAlert: {...state.adminAlert,
+        adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: 'danger',
           message: action.message,
@@ -168,8 +168,8 @@ export default function arch(state = initState, action) {
       };
 
     case DELETE_TABLEDATA_FAIL:
-      return {...state,
-        adminAlert: {...state.adminAlert,
+      return { ...state,
+        adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: 'danger',
           message: action.message
@@ -177,19 +177,19 @@ export default function arch(state = initState, action) {
       };
 
     case ENABLE_TABLEDATA_FAIL:
-          return {...state,
-            adminAlert: {...state.adminAlert,
-              show: true,
-              bsStyle: 'danger',
-              message: action.message
-            }
+      return { ...state,
+        adminAlert: { ...state.adminAlert,
+          show: true,
+          bsStyle: 'danger',
+          message: action.message
+        }
       };
 
     case ENABLE_TABLEDATA_SUCCESS:
-      return {...state,
-        messageTips:{...state.messageTips,
-           isShow:true,
-           txt:"操作成功！"
+      return { ...state,
+        messageTips: { ...state.messageTips,
+          isShow: true,
+          txt: '操作成功！'
         }
       };
 
@@ -250,7 +250,7 @@ export default function arch(state = initState, action) {
       });
 
     case CHANGE_SELECTED_ROWS:
-      return {...state,
+      return { ...state,
         selectedRows: action.selectedRows
       };
 
@@ -267,10 +267,10 @@ export default function arch(state = initState, action) {
           }
         },
         formAlert: {
-          show: {$set: false}
+          show: { $set: false }
         },
-        editFormData: {$set: action.formData},
-        serverMessage: {$set: ''}
+        editFormData: { $set: action.formData },
+        serverMessage: { $set: '' }
       });
     case UPDATE_EDIT_FORM_FIELD_VALUE:
       // Update single value inside specific array item
@@ -283,28 +283,28 @@ export default function arch(state = initState, action) {
         }
       });
     case ARCH_INIT_EDIT_FORM_DATA:
-      return {...state,
+      return { ...state,
         editFormData: action.editFormData
       };
     case SUBMIT_EDIT_FORM:
-      return {...state,
+      return { ...state,
         submitting: true
       };
     case SUBMIT_EDIT_FORM_SUCCESS:
-      return {...state,
+      return { ...state,
         submitting: false,
         submited: true,
-        adminAlert: {...state.adminAlert,
+        adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: action.bsStyle,
           message: action.message
         }
       };
     case SUBMIT_EDIT_FORM_FAIL:
-      return {...state,
+      return { ...state,
         submitting: false,
         submitted: false,
-        adminAlert: {...state.adminAlert,
+        adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: action.bsStyle,
           message: action.message
@@ -314,7 +314,7 @@ export default function arch(state = initState, action) {
     // create dialog
     case SHOW_CREATE_DIALOG:
     case HIDE_CREATE_DIALOG:
-      return {...state,
+      return { ...state,
         createDialog: {
           show: action.openDialog,
           formData: action.formData
@@ -328,33 +328,33 @@ export default function arch(state = initState, action) {
       return update(state, {
         createFormData: {
           [action.id]: {
-            value: {$set: action.payload}
+            value: { $set: action.payload }
           }
         }
       });
     case INIT_CREATE_FORM_DATA:
-      return {...state,
+      return { ...state,
         createFormData: action.formData
       };
     case SUBMIT_CREATE_FORM:
-      return {...state,
+      return { ...state,
         submitting: true
       };
     case SUBMIT_CREATE_FORM_SUCCESS:
-      return {...state,
+      return { ...state,
         submitting: false,
         submited: true,
-        adminAlert: {...state.adminAlert,
+        adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: action.bsStyle,
           message: action.message
         }
       };
     case SUBMIT_CREATE_FORM_FAIL:
-      return {...state,
+      return { ...state,
         submitting: false,
         submitted: false,
-        adminAlert: {...state.adminAlert,
+        adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: action.bsStyle,
           message: action.message
@@ -362,7 +362,7 @@ export default function arch(state = initState, action) {
       };
 
     case GOTO_PAGE:
-      return {...state,
+      return { ...state,
         startIndex: action.startIndex,
         activePage: action.nextPage
       };
@@ -384,8 +384,8 @@ export default function arch(state = initState, action) {
     case HIDE_MESSAGE_TIPS:
       return update(state, {
         messageTips: {
-          isShow: {$set: false},
-          txt: {$set: ' '}
+          isShow: { $set: false },
+          txt: { $set: ' ' }
         }
       });
 
