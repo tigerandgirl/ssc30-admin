@@ -5,6 +5,7 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import { Button, Checkbox } from 'react-bootstrap';
 import { Grid as SSCGrid, Form as SSCForm } from 'ssc-grid';
@@ -71,8 +72,8 @@ class ArchContainer extends Component {
     const { itemsPerPage, startIndex, params: { baseDocId } } = this.props;
 
     let conditions = [];
-    if (baseDocId == 'dept' || baseDocId == 'project'
-        || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
+    if (baseDocId === 'dept' || baseDocId === 'project'
+        || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
       conditions = this.state.conditions;
     }
 
@@ -90,8 +91,8 @@ class ArchContainer extends Component {
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
       let conditions = [];
-      if (nextType == 'dept' || nextType == 'project'
-          || nextType == 'bankaccount' || nextType == 'feeitem') {
+      if (nextType === 'dept' || nextType === 'project'
+          || nextType === 'bankaccount' || nextType === 'feeitem') {
         conditions = [{ field: 'enable', datatype: 'boolean', value: 'true' }];
       }
 
@@ -119,9 +120,6 @@ class ArchContainer extends Component {
   }
 
   // create form
-  handleCreateFormBlur(/* label , value */) {
-    // this.props.updateCreateFormFieldValue(label, value);
-  }
   /**
    * formData
    * 如果是refer
@@ -147,8 +145,8 @@ class ArchContainer extends Component {
     // bug des: 传入手机号为空
 
     let phoneList = ['project', 'dept', 'feeitem'];
-    _.map(phoneList, (obj, ind) => {
-      if (baseDocId == obj) {
+    _.map(phoneList, (obj) => {
+      if (baseDocId === obj) {
         if (formData.person) {
           if (formData.person.phone) {
             formData.personmobile = formData.person.phone;
@@ -180,8 +178,8 @@ class ArchContainer extends Component {
 
     // this.props.saveTableData(baseDocId, fields, formData, rowIdx);
     let phoneList = ['project', 'dept', 'feeitem'];
-    _.map(phoneList, (obj, ind) => {
-      if (baseDocId == obj) {
+    _.map(phoneList, (obj) => {
+      if (baseDocId === obj) {
         if (formData.person) {
           if (formData.person.phone) {
             formData.personmobile = formData.person.phone;
@@ -248,7 +246,8 @@ class ArchContainer extends Component {
     let nextPage = eventKey;
     let startIndex = (nextPage - 1) * itemsPerPage;
     let conditions = this.state.conditions;
-    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId, itemsPerPage, startIndex, nextPage, conditions);
+    this.props.fetchTableBodyDataAndGotoPage(this.props.params.baseDocId,
+      itemsPerPage, startIndex, nextPage, conditions);
   }
 
   getCustomComponent() {
@@ -290,7 +289,8 @@ class ArchContainer extends Component {
           isShow: true,
           txt: '是否删除？',
           sureFn() {
-            container.props.deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowObj, startIndex);
+            container.props.deleteTableDataAndFetchTableBodyData(
+              baseDocId, rowIdx, rowObj, startIndex);
           }
         };
 
@@ -314,9 +314,9 @@ class ArchContainer extends Component {
           baseDocId
         } } = container.props;
         let resultDom = (<span onClick={this.handleRemove}>删除</span>);
-        if (baseDocId == 'dept' || baseDocId == 'project'
-            || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
-          resultDom = (<span onClick={this.handleEnable}>{enable == true ? '停用' : '启用'}</span>);
+        if (baseDocId === 'dept' || baseDocId === 'project'
+            || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
+          resultDom = (<span onClick={this.handleEnable}>{enable === true ? '停用' : '启用'}</span>);
         }
         return (
           <td>
@@ -392,8 +392,8 @@ class ArchContainer extends Component {
     const formDefaultData = this.getFormDefaultData(cols);
 
     let checkBoxContent = '';
-    if (baseDocId == 'dept' || baseDocId == 'project'
-        || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
+    if (baseDocId === 'dept' || baseDocId === 'project'
+        || baseDocId === 'bankaccount' || baseDocId === 'feeitem') {
       checkBoxContent = (
         <div style={{ display: 'inline-block', float: 'left' }}>
           <Checkbox checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
@@ -419,7 +419,7 @@ class ArchContainer extends Component {
 
     let value = '客商';
     getBaseDocTypes().forEach((item) => {
-      if (item.id == this.props.params.baseDocId) {
+      if (item.id === this.props.params.baseDocId) {
         value = item.name;
       }
     });
@@ -462,7 +462,12 @@ class ArchContainer extends Component {
             operationColumnClass={this.getCustomComponent()}
           />
         </div>
-        <AdminEditDialog className="edit-form" title="编辑" {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
+        <AdminEditDialog
+          className="edit-form"
+          title="编辑"
+          show={editDialog.show}
+          onHide={::this.closeEditDialog}
+        >
           <AdminAlert
             show={formAlert.show} bsStyle={formAlert.bsStyle}
             onDismiss={::this.handleFormAlertDismiss}
@@ -476,12 +481,16 @@ class ArchContainer extends Component {
             onReset={::this.handleEditFormReset}
           />
         </AdminEditDialog>
-        <AdminEditDialog className="create-form" title="新增" {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
+        <AdminEditDialog
+          className="create-form"
+          title="新增"
+          show={createDialog.show}
+          onHide={::this.closeCreateDialog}
+        >
           <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
             defaultData={formDefaultData}
-            onBlur={::this.handleCreateFormBlur}
             onSubmit={::this.handleCreateFormSubmit}
             onReset={::this.handleCreateFormReset}
           />
