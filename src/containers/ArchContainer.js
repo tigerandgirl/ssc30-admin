@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 基础档案
  */
 
@@ -14,7 +14,7 @@ import AdminAlert from '../components/AdminAlert';
 import Spinner from '../components/spinner/spinner';
 import MessageTips from '../components/MessageTips';
 import MessageConfirm from '../components/MessageConfirm';
-   
+
 import * as Actions from '../actions/arch';
 import getBaseDocTypes from '../constants/BaseDocTypes';
 
@@ -92,16 +92,15 @@ class ArchContainer extends Component {
       let conditions = [];
       if (nextType == 'dept' || nextType == 'project'
           || nextType == 'bankaccount' || nextType == 'feeitem') {
-        conditions =  [{ field: 'enable', datatype: 'boolean', value: 'true' }];
+        conditions = [{ field: 'enable', datatype: 'boolean', value: 'true' }];
       }
 
       this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null, conditions);
       this.props.fetchTableColumnsModel(nextType);
       this.setState({
         multiple: false
-      })
+      });
     }
-
   }
 
   // admin card actions
@@ -224,12 +223,11 @@ class ArchContainer extends Component {
     ];
     if (e.checked) {
       conditions = [];
-      multiple = true
-
+      multiple = true;
     }
     this.setState({
       conditions,
-      multiple: multiple
+      multiple
     });
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
@@ -385,7 +383,7 @@ class ArchContainer extends Component {
       },
       itemsPerPage
     } = this.props;
-    const {multiple} = this.state;
+    const { multiple } = this.state;
 
     // 表单字段模型 / 表格列模型
     let cols = fields || [];
@@ -398,7 +396,7 @@ class ArchContainer extends Component {
         || baseDocId == 'bankaccount' || baseDocId == 'feeitem') {
       checkBoxContent = (
         <div style={{ display: 'inline-block', float: 'left' }}>
-          <Checkbox   checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
+          <Checkbox checked={multiple} onChange={::this.handleEnableCheck}>显示停用</Checkbox>
         </div>
       );
     }
@@ -420,10 +418,10 @@ class ArchContainer extends Component {
     cols = cols.map(setFormatterBoolean);
 
     let value = '客商';
-    getBaseDocTypes().forEach((item)=>{
-        if(item.id == this.props.params.baseDocId){
-          value = item.name;
-        }
+    getBaseDocTypes().forEach((item) => {
+      if (item.id == this.props.params.baseDocId) {
+        value = item.name;
+      }
     });
 
     return (
@@ -443,9 +441,9 @@ class ArchContainer extends Component {
         </AdminAlert>
         <div>
           <div className="header">
-              <div className="header-title">
-                  <span>{value}</span>
-              </div>
+            <div className="header-title">
+              <span>{value}</span>
+            </div>
           </div>
           <div className="btn-bar">
             {checkBoxContent}
