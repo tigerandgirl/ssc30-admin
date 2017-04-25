@@ -365,7 +365,7 @@ class AccountingSubject extends Component {
           />
         </div>
         <AdminEditDialog className='edit-form' title='编辑' {...this.props} show={editDialog.show} onHide={::this.closeEditDialog}>
-          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
+          <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
             defaultData={editFormData}
@@ -375,7 +375,7 @@ class AccountingSubject extends Component {
           />
         </AdminEditDialog>
         <AdminEditDialog className='create-form' title='新增' {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
-          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
+          <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
             defaultData={formDefaultData}
@@ -385,7 +385,7 @@ class AccountingSubject extends Component {
           />
         </AdminEditDialog>
         <AdminEditDialog className='child-form' title='新增子科目' {...this.props} show={childDialog.show} onHide={::this.closeChildDialog}>
-          <p className="server-message" style={{color: 'red'}}>{this.props.serverMessage}</p>
+          <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={childSubjectCols}
             defaultData={childFormDefaultData}
