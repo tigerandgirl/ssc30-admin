@@ -341,13 +341,7 @@ class AccountingSubject extends Component {
     return (
       <div className="content">
         <MessageConfirm  ref="messageConfirm"/>
-        <AdminAlert show={adminAlert.show} bsStyle={adminAlert.bsStyle}
-                    onDismiss={::this.handlePageAlertDismiss}
-        >
-          {/**  <p>{adminAlert.message}</p>
-          { adminAlert.resBody ? <p>为了方便定位到问题，如下提供了详细信息：</p> : null }  **/}
-          { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
-        </AdminAlert>
+        <p className="server-message">{this.props.serverMessage}</p>
         <div>
           <div className="btn-bar">
             <div className="fr">
