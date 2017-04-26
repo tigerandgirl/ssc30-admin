@@ -5,9 +5,9 @@ import App from './App';
 import NoMatch from '../components/NoMatch';
 import Welcome from './Welcome';
 
-import ArchContainer from './ArchContainer'; // 基础档案
+import ArchContainer from './BaseDoc/ArchContainer'; // 基础档案
 import AccountingSubject from './AccountingSubject'; // 会计平台科目
-import BaseDocIndex from './BaseDocIndex'; // 基础档案列表页面
+import BaseDocIndex from './BaseDoc/BaseDocIndex'; // 基础档案列表页面
 import AccSubIndex from './AccSubIndex'; // 会计平台列表页面
 // 转换规则定义
 import MappingDef from './MappingDef';

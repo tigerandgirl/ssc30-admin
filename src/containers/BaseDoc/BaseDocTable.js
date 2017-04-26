@@ -7,8 +7,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Grid as SSCGrid } from 'ssc-grid';
 
-import MessageConfirm from '../components/MessageConfirm';
-import * as Actions from '../actions/arch';
+import MessageConfirm from '../../components/MessageConfirm';
+import * as Actions from '../../actions/arch';
 
 class BaseDocTable extends Component {
   static displayName = 'BaseDocTable'

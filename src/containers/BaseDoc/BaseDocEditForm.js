@@ -9,9 +9,9 @@ import _ from 'lodash';
 
 import { Form as SSCForm } from 'ssc-grid';
 
-import AdminAlert from '../components/AdminAlert';
+import AdminAlert from '../../components/AdminAlert';
 
-import * as Actions from '../actions/arch';
+import * as Actions from '../../actions/arch';
 
 class BaseDocEditForm extends Component {
   static displayName = 'BaseDocEditForm'

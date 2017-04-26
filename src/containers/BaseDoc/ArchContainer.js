@@ -11,13 +11,13 @@ import { Button, Checkbox } from 'react-bootstrap';
 import BaseDocTable from './BaseDocTable';
 import BaseDocCreateForm from './BaseDocCreateForm';
 
-import AdminEditDialog from '../components/AdminEditDialog';
-import AdminAlert from '../components/AdminAlert';
-import Spinner from '../components/spinner/spinner';
-import MessageTips from '../components/MessageTips';
+import AdminEditDialog from '../../components/AdminEditDialog';
+import AdminAlert from '../../components/AdminAlert';
+import Spinner from '../../components/spinner/spinner';
+import MessageTips from '../../components/MessageTips';
 
-import * as Actions from '../actions/arch';
-import getBaseDocTypes from '../constants/BaseDocTypes';
+import * as Actions from '../../actions/arch';
+import getBaseDocTypes from '../../constants/BaseDocTypes';
 
 class ArchContainer extends Component {
   static displayName = 'ArchContainer'

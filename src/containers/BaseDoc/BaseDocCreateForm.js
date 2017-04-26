@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Form as SSCForm } from 'ssc-grid';
 
-import * as Actions from '../actions/arch';
+import * as Actions from '../../actions/arch';
 
 class BaseDocCreateForm extends Component {
   static displayName = 'BaseDocCreateForm'
