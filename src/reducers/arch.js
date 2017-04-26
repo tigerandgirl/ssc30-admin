@@ -1,5 +1,4 @@
 import update from 'react-addons-update';
-import { combineReducers } from 'redux';
 
 import {
   LOAD_TABLEDATA, LOAD_TABLEDATA_SUCCESS, LOAD_TABLEDATA_FAIL,
@@ -242,6 +241,9 @@ export default function arch(state = initState, action) {
       });
 
     // 删除表格中的一行
+    case DELETE_TABLEDATA:
+      return update(state, {
+      });
     case DELETE_TABLEDATA_SUCCESS:
       return update(state, {
         // adminAlert: {
