@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Grid as SSCGrid } from 'ssc-grid';
 
+import MessageConfirm from '../components/MessageConfirm';
 import * as Actions from '../actions/arch';
 
 class BaseDocTable extends Component {
@@ -194,18 +195,21 @@ class BaseDocTable extends Component {
     cols = cols.map(setFormatterBoolean);
 
     return (
-      <SSCGrid
-        tableData={tableData}
-        columnsModel={cols}
-        className="ssc-grid"
-        paging
-        itemsPerPage={itemsPerPage}
-        totalPage={this.props.totalPage}
-        activePage={this.props.activePage}
-        onPagination={this.handlePagination}
-        operationColumn={{}}
-        operationColumnClass={this.getCustomComponent()}
-      />
+      <div>
+        <MessageConfirm ref="messageConfirm" />
+        <SSCGrid
+          tableData={tableData}
+          columnsModel={cols}
+          className="ssc-grid"
+          paging
+          itemsPerPage={itemsPerPage}
+          totalPage={this.props.totalPage}
+          activePage={this.props.activePage}
+          onPagination={this.handlePagination}
+          operationColumn={{}}
+          operationColumnClass={this.getCustomComponent()}
+        />
+      </div>
     );
   }
 }
