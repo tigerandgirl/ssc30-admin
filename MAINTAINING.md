@@ -1,19 +1,8 @@
 # 发布和部署
 
-如下内容已经废弃，交给Jenkins来统一进行部署。
+如果需要部署到测试服务器或者生产服务器，请首选使用Jenkins来统一进行部署。
 
-## 发布到阿里云
-
-**注意**: 先确认有权限登录阿里云服务器
-
-发布之前先在本地测试一下，运行如下命令
-
-```
-npm run build
-npm run demo
-```
-
-然后在浏览器中测试一下页面显示没有问题，点一点按钮看看是否可以正常提交数据。
+## 如何升级版本号
 
 升级版本号，比如升级到0.1.4
 
@@ -26,30 +15,9 @@ git tag -a v0.1.4 -m 'new release'
 git push --follow-tags
 ```
 
-运行如下命令，先调用webpack进行打包，然后将结果通过rsync同步到阿里云服务器上。
+## 手动发布到测试服务器
 
-```
-npm run release
-PROD_SERVER=10.3.14.240 npm run release # 重新指定后端服务器地址
-```
-
-## 发布友报账和友账表
-
-注意：由于使用rsync+ssh，所以请在本地和远程配置好密钥对。
-
-```
-git clone https://github.com/yyssc/ssc30-admin.git
-cd ssc30-admin
-npm install
-npm run release:ybz
-npm run release:ybz-5088
-npm run release:ybz-6088
-npm run release:yzb
-```
-
-## 发布到测试服务器
-
-由于[这个问题](https://trello.com/c/wDFRGQl8/12-172-20-13-230)以及[这个问题](https://trello.com/c/dhpJBvVg/11-4-19)，所以这里提供一个方式绕开，也就是从本地部署到测试服务器。
+由于[这个问题](https://trello.com/c/wDFRGQl8/12-172-20-13-230)以及[这个问题](https://trello.com/c/dhpJBvVg/11-4-19)，所以这里提供一个方式绕开，也就是从本地部署到测试服务器。注意请先准备好密钥对。
 
 以下拿10.3.14.238这台测试服务器为例
 
