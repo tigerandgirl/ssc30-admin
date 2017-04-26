@@ -431,7 +431,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       let error = new Error(response.statusText);
       error.response = response;
       response.text().then((text) => {
-        dispatch(updateTableDataFailure(('', text)));
+        dispatch(updateTableDataFailure(text));
       });
       throw error;
     }
@@ -440,8 +440,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       if (json.success === true) {
         dispatch(updateTableDataSuccess(json, rowIdx));
       } else {
-        dispatch(updateTableDataFailure('',
-          json.message));
+        dispatch(updateTableDataFailure(json.message));
       }
     }
 

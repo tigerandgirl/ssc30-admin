@@ -14,11 +14,6 @@ class BaseDocCreateForm extends Component {
   static displayName = 'BaseDocCreateForm'
   static propTypes = {
     baseDocId: PropTypes.string.isRequired,
-    conditions: PropTypes.arrayOf(PropTypes.shape({
-      field: PropTypes.string.isRequired,
-      datatype: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired
-    })).isRequired,
     fields: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
       datatype: PropTypes.number.isRequired,
@@ -27,8 +22,7 @@ class BaseDocCreateForm extends Component {
     })).isRequired,
     hideCreateDialog: PropTypes.func.isRequired,
     saveTableDataAndFetchTableBodyData: PropTypes.func.isRequired,
-    serverMessage: PropTypes.string.isRequired,
-    startIndex: PropTypes.number.isRequired
+    serverMessage: PropTypes.string.isRequired
   }
 
   constructor(props) {
