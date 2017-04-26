@@ -15,54 +15,51 @@ class BaseDocTable extends Component {
   static propTypes = {
     activePage: PropTypes.number.isRequired,
     baseDocId: PropTypes.string.isRequired,
-    /**
-     * [store] 字段模型
-     */
+    conditions: PropTypes.arrayOf(PropTypes.shape({
+      field: PropTypes.string.isRequired,
+      datatype: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired
+    })).isRequired,
+    fetchTableBodyData: PropTypes.func.isRequired,
+    fetchTableBodyDataAndGotoPage: PropTypes.func.isRequired,
+    fetchTableColumnsModel: PropTypes.func.isRequired,
     fields: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
       datatype: PropTypes.number.isRequired,
       label: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired
     })).isRequired,
-    /**
-     * [store] 表体数据
-     */
+    itemsPerPage: PropTypes.number.isRequired,
+    showEnableCheckbox: PropTypes.arrayOf(PropTypes.string).isRequired,
+    startIndex: PropTypes.number.isRequired,
     tableData: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired
     })).isRequired,
-    itemsPerPage: PropTypes.number.isRequired,
-    startIndex: PropTypes.number.isRequired,
-    fetchTableBodyData: PropTypes.func.isRequired,
-    fetchTableBodyDataAndGotoPage: PropTypes.func.isRequired,
-    fetchTableColumnsModel: PropTypes.func.isRequired,
-    showEnableCheckbox: PropTypes.arrayOf(PropTypes.string).isRequired,
-    totalPage: PropTypes.number.isRequired
+    totalPage: PropTypes.number.isRequired,
+    updateConditions: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props);
-    const { baseDocId } = props;
     this.handlePagination = this.handlePagination.bind(this);
-    if (props.showEnableCheckbox.indexOf(baseDocId) !== -1) {
-      this.state = {
-        conditions: [{ field: 'enable', datatype: 'boolean', value: 'true' }]
-      };
-    } else {
-      this.state = {
-        conditions: []
-      };
-    }
   }
 
   componentWillMount() {
-    const { itemsPerPage, startIndex, baseDocId } = this.props;
-
-    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null,
-      this.state.conditions);
-    this.props.fetchTableColumnsModel(baseDocId);
   }
 
   componentDidMount() {
+    const { baseDocId, showEnableCheckbox } = this.props;
+    const { itemsPerPage, startIndex } = this.props;
+    // 根据不同基础档案类型，设置不同的默认查询条件
+    let conditions = [];
+    if (showEnableCheckbox.indexOf(baseDocId) !== -1) {
+      conditions = [{ field: 'enable', datatype: 'boolean', value: 'true' }];
+    }
+    this.props.updateConditions(conditions);
+
+    this.props.fetchTableColumnsModel(baseDocId);
+    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null,
+      conditions);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -71,14 +68,16 @@ class BaseDocTable extends Component {
     const currentType = this.props.baseDocId;
     // 当跳转到其他类型的基础档案时候，重新加载表格数据
     if (nextType !== currentType) {
+      // 根据不同基础档案类型，设置不同的默认查询条件
       let conditions = [];
       if (nextProps.showEnableCheckbox.indexOf(nextType) !== -1) {
         conditions = [{ field: 'enable', datatype: 'boolean', value: 'true' }];
       }
+      this.props.updateConditions(conditions);
 
+      this.props.fetchTableColumnsModel(nextType);
       this.props.fetchTableBodyData(nextType, itemsPerPage, startIndex, null,
         conditions);
-      this.props.fetchTableColumnsModel(nextType);
     }
   }
 
@@ -115,14 +114,13 @@ class BaseDocTable extends Component {
       },
       handleRemove(/* event */) {
         const { rowIdx, rowObj } = this.props;
-        const { startIndex } = container.props;
         const { baseDocId } = container.props;
         let param = {
           isShow: true,
           txt: '是否删除？',
           sureFn() {
             container.props.deleteTableDataAndFetchTableBodyData(
-              baseDocId, rowIdx, rowObj, startIndex);
+              baseDocId, rowIdx, rowObj);
           }
         };
 
@@ -167,9 +165,8 @@ class BaseDocTable extends Component {
     const { itemsPerPage } = this.props;
     let nextPage = eventKey;
     let startIndex = (nextPage - 1) * itemsPerPage;
-    let conditions = this.state.conditions;
     this.props.fetchTableBodyDataAndGotoPage(this.props.baseDocId,
-      itemsPerPage, startIndex, nextPage, conditions);
+      itemsPerPage, startIndex, nextPage, this.props.conditions);
   }
 
   render() {

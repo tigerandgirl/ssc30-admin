@@ -20,7 +20,8 @@ import {
 
   ERROR_MESSAGES_UPDATE,
   GOTO_PAGE,
-  REFER_FIELDS_UPDATE
+  REFER_FIELDS_UPDATE,
+  CONDITIONS_UPDATE
 } from '../constants/ActionTypes';
 
 const initState = {
@@ -71,7 +72,9 @@ const initState = {
   },
   serverMessage: '',
   // 哪些基础档案类型需要显示“启用/停用”复选框
-  showEnableCheckbox: ['dept', 'project', 'bankaccount', 'feeitem']
+  showEnableCheckbox: ['dept', 'project', 'bankaccount', 'feeitem'],
+  // 查询条件
+  conditions: []
 };
 
 export default function arch(state = initState, action) {
@@ -387,6 +390,11 @@ export default function arch(state = initState, action) {
           isShow: { $set: false },
           txt: { $set: ' ' }
         }
+      });
+
+    case CONDITIONS_UPDATE:
+      return update(state, {
+        conditions: { $set: action.conditions }
       });
 
     default:

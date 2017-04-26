@@ -469,20 +469,25 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
 /**
  * 复合操作：创建/保存并刷新表格
  */
-export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex, conditions) {
+export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData,
+  rowIdx = null) {
   return (dispatch, getState) => {
     const { arch } = getState();
-    return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex, null, conditions)));
+    return dispatch(saveTableData(baseDocId, fields, formData, rowIdx))
+      .then(() => dispatch(fetchTableBodyData(baseDocId,
+        arch.itemsPerPage, arch.startIndex, null, arch.conditions)));
   };
 }
 
 /**
  * 复合操作：创建/保存并刷新表格
  */
-export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData, startIndex) {
+export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData) {
   return (dispatch, getState) => {
     const { arch } = getState();
-    return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex, null, [])));
+    return dispatch(deleteTableData(baseDocId, rowIdx, rowData))
+      .then(() => dispatch(fetchTableBodyData(baseDocId,
+        arch.itemsPerPage, arch.startIndex, null, arch.conditions)));
   };
 }
 
@@ -492,12 +497,14 @@ export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData,
 export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj) {
   return (dispatch, getState) => {
     const { arch } = getState();
-    return dispatch(enableTableData(baseDocId, rowObj)).then(() => {
-      setTimeout(() => {
-        dispatch(handleMessage());
-      }, 3000);
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex, null, []));
-    });
+    return dispatch(enableTableData(baseDocId, rowObj))
+      .then(() => {
+        setTimeout(() => {
+          dispatch(handleMessage());
+        }, 3000);
+        return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage,
+          arch.startIndex, null, arch.conditions));
+      });
   };
 }
 
@@ -709,13 +716,18 @@ export function hideFormAlert() {
 }
 
 export function updateReferFields(code, fieldIndex) {
-  return (dispatch, getState) => {
-    const { arch } = getState();
-	// console.log('xx', arch.fields[4].id);
+  return (dispatch) => {
     dispatch({
       type: types.REFER_FIELDS_UPDATE,
-	    fieldIndex,
+      fieldIndex,
       code
     });
   };
 }
+
+export const updateConditions = conditions => dispatch => (
+  dispatch({
+    type: types.CONDITIONS_UPDATE,
+    conditions
+  })
+);

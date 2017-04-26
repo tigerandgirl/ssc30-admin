@@ -52,7 +52,8 @@ class ArchContainer extends Component {
     startIndex: PropTypes.number.isRequired,
     tableData: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired
-    })).isRequired
+    })).isRequired,
+    updateConditions: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -123,9 +124,9 @@ class ArchContainer extends Component {
       multiple = true;
     }
     this.setState({
-      conditions,
       multiple
     });
+    this.props.updateConditions(conditions);
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions);
   }
 

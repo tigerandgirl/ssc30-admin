@@ -18,6 +18,11 @@ class BaseDocEditForm extends Component {
   static propTypes = {
     baseDocId: PropTypes.string.isRequired,
     closeEditDialog: PropTypes.func.isRequired,
+    conditions: PropTypes.arrayOf(PropTypes.shape({
+      field: PropTypes.string.isRequired,
+      datatype: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired
+    })).isRequired,
     editDialog: PropTypes.shape({
       rowIdx: PropTypes.number
     }).isRequired,
@@ -82,8 +87,7 @@ class BaseDocEditForm extends Component {
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData,
-      rowIdx, startIndex);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx);
   }
   handleEditFormReset(event) {
     this.props.closeEditDialog();

@@ -14,9 +14,11 @@ class BaseDocCreateForm extends Component {
   static displayName = 'BaseDocCreateForm'
   static propTypes = {
     baseDocId: PropTypes.string.isRequired,
-    /**
-     * [store] 字段模型
-     */
+    conditions: PropTypes.arrayOf(PropTypes.shape({
+      field: PropTypes.string.isRequired,
+      datatype: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired
+    })).isRequired,
     fields: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
       datatype: PropTypes.number.isRequired,
@@ -64,10 +66,7 @@ class BaseDocCreateForm extends Component {
    * ```
    */
   handleCreateFormSubmit(formData) {
-    const { startIndex, fields, baseDocId } = this.props;
-    // this.props.submitCreateForm();
-    // this.props.saveTableData(baseDocId, fields, formData);
-    // this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex);
+    const { fields, baseDocId } = this.props;
 
     // ref is " user " add param : personmobile
     // bug des: 传入手机号为空
@@ -92,8 +91,7 @@ class BaseDocCreateForm extends Component {
       }
     }
 
-    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData,
-      null, startIndex, this.state.conditions);
+    this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData);
   }
   handleCreateFormReset(event) {
     this.props.hideCreateDialog();
