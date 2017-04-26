@@ -122,7 +122,7 @@ class BaseDocEditForm extends Component {
           show={formAlert.show} bsStyle={formAlert.bsStyle}
           onDismiss={this.handleFormAlertDismiss}
         >
-          { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
+          <p>{formAlert.message}</p>
         </AdminAlert>
         <SSCForm
           fieldsModel={cols}

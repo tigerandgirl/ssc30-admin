@@ -176,7 +176,7 @@ class ArchContainer extends Component {
           show={adminAlert.show} bsStyle={adminAlert.bsStyle}
           onDismiss={this.handlePageAlertDismiss}
         >
-          { adminAlert.resBody ? <pre>{adminAlert.resBody}</pre> : null }
+          <p>{adminAlert.message}</p>
         </AdminAlert>
         <div>
           <div className="header">

@@ -48,8 +48,7 @@ const initState = {
     error: {
       code: 0,
       bsStyle: 'danger', // one of: "success", "warning", "danger", "info"
-      message: '',
-      resBody: '' // 需要改成details，因为这里不仅仅会填写response body
+      message: ''
     }
   },
   spinner: {
@@ -141,8 +140,7 @@ export default function arch(state = initState, action) {
         adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: 'danger',
-          message: action.message,
-          resBody: action.resBody
+          message: action.message
         }
       };
 
@@ -163,8 +161,7 @@ export default function arch(state = initState, action) {
         adminAlert: { ...state.adminAlert,
           show: true,
           bsStyle: 'danger',
-          message: action.message,
-          resBody: action.details
+          message: action.message
         }
       };
 
@@ -228,12 +225,11 @@ export default function arch(state = initState, action) {
           $set: {
             show: true,
             bsStyle: 'danger',
-            message: action.message,
-            resBody: action.resBody
+            message: action.message
           }
         },
         serverMessage: {
-          $set: action.resBody
+          $set: action.message
         },
         spinner: {
           show: { $set: true }

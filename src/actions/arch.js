@@ -33,7 +33,7 @@ function appendCredentials(opts) {
 function requestTableColumnsModel() {
   return {
     type: types.LOAD_TABLECOLUMNS
-  }
+  };
 }
 
 // 获取表格列模型成功
@@ -43,7 +43,7 @@ function receiveTableColumnsModelSuccess(json, fields) {
     data: {
       fields
     }
-  }
+  };
 }
 
 // 获取表格列模型失败
@@ -52,15 +52,16 @@ function receiveTableColumnsModelSuccess(json, fields) {
 function receiveTableColumnsModelFail(message, details) {
   return {
     type: types.LOAD_TABLECOLUMNS_FAIL,
-    message, details
-  }
+    message,
+    details
+  };
 }
 
 // 开始获取表格体数据
 function requestTableData() {
   return {
     type: types.LOAD_TABLEDATA
-  }
+  };
 }
 
 // 成功获取到表格体数据
@@ -78,15 +79,11 @@ function receiveTableBodyDataSuccess(json, itemsPerPage) {
 /**
  * 获取表格体数据失败
  * @param {String} message 错误信息
- * @param {String} resBody 比如，可以是HTTP response body，也可以是其他说明信息
- *                         用来补充说明用的，因为message通常会很短
- * TODO: resBody不应该保存在adminAlert下，而是应该放在tableData下
  */
-function receiveTableBodyDataFail(message, resBody) {
+function receiveTableBodyDataFail(message) {
   return {
     type: types.LOAD_TABLEDATA_FAIL,
-    message,
-    resBody
+    message
   };
 }
 
@@ -122,7 +119,7 @@ function enableTableDataFail(message) {
 function updateTableDataRequest() {
   return {
     type: types.TABLEDATA_UPDATE_REQUEST
-  }
+  };
 }
 
 // rowIdx是可选参数，只有当修改表格数据的时候才会传这个参数
@@ -139,11 +136,10 @@ function updateTableDataSuccess(json, rowIdx) {
   };
 }
 
-function updateTableDataFailure(message, resBody) {
+function updateTableDataFailure(message) {
   return {
     type: types.TABLEDATA_UPDATE_FAILURE,
-    message,
-    resBody
+    message
   };
 }
 
@@ -180,14 +176,14 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
 
     let url = URL.getQueryURL(baseDocId);
     return fetch(url, opts)
-      .then(response => {
+      .then((response) => {
         // TODO: HTTP状态检查，需要独立成helper function
         if (response.status >= 200 && response.status < 300) {
           return response;
         }
         let error = new Error(response.statusText);
         error.response = response;
-        response.text().then(text => {
+        response.text().then((text) => {
           dispatch(receiveTableBodyDataFail('后端返回的HTTP status code不是200', text));
         });
         throw error;
@@ -220,12 +216,8 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
  * 复合操作：获取表格数据并将页码设定为下一页
  */
 export function fetchTableBodyDataAndGotoPage(baseDocId, itemsPerPage, startIndex, nextPage, conditions) {
-  return (dispatch) => {
-    return dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions ))
-      .then(() => {
-        return dispatch(gotoPage(startIndex, nextPage));
-      });
-  };
+  return dispatch => dispatch(fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions))
+      .then(() => dispatch(gotoPage(startIndex, nextPage)));
 }
 
 /**
@@ -247,22 +239,20 @@ export function fetchTableColumnsModel(baseDocId) {
 
     let url = `${URL.FICLOUDPUB_INITGRID_URL}`;
     return fetch(url, opts)
-      .then(response => {
+      .then((response) => {
         // TODO: HTTP状态检查，需要独立成helper function
         if (response.status >= 200 && response.status < 300) {
           return response;
         }
         let error = new Error(response.statusText);
         error.response = response;
-        response.text().then(text => {
+        response.text().then((text) => {
           dispatch(receiveTableColumnsModelFail('后端返回的HTTP status code不是200', text));
         });
         throw error;
       })
-      .then(response => {
-        return response.json();
-      })
-      .then(json => {
+      .then(response => response.json())
+      .then((json) => {
         if (json.success === true) {
           // 进行业务层的数据校验
           const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
@@ -303,7 +293,7 @@ export function fetchTableColumnsModel(baseDocId) {
           );
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('fetch table columns error:', err);
       });
   };
@@ -329,15 +319,13 @@ export function deleteTableData(baseDocId, rowIdx, rowData) {
 
     let url = URL.getDeleteURL(baseDocId);
     return fetch(url, opts)
-      .then(response => {
-        return response.json();
-      }).then(json => {
+      .then(response => response.json()).then((json) => {
         if (json.success === true) {
           dispatch(deleteTableDataSuccess(json));
         } else {
           dispatch(deleteTableDataFail(json.message));
         }
-      }).catch(err => {
+      }).catch((err) => {
         alert('删除时候出现错误');
         console.log('删除时候出现错误：', err);
       });
@@ -368,9 +356,7 @@ export function enableTableData(baseDocId, rowObj) {
 
     const url = URL.getEnableURL(baseDocId);
     return fetch(url, opts)
-      .then((response) => {
-        return response.json();
-      })
+      .then(response => response.json())
       .then((json) => {
         if (json.success === true) {
           dispatch(enableTableDataSuccess(json));
@@ -422,7 +408,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
      */
     function processRefer(obj, fields) {
       const newObj = { ...obj };
-      fields.forEach(field => {
+      fields.forEach((field) => {
         if (field.type === 'ref') {
           let fieldId = field.id;
           let fieldObj = obj[fieldId];
@@ -441,14 +427,13 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       // TODO: HTTP状态检查，需要独立成helper function
       if (response.status >= 200 && response.status < 300) {
         return response;
-      } else {
-        let error = new Error(response.statusText);
-        error.response = response;
-        response.text().then(text => {
-          dispatch(updateTableDataFailure(('', text)));
-        });
-        throw error;
       }
+      let error = new Error(response.statusText);
+      error.response = response;
+      response.text().then((text) => {
+        dispatch(updateTableDataFailure(('', text)));
+      });
+      throw error;
     }
 
     function processJSONResult(json) {
@@ -475,7 +460,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       .then(checkHTTPStatus)
       .then(utils.parseJSON)
       .then(processJSONResult)
-      .catch(err => {
+      .catch((err) => {
         console.log('保存基础档案时候出现错误：', err);
       });
   };
@@ -484,12 +469,10 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
 /**
  * 复合操作：创建/保存并刷新表格
  */
-export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex,conditions) {
+export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, rowIdx, startIndex, conditions) {
   return (dispatch, getState) => {
     const { arch } = getState();
-    return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,conditions));
-    });
+    return dispatch(saveTableData(baseDocId, fields, formData, rowIdx)).then(() => dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex, null, conditions)));
   };
 }
 
@@ -499,23 +482,21 @@ export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData, 
 export function deleteTableDataAndFetchTableBodyData(baseDocId, rowIdx, rowData, startIndex) {
   return (dispatch, getState) => {
     const { arch } = getState();
-    return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => {
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
-    });
+    return dispatch(deleteTableData(baseDocId, rowIdx, rowData)).then(() => dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex, null, [])));
   };
 }
 
 /**
  * 复合操作：启用/停用并刷新表格
  */
-export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj ) {
+export function enableTableDataAndFetchTableBodyData(baseDocId, rowObj) {
   return (dispatch, getState) => {
     const { arch } = getState();
-    return dispatch(enableTableData(baseDocId, rowObj )).then(() => {
-      setTimeout(function () {
+    return dispatch(enableTableData(baseDocId, rowObj)).then(() => {
+      setTimeout(() => {
         dispatch(handleMessage());
-      },3000);
-      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex,null,[]));
+      }, 3000);
+      return dispatch(fetchTableBodyData(baseDocId, arch.itemsPerPage, arch.startIndex, null, []));
     });
   };
 }
@@ -566,7 +547,7 @@ export function updateEditFormFieldValue(index, fieldModel, value) {
 }
 
 export function initEditFormData(editFormData) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: types.ARCH_INIT_EDIT_FORM_DATA,
       editFormData
@@ -603,7 +584,7 @@ export function hideCreateDialog() {
       type: types.HIDE_CREATE_DIALOG,
       openDialog: false,
       formData: {}
-    })
+    });
   };
 }
 
@@ -612,7 +593,7 @@ export function submitCreateForm() {
     dispatch({
       type: types.SUBMIT_CREATE_FORM
     });
-    const processResult = result => {
+    const processResult = (result) => {
       result.error ?
         dispatch({
           type: types.SUBMIT_CREATE_FORM_FAIL,
@@ -624,7 +605,7 @@ export function submitCreateForm() {
           type: types.SUBMIT_CREATE_FORM_SUCCESS,
           bsStyle: 'success',
           message: '提交成功'
-        })
+        });
     };
     const { arch: { createFormData } } = getState();
     const options = {
@@ -635,11 +616,11 @@ export function submitCreateForm() {
       body: JSON.stringify(createFormData)
     };
     appendCredentials(options);
-    return fetch(`/api/arch`, options)
+    return fetch('/api/arch', options)
       .then(utils.checkStatus)
       .then(utils.parseJSON)
       .then(processResult)
-      .catch(error => {
+      .catch((error) => {
         dispatch({
           type: types.SUBMIT_CREATE_FORM_FAIL,
           bsStyle: 'danger',
@@ -648,16 +629,16 @@ export function submitCreateForm() {
         throw error;
       });
   };
-};
+}
 
 export function initCreateFormData(formData) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: types.INIT_CREATE_FORM_DATA,
       formData
     });
   };
-};
+}
 
 export function updateCreateFormFieldValue(label, value) {
   return (dispatch, getState) => {
@@ -674,7 +655,7 @@ export function updateCreateFormFieldValue(label, value) {
       payload: value
     });
   };
-};
+}
 
 // 页面上的消息框
 
@@ -682,11 +663,11 @@ function updateErrorMessages(message) {
   return {
     type: types.ERROR_MESSAGES_UPDATE,
     message
-  }
+  };
 }
 
 export function showAdminAlert() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: types.SHOW_ADMIN_ALERT
     });
@@ -694,47 +675,47 @@ export function showAdminAlert() {
 }
 
 export function hideAdminAlert() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: types.HIDE_ADMIN_ALERT
     });
   };
 }
 
-export function handleMessage(){
-  return dispatch =>{
+export function handleMessage() {
+  return (dispatch) => {
     dispatch({
-      type:types.HIDE_MESSAGE_TIPS
-    })
-  }
+      type: types.HIDE_MESSAGE_TIPS
+    });
+  };
 }
 
 // 对话框中的消息框
 
 export function showFormAlert() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: types.FORM_ALERT_OPEN
     });
   };
-};
+}
 
 export function hideFormAlert() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: types.FORM_ALERT_CLOSE
     });
   };
-};
+}
 
 export function updateReferFields(code, fieldIndex) {
   return (dispatch, getState) => {
-	const { arch } = getState();
+    const { arch } = getState();
 	// console.log('xx', arch.fields[4].id);
     dispatch({
       type: types.REFER_FIELDS_UPDATE,
 	    fieldIndex,
       code
     });
-  }
+  };
 }
