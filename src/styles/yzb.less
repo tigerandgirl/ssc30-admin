@@ -1,4 +1,4 @@
-@import '../components/spinner/style.css';
+@import '../components/spinner/style.css';  // 加载loading 组件样式
 
 // common.less 中的通用变量
 html { font-size: 62.5%; }  // 16px = 1.6rem
@@ -8,9 +8,11 @@ body{
   font-family: "Helvetica Neue","Microsoft Yahei",Arial,sans-serif;
   background-color: #f9f9f9;
 }
+
 .blank {
   background: url("../images/blank.png");
 }
+
 .b0{border:0;}
 .mr10{margin-right:10px;}
 .mb0{margin-bottom:0;}
@@ -82,7 +84,7 @@ body{
   outline-offset: 0;
 }
 
-.btn.btn-primary {              // 重要按钮 增加删减之类
+.btn.btn-primary {              // 重要按钮
   .f12;
   background-color: @mainColor;
   border-color: @mainColor;
@@ -99,7 +101,7 @@ body{
   }
 }
 
-.btn.btn-default {
+.btn.btn-default { // 一般按钮
   .f12;
   border-color: @btnBorderColor;
   background-color: @backColor;
@@ -121,7 +123,7 @@ body{
 // 公共表格
 .ssc-grid {
   table {
-    table-layout: fixed;
+    //table-layout: fixed;
     .mb0;
     color: @wordFontColor;
     border: 1px solid @borderColor;
@@ -132,15 +134,10 @@ body{
         background-color: #FFF;
         th {
           .b0;
-          //.ws;
+          .ws;
           height: 56px;
           padding: 0 10px;
           font: 700 14px/56px "SimSun";
-          &input[type=checkbox] {
-            .p0;
-            width: 42px;
-            text-align: center;
-          }
         }
       }
     }
@@ -156,14 +153,7 @@ body{
           padding: 0 10px;
           font: 12px/35px "SimSun";
           color: @wordFontColor;
-          &input[type=checkbox] {
-            text-align: center;
-            .p0;
-          }
         }
-        //td:not(:last-child) {
-        //  max-width: 150px;
-        //}
         td:last-child > a, td:last-child span {
           color: transparent;
           margin-right: 5px;
@@ -231,6 +221,7 @@ body{
   }
   .ledger-content-right {
     margin-left: 250px;   // 左树右表 右边
+    overflow-x: auto;
   }
 }
 
@@ -258,23 +249,23 @@ body{
 }
 .rc-tree li span.rc-tree-switcher.rc-tree-noline_close {
   background: url(../images/rc-tree-noline_close.png) no-repeat 0 3px;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 .rc-tree li span.rc-tree-switcher.rc-tree-noline_open {
   background: url(../images/rc-tree-noline_open.png) no-repeat 0 0;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 .rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__close  {
   background: url(../images/rc-tree-icon__close.png) no-repeat;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 .rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__open {
   background: url(../images/rc-tree-icon__open.png) no-repeat;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 .rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__docu {
   background: url(../images/rc-tree-icon__docu.png) no-repeat;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 .rc-tree li span.rc-tree-switcher, .rc-tree li span.rc-tree-checkbox, .rc-tree li span.rc-tree-iconEle.rc-tree-icon__docu + span.rc-tree-title {
   font: 400 12px "SimSun";
