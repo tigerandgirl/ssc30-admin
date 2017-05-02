@@ -10,6 +10,7 @@ import { Button, Checkbox } from 'react-bootstrap';
 
 import BaseDocTable from './BaseDocTable';
 import BaseDocCreateForm from './BaseDocCreateForm';
+import BaseDocEditForm from './BaseDocEditForm';
 
 import AdminEditDialog from '../../components/AdminEditDialog';
 import AdminAlert from '../../components/AdminAlert';
@@ -199,7 +200,7 @@ class ArchContainer extends Component {
           show={editDialog.show}
           onHide={this.closeEditDialog}
         >
-          <BaseDocCreateForm baseDocId={baseDocId} />
+          <BaseDocEditForm baseDocId={baseDocId} />
         </AdminEditDialog>
         <AdminEditDialog
           className="create-form"
