@@ -1,6 +1,6 @@
 # ssc30-admin [![Travis][build-badge]][build] [![AppVeyor][appveyor-badge]][appveyor] [![npm][npm-badge]][npm] [![Codecov][codecov-badge]][codecov]
 
-注意：友账表所有功能已经迁移到FC项目。
+**注意：友账表所有功能已经迁移到FC项目。**
 
 本项目覆盖的功能包括并不限于：
 
