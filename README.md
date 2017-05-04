@@ -1,12 +1,11 @@
 # ssc30-admin [![Travis][build-badge]][build] [![AppVeyor][appveyor-badge]][appveyor] [![npm][npm-badge]][npm] [![Codecov][codecov-badge]][codecov]
 
-注意：友账表基础档案已经迁移到FC项目
+注意：友账表所有功能已经迁移到FC项目。
 
 本项目覆盖的功能包括并不限于：
 
 - SSC 3.0 后台管理
 - 友报账 - 基础档案
-- 友账表 - 会计平台（部分页面）
 
 ## 进行开发
 

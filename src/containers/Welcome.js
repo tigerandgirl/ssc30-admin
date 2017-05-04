@@ -27,9 +27,9 @@ class Welcome extends React.Component {
       { path: '/entity-no-sidebar-single-page',
         name: '实体模型 Entity (no-sidebar, single-page)' },
       { path: '/mapping-def',
-        name: '转换规则定义 MappingDef (平台接入配置)' },
+        name: '【废弃】转换规则定义 MappingDef (平台接入配置)' },
       { path: '/mapping-def2',
-        name: '转换规则定义2代 MappingDef2' }
+        name: '【废弃】转换规则定义2代 MappingDef2' }
     ];
     return (
       <div className="welcome-container">
