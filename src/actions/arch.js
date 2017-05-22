@@ -196,8 +196,9 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
       .then(json => {
         if (json.success === true) {
           // 进行业务层的数据校验
-          const [isValid, validationMessage] = utils.validation.tableColumnsModelData(json);
+          const [isValid, validationMessage] = utils.validation.tableRowlData(json);
           if (isValid) {
+            
             dispatch(receiveTableBodyDataSuccess(json, itemsPerPage));
           } else {
             dispatch(receiveTableBodyDataFail(
@@ -238,10 +239,12 @@ export function fetchTableColumnsModel(baseDocId) {
     let opts = {
       method: 'post',
       headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
+        'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: `doctype=${baseDocId}`
+      body: JSON.stringify({
+        doctype:baseDocId
+      })
     };
     appendCredentials(opts);
 

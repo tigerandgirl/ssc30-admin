@@ -25,5 +25,8 @@ module.exports = function getBaseDocTypes() {
     ,{id: 'user', name: '用户'}
     ,{id: 'valuerang', name: '值集'}
     ,{id: 'accsubject', name: '会计平台科目'}
+    ,{id: 'duty', name: '职务'}
+    ,{id: 'dutyLevel', name: '职级'}
+    ,{id: 'cityArchive', name: '城市'}
   ];
 }

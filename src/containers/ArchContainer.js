@@ -112,7 +112,7 @@ class ArchContainer extends Component {
    * {
    *   pk_org: {
    *     selected: [{
-   *       id: '',
+   *       pk: '',
    *       code: '',
    *       name: ''
    *     }]
@@ -244,7 +244,7 @@ class ArchContainer extends Component {
         _.map( fields , function(obj ,ind ){
             _.map(control, function( con ,i  ){
                 if( con == obj.refCode  ){
-                  var rowObjCode = '{\"id\"=\"' + rowObj.id +'\"}';
+                  var rowObjCode = '{\"pk\"=\"' + rowObj.pk +'\"}';
                   container.props.updateReferFields(rowObjCode, ind );
                 }
             })
@@ -253,8 +253,8 @@ class ArchContainer extends Component {
         // 修复后端数据中的null
         fields.forEach(field => {
           if (field.type === 'string') {
-            if (rowObj[field.id] === null) {
-              rowObj[field.id] = '';
+            if (rowObj[field.pk] === null) {
+              rowObj[field.pk] = '';
             }
           }
         });
@@ -316,7 +316,7 @@ class ArchContainer extends Component {
    * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
    * tableData中获取参照的具体信息，一般是：
    * ```json
-   * { id: '', code: '', name: '' }
+   * { pk: '', code: '', name: '' }
    * ```
    */
   getFormDefaultData(columnsModel) {
@@ -326,11 +326,11 @@ class ArchContainer extends Component {
       if (fieldModel.hidden === true) {
         return;
       }
-      const fieldId = fieldModel.id;
+      const fieldId = fieldModel.pk;
       switch (fieldModel.type) {
         case 'ref':
           formData[fieldId] = {
-            id: '',
+            pk: '',
             code: '',
             name: ''
           };

@@ -533,6 +533,32 @@ export const validation = {
         你可以尝试联系chenyangf@yonyou.com，也许可能会帮助到你。`;
     }
     return [isValid, message];
+  },
+
+  /**
+   * 检查tableRow中：
+   * - 是否有重复的pk
+   * @param {object} 经过parse的后端返回的JSON
+   * @return {array} [isValid, message]
+   *   - `isValid` 是否校验成功
+   *   - `message` 校验失败的时候，用来提供相应的错误信息
+   */
+  tableRowlData: (json) => {
+    let isValid = true;
+    let message = '';
+    let pks = json.data.map(row => row.pk);
+    // 为什么没有import lodash还能使用_？
+    let duplicatedIds = _.filter(pks, (value, index, iteratee) => {
+      return _.includes(iteratee, value, index + 1);
+    });
+    if (!_.isEmpty(duplicatedIds)) {
+      isValid = false;
+      message = `JSON中出现了重复的pk：${duplicatedIds}，请立即停止所有操作，
+        否则可能产生意想不到的结果！如果你不明白这里发生了什么事情，请咨询网站管理员。
+        由于当前网站管理员不存在，你可以尝试绕过网站管理员，直接联系程序员，比如
+        你可以尝试联系chenyangf@yonyou.com，也许可能会帮助到你。`;
+    }
+    return [isValid, message];
   }
 };
 

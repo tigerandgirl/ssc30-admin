@@ -11,7 +11,7 @@
 
 // 默认使用友报账服务器，这也是ssc30-admin一开始就为了这个产品开发的
 const DEFAULT_SCHEME = 'http';
-const DEFAULT_HOST_PORT = '10.3.14.233:8080';
+const DEFAULT_HOST_PORT = '172.20.13.230:8082';
 const DEFAULT_PATH_PREFIX = '';
 
 export const SCHEME = typeof G_SCHEME === 'undefined'
@@ -32,17 +32,22 @@ const makeURL = path => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}${path}`;
  */
 
 // 基础档案 模型查询接口
-export const FICLOUDPUB_INITGRID_URL = makeURL('/ficloud_pub/initgrid');
+export const FICLOUDPUB_INITGRID_URL = makeURL('/initheader/initgrid');
 // 基础档案 数据查询接口
 export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add`;
 export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save`;
 export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete`;
-export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/query`;
+export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/findpage`;
 export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable`;
 
 // 参照 查询接口
 export const ReferDataURL = makeURL('/refbase_ctr/queryRefJSON');
 export const ReferUserDataURL = makeURL('/userCenter/queryUserAndDeptByDeptPk');
+
+// 职务职级城市 查询接口
+export const ReferDutyURL = makeURL('/doc/duty/findAll');
+export const ReferDutyLevelURL = makeURL('/doc/dutyLevel/findAll');
+
 
 // 公式编辑器
 export const FormulaURL = makeURL('/echart/metatree');

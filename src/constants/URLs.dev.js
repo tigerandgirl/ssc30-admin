@@ -17,7 +17,7 @@ const DEV_SERVER = '10.3.14.240';
 
 // 默认使用本地开发环境，使用swagger作为后端，而且默认使用友报账后端
 const DEFAULT_SCHEME = 'http';
-const DEFAULT_HOST_PORT = '127.0.0.1:3009';
+const DEFAULT_HOST_PORT = '172.20.13.230:8082';
 const DEFAULT_PATH_PREFIX = '';
 
 export const SCHEME = typeof G_SCHEME === 'undefined'
@@ -39,17 +39,21 @@ const makeURL = path => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}${path}`;
  */
 
 // 基础档案 模型查询接口
-export const FICLOUDPUB_INITGRID_URL = makeURL('/ficloud_pub/initgrid');
+export const FICLOUDPUB_INITGRID_URL = makeURL('/initheader/initgrid?phone=13920171111');
 // 基础档案 数据查询接口
-export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add`;
-export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save`;
-export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete`;
-export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/query`;
-export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable`;
+export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add?phone=13920171111`;
+export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save?phone=13920171111`;
+export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete?phone=13920171111`;
+export const getQueryURL = type => `${SCHEME}://${HOST_PORT}/doc/${type}/findpage?phone=13920171111`;
+export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable?phone=13920171111`;
 
 // 参照 查询接口
 export const ReferDataURL = makeURL('/refbase_ctr/queryRefJSON');
 export const ReferUserDataURL = makeURL('/userCenter/queryUserAndDeptByDeptPk');
+
+// 职务职级城市 查询接口
+export const ReferDutyURL = makeURL('/doc/duty/findAll');
+export const ReferDutyLevelURL = makeURL('/doc/dutyLevel/findAll');
 
 // 公式编辑器
 export const FormulaURL = makeURL('/echart/metatree');
