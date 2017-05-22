@@ -37,7 +37,7 @@ export const FICLOUDPUB_INITGRID_URL = makeURL('/initheader/initgrid');
 export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add`;
 export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save`;
 export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete`;
-export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/findpage`;
+export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/query`;
 export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable`;
 
 // 参照 查询接口
