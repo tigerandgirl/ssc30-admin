@@ -28,12 +28,12 @@ sync_files '10.3.14.233' '22' 'sscweb' 'dist/' \
 
 # 5088 以后的测试环境
 gen_config 'http' '172.20.4.88:5088' ''
-sync_files '172.20.4.88' '22' 'root' 'dist/' \
+sync_files '172.20.4.88' '22' 'sscweb' 'dist/' \
   '/ssc/tomcat_dc_integration_2/webapps/manaaccountybz/'
 
 # 6088
 gen_config 'http' '172.20.4.88:6088' ''
-sync_files '172.20.4.88' '22' 'root' 'dist/' \
+sync_files '172.20.4.88' '22' 'sscweb' 'dist/' \
   '/ssc/tomcat_dc_integration_3/tomcat_dc_integration/webapps/manaaccountybz'
 
 # 234 鬼知道这是啥环境
