@@ -44,7 +44,7 @@ export const FICLOUDPUB_INITGRID_URL = makeURL('/initheader/initgrid?phone=13920
 export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add?phone=13920171111`;
 export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save?phone=13920171111`;
 export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete?phone=13920171111`;
-export const getQueryURL = type => `${SCHEME}://${HOST_PORT}/doc/${type}/query?phone=13920171111`;
+export const getQueryURL = type => `${SCHEME}://${HOST_PORT}/${type}/query?phone=13920171111`;
 export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable?phone=13920171111`;
 
 // 参照 查询接口

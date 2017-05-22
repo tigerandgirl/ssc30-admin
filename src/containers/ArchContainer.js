@@ -121,6 +121,7 @@ class ArchContainer extends Component {
    * ```
    */
   handleCreateFormSubmit(formData) {
+    debugger;
     const { startIndex, fields, params: { baseDocId } } = this.props;
     // this.props.submitCreateForm();
     // this.props.saveTableData(baseDocId, fields, formData);
@@ -326,7 +327,7 @@ class ArchContainer extends Component {
       if (fieldModel.hidden === true) {
         return;
       }
-      const fieldId = fieldModel.pk;
+      const fieldId = fieldModel.id;
       switch (fieldModel.type) {
         case 'ref':
           formData[fieldId] = {
