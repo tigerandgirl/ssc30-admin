@@ -197,7 +197,15 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
         if (json.success === true) {
           // 进行业务层的数据校验
           const [isValid, validationMessage] = utils.validation.tableRowlData(json);
-          dispatch(receiveTableBodyDataSuccess(json, itemsPerPage));
+          if (isValid) {
+            dispatch(receiveTableBodyDataSuccess(json, itemsPerPage));
+          } else {
+            dispatch(receiveTableBodyDataFail(
+              `虽然后端返回的success是true，而且客户端也获得到了JSON数据，
+              但是数据校验方法提示说：“${validationMessage}”`,
+              JSON.stringify(json.data, null, '  ')
+            ));
+          }
         } else {
           dispatch(receiveTableBodyDataFail('获取表格数据失败，后端返回的success是false',
             json.message));
