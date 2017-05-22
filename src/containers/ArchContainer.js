@@ -356,6 +356,57 @@ class ArchContainer extends Component {
     return formData;
   }
 
+  /**
+   * 根据列模型和表格体数据来构建空表单需要的数据
+   * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
+   * tableData中获取参照的具体信息，一般是：
+   * ```json
+   * { pk: '', code: '', name: '' }
+   * ```
+   */
+  getFormCityData(columnsModel) {
+    let formData = {};
+    columnsModel.forEach(fieldModel => {
+      // 隐藏字段，比如id字段，不用初始化值
+      if (fieldModel.id!= 'cityLevel' && fieldModel.hidden === true) {
+        return;
+      }
+      if (fieldModel.id == 'cityLevel') {
+        fieldModel.hidden = false;
+      }
+      if (fieldModel.id == 'cityLevelName') {
+        fieldModel.hidden = true;
+      }
+      const fieldId = fieldModel.id;
+      switch (fieldModel.type) {
+        case 'ref':
+          formData[fieldId] = {
+            pk: '',
+            code: '',
+            name: ''
+          };
+          break;
+        case 'boolean':
+          // 复选框应该设置默认值为false，也就是没有勾选
+          if (fieldModel.type === 'boolean') {
+            formData[fieldId] = false;
+          }
+          // XXDEBUG-START
+          // “启用”字段默认应该是true，后端没有传递这个信息，所以只好在前端写死
+          if (fieldId === 'enable') {
+            formData[fieldId] = true;
+          }
+          // XXDEBUG-END
+          break;
+        default:
+          formData[fieldId] = '';
+          break;
+      }
+    });
+    return formData;
+  }
+
+
   render() {
     const {
       tableData, fields,
@@ -372,7 +423,14 @@ class ArchContainer extends Component {
     let cols = fields || [];
 
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData(cols);
+
+    let currentFormData = [];
+
+    if( baseDocId == 'cityArchive') {
+      currentFormData = this.getFormCityData(cols);
+    }else {
+      currentFormData = this.getFormDefaultData(cols);
+    }
 
     let checkBoxContent = "";
     if( baseDocId == "dept" ||baseDocId == "project"
@@ -451,7 +509,7 @@ class ArchContainer extends Component {
           <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
             fieldsModel={cols}
-            defaultData={formDefaultData}
+            defaultData={currentFormData}
             onBlur={::this.handleCreateFormBlur}
             onSubmit={::this.handleCreateFormSubmit}
             onReset={::this.handleCreateFormReset}
