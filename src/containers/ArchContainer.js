@@ -302,9 +302,15 @@ class ArchContainer extends Component {
             || baseDocId == "bankaccount" ||baseDocId == "feeitem" ){
           resultDom = (  <span onClick={this.handleEnable}>{enable==true ?"停用":"启用"}</span> );
         }
+        var modifyAction = ( <span onClick={this.handleEdit}>修改</span> );
+
+        if(baseDocId == "duty" || baseDocId == "dutyLevel") {
+          modifyAction = (<span></span>)
+        }
+
         return (
           <td>
-            <span onClick={this.handleEdit}>修改</span>
+            {modifyAction}
             {resultDom}
           </td>
         );
