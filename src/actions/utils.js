@@ -255,7 +255,7 @@ export function setRequiredFields(baseDocId, { ...field }) {
       email: true,
       positionstate: true
     },
-    duty:{
+    duty:{ //职务
       duty_code:true ,
       duty_name:true
     }
