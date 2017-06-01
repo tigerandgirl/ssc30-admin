@@ -254,6 +254,10 @@ export function setRequiredFields(baseDocId, { ...field }) {
       sex: true,
       email: true,
       positionstate: true
+    },
+    duty:{
+      duty_code:true ,
+      duty_name:true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
