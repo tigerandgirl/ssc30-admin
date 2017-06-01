@@ -258,6 +258,10 @@ export function setRequiredFields(baseDocId, { ...field }) {
     duty:{ //职务
       duty_code:true ,
       duty_name:true
+    },
+    dutyLevel:{//职级
+      duty_level_code:true,
+      duty_level_name:true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
