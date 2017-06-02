@@ -262,6 +262,12 @@ export function setRequiredFields(baseDocId, { ...field }) {
     dutyLevel:{//职级
       duty_level_code:true,
       duty_level_name:true
+    },
+    cityArchive:{
+      code:true ,
+      name:true ,
+      ename:true ,
+      cityLevel:true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
