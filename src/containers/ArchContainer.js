@@ -488,7 +488,6 @@ class ArchContainer extends Component {
           </div>
           <SSCGrid tableData={tableData} columnsModel={cols} className="ssc-grid"
             paging
-            localSearch
             itemsPerPage={itemsPerPage}
             totalPage={this.props.totalPage}
             activePage={this.props.activePage}

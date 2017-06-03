@@ -25,7 +25,7 @@ import {
 } from '../constants/ActionTypes';
 
 const initState = {
-  itemsPerPage: 100, // TODO 常量不应该放在这里
+  itemsPerPage: 30, // TODO 常量不应该放在这里
   startIndex: 0,
   activePage: 1,
   loaded: false,
