@@ -421,16 +421,18 @@ class ArchContainer extends Component {
    * ```
    */
   getCityCols(columnsModel) {
+    let gridCols = [];
     columnsModel.forEach(fieldModel => {
       if (fieldModel.id == 'cityLevel') {
-        fieldModel.hidden = false;
-      }
-      if (fieldModel.id == 'cityLevelName') {
         fieldModel.hidden = true;
       }
+      if (fieldModel.id == 'cityLevelName') {
+        fieldModel.hidden = false;
+      }
+      gridCols.push(fieldModel);
 
     });
-    return columnsModel;
+    return gridCols;
   }
 
 
