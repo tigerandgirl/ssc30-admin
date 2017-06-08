@@ -454,14 +454,11 @@ class ArchContainer extends Component {
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
 
     let currentFormData = [];
-    let currentCols = [];
 
     if( baseDocId == 'cityArchive') {
       currentFormData = this.getFormCityData(cols);
-      currentCols = this.getCityCols(cols);
     }else {
       currentFormData = this.getFormDefaultData(cols);
-      currentCols = cols;
     }
 
 
@@ -532,7 +529,7 @@ class ArchContainer extends Component {
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <SSCForm
-            fieldsModel={currentCols}
+            fieldsModel={cols}
             defaultData={editFormData}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.handleEditFormReset}
@@ -541,7 +538,7 @@ class ArchContainer extends Component {
         <AdminEditDialog className="create-form" title="新增" {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
           <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
-            fieldsModel={currentCols}
+            fieldsModel={cols}
             defaultData={currentFormData}
             onBlur={::this.handleCreateFormBlur}
             onSubmit={::this.handleCreateFormSubmit}
