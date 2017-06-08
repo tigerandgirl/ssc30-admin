@@ -378,7 +378,7 @@ class ArchContainer extends Component {
         return;
       }
       if (fieldModel.id == 'cityLevel') {
-        fieldModel.hidden = true;
+        fieldModel.hidden = false;
       }
       if (fieldModel.id == 'cityLevelName') {
         fieldModel.hidden = false;
@@ -431,12 +431,14 @@ class ArchContainer extends Component {
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
 
     let currentFormData = [];
+    let currentCols = [];
 
     if( baseDocId == 'cityArchive') {
       currentFormData = this.getFormCityData(cols);
     }else {
       currentFormData = this.getFormDefaultData(cols);
     }
+
 
     let checkBoxContent = "";
     if( baseDocId == "dept" ||baseDocId == "project"
