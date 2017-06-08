@@ -412,6 +412,27 @@ class ArchContainer extends Component {
     return formData;
   }
 
+  /**
+   * 根据列模型和表格体数据来构建空表单需要的数据
+   * 以参照来举例，需要现从columnsModel中的type来现确认哪个字段是参照，然后从
+   * tableData中获取参照的具体信息，一般是：
+   * ```json
+   * { pk: '', code: '', name: '' }
+   * ```
+   */
+  getCityCols(columnsModel) {
+    columnsModel.forEach(fieldModel => {
+      if (fieldModel.id == 'cityLevel') {
+        fieldModel.hidden = false;
+      }
+      if (fieldModel.id == 'cityLevelName') {
+        fieldModel.hidden = true;
+      }
+
+    });
+    return columnsModel;
+  }
+
 
   render() {
     const {
@@ -435,8 +456,10 @@ class ArchContainer extends Component {
 
     if( baseDocId == 'cityArchive') {
       currentFormData = this.getFormCityData(cols);
+      currentCols = this.getCityCols(cols);
     }else {
       currentFormData = this.getFormDefaultData(cols);
+      currentCols = cols;
     }
 
 
@@ -507,7 +530,7 @@ class ArchContainer extends Component {
             { formAlert.resBody ? <pre>{formAlert.resBody}</pre> : null }
           </AdminAlert>
           <SSCForm
-            fieldsModel={cols}
+            fieldsModel={currentCols}
             defaultData={editFormData}
             onSubmit={::this.handleEditFormSubmit}
             onReset={::this.handleEditFormReset}
@@ -516,7 +539,7 @@ class ArchContainer extends Component {
         <AdminEditDialog className="create-form" title="新增" {...this.props} show={createDialog.show} onHide={::this.closeCreateDialog}>
           <p className="server-message">{this.props.serverMessage}</p>
           <SSCForm
-            fieldsModel={cols}
+            fieldsModel={currentCols}
             defaultData={currentFormData}
             onBlur={::this.handleCreateFormBlur}
             onSubmit={::this.handleCreateFormSubmit}
