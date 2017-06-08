@@ -381,7 +381,7 @@ class ArchContainer extends Component {
         fieldModel.hidden = false;
       }
       if (fieldModel.id == 'cityLevelName') {
-        fieldModel.hidden = false;
+        fieldModel.hidden = true;
       }
       const fieldId = fieldModel.id;
       switch (fieldModel.type) {
