@@ -39,7 +39,7 @@ const makeURL = path => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}${path}`;
  */
 
 // 基础档案 模型查询接口
-export const FICLOUDPUB_INITGRID_URL = makeURL('/ficloud_pub/initgrid');
+export const FICLOUDPUB_INITGRID_URL = makeURL('/initheader/initgrid');
 // 基础档案 数据查询接口
 export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add`;
 export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save`;
@@ -51,6 +51,10 @@ export const getUpdateURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${ty
 // 参照 查询接口
 export const ReferDataURL = makeURL('/refbase_ctr/queryRefJSON');
 export const ReferUserDataURL = makeURL('/userCenter/queryUserAndDeptByDeptPk');
+
+// 职务职级城市查询接口
+export const ReferdutyURL = makeURL('/doc/duty/findAll');
+export const ReferDutyLevelURL = makeURL('doc/dutyLevel/findAll');
 
 // 公式编辑器
 export const FormulaURL = makeURL('/echart/metatree');

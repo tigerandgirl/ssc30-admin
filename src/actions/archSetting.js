@@ -73,7 +73,7 @@ export const fetchConfigData = () => {
       mode: "cors"
     };
 
-    var url = `/api/archsetting/config`;
+    var url = `/api/archsetting/config`;  
 
     return fetch(url, opts)
       .then(response => {
