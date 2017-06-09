@@ -27,6 +27,6 @@ module.exports = function getBaseDocTypes() {
     ,{id: 'accsubject', name: '会计平台科目'}
     ,{id: 'duty', name: '职务'}
     ,{id: 'dutyLevel', name: '职级'}
-    ,{id: 'cityArchive', name: '城门'}
+    ,{id: 'cityArchive', name: '城市'}
   ];
 }
