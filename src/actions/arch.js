@@ -457,7 +457,6 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
       body: JSON.stringify(requestBodyObj)
     };
     appendCredentials(opts);
-
     let url = URL.getSaveURL(baseDocId);
     return fetch(url, opts)
       .then(checkHTTPStatus)
@@ -474,6 +473,7 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
  */
 export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData,
   rowIdx = null) {
+  debugger;
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx))

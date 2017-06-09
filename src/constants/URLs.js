@@ -38,15 +38,18 @@ const makeURL = path => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}${path}`;
  * 通用接口
  */
 
+const urlParam = '';
+//const urlParam = '?phone=13920171111&tenantId=ot85sl3q';
+
 // 基础档案 模型查询接口
-export const FICLOUDPUB_INITGRID_URL = makeURL('/initheader/initgrid');
+export const FICLOUDPUB_INITGRID_URL = makeURL('/initheader/initgrid'+urlParam);
 // 基础档案 数据查询接口
-export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add`;
-export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save`;
-export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete`;
-export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/query`;
-export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable`;
-export const getUpdateURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/update`;
+export const getAddURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/add`+urlParam;
+export const getSaveURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/save`+urlParam;
+export const getDeleteURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/delete`+urlParam;
+export const getQueryURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/query`+urlParam;
+export const getEnableURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/turnenable`+urlParam;
+export const getUpdateURL = type => `${SCHEME}://${HOST_PORT}${PATH_PREFIX}/${type}/update`+urlParam;
 
 // 参照 查询接口
 export const ReferDataURL = makeURL('/refbase_ctr/queryRefJSON');
