@@ -231,10 +231,13 @@ export function fetchTableColumnsModel(baseDocId) {
     let opts = {
       method: 'post',
       headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
+        'Content-type': 'application/json'
       },
       mode: 'cors',
-      body: `doctype=${baseDocId}`
+      body: JSON.stringify({
+        doctype:baseDocId
+      })
+      //body: `doctype=${baseDocId}`
     };
     appendCredentials(opts);
 
