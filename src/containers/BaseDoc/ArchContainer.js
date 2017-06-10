@@ -181,11 +181,11 @@ class ArchContainer extends Component {
           <p>{adminAlert.message}</p>
         </AdminAlert>
         <div>
-          <div className="header">
+          <!--<div className="header">
             <div className="header-title">
               <span>{value}</span>
             </div>
-          </div>
+          </div>-->
           <div className="btn-bar">
             {checkBoxContent}
             <div className="fr">
