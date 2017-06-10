@@ -473,7 +473,6 @@ export function saveTableData(baseDocId, fields, formData, rowIdx) {
  */
 export function saveTableDataAndFetchTableBodyData(baseDocId, fields, formData,
   rowIdx = null) {
-  debugger;
   return (dispatch, getState) => {
     const { arch } = getState();
     return dispatch(saveTableData(baseDocId, fields, formData, rowIdx))

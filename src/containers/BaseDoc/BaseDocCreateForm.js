@@ -10,6 +10,8 @@ import { Form as SSCForm } from 'ssc-grid';
 
 import * as Actions from '../../actions/arch';
 
+let tempFormData = null;
+
 class BaseDocCreateForm extends Component {
   static displayName = 'BaseDocCreateForm'
   static propTypes = {
@@ -41,6 +43,10 @@ class BaseDocCreateForm extends Component {
    * @param {Object} nextProps
    */
   componentWillReceiveProps() {
+    const {createDialog} = this.props;
+    if(!createDialog.show) {
+      tempFormData = null;
+    }
   }
 
   // create form
@@ -85,9 +91,11 @@ class BaseDocCreateForm extends Component {
       }
     }
 
+    tempFormData = formData;
     this.props.saveTableDataAndFetchTableBodyData(baseDocId, fields, formData);
   }
   handleCreateFormReset(event) {
+    tempFormData = null;
     this.props.hideCreateDialog();
     event.preventDefault();
   }
@@ -137,12 +145,18 @@ class BaseDocCreateForm extends Component {
     return formData;
   }
 
+
+
   render() {
     const { fields } = this.props;
     let cols = fields;
-
+    let formDefaultData;
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
-    const formDefaultData = this.getFormDefaultData();
+    if(tempFormData!=null) {
+      formDefaultData = tempFormData;
+    }else {
+      formDefaultData = this.getFormDefaultData();
+    }
 
     function setFormatterBoolean(field) {
       switch (field.type) {
