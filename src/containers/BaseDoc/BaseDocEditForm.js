@@ -99,12 +99,12 @@ class BaseDocEditForm extends Component {
   }
 
   render() {
-    const { fields, editFormData, formAlert,baseDocId } = this.props;
+    const { fields, editFormData, formAlert } = this.props;
     
 
     // 表单字段模型 / 表格列模型
     let cols = fields || [];
-    if(baseDocId == 'cityArchive') {
+/*    if(baseDocId == 'cityArchive') {
       cols = cols.map(setCityFormModel);
     }
     
@@ -113,15 +113,12 @@ class BaseDocEditForm extends Component {
         case 'cityLevel':
           field.hidden = false;
           break;
-        case 'cityLevelName':
-          field.hidden = true;
-          break;
         default:
           break;
       }
 
       return field;
-    }
+    }*/
     
     function setFormatterBoolean(field) {
       switch (field.type) {

@@ -148,11 +148,8 @@ class BaseDocCreateForm extends Component {
 
 
   render() {
-    const { fields, baseDocId } = this.props;
+    const { fields } = this.props;
     let cols = fields;
-    if(baseDocId == 'cityArchive') {
-       cols = cols.map(setCityFormModel);
-    }
     let formDefaultData;
     // 点击添加按钮时候，表单应该是空的，这里创建表单需要的空数据
     if(tempFormData!=null) {
@@ -161,20 +158,6 @@ class BaseDocCreateForm extends Component {
       formDefaultData = this.getFormDefaultData();
     }
 
-    function setCityFormModel(field) {
-      switch (field.id) {
-        case 'cityLevel':
-          field.hidden = false;
-          break;
-        case 'cityLevelName':
-          field.hidden = true;
-          break;
-        default:
-          break;
-      }
-
-      return field;
-    }
 
     function setFormatterBoolean(field) {
       switch (field.type) {

@@ -281,8 +281,7 @@ export function setRequiredFields(baseDocId, { ...field }) {
     cityArchive: {
       code: true,
       name: true,
-      ename: true,
-      cityLevelName: true
+      ename: true
     }
   };
   if (data[baseDocId] && data[baseDocId][field.id] === true) {
