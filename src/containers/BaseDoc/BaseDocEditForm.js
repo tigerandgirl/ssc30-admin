@@ -99,10 +99,30 @@ class BaseDocEditForm extends Component {
   }
 
   render() {
-    const { fields, editFormData, formAlert } = this.props;
+    const { fields, editFormData, formAlert,baseDocId } = this.props;
+    
 
     // 表单字段模型 / 表格列模型
     let cols = fields || [];
+    if(baseDocId == 'cityArchive') {
+      cols = cols.map(setCityFormModel);
+    }
+    
+    function setCityFormModel(field) {
+      switch (field.id) {
+        case 'cityLevel':
+          field.hidden = false;
+          break;
+        case 'cityLevelName':
+          field.hidden = true;
+          break;
+        default:
+          break;
+      }
+
+      return field;
+    }
+    
     function setFormatterBoolean(field) {
       switch (field.type) {
         case 'boolean':
