@@ -188,7 +188,7 @@ class ArchContainer extends Component {
     if( baseDocId ==="cityArchive"){
       searchContent = (
           <div className="input-group fl">
-            <input type="text" id="searchContent" className="form-control" style={{width:'300px',margin:'5px 0'}} value={this.state.searchContent} onChange={this.getSearchContent} placeholder="请输入城市名称或编码" />
+            <input type="text" id="searchContent" className="form-control" style={{width:'300px',margin:'0 0 10px 0 '}} value={this.state.searchContent} onChange={this.getSearchContent} placeholder="请输入城市名称或编码" />
             <span className="input-group-btn" onClick={this.searchCityArchive}>
                 <button className="btn btn-default" type="button">
                   <span className="glyphicon glyphicon-search"></span>
