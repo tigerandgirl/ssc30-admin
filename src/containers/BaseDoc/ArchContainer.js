@@ -66,13 +66,16 @@ class ArchContainer extends Component {
     this.closeEditDialog = this.closeEditDialog.bind(this);
     this.closeCreateDialog = this.closeCreateDialog.bind(this);
     this.handleEnableCheck = this.handleEnableCheck.bind(this);
+  
     if (props.showEnableCheckbox.indexOf(baseDocId) !== -1) {
       this.state = {
-        conditions: [{ field: 'enable', datatype: 'boolean', value: 'true' }]
+        conditions: [{ field: 'enable', datatype: 'boolean', value: 'true' }],
+        searchContent:""
       };
     } else {
       this.state = {
-        conditions: []
+        conditions: [],
+        searchContent:""
       };
     }
   }
@@ -136,6 +139,20 @@ class ArchContainer extends Component {
     this.props.handleMessage();
   }
 
+  searchCityArchive = () =>{
+    const { params: { baseDocId }, itemsPerPage, startIndex } = this.props;
+    let conditions =[],filterquery=this.state.searchContent;
+    this.props.updateConditions(conditions);
+    this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null, conditions,filterquery);
+  }
+
+  getSearchContent = (e)=>{
+    let searchContent = e.currentTarget.value;
+    this.setState({
+      searchContent:searchContent
+    })
+  }
+
   render() {
     const {
       editDialog,
@@ -166,6 +183,22 @@ class ArchContainer extends Component {
       }
     });
 
+
+    let searchContent =("");
+    if( baseDocId ==="cityArchive"){
+      searchContent = (
+          <div className="input-group fl">
+            <input type="text" id="searchContent" className="form-control" style={{width:'200px'}} value={this.state.searchContent} onChange={this.getSearchContent} placeholder="请输入..." />
+            <span className="input-group-btn" onClick={this.searchCityArchive}>
+                <button className="btn btn-default" type="button">
+                  <span className="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+          </div>
+      );
+    }
+
+
     return (
       <div className="content">
         <div className="blank" />
@@ -191,6 +224,7 @@ class ArchContainer extends Component {
             <div className="fr">
               <Button onClick={this.handleCreate}>新增</Button>
             </div>
+            {searchContent}
           </div>
           <BaseDocTable baseDocId={baseDocId} />
         </div>

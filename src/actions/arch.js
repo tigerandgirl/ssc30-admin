@@ -157,7 +157,7 @@ export function gotoPage(startIndex, nextPage) {
 }
 
 // 这个接口只获取表格体的数据
-export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage, conditions) {
+export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage, conditions,filterquery) {
   return (dispatch) => {
     dispatch(requestTableData());
     let opts = {
@@ -169,7 +169,8 @@ export function fetchTableBodyData(baseDocId, itemsPerPage, startIndex, nextPage
       body: JSON.stringify({
         begin: startIndex,
         groupnum: itemsPerPage,
-        conditions
+        conditions,
+        filterquery  //TODO 不确定查询条件会不会影响到其他 ，待测试 
       })
     };
     appendCredentials(opts);
