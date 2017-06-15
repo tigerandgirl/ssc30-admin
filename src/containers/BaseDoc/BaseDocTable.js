@@ -170,10 +170,27 @@ class BaseDocTable extends Component {
   }
 
   render() {
-    const { tableData, fields, itemsPerPage } = this.props;
+    const { tableData, fields, itemsPerPage ,baseDocId} = this.props;
 
     // 表单字段模型 / 表格列模型
     let cols = fields || [];
+
+    if(baseDocId == 'dutyLevel' ||  baseDocId=="duty") {
+      cols = cols.map(setCityFormModel);
+    }
+    function setCityFormModel(field) {
+      switch (field.id) {
+        case 'duty_level_code':
+        case 'duty_code':
+          field.disabled = false;
+          break;
+        default:
+          break;
+      }
+
+      return field;
+    }
+
     function setFormatterBoolean(field) {
       switch (field.type) {
         case 'boolean':
@@ -190,6 +207,8 @@ class BaseDocTable extends Component {
       return field;
     }
     cols = cols.map(setFormatterBoolean);
+
+
 
     return (
       <div>
