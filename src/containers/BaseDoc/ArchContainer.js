@@ -66,7 +66,7 @@ class ArchContainer extends Component {
     this.closeEditDialog = this.closeEditDialog.bind(this);
     this.closeCreateDialog = this.closeCreateDialog.bind(this);
     this.handleEnableCheck = this.handleEnableCheck.bind(this);
-  
+
     if (props.showEnableCheckbox.indexOf(baseDocId) !== -1) {
       this.state = {
         conditions: [{ field: 'enable', datatype: 'boolean', value: 'true' }],
@@ -232,7 +232,7 @@ class ArchContainer extends Component {
             </div>
             {searchContent}
           </div>
-          <BaseDocTable baseDocId={baseDocId} />
+          <BaseDocTable baseDocId={baseDocId} filterquery={this.state.searchContent} />
         </div>
         <AdminEditDialog
           className="edit-form"

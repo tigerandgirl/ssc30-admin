@@ -49,7 +49,7 @@ class BaseDocTable extends Component {
 
   componentDidMount() {
     const { baseDocId, showEnableCheckbox } = this.props;
-    const { itemsPerPage, startIndex } = this.props;
+    const { itemsPerPage, startIndex,filterquery } = this.props;
     // 根据不同基础档案类型，设置不同的默认查询条件
     let conditions = [];
     if (showEnableCheckbox.indexOf(baseDocId) !== -1) {
@@ -59,7 +59,7 @@ class BaseDocTable extends Component {
 
     this.props.fetchTableColumnsModel(baseDocId);
     this.props.fetchTableBodyData(baseDocId, itemsPerPage, startIndex, null,
-      conditions);
+      conditions, filterquery);
   }
 
   componentWillReceiveProps(nextProps) {
